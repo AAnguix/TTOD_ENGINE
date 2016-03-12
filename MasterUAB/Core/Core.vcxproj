@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AStar.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Components\ComponentManager.cpp" />
+    <ClCompile Include="Components\PhysxComponent.cpp" />
+    <ClCompile Include="Components\ScriptedComponent.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="DebugHelper.cpp" />
+    <ClCompile Include="DebugHelperImplementation.cpp" />
+    <ClCompile Include="Input\InputManager.cpp" />
+    <ClCompile Include="Input\InputManagerImplementation.cpp" />
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="ScriptManager\RegisterBase.cpp" />
+    <ClCompile Include="ScriptManager\RegisterCore.cpp" />
+    <ClCompile Include="ScriptManager\RegisterGraphics.cpp" />
+    <ClCompile Include="ScriptManager\RegisterPhysx.cpp" />
+    <ClCompile Include="ScriptManager\ScriptManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AStar.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Components\Component.h" />
+    <ClInclude Include="Components\ComponentManager.h" />
+    <ClInclude Include="Components\PhysxComponent.h" />
+    <ClInclude Include="Components\ScriptedComponent.h" />
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="DebugHelper.h" />
+    <ClInclude Include="DebugHelperImplementation.h" />
+    <ClInclude Include="Input\InputManager.h" />
+    <ClInclude Include="Input\InputManagerImplementation.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="ScriptManager\ScriptManager.h" />
+    <ClInclude Include="ScriptManager\testclass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\3rdParty\AntTweakBar\AntTweakBar.vcxproj">
+      <Project>{b99e1fa1-c30a-45f2-9d57-9e9c21b2df42}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\3rdParty\cal3d-0.11rc2\src\cal3d\cal3d.vcxproj">
+      <Project>{d780f1cb-43bc-f2f2-cc86-ba3416cbf389}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\3rdParty\luabind\luabind.vcxproj">
+      <Project>{09b805a4-13db-4a24-8e3a-386dad319399}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\3rdParty\Lua\Lua.vcxproj">
+      <Project>{209a2a97-a786-41e1-9ca4-906b36eed6b8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\Base.vcxproj">
+      <Project>{69430b34-6c84-44a0-896c-24e980d9b718}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{77B0C728-54BB-429B-925A-3F8CB72784F9}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Core</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\bin\lib\</OutDir>
+    <IntDir>$(SolutionDir)\bin\Intermediate\$(ProjectName)$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\bin\lib</OutDir>
+    <IntDir>$(SolutionDir)\bin\Intermediate\$(ProjectName)$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)PhysX;$(SolutionDir)Graphics;$(SolutionDir)Core;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\include\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\include\;$(SolutionDir)3rdParty\AntTweakBar\include;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)Videogametest\;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)PhysX;$(SolutionDir)Graphics;$(SolutionDir)Core;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\include\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\include\;$(SolutionDir)3rdParty\AntTweakBar\include;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)Videogametest\;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

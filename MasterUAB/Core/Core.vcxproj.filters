@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="DebugHelper.cpp" />
+    <ClCompile Include="DebugHelperImplementation.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="ScriptManager\ScriptManager.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Input\InputManager.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputManagerImplementation.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager\RegisterGraphics.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager\RegisterBase.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager\RegisterCore.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\ComponentManager.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\PhysxComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\ScriptedComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager\RegisterPhysx.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
+    <ClCompile Include="AStar.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DebugHelper.h" />
+    <ClInclude Include="DebugHelperImplementation.h" />
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="ScriptManager\ScriptManager.h">
+      <Filter>ScriptManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptManager\testclass.h">
+      <Filter>ScriptManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="Input\InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputManagerImplementation.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Component.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\ComponentManager.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\PhysxComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\ScriptedComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AStar.h">
+      <Filter>ScriptManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ScriptManager">
+      <UniqueIdentifier>{102434e4-af86-4ec6-8c83-3593d2150b26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{6d8c07f2-a398-420c-a41d-5f4c2987cbaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{fd9d8db8-dfe0-42e7-9ebd-25c5c0e0f733}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
