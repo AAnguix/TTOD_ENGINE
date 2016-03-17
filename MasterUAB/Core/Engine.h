@@ -48,6 +48,7 @@ class CLayerManager;
 class CRenderableObjectTechniqueManager;
 class CSceneRendererCommandManager;
 class CDebugHelperImplementation;
+class CParticleManager;
 
 class CEngine : public CSingleton<CEngine>
 {
@@ -70,6 +71,7 @@ private:
 	CRenderableObjectTechniqueManager* m_RenderableObjectTechniqueManager;
 	CSceneRendererCommandManager* m_SceneRendererCommandManager;
 	CDebugHelperImplementation* m_DebugHelper;
+	CParticleManager* m_ParticleSystemManager;
 	CEngine();
 
 public:
@@ -93,6 +95,7 @@ public:
 	CRenderableObjectTechniqueManager* GetRenderableObjectTechniqueManager() const;
 	CSceneRendererCommandManager* GetSceneRendererCommandManager() const;
 	CDebugHelperImplementation* GetDebugHelper() const;
+	CParticleManager* GetParticleSystemManager() const;
 	void SetRenderManager(CRenderManager *RenderManager) {m_RenderManager=RenderManager;}
 };
 

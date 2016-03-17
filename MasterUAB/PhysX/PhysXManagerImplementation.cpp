@@ -1,5 +1,8 @@
 #include "PhysXManagerImplementation.h"
 #include <Windows.h>
+#include <sstream>
+#include "Engine.h"
+#include "ScriptManager\ScriptManager.h"
 
 static physx::PxDefaultErrorCallback gDefaultErrorCallback;
 static physx::PxDefaultAllocator gDefaultAllocatorCallback;
@@ -145,10 +148,10 @@ void CPhysXManagerImplementation::onContact(const physx::PxContactPairHeader& pa
 
 void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 {
-	for(physx::PxU32 i=0;i<count;++i)
+	for (physx::PxU32 i = 0; i<count; ++i)
 	{
 		//ignore pairs when shapes have been deleted
-		if((pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER)))
+		if ((pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER)))
 			continue;
 
 		size_t indexTrigger = (size_t)pairs[i].triggerActor->userData;
@@ -157,9 +160,13 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 		std::string triggerName = m_ActorNames[indexTrigger];
 		std::string actorName = m_ActorNames[indexActor];
 
-		//printf("Trigger \"%s\" fired with \"%s\"",triggerName.c_str(),actorName.c_str());
+		std::stringstream l_Ss;
+		l_Ss << "OnTriggerAction(" << "'" << triggerName << "'" << "," << "'" << actorName << "'" << ")";
+		std::string l_Code = l_Ss.str();
+		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
 	}
 }
+
 
 void CPhysXManagerImplementation::CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, Vect3f &Position, const std::string &MaterialName)
 {
@@ -169,8 +176,8 @@ void CPhysXManagerImplementation::CreateCharacterController(const std::string &N
 	l_Desc.radius=Radius;
 	l_Desc.climbingMode = physx::PxCapsuleClimbingMode::eEASY;
 	l_Desc.slopeLimit = cosf(3.1415f / 6); //The maximum slope which the character can walk up.
-	l_Desc.stepOffset = 0.01; //maximum height of an obstacle which the character can climb.
-	l_Desc.contactOffset = 0.001;
+	l_Desc.stepOffset = 0.01f; //maximum height of an obstacle which the character can climb.
+	l_Desc.contactOffset = 0.001f;
 	l_Desc.density = Density;
 	l_Desc.reportCallback = this;
 	l_Desc.position = physx::PxExtendedVec3(Position.x,Position.y + Radius + Height * 0.5f,Position.z);

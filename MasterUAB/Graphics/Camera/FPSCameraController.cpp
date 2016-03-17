@@ -119,8 +119,3 @@ Vect3f CFPSCameraController::GetDirection() const
 	Vect3f l_Direction(cos(m_Yaw)*cos(m_Pitch), sin(m_Pitch), sin(m_Yaw)*cos(m_Pitch));
 	return l_Direction;
 }
-
-CFPSCameraController::EType CFPSCameraController::GetType() const
-{
-	return FIXED;
-}

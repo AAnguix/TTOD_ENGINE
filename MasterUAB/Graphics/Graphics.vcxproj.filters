@@ -247,6 +247,9 @@
     <ClInclude Include="Particles\ParticleSystemType.h">
       <Filter>Particles</Filter>
     </ClInclude>
+    <ClInclude Include="Effects\EffectGeometryShader.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -479,6 +482,9 @@
     </ClCompile>
     <ClCompile Include="Particles\ParticleSystemType.cpp">
       <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\EffectGeometryShader.cpp">
+      <Filter>Effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

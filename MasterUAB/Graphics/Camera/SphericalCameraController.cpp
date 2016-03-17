@@ -31,8 +31,3 @@ void CSphericalCameraController::SetCamera(CCamera *Camera) const
 	Camera->SetUp(GetUp());
 	Camera->SetMatrixs();
 }
-
-CSphericalCameraController::EType CSphericalCameraController::GetType() const
-{
-	return CSphericalCameraController::EType::FIXED;
-}

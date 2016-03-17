@@ -1,8 +1,20 @@
 # Own directories
 
 MasterUAB/bin/Intermediate/
-MasterUAB/bin/VideogameTest/
 MasterUAB/bin/lib/
+
+MasterUAB/bin/VideogameTest/*
+!MasterUAB/bin/VideogameTest/Data
+MasterUAB/bin/VideogameTest/Data/*
+!MasterUAB/bin/VideogameTest/Data/Scripting
+!MasterUAB/bin/VideogameTest/Data/Effects
+!MasterUAB/bin/VideogameTest/Data/basic_scene_renderer_commands.xml
+!MasterUAB/bin/VideogameTest/Data/scene_renderer_commands.xml
+!MasterUAB/bin/VideogameTest/Data/renderable_objects_techniques.xml
+!MasterUAB/bin/VideogameTest/Data/Input.xml
+!MasterUAB/bin/VideogameTest/Data/Effects.xml
+!MasterUAB/bin/VideogameTest/Data/GUI.xml
+
 MasterUAB/ipch/
 MasterUAB/VideogameTest/debug32
 
@@ -19,6 +31,9 @@ MasterUAB/3rdParty/iconv-1.9.2.win32/
 MasterUAB/3rdParty/libxml2-2.7.2.win32
 MasterUAB/3rdParty/cal3d-0.11rc2/src/cal3d/Debug
 MasterUAB/3rdParty/cal3d-0.11rc2/src/cal3d/Release
+MasterUAB/3rdParty/AntTweakBar/debug32
+MasterUAB/3rdParty/AntTweakBar/release32
+
 # Executables
 *.exe
 

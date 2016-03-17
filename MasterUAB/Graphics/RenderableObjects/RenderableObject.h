@@ -31,7 +31,7 @@ public:
 	virtual void Render(CRenderManager *RM) = 0;
 	virtual bool AddComponent(CComponent *Component);
 	UAB_GET_PROPERTY_POINTER(CComponentManager,ComponentManager);
-	virtual TRenderableObjectType GetClassType() const;
+	virtual TRenderableObjectType GetClassType() const = 0;
 
 };
 

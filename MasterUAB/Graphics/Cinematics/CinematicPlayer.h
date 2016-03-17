@@ -19,8 +19,12 @@ public:
 	virtual void Pause(); 
 	bool IsFinished() {return m_CurrentTime>=m_Duration;} 
 	float GetDuration() {return m_Duration;} 
-	float GetCurrentTime() {return m_CurrentTime;} 
+	float GetActualTime() {return m_CurrentTime;} 
+	void SetActualTime(float ActualTime){ m_CurrentTime = ActualTime; };
+	bool GetPlaying() const{ return m_Playing; };
 	virtual void OnRestartCycle(); //Evento que se lanza cuando vuelve a empezar la cinemática
+	
+	
 };
 
 #endif

@@ -55,9 +55,9 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 	m_NumVertices=m_CalHardwareModel->getTotalVertexCount();
 	
 	if(sizeof(CalIndex)==2)
-		m_RenderableVertexs=new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces*3);
+		m_RenderableVertexs=new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces*3, false);
 	else
-		m_RenderableVertexs=new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces*3);
+		m_RenderableVertexs=new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces*3, false);
 	
 	free(l_Vertexs);
 	free(l_Faces);
@@ -134,7 +134,7 @@ m_NumFaces(0)
 		std::string l_MaterialName = m_AnimatedCoreModel->GetMaterials()[0]->GetName();
 		/*TODO Obtener propiedades del material*/
 		CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName,0.1f,0.1f,0.1f);
-		Vect3f l_CControlerPos(m_Position.x, m_Position.y + (CCONTROLLER_HEIGHT*10), m_Position.z);
+		Vect3f l_CControlerPos(m_Position.x, m_Position.y, m_Position.z);
 		
 		//CalBoundingBox Height = m_CalModel->getBoundingBox(false); 
 	

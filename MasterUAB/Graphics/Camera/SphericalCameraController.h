@@ -25,7 +25,7 @@ public:
 		AddZoom(-movement.z*2.0f);
 	}
 
-	EType GetType() const;
+	EType GetType() const{ return FIXED; };
 };
 
 #endif

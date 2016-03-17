@@ -177,11 +177,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 				{
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 
@@ -189,11 +189,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 				{
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 
@@ -201,11 +201,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 				{
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 
@@ -213,11 +213,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 				{
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_COLOR_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_COLOR_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_COLOR_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_COLOR_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 
@@ -225,11 +225,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 				{
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 
@@ -237,11 +237,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 				{
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_COLOR_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 				//News
@@ -249,11 +249,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 				{
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 				else if (l_VertexType == MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX::GetVertexType())
@@ -262,11 +262,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 
@@ -276,11 +276,11 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 					if (l_IndexType == 16)
 					{
-						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 					else
 					{
-						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs);
+						l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 					}
 				}
 

@@ -1,9 +1,18 @@
 #include "Particles\ParticleManager.h"
 #include "XML\XMLTreeNode.h"
+#include "Engine.h"
+#include "RenderableObjects\LayerManager.h"
+#include "RenderableObjects\RenderableObjectsManager.h"
+#include "Particles\ParticleSystemInstance.h"
 
 CParticleManager::CParticleManager() : m_Filename("")
 {
 	
+}
+
+CParticleManager::~CParticleManager()
+{
+
 }
 
 void CParticleManager::Load(const std::string &Filename)
@@ -20,6 +29,10 @@ void CParticleManager::Load(const std::string &Filename)
 			{
 				CHECKED_DELETE(l_ParticleSystemType);
 			}
+			else
+			{
+				m_DefaultType = l_Meshes(i).GetBoolProperty("default_type", false) ? l_ParticleSystemType : nullptr;
+			}
 		}
 	}
 }
@@ -28,6 +41,21 @@ void CParticleManager::Reload()
 {
 	Destroy();
 	Load(m_Filename);
+
+	CRenderableObjectsManager* l_Particles = CEngine::GetSingleton().GetLayerManager()->GetResource("particles");
+	CTemplatedVectorMapManager<CRenderableObject>::TVectorResources m_ParticleSystemInstances = l_Particles->GetResourcesVector();
+
+	for (size_t i = 0; i < m_ParticleSystemInstances.size(); ++i)
+	{
+		assert(m_ParticleSystemInstances[i]->GetClassType() == CRenderableObject::PARTICLE_EMITER);
+
+		/*Reload particle system type*/
+		CParticleSystemType* l_NewSystemType = GetResource( ((CParticleSystemInstance*)m_ParticleSystemInstances[i])->GetType()->GetName());
+		((CParticleSystemInstance*)m_ParticleSystemInstances[i])->SetType(l_NewSystemType);
+
+		((CParticleSystemInstance*)m_ParticleSystemInstances[i])->SetEmissionScaler
+			(l_NewSystemType->m_EmitAbsolute ? 1 : 1.0f / ((CParticleSystemInstance*)m_ParticleSystemInstances[i])->GetEmissionVolume());
+	}
 }
 
 const std::vector<CParticleSystemType *> & CParticleManager::GetLUAParticles()

@@ -6,18 +6,12 @@ CFixedCameraController::CFixedCameraController()
 {
 	m_Position=v3fZERO;
 	m_LookAt=v3fZERO;
-	m_FOV=0.0f;
-	m_Near=0.0f;
-	m_Far=0.0f;
 }
 
-CFixedCameraController::CFixedCameraController(CXMLTreeNode &TreeNode)
+CFixedCameraController::CFixedCameraController(CXMLTreeNode &TreeNode) : CCameraController()
 {
 	m_Position=TreeNode.GetVect3fProperty("position",v3fZERO);
 	m_LookAt=TreeNode.GetVect3fProperty("look_at",v3fZERO);
-	m_FOV=TreeNode.GetFloatProperty("fov",0.0f);
-	m_Near=TreeNode.GetFloatProperty("near",0.0f);
-	m_Far=TreeNode.GetFloatProperty("far",0.0f);
 }
 
 CFixedCameraController::~CFixedCameraController()
@@ -30,8 +24,8 @@ void CFixedCameraController::SetCamera(CCamera *Camera) const
 	Camera->SetFOV(m_FOV);
 	Camera->SetPosition(m_Position);
 	Camera->SetLookAt(m_LookAt);
-	Camera->SetZNear(m_Near);
-	Camera->SetZFar(m_Far);
+	Camera->SetZNear(m_ZNear);
+	Camera->SetZFar(m_ZFar);
 	Camera->SetUp(GetUp());
 	Camera->SetMatrixs();
 }

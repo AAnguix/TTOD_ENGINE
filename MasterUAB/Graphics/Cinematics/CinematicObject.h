@@ -26,6 +26,10 @@ public:
 	void Update(float ElapsedTime); 
 	void Stop(); 
 	void OnRestartCycle(); 
+	size_t GetCurrentKeyFrame() const{ return m_CurrentKeyFrame; };
+	void SetCurrentKeyFrame(size_t KeyFrame) { m_CurrentKeyFrame = KeyFrame; };
+	CRenderableObject* GetRenderableObject() const{ return m_RenderableObject; };
+	std::vector<CCinematicObjectKeyFrame *> GetCinematicObjectKeyFrames() const{ return m_CinematicObjectKeyFrames; };
 };
 
 #endif

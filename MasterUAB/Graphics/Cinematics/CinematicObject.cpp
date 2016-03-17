@@ -5,6 +5,8 @@
 #include "RenderableObjects\LayerManager.h"
 #include "Log.h"
 #include "Math\MathUtils.h"
+#include "Engine.h"
+#include "PhysXManager.h"
 
 CCinematicObject::CCinematicObject(CXMLTreeNode &TreeNode)
 {
@@ -137,63 +139,42 @@ Vect3f CCinematicObject::ObjectToInertialQuaternion(Quatf q)
 
 void CCinematicObject::Update(float ElapsedTime)
 {
-	if(m_Playing)
+	if (m_Playing)
 	{
-		m_CurrentTime=m_CurrentTime+ElapsedTime;
+		m_CurrentTime = m_CurrentTime + ElapsedTime;
 
 		CEngine::GetSingleton().GetLogManager()->Log(m_CurrentTime);
-		
-		for(size_t i=m_CurrentKeyFrame;i<m_CinematicObjectKeyFrames.size()-1;++i)
+
+		for (size_t i = m_CurrentKeyFrame; i<m_CinematicObjectKeyFrames.size() - 1; ++i)
 		{
-			if(m_CinematicObjectKeyFrames[i]->GetKeyFrameTime()>m_CurrentTime)
+			if (m_CinematicObjectKeyFrames[i]->GetKeyFrameTime()>m_CurrentTime)
 			{
-				m_CurrentKeyFrame=i;
-				//m_NextKey=i+1;
-				i=m_CinematicObjectKeyFrames.size()-1;
+				m_CurrentKeyFrame = i;
+
 			}
 		}
-	
-		Vect3f l_NewPosition=v3fZERO;
-		
-		//float l_StartTime=m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetKeyFrameTime();
-		//float l_EndTime=m_CinematicObjectKeyFrames[m_CurrentKeyFrame+1]->GetKeyFrameTime();
-		//float l_timeDiff = (ElapsedTime - l_StartTime) / (l_EndTime - l_StartTime);
-	 
-		Vect3f l_Pos=m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetPosition();
-		l_NewPosition = (l_Pos.Lerp(m_CinematicObjectKeyFrames[m_CurrentKeyFrame+1]->GetPosition(),m_CurrentTime));
-		m_RenderableObject->SetPosition(l_NewPosition);
 
-		float h = m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetYaw() * 180 / DOUBLE_PI_VALUE; //Radians to Euler Angles
-		float h2 = m_CinematicObjectKeyFrames[m_CurrentKeyFrame+1]->GetYaw() * 180 / DOUBLE_PI_VALUE;
-		
-		float p = m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetPitch() * 180 / DOUBLE_PI_VALUE;
-		float p2 = m_CinematicObjectKeyFrames[m_CurrentKeyFrame+1]->GetPitch() * 180 / DOUBLE_PI_VALUE;
-		
-		float b = m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetRoll() * 180 / DOUBLE_PI_VALUE;
-		float b2 = m_CinematicObjectKeyFrames[m_CurrentKeyFrame+1]->GetRoll() * 180 / DOUBLE_PI_VALUE;
+		Vect3f l_NewPosition = v3fZERO;
+		Vect3f l_Pos = m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetPosition();
+		l_NewPosition = (l_Pos.Lerp(m_CinematicObjectKeyFrames[m_CurrentKeyFrame + 1]->GetPosition(), m_CurrentTime));
 
-		float x = cos(h/2)*cos(p/2)*cos(b/2) + sin(h/2)*sin(p/2)*sin(b/2);
-		float x2 = cos(h/2)*cos(p/2)*cos(b/2) + sin(h/2)*sin(p/2)*sin(b/2);
-		
-		float y = cos(h/2)*sin(p/2)*cos(b/2) + sin(h/2)*cos(p/2)*sin(b/2);
-		float y2 = cos(h/2)*sin(p/2)*cos(b/2) + sin(h/2)*cos(p/2)*sin(b/2);
-		
-		float z = sin(h/2)*cos(p/2)*cos(b/2) - cos(h/2)*sin(p/2)*sin(b/2);
-		float z2 = sin(h/2)*cos(p/2)*cos(b/2) - cos(h/2)*sin(p/2)*sin(b/2);
 
-		float w = cos(h/2)*cos(p/2)*sin(b/2) - sin(h/2)*sin(p/2)*cos(b/2);
-		float w2 = cos(h/2)*cos(p/2)*sin(b/2) - sin(h/2)*sin(p/2)*cos(b/2);
+		float h = m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetYaw();
+		float h2 = m_CinematicObjectKeyFrames[m_CurrentKeyFrame + 1]->GetYaw();
 
-		Quatf l_q1(x,y,z,w);
-		Quatf l_q2(x2,y2,z2,w2);
+		float p = m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetPitch();
+		float p2 = m_CinematicObjectKeyFrames[m_CurrentKeyFrame + 1]->GetPitch();
 
-		Quatf l_qInterpolated = Slerp(l_q1,l_q2,m_CurrentTime);
+		float b = m_CinematicObjectKeyFrames[m_CurrentKeyFrame]->GetRoll();
+		float b2 = m_CinematicObjectKeyFrames[m_CurrentKeyFrame + 1]->GetRoll();
 
-		Vect3f l_Eulers = ObjectToInertialQuaternion(l_qInterpolated);
+		Quatf l_q1(h, p, b);
+		Quatf l_q2(h2, p2, b2);
 
-		m_RenderableObject->SetYaw(l_Eulers.x);
-		m_RenderableObject->SetPitch(l_Eulers.y);
-		m_RenderableObject->SetRoll(l_Eulers.z);
+		Quatf l_qInterpolated = Slerp(l_q1, l_q2, m_CurrentTime);
+
+		CEngine &l_Engine = CEngine::GetSingleton();
+		l_Engine.GetPhysXManager()->MoveKinematicActor(m_RenderableObject->GetName(), l_NewPosition, l_qInterpolated);
 	}
 }
 

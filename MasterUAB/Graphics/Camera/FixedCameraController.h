@@ -8,9 +8,6 @@ class CFixedCameraController : public CCameraController
 {
 private:
 	Vect3f m_LookAt;
-	float m_FOV;
-	float m_Near;
-	float m_Far;
 	
 public:
 	CFixedCameraController();

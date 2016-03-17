@@ -21,14 +21,6 @@ inline physx::PxQuat CastQuat(const Quatf& q)
 inline Quatf CastQuat(const physx::PxQuat& q)
 {return Quatf(q.x,q.y,q.z,q.w);}
 
-struct RaycastData
-{
-	Vect3f m_Position;
-	Vect3f m_Normal;
-	float m_Distance;
-	std::string m_ActorName;
-};
-
 CPhysXManager::CPhysXManager()
 {
 	m_LeftOverSeconds=0.0f;
@@ -63,6 +55,76 @@ physx::PxMaterial* CPhysXManager::GetMaterial(const std::string &MaterialName)
 	}
 
 	return nullptr;
+}
+
+void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation, int Group)
+{
+	//L_PutGroupToShape(Shape, Group);
+
+	Body->attachShape(*Shape);
+	m_Scene->addActor(*Body);
+	Body->userData = (void*)AddActor(ActorName, Position, Orientation, Body);
+	
+}
+
+size_t CPhysXManager::AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor)
+{
+	#ifdef USE_PHYSX_DEBUG
+		CheckMapAndVectors();
+	#endif
+
+	size_t index = m_Actors.size();
+
+	Actor->userData = (void*)index;
+
+	m_ActorIndexs[ActorName] = index;
+	m_ActorNames.push_back(ActorName);
+	m_ActorPositions.push_back(Position);
+	m_ActorOrientations.push_back(Orientation);
+	m_Actors.push_back(Actor);
+
+	return m_ActorIndexs[ActorName];
+}
+
+physx::PxShape* CPhysXManager::CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+{
+	physx::PxMaterial* l_Material = GetMaterial(Material);
+	physx::PxShape* shape = m_PhysX->createShape(Geometry, *l_Material);
+	
+	assert(shape != nullptr);
+	physx::PxRigidStatic* body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
+
+	RegisterActor(Name, shape, body, Position, Orientation, Group);
+	
+	return shape;
+}
+
+physx::PxShape* CPhysXManager::CreateDinamicShape(const std::string &Name, physx::PxGeometry Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, float Density, int Group, bool IsKinematic)
+{
+	physx::PxMaterial* l_Material = GetMaterial(Material);
+	physx::PxShape* shape = m_PhysX->createShape(Geometry, *l_Material);
+	physx::PxRigidDynamic* body = m_PhysX->createRigidDynamic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
+
+	//RegisterActor(Name, shape, body, Position, Orientation, Density, Group);
+
+	shape->release();
+
+	return nullptr;
+}
+
+void CPhysXManager::CreateSTBOX(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+{
+	physx::PxVec3 l_Size = CastVec(Size);
+	physx::PxShape* l_Shape = CreateStaticShape(
+		Name,
+		physx::PxBoxGeometry(l_Size.x / 2, l_Size.y / 2, l_Size.z / 2),
+		Material,
+		Position,
+		Orientation,
+		Group);
+
+	if (l_Shape != nullptr)
+		l_Shape->release();
 }
 
 
@@ -155,7 +217,12 @@ void CPhysXManager::CreateConvexMesh(std::vector<Vect3f> Vertices, const std::st
 	SaveActorData(index,MeshName,Position,Orientation,l_Body);
 }
 
-
+size_t CPhysXManager::GetActorIndex(const std::string& ActorName) const
+{
+	auto it = m_ActorIndexs.find(ActorName);
+	assert(it != m_ActorIndexs.end());
+	return it->second;
+}
 
 void CPhysXManager::SaveActorData(size_t Index, const std::string ActorName,const Vect3f &Position, const Quatf &Orientation, physx::PxActor *Actor)
 {
@@ -299,13 +366,57 @@ Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterContro
 	physx::PxExtendedVec3 l_FPos = l_Controller->getFootPosition();
 	physx::PxVec3 l_V = l_Actor->getLinearVelocity();
 
-	CharacterControllerData l_CCData(CastVec(l_FPos),CastVec(l_V));
+	SCharacterControllerData l_CCData(CastVec(l_FPos),CastVec(l_V));
 
 	return GetActorPosition(CharacterControllerName);
 	//return l_CCData;
 }
 
-bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, RaycastData* Result_)
+Vect3f CPhysXManager::GetCharacterControllerPosition(const std::string& CharacterControllerName)
+{
+	physx::PxController* l_CController = m_CharacterControllers[CharacterControllerName];
+	return Vect3f(CastVec(l_CController->getPosition()));
+}
+
+Vect3f CPhysXManager::GetCharacterControllerFootPosition(const std::string& CharacterControllerName)
+{
+	physx::PxController* l_CController = m_CharacterControllers[CharacterControllerName];
+	return Vect3f(CastVec(l_CController->getFootPosition()));
+}
+
+void CPhysXManager::SetShapeAsTrigger(const std::string &ActorName)
+{
+	auto it_Actors = m_ActorIndexs.find(ActorName);
+
+	if (it_Actors != m_ActorIndexs.end())
+	{
+		size_t l_Index = it_Actors->second;
+		physx::PxActor* l_PxActor = m_Actors[l_Index];
+
+		physx::PxRigidDynamic* l_DynamicActor = l_PxActor->is<physx::PxRigidDynamic>();
+		physx::PxShape* l_Shape;
+
+		if (l_DynamicActor != nullptr)
+		{
+			l_DynamicActor->getShapes(&l_Shape, 1);
+			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			physx::PxRigidStatic* l_StaticActor = l_PxActor->is<physx::PxRigidStatic>();
+			
+			if (l_StaticActor != nullptr)
+			{
+				l_StaticActor->getShapes(&l_Shape, 1);
+				l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+				l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+			}
+		}
+	}
+}
+
+bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* Result_)
 {
 	physx::PxFilterData filterData;
 	filterData.setToDefault();
@@ -335,6 +446,37 @@ bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterM
 	Result_->m_ActorName=m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
 
 	return true;
+}
+
+void CPhysXManager::MoveKinematicActor(const std::string& ActorName, const Vect3f &Position)
+{
+	physx::PxActor* l_Actor = IsRigidDynamic(ActorName);
+	assert(l_Actor != nullptr);
+	((physx::PxRigidDynamic*)l_Actor)->setKinematicTarget(physx::PxTransform(CastVec(Position), CastQuat(GetActorOrientation(ActorName))));
+}
+
+void CPhysXManager::MoveKinematicActor(const std::string& ActorName, const Quatf &Rotation)
+{
+	physx::PxActor* l_Actor = IsRigidDynamic(ActorName);
+	assert(l_Actor != nullptr);
+	((physx::PxRigidDynamic*)l_Actor)->setKinematicTarget(physx::PxTransform(CastVec(GetActorPosition(ActorName)),CastQuat(Rotation)));
+}
+
+
+void CPhysXManager::MoveKinematicActor(const std::string& ActorName, const Vect3f &Position, const Quatf &Rotation)
+{
+	physx::PxActor* l_Actor = IsRigidDynamic(ActorName);
+	assert(l_Actor != nullptr);
+	((physx::PxRigidDynamic*)l_Actor)->setKinematicTarget(physx::PxTransform(CastVec(Position), CastQuat(Rotation)));
+}
+
+
+physx::PxActor* CPhysXManager::IsRigidDynamic(const std::string& ActorName)
+{
+	auto it_Actors = m_ActorIndexs.find(ActorName);
+	size_t l_ActorIndex = it_Actors->second;
+	physx::PxActor* l_Actor = m_Actors[l_ActorIndex];
+	return l_Actor->isRigidDynamic();
 }
 
 void CPhysXManager::Reload()

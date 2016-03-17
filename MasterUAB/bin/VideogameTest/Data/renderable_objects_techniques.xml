@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<renderable_object_techniques>
+	<pool_renderable_object_technique name="forward_shading">
+		<default_technique vertex_type="MV_POSITION_COLOR_VERTEX" technique="debug_technique"/>
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX" technique="diffuse_technique"/>
+		<default_technique vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" technique="animated_diffuse_technique"/>
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX" technique="bumpmap_technique"/>
+		<!-- <default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="gui_technique"/> -->
+		<renderable_object_technique name="skybox_renderable_object_technique" technique="skybox_technique"/>
+		<renderable_object_technique name="environment_renderable_object_technique" technique="environment_technique"/>
+		<default_technique vertex_type="MV_PARTICLE_VERTEX" technique="particles_technique"/>
+	</pool_renderable_object_technique>	
+	
+	<pool_renderable_object_technique name="generate_g_buffer">
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX" technique="gbuffer_diffuse_technique"/>
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX" technique="gbuffer_diffuse_normal_technique"/>
+		<renderable_object_technique name="diffuse_environment_renderable_object_technique" technique="gbuffer_diffuse_environment_technique"/>
+		<renderable_object_technique name="diffuse_normal_environment_renderable_object_technique" technique="gbuffer_diffuse_normal_environment_technique"/>
+		<default_technique vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" technique="gbuffer_animated_models_technique"/>
+		<!-- <renderable_object_technique name="animated_models_normal_renderable_object_technique" technique="gbuffer_animated_models_normal_technique"/>
+		<renderable_object_technique name="animated_models_environment_renderable_object_technique" technique="gbuffer_animated_models_environment_technique"/>
+		<renderable_object_technique name="animated_models_normal_environment_renderable_object_technique" technique="gbuffer_animated_models_normal_environment_technique"/> -->
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="gbuffer_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="deferred_shading">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="deferred_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="generate_shadow_map">
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX" technique="shadowmap_technique"/>
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX" technique="shadowmap_normal_technique"/>
+		<renderable_object_technique name="diffuse_environment_renderable_object_technique" technique="shadowmap_environment_technique"/>
+		<renderable_object_technique name="diffuse_normal_environment_renderable_object_technique" technique="shadowmap_normal_environment_technique"/>
+		<default_technique vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" technique="shadowmap_animated_models_technique"/>
+		<!-- <renderable_object_technique name="animated_models_normal_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
+		<renderable_object_technique name="animated_models_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
+		<renderable_object_technique name="animated_models_normal_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/> -->
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="noise_and_vignetting_pool">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="noise_and_vignetting_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="deferred_fog_shading_pool_renderable_object_technique">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="fog_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="gaussian_filter_pool_renderable_object_technique">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="GUI_technique"/>
+		<renderable_object_technique name="gaussian_filter_renderable_object_technique" technique="gaussian_filter_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="threshold_filter_pool_renderable_object_technique">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="threshold_filter_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="zblur_pool_renderable_object_technique">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="zblur_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="HDAO_pool_renderable_object_technique">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="HDAO_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="bloom_pool_renderable_object_technique">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="bloom_drawquad_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="color_grading_pool_renderable_object_technique">
+		<renderable_object_technique name="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="color_grading_technique"/>
+	</pool_renderable_object_technique> 
+	
+	<pool_renderable_object_technique name="light_scattering_pool">
+		<renderable_object_technique name="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="GUI_technique"/>
+		<renderable_object_technique name="gaussian_filter_renderable_object_technique" technique="gaussian_filter_drawquad_technique"/>
+		<renderable_object_technique name="light_scattering_renderable_object_technique" technique="light_scattering_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="ssr_pool">
+		<renderable_object_technique name="ssr_renderable_object_technique" technique="ssr_technique"/>
+		<renderable_object_technique name="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="GUI_technique"/>
+	</pool_renderable_object_technique>
+	
+</renderable_object_techniques>

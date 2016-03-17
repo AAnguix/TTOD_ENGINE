@@ -23,6 +23,9 @@ namespace physx
 	class PxController;
 
 	class PxShape;
+	class PxRigidActor;
+
+	class PxGeometry;
 
 	namespace debugger
 	{
@@ -67,26 +70,44 @@ protected:
 	std::map<std::string,physx::PxController*> m_CharacterControllers;
 
 	void SaveActorData(size_t Index, const std::string ActorName,const Vect3f &Position, const Quatf &Orientation, physx::PxActor *Actor);
+	size_t GetActorIndex(const std::string& ActorName) const;
 	void CheckMapAndVectors();
+	physx::PxActor* IsRigidDynamic(const std::string& ActorName);
 
 public:
-	struct ActorData
+	struct SRaycastData
+	{
+		Vect3f m_Position;
+		Vect3f m_Normal;
+		float m_Distance;
+		std::string m_ActorName;
+	};
+
+	struct SActorData
 	{
 		Vect3f m_Position;
 		Quatf m_Orientation;
 	};
 
-	struct CharacterControllerData
+	struct SCharacterControllerData
 	{
 		Vect3f m_FootPosition;
 		Vect3f m_LinearVelocity;
-		CharacterControllerData(Vect3f FootPosition, Vect3f LinearVelocity):m_FootPosition(FootPosition),m_LinearVelocity(LinearVelocity){}
+		SCharacterControllerData(Vect3f FootPosition, Vect3f LinearVelocity):m_FootPosition(FootPosition),m_LinearVelocity(LinearVelocity){}
 	};
 
 	static CPhysXManager* CreatePhysxManager();
 	virtual ~CPhysXManager();
 	void Update(float ElapsedTime);
 	virtual void Reload();
+
+	/*Testing*/
+	void CreateSTBOX(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	physx::PxShape* CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	physx::PxShape* CreateDinamicShape(const std::string &Name, physx::PxGeometry Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, float Density, int Group, bool IsKinematic = false);
+	size_t AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor);
+	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation, int Group);
+	/**/
 
 	void RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction,float Restitution);
 	physx::PxMaterial* GetMaterial(const std::string &MaterialName);
@@ -97,34 +118,35 @@ public:
 	void CreateConvexMesh(std::vector<Vect3f> Vertices,const std::string &MeshName, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName);
 	
 	bool RemoveActor(const std::string &ActorName);
+	
 	virtual void CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, Vect3f &Position, const std::string &MaterialName);
 	Vect3f MoveCharacterController(const std::string& CharacterControllerName, const Vect3f &Movement, float ElapsedTime);
-	bool Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, RaycastData* result_ = nullptr);
+	Vect3f GetCharacterControllerPosition(const std::string& CharacterControllerName);
+	Vect3f GetCharacterControllerFootPosition(const std::string& CharacterControllerName);
 
-	Vect3f GetActorPosition(const std::string& actorName) const
+	void MoveKinematicActor(const std::string& ActorName, const Vect3f &Position);
+	void MoveKinematicActor(const std::string& ActorName, const Quatf &Rotation);
+	void MoveKinematicActor(const std::string& ActorName, const Vect3f &Position, const Quatf &Rotation);
+
+	bool Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* result_ = nullptr);
+	void SetShapeAsTrigger(const std::string &ActorName);
+
+	Vect3f GetActorPosition(const std::string& ActorName) const
 	{
-		auto it = m_ActorIndexs.find(actorName);
-		assert(it != m_ActorIndexs.end());
-		size_t index = it->second;
-		return m_ActorPositions[index];
+		return m_ActorPositions[GetActorIndex(ActorName)];
 	}
 
-	Quatf GetActorOrientation(const std::string& actorName) const
+	Quatf GetActorOrientation(const std::string& ActorName) const
 	{
-		auto it = m_ActorIndexs.find(actorName);
-		assert(it != m_ActorIndexs.end());
-		size_t index = it->second;
-		return m_ActorOrientations[index];
+		return m_ActorOrientations[GetActorIndex(ActorName)];
 	}
 
-	ActorData GetActorPositionAndOrientation(const std::string& actorName) const
+	SActorData GetActorPositionAndOrientation(const std::string& ActorName) const
 	{
-		auto it = m_ActorIndexs.find(actorName);
-		assert(it != m_ActorIndexs.end());
-		size_t index = it->second;
-		ActorData l_ActorData;
-		l_ActorData.m_Position=m_ActorPositions[index];
-		l_ActorData.m_Orientation=m_ActorOrientations[index];
+		SActorData l_ActorData;
+		l_ActorData.m_Position = m_ActorPositions[GetActorIndex(ActorName)];
+		l_ActorData.m_Orientation = m_ActorOrientations[GetActorIndex(ActorName)];
+
 		return l_ActorData;
 	}
 };

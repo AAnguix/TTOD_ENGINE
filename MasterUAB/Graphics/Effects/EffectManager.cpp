@@ -36,6 +36,7 @@ void CEffectManager::ReloadFile()
 {
 	m_VertexShaders.Destroy();
 	m_PixelShaders.Destroy();
+	m_GeometryShaders.Destroy();
 	Destroy();
 	Load(m_Filename);
 }
@@ -62,7 +63,7 @@ void CEffectManager::Load(const std::string &Filename)
 
 				if (l_Element.GetName() == std::string("vertex_shader"))
 				{
-					std::string l_Name = l_Element.GetPszProperty("name","diffuse_vs");
+					std::string l_Name = l_Element.GetPszProperty("name","");
 
 					CEffectVertexShader *l_VertexShader = new CEffectVertexShader(l_Element);
 					l_VertexShader->Load();
@@ -73,13 +74,24 @@ void CEffectManager::Load(const std::string &Filename)
 				}
 				else if (l_Element.GetName() == std::string("pixel_shader"))
 				{
-					std::string l_Name = l_Element.GetPszProperty("name","diffuse_ps");
+					std::string l_Name = l_Element.GetPszProperty("name","");
 					
 					CEffectPixelShader *l_PixelShader = new CEffectPixelShader(l_Element);
 					l_PixelShader->Load();
 					if(!m_PixelShaders.AddResource(l_Name,l_PixelShader))
 					{
 						CHECKED_DELETE(l_PixelShader);
+					}
+				}
+				else if (l_Element.GetName() == std::string("geometry_shader"))
+				{
+					std::string l_Name = l_Element.GetPszProperty("name", "");
+
+					CEffectGeometryShader *l_GeometryShader = new CEffectGeometryShader(l_Element);
+					l_GeometryShader->Load();
+					if (!m_GeometryShaders.AddResource(l_Name, l_GeometryShader))
+					{
+						CHECKED_DELETE(l_GeometryShader);
 					}
 				}
 				else if (l_Element.GetName() == std::string("effect_technique"))
@@ -105,6 +117,11 @@ CEffectVertexShader * CEffectManager::GetVertexShader(const std::string &VertexS
 CEffectPixelShader * CEffectManager::GetPixelShader(const std::string &PixelShader)
 {
 	return m_PixelShaders.GetResource(PixelShader);
+}
+
+CEffectGeometryShader * CEffectManager::GetGeometryShader(const std::string &GeometryShader)
+{
+	return m_GeometryShaders.GetResource(GeometryShader);
 }
 
 void CEffectManager::SetSceneConstants()
@@ -205,6 +222,10 @@ void CEffectManager::SetLightsConstants(unsigned int MaxLights)
 		//CSceneEffectParameters,0. CLightEffectParameters,1. CAnimatedModelEffectParameters,2.
 		itMap->second->GetPixelShader()->SetConstantBuffer(1,&m_LightEffectParameters);
 		itMap->second->GetVertexShader()->SetConstantBuffer(1,&m_LightEffectParameters);
+
+		CEffectGeometryShader* l_GShader = itMap->second->GetGeometryShader();
+		/*if (l_GShader!=nullptr)
+			l_GShader->SetConstantBuffer(1, &m_LightEffectParameters);*/
 	}
 }
 

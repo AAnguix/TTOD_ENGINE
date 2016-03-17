@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<cinematics>
+	<on time="0.0" duration="1.0" action="add_roll" layer="solid" name="WindmillBlades" value="0.01"/>
+	<after_last_action time="2.0" duration="0.0" action="set_camera" name="Camera001" />
+	<after_last_action time="1.5" duration="0.0" action="set_camera" name="FixedCamera" />
+</cinematics>
+
+<!-- <after_last_action time="1.0" duration="0.0" action="clear_cycle" layer="solid" name="bruja" id="1" delay_out="0.1"/>
+<after_last_action time="2.0" duration="0.0" action="set_yaw" layer="solid" name="ruin_horse" value="2.2"/> -->

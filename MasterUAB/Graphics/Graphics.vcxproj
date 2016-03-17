@@ -32,6 +32,7 @@
     <ClInclude Include="Effects\Effect.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Effects\EffectGeometryShader.h" />
     <ClInclude Include="Effects\EffectManager.h" />
     <ClInclude Include="Effects\EffectParameters.h" />
     <ClInclude Include="Effects\EffectPixelShader.h" />
@@ -124,6 +125,7 @@
     <ClCompile Include="Cinematics\CinematicObject.cpp" />
     <ClCompile Include="Cinematics\CinematicObjectKeyFrame.cpp" />
     <ClCompile Include="Cinematics\CinematicPlayer.cpp" />
+    <ClCompile Include="Effects\EffectGeometryShader.cpp" />
     <ClCompile Include="Effects\EffectManager.cpp" />
     <ClCompile Include="Effects\EffectPixelShader.cpp" />
     <ClCompile Include="Effects\EffectShader.cpp" />

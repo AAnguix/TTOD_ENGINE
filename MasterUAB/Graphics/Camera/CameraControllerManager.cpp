@@ -80,6 +80,7 @@ void CCameraControllerManager::Reload()
 void CCameraControllerManager::SetCurrentCameraController(const std::string CameraControllerName)
 {
 	CCameraController* l_Controller = GetResource(CameraControllerName);
+	assert(l_Controller != nullptr);
 	if(l_Controller)
 	{
 		m_CurrentCameraController=l_Controller;

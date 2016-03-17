@@ -15,6 +15,7 @@
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "DebugHelperImplementation.h"
+#include "Particles\ParticleManager.h"
 
 CEngine::CEngine()
 : m_RenderManager(NULL)
@@ -35,10 +36,12 @@ CEngine::CEngine()
 	m_RenderableObjectTechniqueManager = new CRenderableObjectTechniqueManager;
 	m_SceneRendererCommandManager = new CSceneRendererCommandManager;
 	m_DebugHelper = new CDebugHelperImplementation;
+	m_ParticleSystemManager = new CParticleManager;
 }
 
 CEngine::~CEngine()
 {
+	{CHECKED_DELETE(m_ParticleSystemManager); }
 	{CHECKED_DELETE(m_DebugHelper);}
 	{CHECKED_DELETE(m_SceneRendererCommandManager);}
 	{CHECKED_DELETE(m_RenderableObjectTechniqueManager);}
@@ -135,6 +138,11 @@ CSceneRendererCommandManager* CEngine::GetSceneRendererCommandManager() const
 CDebugHelperImplementation* CEngine::GetDebugHelper() const
 {
 	return m_DebugHelper;
+}
+
+CParticleManager* CEngine::GetParticleSystemManager() const
+{
+	return m_ParticleSystemManager;
 }
 
 CRenderManager* CEngine::GetRenderManager() const

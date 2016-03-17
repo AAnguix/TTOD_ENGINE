@@ -132,7 +132,10 @@ void CScriptManager::RegisterCore()
 		.def(constructor<>())
 		.def("Initialize", &CLog::Initialize)
 		.def("Reload", &CLog::Reload)
-		//.def("write_log", (void(*)(int)) &CLog::Log)
+		.def("Log", (void(CLog::*)(int))&CLog::Log)
+		.def("Log", (void(CLog::*)(float))&CLog::Log)
+		.def("Log", (void(CLog::*)(const std::string&))&CLog::Log)
+		//.def("Log", (void(*)(int)) &CLog::Log)
 	];
 
 	module(LUA_STATE) 

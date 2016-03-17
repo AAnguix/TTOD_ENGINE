@@ -39,7 +39,7 @@ void CRenderManager::InitializeDebugRender()
 		{Vect4f(1.0f, -1.0f, 0.5f, 1.0f), CColor(1.0f, 1.0f, 1.0f, 1.0f), Vect2f(1.0f, 1.0f)}
 	};
 	
-	m_DrawQuadRV=new CTrianglesStripRenderableVertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(l_ScreenVertexsQuad, 4, 2);
+	m_DrawQuadRV = new CTrianglesStripRenderableVertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(l_ScreenVertexsQuad, 4, 2, false);
 }
 
 void CRenderManager::SetCurrentCamera(const CCamera& _CurrentCamera)

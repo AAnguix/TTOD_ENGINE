@@ -20,11 +20,28 @@ void CScriptManager::RegisterPhysics()
 	[
 		class_<CPhysXManager>("CPhysXManager")
 		.def("MoveCharacterController", &CPhysXManager::MoveCharacterController)
+		.def("GetCharacterControllerPosition", &CPhysXManager::GetCharacterControllerPosition)
+		.def("GetCharacterControllerFootPosition", &CPhysXManager::GetCharacterControllerFootPosition)
+		.def("GetActorPosition", &CPhysXManager::GetActorPosition)
+		.def("GetActorOrientation", &CPhysXManager::GetActorOrientation)
+		.def("GetActorPositionAndOrientation", &CPhysXManager::GetActorPositionAndOrientation)
+		.def("SetShapeAsTrigger", &CPhysXManager::SetShapeAsTrigger)
+		.def("Raycast", &CPhysXManager::Raycast)
+		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Vect3f&))&CPhysXManager::MoveKinematicActor)
+		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Quatf&))&CPhysXManager::MoveKinematicActor)
+		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Vect3f&, const Quatf&))&CPhysXManager::MoveKinematicActor)
 		.def("Reload", &CPhysXManager::Reload)
 	];
-
 	module(LUA_STATE) 
 	[
-		class_<CPhysXManager::CharacterControllerData>("CharacterControllerData")
+		class_<CPhysXManager::SCharacterControllerData>("SCharacterControllerData")
+	];
+	module(LUA_STATE)
+	[
+		class_<CPhysXManager::SRaycastData>("SRaycastData")
+	];
+	module(LUA_STATE)
+	[
+		class_<CPhysXManager::SActorData>("SActorData")
 	];
 }

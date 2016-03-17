@@ -14,6 +14,7 @@
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "RenderableObjects\LayerManager.h"
+#include "Particles\ParticleManager.h"
 
 #include "ScriptManager\ScriptManager.h"
 
@@ -109,7 +110,12 @@ void CApplication::Initialize()
 	l_Engine.GetMaterialManager()->Load("./Data/level/Materials.xml");
 
 	l_Engine.GetStaticMeshManager()->Load("./Data/level/StaticMeshes.xml");
+	
+	l_Engine.GetParticleSystemManager()->Load("./Data/level/ParticlesSystems.xml");
 	l_Engine.GetAnimatedModelManager()->Load("./Data/level/AnimatedModels.xml");
+
+	l_Engine.GetRenderManager()->GetContextManager()->SetMatrices(CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera());
+	/*Used in particles rendering order*/
 
 	l_Engine.GetLayerManager()->Load("./Data/level/RenderableObjects.xml");
 	l_Engine.GetLightManager()->Load("./Data/level/Lights.xml");
@@ -155,6 +161,11 @@ void CApplication::Update(float ElapsedTime)
 	CCameraControllerManager* l_CCManager = CEngine::GetSingleton().GetCameraControllerManager();
 
 	LUAReload(ElapsedTime);
+
+	std::stringstream l_Ss;
+	l_Ss << "UpdateCinematics(" << ElapsedTime << ")";
+	std::string l_Code = l_Ss.str();
+	CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
 
 	//LUAControlCharacter(ElapsedTime);
 

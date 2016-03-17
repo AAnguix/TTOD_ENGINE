@@ -84,6 +84,10 @@ bool CEffectVertexShader::Load()
 	
 	else if(m_VertexType=="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX")  
 		l_Loaded=MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
+	
+	else if (m_VertexType == "MV_PARTICLE_VERTEX")
+		l_Loaded = MV_PARTICLE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+
 	else   
 		CEngine::GetSingleton().GetLogManager()->Log("Vertex type "+m_VertexType+" not recognized on CEffectVertexShader::Load");
 		//Info("Vertex type '%s' not recognized on CEffectVertexShader::Load", m_VertexType.c_str());*/

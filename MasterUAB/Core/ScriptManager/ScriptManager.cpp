@@ -193,12 +193,12 @@ void CScriptManager::RegisterGraphics()
 	];
 
 	RegisterCamera();
-	RegisterCinematics();
 	RegisterEffects();
 	RegisterLights();
 	RegisterMaterials();
 	RegisterParticles();
 	RegisterRenderableObjects();
+	RegisterCinematics();
 	RegisterAnimations();
 	RegisterSceneRendererCommands();
 }
@@ -291,6 +291,11 @@ void CScriptManager::RegisterCamera()
 		.def("SetPosition", &CCameraController::SetPosition)	
 		.def("GetType", &CCameraController::GetType)	
 		.def("Update", &CCameraController::Update)	
+		.enum_("t_camera_controller_type")
+		[
+			value("FIXED", 0),
+			value("KEY", 1)
+		]
 	];
 
 	module(LUA_STATE) 
@@ -347,14 +352,14 @@ void CScriptManager::RegisterCamera()
 
 	module(LUA_STATE) 
 	[  
-		class_<CTemplatedMapManager<CCamera>>("CTemplatedMapManager")   
-		.def("GetResource", &CTemplatedMapManager<CCamera>::GetResource) 
-		.def("AddResource", &CTemplatedMapManager<CCamera>::AddResource) 
+		class_<CTemplatedMapManager<CCameraController>>("CTemplatedMapManager")
+		.def("GetResource", &CTemplatedMapManager<CCameraController>::GetResource)
+		.def("AddResource", &CTemplatedMapManager<CCameraController>::AddResource)
 	]; 
 	
 	module(LUA_STATE) 
 	[ 
-		class_< CCameraControllerManager, CTemplatedMapManager<CCamera>>("CCameraControllerManager")   
+		class_< CCameraControllerManager, CTemplatedMapManager<CCameraController>>("CCameraControllerManager")   
 		.def("Load", &CCameraControllerManager::Load) 
 		.def("Reload", &CCameraControllerManager::Reload) 
 		.def("Update", &CCameraControllerManager::Update)
@@ -388,7 +393,6 @@ void CScriptManager::RegisterCinematics()
 		class_<CCameraKeyController,CCameraController>("CCameraKeyController")
 		.def(constructor<CXMLTreeNode>())
 		.def("set_camera", &CCameraKeyController::SetCamera)
-		.def("update", &CCameraKeyController::Update)	
 		.def("set_current_time", &CCameraKeyController::SetCurrentTime)	
 		.def("reset_time", &CCameraKeyController::ResetTime)	
 		.def("get_total_time", &CCameraKeyController::GetTotalTime)	
@@ -398,32 +402,28 @@ void CScriptManager::RegisterCinematics()
 		.def("set_reverse", &CCameraKeyController::SetReverse)	
 	];
 
-	/* ABSTRACTA
-	module(LUA_STATE) [
-		class_<CCinematic>("CCinematic")
-			.def(constructor<CXMLTreeNode>())
-			.def("load_xml", &CCinematic::LoadXML)	
-			.def("add_cinematic_object", &CCinematic::AddCinematicObject)
-			.def("update", &CCinematic::Update)
-		];
-		*/
-
-	module(LUA_STATE) 
+	module(LUA_STATE)
 	[
 		class_<CCinematicPlayer>("CCinematicPlayer")
 		.def(constructor<>())
-		.def("init", &CCinematicPlayer::Init)	
-		.def("update", &CCinematicPlayer::Update)	
-		.def("stop", &CCinematicPlayer::Stop)	
-		.def("play", &CCinematicPlayer::Play)	
-		.def("pause", &CCinematicPlayer::Pause)	
-		.def("is_finished", &CCinematicPlayer::IsFinished)
-		.def("get_duration", &CCinematicPlayer::GetDuration)	
-		//.def("get_current_time", &CCinematicPlayer::getc)	
-		.def("on_restart_cycle", &CCinematicPlayer::OnRestartCycle)	
-		
+		.def("Init", &CCinematicPlayer::Init)
+		.def("Update", &CCinematicPlayer::Update)
+		.def("Stop", &CCinematicPlayer::Stop)
+		.def("Play", &CCinematicPlayer::Play)
+		.def("Pause", &CCinematicPlayer::Pause)
+		.def("IsFinished", &CCinematicPlayer::IsFinished)
+		.def("GetDuration", &CCinematicPlayer::GetDuration)
+		.def("GetCurrentTime", &CCinematicPlayer::GetActualTime)
+		.def("OnRestartCycle", &CCinematicPlayer::OnRestartCycle)
 	];
-		
+
+	module(LUA_STATE) 
+	[
+		class_<CCinematic, bases<CRenderableObject, CCinematicPlayer>>("CCinematic")
+		.def(constructor<CXMLTreeNode>())
+		.def("load_xml", &CCinematic::LoadXML)	
+		.def("add_cinematic_object", &CCinematic::AddCinematicObject)
+	];
 	
 	module(LUA_STATE) 
 	[
@@ -745,7 +745,7 @@ void CScriptManager::RegisterMaterials()
 
 void CScriptManager::RegisterParticles()
 {
-	module(LUA_STATE)
+	/*module(LUA_STATE)
 	[
 		class_<CParticleSystemType, CNamed>("CParticleSystemType")
 		.def(constructor<CXMLTreeNode>())
@@ -754,7 +754,9 @@ void CScriptManager::RegisterParticles()
 	module(LUA_STATE)
 	[
 		class_<CParticleSystemInstance, CRenderableObject>("CParticleSystemInstance")
-	];
+		.def("Render", &CParticleSystemInstance::Render)
+		.def("Update", &CParticleSystemInstance::Update)
+	];*/
 
 }
 

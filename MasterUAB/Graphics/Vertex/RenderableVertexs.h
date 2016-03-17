@@ -12,7 +12,7 @@ class CRenderableVertexs
 
 public:
 
-	virtual bool Render(CRenderManager *RenderManager, CEffectTechnique *EffectTechnique, void *Parameters)
+	virtual bool Render(CRenderManager *RenderManager, CEffectTechnique *EffectTechnique, void *Parameters, int numVertexs = -1)
 	{
 		assert(!"This method mustn't be called");
 		return false;
@@ -86,10 +86,17 @@ public:
 		delete[] tan1; 
 	} 
 
+	virtual bool UpdateVertexs(void* Vtxs, unsigned int VtxsCount)
+	{
+		assert(!"This method mustn't be called");
+		return false;
+	}
 
 };
 
 // ************************************************************************************************************************************************************************************
+
+
 
 template<class T>
 class CTemplatedRenderableVertexs : public CRenderableVertexs
@@ -101,18 +108,19 @@ private:
 	D3D11_PRIMITIVE_TOPOLOGY m_PrimitiveTopology;
 	unsigned int m_VertexsCount;
 	unsigned int m_PrimitiveCount;
+	bool m_Dynamic;
 
 public:
 
-	CTemplatedRenderableVertexs(void *Vtxs, unsigned int VtxsCount, D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology, unsigned int PrimitiveCount)
-	: m_VertexsCount(VtxsCount), m_PrimitiveTopology(PrimitiveTopology), m_PrimitiveCount(PrimitiveCount)
+	CTemplatedRenderableVertexs(void *Vtxs, unsigned int VtxsCount, D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology, unsigned int PrimitiveCount, bool Dynamic)
+		: m_VertexsCount(VtxsCount), m_PrimitiveTopology(PrimitiveTopology), m_PrimitiveCount(PrimitiveCount), m_Dynamic(Dynamic)
 	{
 		D3D11_BUFFER_DESC l_BufferDescription;
 		ZeroMemory(&l_BufferDescription, sizeof(l_BufferDescription));
-		l_BufferDescription.Usage=D3D11_USAGE_DEFAULT;
-		l_BufferDescription.ByteWidth=sizeof(T)*m_VertexsCount;
-		l_BufferDescription.BindFlags=D3D11_BIND_VERTEX_BUFFER;
-		l_BufferDescription.CPUAccessFlags=0;
+		l_BufferDescription.Usage = Dynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT; //D3D11_USAGE_DEFAULT
+		l_BufferDescription.ByteWidth = sizeof(T)*m_VertexsCount;
+		l_BufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		l_BufferDescription.CPUAccessFlags = Dynamic ? D3D11_CPU_ACCESS_WRITE : 0; //0
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory( &InitData, sizeof(InitData) );
 		InitData.pSysMem = Vtxs;
@@ -129,10 +137,11 @@ public:
 		CHECKED_RELEASE(m_VertexBuffer);
 	}
 
-	bool Render(CRenderManager *RenderManager, CEffectTechnique *EffectTechnique, void *Parameters)
+	bool Render(CRenderManager *RenderManager, CEffectTechnique *EffectTechnique, void *Parameters, int numVertexs)
 	{
 		CEffectVertexShader *l_EffectVertexShader=EffectTechnique->GetVertexShader();
 		CEffectPixelShader *l_EffectPixelShader=EffectTechnique->GetPixelShader();
+		CEffectGeometryShader *l_EffectGeometryShader = EffectTechnique->GetGeometryShader();
 		
 		if(l_EffectPixelShader==NULL || l_EffectVertexShader==NULL || l_EffectVertexShader->GetVertexShader()==NULL || l_EffectPixelShader->GetPixelShader()==NULL )
 		{
@@ -154,8 +163,39 @@ public:
 		ID3D11Buffer *l_ConstantBufferPS=l_EffectPixelShader->GetConstantBuffer(0);
 		l_DeviceContext->UpdateSubresource(l_ConstantBufferPS, 0, NULL,Parameters, 0, 0 );
 		l_DeviceContext->PSSetConstantBuffers(0, 1, &l_ConstantBufferPS);
+
+		if (l_EffectGeometryShader)
+		{
+			ID3D11Buffer *l_ConstantBufferGS = l_EffectGeometryShader->GetConstantBuffer(0);
+			l_DeviceContext->UpdateSubresource(l_ConstantBufferGS, 0, NULL, Parameters, 0, 0);
+			l_DeviceContext->GSSetConstantBuffers(0, 1, &l_ConstantBufferGS);
+			l_DeviceContext->GSSetShader(l_EffectGeometryShader->GetGeometryShader(), NULL, 0);
+		}
+		else
+		{
+			l_DeviceContext->GSSetShader(NULL, NULL, 0);
+		}
 		
-		l_DeviceContext->Draw(m_VertexsCount, 0);
+		l_DeviceContext->Draw(numVertexs >= 0 ? numVertexs : m_VertexsCount, 0);
+		return true;
+	}
+
+	bool UpdateVertexs(void* Vtxs, unsigned int VtxsCount)
+	{
+		assert(m_Dynamic);
+
+		D3D11_MAPPED_SUBRESOURCE l_MappedResource;
+		ZeroMemory(&l_MappedResource, sizeof(l_MappedResource));
+
+		ID3D11DeviceContext* l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
+		HRESULT l_HR = l_DeviceContext->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &l_MappedResource);
+		if (FAILED(l_HR))
+			return false;
+
+		memcpy(l_MappedResource.pData, Vtxs, sizeof(T)*VtxsCount);
+
+		l_DeviceContext->Unmap(m_VertexBuffer, 0);
+
 		return true;
 	}
 };
@@ -165,8 +205,8 @@ template<class T> \
 class ClassName : public CTemplatedRenderableVertexs<T> \
 { \
 public: \
-ClassName(void *Vtxs, unsigned int VtxsCount, unsigned int PrimitiveCount) \
-: CTemplatedRenderableVertexs(Vtxs, VtxsCount, TopologyType, PrimitiveCount) \
+ClassName(void *Vtxs, unsigned int VtxsCount, unsigned int PrimitiveCount, bool Dynamic) \
+: CTemplatedRenderableVertexs(Vtxs, VtxsCount, TopologyType, PrimitiveCount, Dynamic) \
 { \
 } \
 };
@@ -174,10 +214,14 @@ CRENDERABLE_VERTEX_CLASS_TYPE_CREATOR(CLinesListRenderableVertexs,D3D11_PRIMITIV
 CRENDERABLE_VERTEX_CLASS_TYPE_CREATOR(CLinesStripRenderableVertexs,D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 CRENDERABLE_VERTEX_CLASS_TYPE_CREATOR(CTrianglesListRenderableVertexs,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 CRENDERABLE_VERTEX_CLASS_TYPE_CREATOR(CTrianglesStripRenderableVertexs,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+CRENDERABLE_VERTEX_CLASS_TYPE_CREATOR(CPointListRenderableVertexs, D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 //Clase templatizada por cada tipo de vértice que derive
 //de CRenderableVertexs para renderizar utilizando vertex buffer e index buffer. La
 //clase la vamos a definir de la siguiente manera.
+
+
+
 
 template<class T>
 class CTemplatedRenderableIndexedVertexs : public CRenderableVertexs
@@ -190,18 +234,19 @@ private:
 	DXGI_FORMAT m_IndexType;
 	unsigned int m_VertexsCount;
 	unsigned int m_IndexsCount;
+	bool m_Dynamic;
 
 public:
-	CTemplatedRenderableIndexedVertexs(void *Vtxs, unsigned int VtxsCount, void *Indices, unsigned int IndexsCount, D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology,DXGI_FORMAT IndexType)
-: m_VertexsCount(VtxsCount), m_IndexsCount(IndexsCount), m_PrimitiveTopology(PrimitiveTopology), m_VertexBuffer(0), m_IndexBuffer(0), m_IndexType(IndexType)
+	CTemplatedRenderableIndexedVertexs(void *Vtxs, unsigned int VtxsCount, void *Indices, unsigned int IndexsCount, D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology,DXGI_FORMAT IndexType, bool Dynamic)
+		: m_VertexsCount(VtxsCount), m_IndexsCount(IndexsCount), m_PrimitiveTopology(PrimitiveTopology), m_VertexBuffer(0), m_IndexBuffer(0), m_IndexType(IndexType), m_Dynamic(Dynamic)
 {
 	D3D11_BUFFER_DESC l_VertexBufferDesc;
 	ZeroMemory(&l_VertexBufferDesc, sizeof(l_VertexBufferDesc));
-	l_VertexBufferDesc.Usage=D3D11_USAGE_DEFAULT;
+	l_VertexBufferDesc.Usage = Dynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT; //D3D11_USAGE_DEFAULT;
 
 	l_VertexBufferDesc.ByteWidth=sizeof(T)*m_VertexsCount;
 	l_VertexBufferDesc.BindFlags=D3D11_BIND_VERTEX_BUFFER;
-	l_VertexBufferDesc.CPUAccessFlags=0;
+	l_VertexBufferDesc.CPUAccessFlags = Dynamic ? D3D11_CPU_ACCESS_WRITE : 0; //0
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem=Vtxs;
@@ -213,11 +258,11 @@ public:
 
 	D3D11_BUFFER_DESC l_IndexBuffer;
 	ZeroMemory(&l_IndexBuffer, sizeof(l_IndexBuffer));
-	l_IndexBuffer.Usage=D3D11_USAGE_DEFAULT;
+	l_IndexBuffer.Usage = Dynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT; //D3D11_USAGE_DEFAULT;
 	l_IndexBuffer.ByteWidth=(m_IndexType==DXGI_FORMAT_R16_UINT ?
 	sizeof(WORD) : sizeof(unsigned int))*m_IndexsCount;
 	l_IndexBuffer.BindFlags=D3D11_BIND_INDEX_BUFFER;
-	l_IndexBuffer.CPUAccessFlags=0;
+	l_IndexBuffer.CPUAccessFlags = Dynamic ? D3D11_CPU_ACCESS_WRITE : 0; //0
 	InitData.pSysMem=Indices;
 	hr=l_Device->CreateBuffer(&l_IndexBuffer, &InitData, &m_IndexBuffer);
 	if(FAILED(hr))
@@ -236,6 +281,7 @@ public:
 
 		CEffectVertexShader *l_EffectVertexShader=EffectTechnique->GetVertexShader();
 		CEffectPixelShader *l_EffectPixelShader=EffectTechnique->GetPixelShader();
+		CEffectGeometryShader *l_EffectGeometryShader = EffectTechnique->GetGeometryShader();
 		ID3D11Buffer *l_ConstantBufferVS=l_EffectVertexShader->GetConstantBuffer(0);
 		
 		if(l_EffectPixelShader==NULL || l_EffectVertexShader==NULL || l_ConstantBufferVS==NULL)
@@ -258,10 +304,40 @@ public:
 		l_DeviceContext->UpdateSubresource(l_ConstantBufferPS, 0, NULL,Parameters, 0, 0 );
 		l_DeviceContext->PSSetConstantBuffers(0, 1, &l_ConstantBufferPS);
 		
-		l_DeviceContext->DrawIndexed(IndexCount==-1 ? m_IndexsCount :
-		IndexCount, StartIndexLocation, BaseVertexLocation);
+		if (l_EffectGeometryShader)
+		{
+			ID3D11Buffer *l_ConstantBufferGS = l_EffectGeometryShader->GetConstantBuffer(0);
+			l_DeviceContext->UpdateSubresource(l_ConstantBufferGS, 0, NULL, Parameters, 0, 0);
+			l_DeviceContext->GSSetConstantBuffers(0, 1, &l_ConstantBufferGS);
+			l_DeviceContext->GSSetShader(l_EffectGeometryShader->GetGeometryShader(), NULL, 0);
+		}
+		else
+		{
+			l_DeviceContext->GSSetShader(NULL, NULL, 0);
+		}
+
+		l_DeviceContext->DrawIndexed(IndexCount==-1 ? m_IndexsCount : IndexCount, StartIndexLocation, BaseVertexLocation);
 		return true;
 }
+
+	bool UpdateVertexs(void* Vtxs, unsigned int VtxsCount)
+	{
+		assert(m_Dynamic);
+
+		D3D11_MAPPED_SUBRESOURCE l_MappedResource;
+		ZeroMemory(&l_MappedResource, sizeof(l_MappedResource));
+
+		ID3D11DeviceContext* l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
+		HRESULT l_HR = l_DeviceContext->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &l_MappedResource);
+		if (FAILED(l_HR))
+			return false;
+
+		memcpy(l_MappedResource.pData, Vtxs, sizeof(T)*VtxsCount);
+
+		l_DeviceContext->Unmap(m_VertexBuffer, 0);
+
+		return true;
+	}
 };
 
 #define CRENDERABLE_INDEXED_VERTEX_CLASS_TYPE_CREATOR(ClassName, TopologyType, IndexType) \
@@ -269,8 +345,8 @@ template<class T> \
 class ClassName : public CTemplatedRenderableIndexedVertexs<T> \
 { \
 public: \
-ClassName(void *Vtxs, unsigned int VtxsCount, void *Indices, unsigned int IndexsCount) \
-: CTemplatedRenderableIndexedVertexs(Vtxs, VtxsCount, Indices, IndexsCount, TopologyType, IndexType) \
+ClassName(void *Vtxs, unsigned int VtxsCount, void *Indices, unsigned int IndexsCount, bool Dynamic) \
+: CTemplatedRenderableIndexedVertexs(Vtxs, VtxsCount, Indices, IndexsCount, TopologyType, IndexType, Dynamic) \
 { \
 } \
 };

@@ -6,6 +6,7 @@
 #include <string>
 
 class CCamera;
+class CXMLTreeNode;
 
 class CCameraController
 {
@@ -14,6 +15,11 @@ protected:
 
 	float m_Yaw;
 	float m_Pitch;
+
+	float m_FOV;
+	float m_Aspect;
+	float m_ZFar;
+	float m_ZNear;
 
 	enum EType
 	{
@@ -24,6 +30,7 @@ protected:
 
 public:
 	CCameraController();
+	CCameraController(CXMLTreeNode &TreeNode);
 	virtual ~CCameraController();
 	virtual void SetCamera(CCamera *Camera) const = 0;
 	virtual void AddYaw(float Radians);

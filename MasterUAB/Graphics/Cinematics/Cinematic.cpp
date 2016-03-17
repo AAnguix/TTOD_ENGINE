@@ -1,5 +1,6 @@
 #include "Cinematics\Cinematic.h"
 #include "Utils\Utils.h"
+#include "Components\ComponentManager.h"
 
 CCinematic::CCinematic(CXMLTreeNode &TreeNode)
 {

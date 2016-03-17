@@ -19,7 +19,6 @@ public:
 	//inline Quaternion(double Yaw, double Pitch, double Roll); //Radians
 
 	inline const Vector3<T> GetRadians();
-
 	// Operadores aritméticos   
   //inline Quaternion<T>  operator - (const Quaternion<T>& otro) const;
 };

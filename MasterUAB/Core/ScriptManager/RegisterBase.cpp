@@ -48,12 +48,49 @@ void CScriptManager::RegisterBase()
 		.def("SetYawPitchRoll", &C3DElement::SetYawPitchRoll)
 	];
 	
+	module(LUA_STATE)
+	[
+		class_<CXMLTreeNode>("CXMLTreeNode")
+		.def(constructor<>())
+		.def("LoadFile", &CXMLTreeNode::LoadFile)
+		.def("GetBoolKeyword", &CXMLTreeNode::GetBoolKeyword)
+		.def("GetBoolProperty", &CXMLTreeNode::GetBoolProperty)
+		.def("GetFloatKeyword", &CXMLTreeNode::GetFloatKeyword)
+		.def("GetFloatProperty", &CXMLTreeNode::GetFloatProperty)
+		.def("GetIntKeyword", &CXMLTreeNode::GetIntKeyword)
+		.def("GetIntProperty", &CXMLTreeNode::GetIntProperty)
+		.def("GetName", &CXMLTreeNode::GetName)
+		.def("GetNumChildren", &CXMLTreeNode::GetNumChildren)
+		.def("GetPszISOProperty", &CXMLTreeNode::GetPszISOProperty)
+		.def("GetPszKeyword", &CXMLTreeNode::GetPszKeyword)
+		.def("GetPszProperty", &CXMLTreeNode::GetPszProperty)
+		.def("GetVect2fProperty", &CXMLTreeNode::GetVect2fProperty)
+		.def("GetVect3fProperty", &CXMLTreeNode::GetVect3fProperty)
+		.def("GetVect4fProperty", &CXMLTreeNode::GetVect4fProperty)
+		.def("Exists", &CXMLTreeNode::Exists)
+		.def("[]", &CXMLTreeNode::operator[])
+		.def("GetChild", &CXMLTreeNode::operator())
+	];
+
 	module(LUA_STATE) 
 	[
 		class_<CNamed>("CNamed")
 		.def(constructor<CXMLTreeNode>())
 		.def("GetName", &CNamed::GetName)
 		.def("SetName", &CNamed::SetName)
+	];
+
+	module(LUA_STATE)
+	[
+		class_< Quatf >("Quatf")
+		.def(constructor<>())
+		.def(constructor<float, float,float,float>())
+		.def(constructor<float, float, float>())
+		.def("GetRadians", &Quatf::GetRadians)
+		.def_readwrite("x", &Quatf::x)
+		.def_readwrite("y", &Quatf::y)
+		.def_readwrite("z", &Quatf::z)
+		.def_readwrite("w", &Quatf::w)
 	];
 
 	module(LUA_STATE) 
