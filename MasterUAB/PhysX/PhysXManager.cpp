@@ -89,7 +89,7 @@ size_t CPhysXManager::AddActor(const std::string &ActorName, const Vect3f &Posit
 physx::PxShape* CPhysXManager::CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
 	physx::PxMaterial* l_Material = GetMaterial(Material);
-	physx::PxShape* shape = m_PhysX->createShape(Geometry, *l_Material);
+	physx::PxShape* shape = m_PhysX->createShape(Geometry, *l_Material, false);
 	
 	assert(shape != nullptr);
 	physx::PxRigidStatic* body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
@@ -110,6 +110,20 @@ physx::PxShape* CPhysXManager::CreateDinamicShape(const std::string &Name, physx
 	shape->release();
 
 	return nullptr;
+}
+
+void CPhysXManager::CreateSTSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+{
+	physx::PxShape* l_Shape = CreateStaticShape(
+		Name,
+		physx::PxSphereGeometry(Radius),
+		Material,
+		Position,
+		Orientation,
+		Group);
+
+	if (l_Shape != nullptr)
+		l_Shape->release();
 }
 
 void CPhysXManager::CreateSTBOX(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
@@ -134,7 +148,7 @@ void CPhysXManager::CreateRigidStatic(const std::string &Name, const Vect3f Size
 	const physx::PxMaterial* l_Material = GetMaterial(MaterialName);
 
 	physx::PxVec3 v = CastVec(Size);
-	physx::PxShape* l_Shape = m_PhysX->createShape(physx::PxBoxGeometry(v.x/2,v.y/2,v.z/2),*l_Material);
+	physx::PxShape* l_Shape = m_PhysX->createShape(physx::PxBoxGeometry(v.x/2,v.y/2,v.z/2),*l_Material,false);
 	physx::PxRigidStatic* l_Body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position),CastQuat(Orientation)));
 	
 	l_Body->attachShape(*l_Shape);

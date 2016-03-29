@@ -16,7 +16,7 @@ DWORD WINAPI FakeXInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState)
 typedef DWORD WINAPI TF_XInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState);
 TF_XInputGetState *s_XInputGetState = FakeXInputGetState;
 
-CInputManagerImplementation::CInputManagerImplementation(HWND hWnd)
+CInputManagerImplementation::CInputManagerImplementation()
 	: m_MovementX(0)
 	, m_MovementY(0)
 	, m_MovementZ(0)
@@ -27,7 +27,6 @@ CInputManagerImplementation::CInputManagerImplementation(HWND hWnd)
 	, m_PreviousButtonMiddle(false)
 	, m_PreviousButtonRight(false)
 	, m_MouseSpeed(1)
-
 {
 	m_Alt = false;
 	m_Ctrl = false;
@@ -41,7 +40,7 @@ CInputManagerImplementation::CInputManagerImplementation(HWND hWnd)
 	{
 		m_PadButtensPrevious[i] = 0;
 	}
-
+	
 
 	// mouse input
 	HRESULT l_HR;
@@ -77,9 +76,17 @@ CInputManagerImplementation::CInputManagerImplementation(HWND hWnd)
 	}
 
 	if (m_Mouse != NULL)
+	{
 		m_Mouse->Acquire();
-	else
-		MessageBox(hWnd, "Problem with de mouse input!", "Mouse", MB_ICONERROR | MB_OK);
+		m_MouseInput = new CMouseInput();
+	}
+	//else
+		//MessageBox(hWnd, "Problem with de mouse input!", "Mouse", MB_ICONERROR | MB_OK);
+}
+
+void CInputManagerImplementation::Initialize(HWND Hwnd)
+{
+	m_HWND = Hwnd;
 }
 
 CInputManagerImplementation::~CInputManagerImplementation()
@@ -89,6 +96,22 @@ CInputManagerImplementation::~CInputManagerImplementation()
 
 	CHECKED_RELEASE(m_Mouse);
 	CHECKED_RELEASE(m_DI);
+	CHECKED_DELETE(m_MouseInput);
+}
+
+CMouseInput* CInputManagerImplementation::GetMouse() const
+{
+	POINT l_Cursor;
+	
+	if (GetCursorPos(&l_Cursor))
+	{
+		if (ScreenToClient(m_HWND, &l_Cursor))
+		{
+			m_MouseInput->Update(l_Cursor.x, l_Cursor.y, m_ButtonLeft,  !m_ButtonLeft);
+		}
+	}
+
+	return m_MouseInput;
 }
 
 void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)

@@ -16,6 +16,8 @@
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "DebugHelperImplementation.h"
 #include "Particles\ParticleManager.h"
+#include "Input\InputManagerImplementation.h"
+#include "GUIManager.h"
 
 CEngine::CEngine()
 : m_RenderManager(NULL)
@@ -37,10 +39,14 @@ CEngine::CEngine()
 	m_SceneRendererCommandManager = new CSceneRendererCommandManager;
 	m_DebugHelper = new CDebugHelperImplementation;
 	m_ParticleSystemManager = new CParticleManager;
+	m_InputManager = new CInputManagerImplementation;
+	m_GUIManager = new CGUIManager;
 }
 
 CEngine::~CEngine()
 {
+	{CHECKED_DELETE(m_GUIManager);}
+	{CHECKED_DELETE(m_InputManager); }
 	{CHECKED_DELETE(m_ParticleSystemManager); }
 	{CHECKED_DELETE(m_DebugHelper);}
 	{CHECKED_DELETE(m_SceneRendererCommandManager);}
@@ -143,6 +149,16 @@ CDebugHelperImplementation* CEngine::GetDebugHelper() const
 CParticleManager* CEngine::GetParticleSystemManager() const
 {
 	return m_ParticleSystemManager;
+}
+
+CInputManagerImplementation* CEngine::GetInputManager() const
+{
+	return m_InputManager;
+}
+
+CGUIManager* CEngine::GetGUIManager() const
+{
+	return m_GUIManager;
 }
 
 CRenderManager* CEngine::GetRenderManager() const

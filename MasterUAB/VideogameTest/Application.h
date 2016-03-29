@@ -25,10 +25,9 @@ public:
 
 	void Update(float ElapsedTime);
 	void Render();
-	void Initialize();
+	void Initialize(HWND Hwnd);
 
 	void LUAReload(float ElapsedTime);
-	void LUAControlCharacter(float ElapsedTime);
 
 private:
 

@@ -102,6 +102,7 @@ public:
 	virtual void Reload();
 
 	/*Testing*/
+	void CreateSTSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 	void CreateSTBOX(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 	physx::PxShape* CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 	physx::PxShape* CreateDinamicShape(const std::string &Name, physx::PxGeometry Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, float Density, int Group, bool IsKinematic = false);

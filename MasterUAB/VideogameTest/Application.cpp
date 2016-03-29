@@ -4,7 +4,7 @@
 #include "Math\Vector4.h"
 
 #include "Render\ContextManager.h"
-#include "Input\InputManager.h"
+#include "Input\InputManagerImplementation.h"
 #include "DebugHelper.h"
 #include "Engine.h"
 #include "Effects\EffectManager.h"
@@ -23,7 +23,7 @@
 #include "Camera\CameraControllerManager.h"
 #include "Log.h"
 #include "PhysXManager.h"
-
+#include "GUIManager.h"
 #include "Cinematics\Cinematic.h"
 
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
@@ -49,27 +49,8 @@ CApplication::CApplication(CContextManager *_ContextManager)
 	CEngine::GetSingleton().SetRenderManager(&m_RenderManager);
 	CDebugHelper::GetDebugHelper()->Log("CApplication::CApplication");
 
-	CDebugHelper::SDebugBar bar;
+	/*CDebugHelper::SDebugBar bar;
 	bar.name = "CApplication";
-
-	{
-		CDebugHelper::SDebugVariable var = {};
-		var.name = "background";
-		var.type = CDebugHelper::COLOR;
-		var.mode = CDebugHelper::READ_WRITE;
-		var.pColor = &m_BackgroundColor;
-
-		bar.variables.push_back(var);
-	}
-	{
-		CDebugHelper::SDebugVariable var = {};
-		var.name = "Prueba";
-		var.type = CDebugHelper::POSITION_ORIENTATION;
-		var.mode = CDebugHelper::READ_WRITE;
-		//var.pPositionOrientation = m_Cube.GetPtrTransform();
-
-		bar.variables.push_back(var);
-	}
 	{
 		CDebugHelper::SDebugVariable var = {};
 		var.name = "switch camera";
@@ -79,8 +60,10 @@ CApplication::CApplication(CContextManager *_ContextManager)
 
 		bar.variables.push_back(var);
 	}
-
 	CDebugHelper::GetDebugHelper()->RegisterBar(bar);
+	*/
+
+	
 }
 
 CApplication::~CApplication()
@@ -88,12 +71,18 @@ CApplication::~CApplication()
 	CDebugHelper::GetDebugHelper()->Log("CApplication::~CApplication");
 }
 
-void CApplication::Initialize()
+void CApplication::Initialize(HWND Hwnd)
 {
 	CEngine &l_Engine=CEngine::GetSingleton();
 	
+	l_Engine.GetInputManager()->Initialize(Hwnd);
+	l_Engine.GetInputManager()->LoadCommandsFromFile("./Data/Input.xml");
+	CInputManager::SetCurrentInputManager(l_Engine.GetInputManager());
+
 	l_Engine.GetDebugHelper()->Initialize(m_ContextManager->GetDevice());
 	CDebugHelper::SetCurrentDebugHelper(l_Engine.GetDebugHelper());
+
+	l_Engine.GetGUIManager()->Initialize(m_ContextManager->GetFrameBufferWidth(), m_ContextManager->GetFrameBufferHeight());
 
 	l_Engine.GetLogManager()->Initialize(true);
 	
@@ -104,11 +93,13 @@ void CApplication::Initialize()
 	l_Engine.GetEffectManager()->Load("./Data/Effects.xml");
 	l_Engine.GetCameraControllerManager()->Load("./Data/level/Cameras.xml");
 	
-	
 	l_Engine.GetRenderableObjectTechniqueManager()->Load("Data/renderable_objects_techniques.xml");
 	
 	l_Engine.GetMaterialManager()->Load("./Data/level/Materials.xml");
+	l_Engine.GetMaterialManager()->Load("./Data/level/EffectsMaterials.xml");
+	l_Engine.GetMaterialManager()->Load("./Data/GUIMaterials.xml");
 
+	l_Engine.GetGUIManager()->Load("./Data/GUI.xml");
 	l_Engine.GetStaticMeshManager()->Load("./Data/level/StaticMeshes.xml");
 	
 	l_Engine.GetParticleSystemManager()->Load("./Data/level/ParticlesSystems.xml");
@@ -160,14 +151,10 @@ void CApplication::Update(float ElapsedTime)
 {	
 	CCameraControllerManager* l_CCManager = CEngine::GetSingleton().GetCameraControllerManager();
 
-	LUAReload(ElapsedTime);
-
 	std::stringstream l_Ss;
-	l_Ss << "UpdateCinematics(" << ElapsedTime << ")";
+	l_Ss << "Update(" << ElapsedTime << ")";
 	std::string l_Code = l_Ss.str();
 	CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
-
-	//LUAControlCharacter(ElapsedTime);
 
 	//CEngine::GetSingleton().GetLogManager()->Log(boost::lexical_cast<string>(ElapsedTime));
 
@@ -312,17 +299,4 @@ Vect3f CApplication::CalcForward(float Yaw)
 	Vect3f forward = Vect3f(sin(Yaw), 0.0f, cos(Yaw));
 
 	return forward;
-}
-
-void CApplication::LUAReload(float ElapsedTime) 
-{
-	CEngine::GetSingleton().GetScriptManager()->RunCode("Reload()");
-}
-
-void CApplication::LUAControlCharacter(float ElapsedTime)
-{
-	std::stringstream l_Ss;
-	l_Ss << "CharacterController(" << ElapsedTime << ")";
-	std::string l_Code = l_Ss.str();
-	CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
 }

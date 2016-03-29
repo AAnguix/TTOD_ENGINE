@@ -28,7 +28,7 @@ private:
 	void RegisterCore();
 	void RegisterPhysics();
 	void RegisterSceneRendererCommands();
-
+	void RegisterGUI();
 	void Register();
 
 public:

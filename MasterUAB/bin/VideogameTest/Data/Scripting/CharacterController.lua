@@ -19,11 +19,24 @@ function CharacterController(ElapsedTime)
 		l_Player:BlendCycle(2,1.0,0.1)
 	end
 	
-	if ((CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_FORWARD_END")) or
-		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_BACK_END")) or 
-		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_LEFT_END")) or 
-		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_RIGHT_END")))  then
-		GetPlayer():ClearCycle(2,0.15)
+	-- if ((CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_FORWARD_END")) or
+		-- (CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_BACK_END")) or 
+		-- (CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_LEFT_END")) or 
+		-- (CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_RIGHT_END")))  then
+		-- GetPlayer():ClearCycle(2,0.15)
+	-- end
+	
+	if (CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_FORWARD_END")) then
+		GetPlayer():ClearCycle(2,0.1)
+	end
+	if (CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_BACK_END")) then
+		GetPlayer():ClearCycle(2,0.1)
+	end
+	if (CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_LEFT_END")) then
+		GetPlayer():ClearCycle(2,0.1)
+	end
+	if (CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_RIGHT_END"))then
+		GetPlayer():ClearCycle(2,0.1)
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then
@@ -32,7 +45,32 @@ function CharacterController(ElapsedTime)
 		PlayerYaw(l_CameraController)
 		--SetPlayerPosition(MovePlayerForward(l_CameraController,false,ElapsedTime))
 		local v = l_CameraController:GetForward()
-		MovePlayerPhisics(Vect3f(v.x,0.0,v.z),false,ElapsedTime)
+		MovePlayerPhisics(Vect3f(v.x,0.0,v.z),false,ElapsedTime,false)
+	end
+	if CInputManager.GetInputManager():IsActionActive("MOVE_BACK") then
+		--SetPlayerPosition(MovePlayerBackward(l_CameraController,false,ElapsedTime))
+		--l_Displacement = GetDisplacement(Vect3f(0.0,0.0,-0.1),false,ElapsedTime)
+		--SetPlayerPosition(GetPlayer():GetPosition()+l_Displacement)
+		--l_PhysicsManager:MoveCharacterController(GetPlayer():GetName(),l_Displacement,ElapsedTime)
+		PlayerYaw(l_CameraController)
+		local v = l_CameraController:GetForward()
+		MovePlayerPhisics(Vect3f(-v.x,0.0,-v.z),false,ElapsedTime, true)
+	end
+	if CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT") then
+		--l_Displacement = GetDisplacement(Vect3f(-0.1,0.0,0.0),false,ElapsedTime)
+		--SetPlayerPosition(GetPlayer():GetPosition()+l_Displacement)
+		--l_PhysicsManager:MoveCharacterController(GetPlayer():GetName(),l_Displacement,ElapsedTime)
+		PlayerYaw(l_CameraController)	
+		local v = l_CameraController:GetRight()
+		MovePlayerPhisics(Vect3f(-v.x,-v.y,-v.z),false,ElapsedTime, true)
+	end
+	if CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT") then
+		--l_Displacement = GetDisplacement(Vect3f(-0.1,0.0,0.0),false,ElapsedTime)
+		--SetPlayerPosition(GetPlayer():GetPosition()+l_Displacement)
+		--l_PhysicsManager:MoveCharacterController(GetPlayer():GetName(),l_Displacement,ElapsedTime)
+		PlayerYaw(l_CameraController)	
+		local v = l_CameraController:GetRight()
+		MovePlayerPhisics(Vect3f(v.x,v.y,v.z),false,ElapsedTime, true)
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("PLAYER_JUMP") then
@@ -43,25 +81,6 @@ function CharacterController(ElapsedTime)
 	MovePlayerPhisics(Vect3f(0.0,-10.0,0.0),false,ElapsedTime)
 	
 	--CEngine.GetSingleton():GetPhysXManager():MoveCharacterController(GetPlayer():GetName(),Vect3f(0.0,-10.0,0.0),ElapsedTime)
-	
-	-- if CInputManager.GetInputManager():IsActionActive("MOVE_BACK") then
-		-- SetPlayerPosition(MovePlayerBackward(l_CameraController,false,ElapsedTime))
-		-- l_Displacement = GetDisplacement(Vect3f(0.0,0.0,-0.1),false,ElapsedTime)
-		-- SetPlayerPosition(GetPlayer():GetPosition()+l_Displacement)
-		-- l_PhysicsManager:MoveCharacterController(GetPlayer():GetName(),l_Displacement,ElapsedTime)
-	-- end
-	
-	-- if CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT") then
-		-- l_Displacement = GetDisplacement(Vect3f(-0.1,0.0,0.0),false,ElapsedTime)
-		-- SetPlayerPosition(GetPlayer():GetPosition()+l_Displacement)
-		-- l_PhysicsManager:MoveCharacterController(GetPlayer():GetName(),l_Displacement,ElapsedTime)
-	-- end
-	
-	-- if CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT") then
-		-- l_Displacement = GetDisplacement(Vect3f(0.1,0.0,0.0),false,ElapsedTime)
-		-- SetPlayerPosition(GetPlayer():GetPosition()+l_Displacement)
-		-- l_PhysicsManager:MoveCharacterController(GetPlayer():GetName(),l_Displacement,ElapsedTime)
-	-- end
 	
 	-- if CInputManager.GetInputManager():IsActionActive("ANIMATION_2") then
 		-- GetPlayer():ExecuteAction(1,0.1,0.2,1.0,false)		--GetPlayer():BlendCycle(1,0.1,1.0)
@@ -201,10 +220,13 @@ function MovePlayerForward(CameraController,Speed, ElapsedTime)
 	return l_PlayerPos
 end
 
-function MovePlayerPhisics(Displacement,Speed, ElapsedTime)
-
+function MovePlayerPhisics(Displacement,Speed, ElapsedTime, Slow)
+	local MoveSpeed = g_PlayerSpeed
+	if Slow then 
+		MoveSpeed = g_PlayerStrafeSpeed
+	end
 	--l_Engine = CEngine.GetSingleton()
-	local l_ConstantSpeed=ElapsedTime*g_PlayerSpeed
+	local l_ConstantSpeed=ElapsedTime*MoveSpeed
 	
 	if Speed then
 		l_ConstantSpeed=l_ConstantSpeed*g_PlayerFastSpeed

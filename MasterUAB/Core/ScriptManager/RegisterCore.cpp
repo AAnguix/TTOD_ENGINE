@@ -24,6 +24,7 @@
 #include "Components\ComponentManager.h"
 #include "Components\ScriptedComponent.h"
 #include "Components\PhysxComponent.h"
+#include "GUIManager.h"
 //#include "AStar.h"
 
 using namespace luabind;
@@ -63,6 +64,7 @@ void CScriptManager::RegisterCore()
 		.def("GetLogManager", &CEngine::GetLogManager)
 		.def("GetDebugHelper", &CEngine::GetDebugHelper)
 		.def("GetPhysXManager", &CEngine::GetPhysXManager)
+		.def("GetGUIManager", &CEngine::GetGUIManager)
 	];
 
 	/*Components*/
@@ -165,7 +167,8 @@ void CScriptManager::RegisterCore()
 	module(LUA_STATE) 
 	[
 		class_<CInputManagerImplementation,CInputManager>("CInputManagerImplementation")
-		.def(constructor<HWND>())
+		.def(constructor<>())
+		.def("Initialize", &CInputManagerImplementation::Initialize)
 		.def("load_commands_from_file", &CInputManagerImplementation::LoadCommandsFromFile)
 		.def("begin_frame", &CInputManagerImplementation::BeginFrame)
 		.def("end_frame", &CInputManagerImplementation::EndFrame)

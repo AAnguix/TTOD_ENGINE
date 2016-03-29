@@ -16,6 +16,7 @@ private:
 	float						m_FastSpeed;
 	float						m_Zoom;
 	float						m_ZoomSpeed;
+	float						m_LookAtPitch;
 
 
 public:
@@ -23,6 +24,7 @@ public:
 	CThirdPersonCameraController(CXMLTreeNode &TreeNode);
 	virtual ~CThirdPersonCameraController();
 
+	void AddLookAtPitch(float Pitch);
 	void AddZoom(float Zoom);
 	void SetZoom(float Zoom) { m_Zoom = Zoom; }
 	void Move(float Strafe, float Forward, bool Speed, float ElapsedTime);

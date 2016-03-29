@@ -38,6 +38,12 @@
     <ClCompile Include="AStar.cpp">
       <Filter>ScriptManager</Filter>
     </ClCompile>
+    <ClCompile Include="Input\MouseInput.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager\RegisterGUI.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugHelper.h" />
@@ -70,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="AStar.h">
       <Filter>ScriptManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\MouseInput.h">
+      <Filter>Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

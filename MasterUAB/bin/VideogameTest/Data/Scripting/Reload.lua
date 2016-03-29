@@ -31,6 +31,10 @@ function Reload()
 		ReloadSceneRendererCommands()
 	end
 	
+	if CInputManager.GetInputManager():IsActionActive("ON_ALT9_PRESSED") then
+		ReloadGUI()
+	end
+	
 	if CInputManager.GetInputManager():IsActionActive("RELOAD_LUA") then
 		CEngine.GetSingleton():GetDebugHelper():RemoveBar()
 		LuaMain()
@@ -38,7 +42,7 @@ function Reload()
 	end
 end
 
-function ReloadScene() --Alt+1
+function ReloadScene()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetEffectManager():ReloadFile()
@@ -52,7 +56,7 @@ function ReloadScene() --Alt+1
 	l_Engine:GetCameraControllerManager():Reload()
 end
 
-function ReloadEffects() --Alt+2
+function ReloadEffects() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetEffectManager():ReloadFile()
@@ -70,7 +74,7 @@ function ReloadEffectTechnique(EffectTechniqueName)
 	l_Technique:Refresh()
 end
 
-function ReloadRenderableObjectTechniques() --Alt+3
+function ReloadRenderableObjectTechniques() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetRenderableObjectTechniqueManager():Reload()
@@ -82,7 +86,7 @@ function ReloadRenderableObjectTechniques() --Alt+3
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadMaterials() --Alt+4
+function ReloadMaterials()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetMaterialManager():Reload()
@@ -93,7 +97,7 @@ function ReloadMaterials() --Alt+4
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadAnimatedModels() --Alt+5
+function ReloadAnimatedModels() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetAnimatedModelManager():Reload()
@@ -102,7 +106,7 @@ function ReloadAnimatedModels() --Alt+5
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadStaticMeshes() --Alt+6
+function ReloadStaticMeshes() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetStaticMeshManager():Reload()
@@ -111,7 +115,7 @@ function ReloadStaticMeshes() --Alt+6
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadLayers() --Alt+7
+function ReloadLayers() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetLayerManager():Reload()
@@ -119,22 +123,26 @@ function ReloadLayers() --Alt+7
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadLights() --Alt+8
+function ReloadLights()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetLightManager():Reload()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadSceneRendererCommands() --Alt+9
+function ReloadSceneRendererCommands() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetSceneRendererCommandManager():Reload()
+end
+
+function ReloadGUI()
+	g_GUIManager:Reload()
+	InitializeGUI()
 end
 
 function ReloadCameras()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetCameraControllerManager():Reload()
 end
-
 
 function ReloadLog()
 	local l_Engine = CEngine.GetSingleton()

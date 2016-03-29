@@ -1,6 +1,6 @@
 function LuaMain()
 	DefineLUAModules()
-	Main()
+	Initialize()
 end
 
 function DefineLUAModules()
@@ -11,6 +11,7 @@ end
 function DefineFunctions()
 	dofile("./Data/Scripting/Globals.lua")
 	dofile("./Data/Scripting/AIGlobals.lua")
+	dofile("./Data/Scripting/GUI.lua")
 	dofile("./Data/Scripting/CameraController.lua")
 	dofile("./Data/Scripting/EnemyController.lua")
 	dofile("./Data/Scripting/CharacterController.lua")
@@ -27,12 +28,19 @@ function DefineClasses()
 	dofile("./Data/Scripting/CinematicsManager.lua")
 end
 
-function Main()
+function Initialize()
 	InitializeDebugBar()
 	-- SetPlayerCharacterDefaultState()
+	InitializeGUI()
 	InitializeAI()
 	InitializeRenderableObjectsScripts()
 	CinematicsManager()
 end
 
+function Update(ElapsedTime)
+	Reload(ElapsedTime)
+	CharacterController(ElapsedTime)
+	UpdateGUI(ElapsedTime)
+	UpdateCinematics(ElapsedTime)
+end
 

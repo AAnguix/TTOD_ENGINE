@@ -2,7 +2,6 @@
 #include "functions.fxh"
 #include "samplers.fxh"
 
-
 static float m_SpecularFactor=m_RawDataValues[0];
 static float m_Gloss=m_RawDataValues[1];
 static float m_BumpFactor=m_RawDataValues[2];
@@ -115,10 +114,9 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 	if(l_Diffuse.a<m_CutOut)
 		clip(-1);
 		
+	float l_Spec = 0.0;
+		
 	l_Output.Target0.xyz = l_Diffuse.xyz;
-	
-	l_Output.Target0.w = 1/m_SpecularFactor;
-	l_Output.Target1.w = 1/m_Gloss;
 	
 	float3 l_Target1 = float3(0.0,0.0,0.0);
 	
@@ -128,7 +126,7 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 			float3 Nn = normalize(IN.Normal);
 		#ifdef HAS_NORMAL
 			float4 l_NormalMapTexture = T1Texture.Sample(S1Sampler, IN.UV);
-			
+			l_Spec = l_NormalMapTexture.a;
 			float3 l_TangentNormalized=normalize(IN.WorldTangent);
 			float3 l_BinormalNormalized=normalize(IN.WorldBinormal); 
 			float3 l_Bump=m_BumpFactor*(l_NormalMapTexture.rgb - float3(0.5,0.5,0.5));	
@@ -143,12 +141,13 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 			l_ReflectColor = T1CubeTexture.Sample(S1Sampler, l_ReflectVector).xyz;
 			l_Output.Target2 = float4(Normal2Texture(IN.Normal.xyz), 1.0f); //Alpha not used
 		#endif
+			
 			l_Target1 = m_LightAmbient.xyz*l_Output.Target0.xyz + (l_ReflectColor*n_EnvironmentFactor);
 	#else
 		l_Target1 = m_LightAmbient.xyz*l_Output.Target0.xyz; //No environment
 		#ifdef HAS_NORMAL
 			float4 l_NormalMapTexture = T1Texture.Sample(S1Sampler, IN.UV);
-			
+			l_Spec = l_NormalMapTexture.a;
 			float3 l_TangentNormalized=normalize(IN.WorldTangent);
 			float3 l_BinormalNormalized=normalize(IN.WorldBinormal); 
 			float3 l_Bump=m_BumpFactor*(l_NormalMapTexture.rgb - float3(0.5,0.5,0.5));	
@@ -161,6 +160,9 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 	#endif
 	
 	l_Output.Target1.xyz = l_Target1;
+	
+	l_Output.Target0.w = m_SpecularFactor * (1-l_Spec);
+	l_Output.Target1.w = 1/m_Gloss;
 	
 	float l_Depth = IN.HPos.z / IN.HPos.w;
 	l_Output.Target3=float4(l_Depth, l_Depth, l_Depth, 1.0);

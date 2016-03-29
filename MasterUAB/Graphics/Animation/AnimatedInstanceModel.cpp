@@ -124,7 +124,7 @@ m_NumFaces(0)
 	m_Pitch = TreeNode.GetFloatProperty("pitch",0.0f);
 	m_Roll = TreeNode.GetFloatProperty("roll",0.0f);
 	m_Scale = TreeNode.GetFloatProperty("scale");
-	m_Visible = TreeNode.GetBoolProperty("visible");
+	m_Visible = TreeNode.GetBoolProperty("visible",true);
 	
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(TreeNode.GetPszProperty("model_name")));
 
@@ -138,7 +138,7 @@ m_NumFaces(0)
 		
 		//CalBoundingBox Height = m_CalModel->getBoundingBox(false); 
 	
-		CEngine::GetSingleton().GetPhysXManager()->CreateCharacterController(m_Name,CCONTROLLER_HEIGHT,0.6f,5.0f,l_CControlerPos,l_MaterialName);
+		CEngine::GetSingleton().GetPhysXManager()->CreateCharacterController(m_Name,CCONTROLLER_HEIGHT,0.3f,30.0f,l_CControlerPos,l_MaterialName);
 	}
 }
 

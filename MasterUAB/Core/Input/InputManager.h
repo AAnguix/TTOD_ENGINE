@@ -4,7 +4,6 @@
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
-
 #include "Math\Vector2.h"
 
 class CInputManager
@@ -32,7 +31,6 @@ protected:
 	Vect2i m_CursorD;
 
 	bool m_Focus;
-
 };
 
 #endif

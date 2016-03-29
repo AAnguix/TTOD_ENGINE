@@ -43,8 +43,8 @@
 #include "Cinematics\Cinematic.h"
 
 #define APPLICATION_NAME	"The Tale Of Daigann"
-#define APPLICATTION_WIDTH 1280
-#define APPLICATTION_HEIGHT 720
+#define APPLICATTION_WIDTH  1280 //1280
+#define APPLICATTION_HEIGHT 720 //720
 
 CContextManager s_Context;
 
@@ -111,14 +111,14 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void CheckMemoryLeaks()
 {
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_CrtSetBreakAlloc (14301); //26598 29214 30923 32011
+	//_CrtSetBreakAlloc(217429); //26598 29214 30923 32011
 }
 
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
 	CheckMemoryLeaks();
 
-	// Register the window class
+	//Register the window class
 	WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, APPLICATION_NAME, NULL };
 
 	RegisterClassEx(&wc);
@@ -127,10 +127,8 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-	// Create the application's window
+	//Create the application's window
 	HWND hWnd = CreateWindow(APPLICATION_NAME, APPLICATION_NAME, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, wc.hInstance, NULL);
-
-	// Añadir aquí el Init de la applicacioón
 
 	s_Context.CreateContext(hWnd, APPLICATTION_WIDTH, APPLICATTION_HEIGHT);
 
@@ -140,90 +138,13 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 	s_Context.InitStates();
 
 	{
+		//Create and initialize application
 		CApplication l_Application(&s_Context);
-		
-		CInputManagerImplementation inputManager(hWnd);
-		CInputManager::SetCurrentInputManager(&inputManager);
-
-		inputManager.LoadCommandsFromFile("Data\\Input.xml");
-
-		//CDebugHelperImplementation l_DebugHelper(s_Context.GetDevice());
-		//CDebugHelper::SetCurrentDebugHelper(&l_DebugHelper);
-		
-		/*CDebugHelper::SDebugBar l_DebugBar;
-
-		l_DebugBar.name="Debug Bar";
-
-		CDebugHelper::SDebugVariable l_VScene,l_VEffects,l_ROTechnique,l_VMaterials,l_VAnimatedModels, l_VStaticMeshes,l_VLayer, l_VLights,l_VSRCommands;
-		
-		/*CDebugHelper::SDebugVariable l_Test;
-		l_Test.type=CDebugHelper::POSITION_ORIENTATION;
-		l_Test.name="Test";
-		l_Test.mode=CDebugHelper::Mode::READ_WRITE;
-		float f=0.5;
-		SPositionOrientation s_Pos;
-		s_Pos.Position=Vect3f(0.0,0.0,0.0);
-		s_Pos.Yaw=0.0f;
-		s_Pos.Pitch=0.0f;
-		s_Pos.Roll=0.0f;
-
-		l_Test.pPositionOrientation=&s_Pos;
-		
-		l_VScene.type=CDebugHelper::BUTTON;
-		l_VScene.name="[1]Scene";
-		l_VScene.data=(void*)("Scene");
-		l_VScene.callback=&CApplication::OpenScene;
-
-		l_VEffects.type=CDebugHelper::BUTTON;
-		l_VEffects.name="[2]Effects";
-		l_VEffects.callback=&CApplication::OpenEffects;
-
-		l_ROTechnique.type=CDebugHelper::BUTTON;
-		l_ROTechnique.name="[3]RO.Techniques";
-		l_ROTechnique.callback=&CApplication::OpenRenderableObjectTechniques;
-
-		l_VMaterials.type=CDebugHelper::BUTTON;
-		l_VMaterials.name="[4]Materials";
-		l_VMaterials.callback=&CApplication::OpenMaterials;
-
-		l_VAnimatedModels.type=CDebugHelper::BUTTON;
-		l_VAnimatedModels.name="[5]Animated Models";
-		l_VAnimatedModels.callback=&CApplication::OpenAnimatedModels;
-
-		l_VStaticMeshes.type=CDebugHelper::BUTTON;
-		l_VStaticMeshes.name="[6]Static Meshes";
-		l_VStaticMeshes.callback=&CApplication::OpenStaticMeshes;
-
-		l_VLayer.type=CDebugHelper::BUTTON;
-		l_VLayer.name="[7]Layers";
-		l_VLayer.callback=&CApplication::OpenLayers;
-
-		l_VLights.name="[8]Lights";
-		l_VLights.type=CDebugHelper::BUTTON;
-		l_VLights.callback=&CApplication::OpenLights;
-
-		l_VSRCommands.name="[9]SRCommands";
-		l_VSRCommands.type=CDebugHelper::BUTTON;
-		l_VSRCommands.callback=&CApplication::OpenSceneRenderCommands;
-	
-		//l_DebugBar.variables.push_back(l_Test);
-		l_DebugBar.variables.push_back(l_VScene);
-		l_DebugBar.variables.push_back(l_VEffects);
-		l_DebugBar.variables.push_back(l_ROTechnique);
-		l_DebugBar.variables.push_back(l_VMaterials);
-		l_DebugBar.variables.push_back(l_VAnimatedModels);
-		l_DebugBar.variables.push_back(l_VStaticMeshes);
-		l_DebugBar.variables.push_back(l_VLayer);
-		l_DebugBar.variables.push_back(l_VLights);
-		l_DebugBar.variables.push_back(l_VSRCommands);
-		
-
-		l_DebugHelper.RegisterBar(l_DebugBar);
-		*/
-
-		l_Application.Initialize();
+		l_Application.Initialize(hWnd);
 		l_Application.SwitchCamera();
+		
 		UpdateWindow(hWnd);
+
 		MSG msg;
 		ZeroMemory(&msg, sizeof(msg));
 
@@ -253,11 +174,11 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 							break;
 						case WM_SETFOCUS:
 							hasFocus = true;
-							inputManager.SetFocus(true);
+							CEngine::GetSingleton().GetInputManager()->SetFocus(true);
 							break;
 						case  WM_KILLFOCUS:
 							hasFocus = false;
-							inputManager.SetFocus(false);
+							CEngine::GetSingleton().GetInputManager()->SetFocus(false);
 							break;
 						case WM_SYSKEYDOWN:
 						case WM_SYSKEYUP:
@@ -302,7 +223,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 									}
 								}
 							}
-							if (!hasFocus || !inputManager.KeyEventReceived(msg.wParam, msg.lParam))
+							if (!hasFocus || !CEngine::GetSingleton().GetInputManager()->KeyEventReceived(msg.wParam, msg.lParam))
 							{
 								TranslateMessage(&msg);
 								DispatchMessage(&msg);
@@ -314,7 +235,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 								int xPosAbsolute = GET_X_LPARAM(msg.lParam);
 								int yPosAbsolute = GET_Y_LPARAM(msg.lParam);
 
-								inputManager.UpdateCursor(xPosAbsolute, yPosAbsolute);
+								CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
 							}
 							else
 							{
@@ -330,7 +251,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 			}
 			else
 			{
-				inputManager.BeginFrame();
+				CEngine::GetSingleton().GetInputManager()->BeginFrame();
 
 				DWORD l_CurrentTime = timeGetTime();
 				float m_ElapsedTime = (float)(l_CurrentTime - m_PreviousTime)*0.001f;
@@ -339,13 +260,15 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 				l_Application.Update(m_ElapsedTime);
 				l_Application.Render();
 
-				inputManager.EndFrame();
+				CEngine::GetSingleton().GetInputManager()->EndFrame();
 			}
 		}
+
 		UnregisterClass(APPLICATION_NAME, wc.hInstance);
 	}
 	delete CEngine::GetSingletonPtr();
-	// Añadir una llamada a la alicación para finalizar/liberar memoria de todos sus datos
+	
+	//Release application memory
 	s_Context.Dispose();
 
 	return 0;

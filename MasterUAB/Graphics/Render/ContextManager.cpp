@@ -70,7 +70,7 @@ void CContextManager::Dispose()
 	if (m_SwapChain)
 	{
 		m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-		m_SwapChain->SetFullscreenState(false, nullptr); //FullScreen
+		m_SwapChain->SetFullscreenState(false, nullptr); 
 	}
 
 	if (m_D3DDebug)
@@ -83,7 +83,7 @@ void CContextManager::Dispose()
 	CHECKED_RELEASE(m_SwapChain);
 }
 
-HRESULT CContextManager::CreateContext(HWND hWnd, int Width, int Height)
+HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned int Height)
 {
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
@@ -121,7 +121,7 @@ HRESULT CContextManager::CreateContext(HWND hWnd, int Width, int Height)
 		return S_FALSE;
 	}
 
-	m_SwapChain->SetFullscreenState(false, nullptr);
+	m_SwapChain->SetFullscreenState(false, nullptr); //FullScreen
 
 	/*
 	#if _DEBUG
@@ -155,7 +155,7 @@ HRESULT CContextManager::CreateContext(HWND hWnd, int Width, int Height)
 	return S_OK;
 }
 
-HRESULT CContextManager::CreateBackBuffer(HWND hWnd, int Width, int Height)
+HRESULT CContextManager::CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height)
 {
 	CHECKED_RELEASE(m_RenderTargetView);
 	CHECKED_RELEASE(m_DepthStencil);

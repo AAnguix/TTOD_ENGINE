@@ -38,21 +38,18 @@
 		<texture stage_id="0" file="DiffuseMapTexture"/>
 		<texture stage_id="1" file="NormalMapTexture"/>
 		<texture stage_id="2" file="DepthMapTexture"/>
+		<texture stage_id="3" file="LightMapTexture"/>
 	</render_deferred_shading> 
 	
-	<!-- Forward Shading -->
-	<!-- <set_pool_renderable_objects_technique pool="forward_shading"/>
-	<render_layer layer="solid" active="true"/> -->
-	
 	<!-- Fog -->
-	<!-- <capture_frame_buffer>
+	<capture_frame_buffer>
 		<capture_texture name="DeferredCapturedTexture" texture_width_as_frame_buffer="true"/>
 	</capture_frame_buffer>
 	<set_pool_renderable_objects_technique pool="deferred_fog_shading_pool_renderable_object_technique"/>
 	<render_draw_quad material="DeferredFogMaterial">
 		<texture stage_id="0" file="DeferredCapturedTexture"/>
 		<texture stage_id="1" file="DepthMapTexture"/>
-	</render_draw_quad> -->
+	</render_draw_quad>
 	
 	<!-- ZBlur -->
 	<capture_frame_buffer>
@@ -76,7 +73,7 @@
 	
 	
 	<!-- HDAO -->
-	<!-- <capture_frame_buffer>
+	<capture_frame_buffer>
 		<capture_texture name="HDAOCapturedTexture" texture_width_as_frame_buffer="true"/>
 	</capture_frame_buffer>
 	<set_pool_renderable_objects_technique pool="HDAO_pool_renderable_object_technique"/>
@@ -85,10 +82,10 @@
 		<texture stage_id="0" file="HDAOCapturedTexture"/>
 		<texture stage_id="1" file="NormalMapTexture"/>
 		<texture stage_id="2" file="DepthMapTexture"/>
-	</render_draw_quad>  -->
+	</render_draw_quad> 
 	
 	<!-- Bloom -->
-	<!-- <capture_frame_buffer>
+	<capture_frame_buffer>
 		<capture_texture name="ThresholdCapturedTexture" texture_width_as_frame_buffer="true"/>
 	</capture_frame_buffer>
 	<set_pool_renderable_objects_technique pool="threshold_filter_pool_renderable_object_technique"/>
@@ -111,7 +108,7 @@
 	<render_draw_quad material="BloomMaterial">
 		<texture stage_id="0" file="ThresholdCapturedTexture"/>
 		<texture stage_id="1" file="Gaussian"/>
-	</render_draw_quad> --> 
+	</render_draw_quad> 
 	
 	
 	<!-- ColorGrading -->
@@ -177,7 +174,8 @@
 	
 	<set_matrices/>
 	<set_pool_renderable_objects_technique pool="forward_shading"/>
-	<render_layer layer="particles" active="true"/>
+	<!-- <render_layer layer="particles" active="true"/> -->
+	<!-- <render_layer layer="particles" active="true"/> -->
 	
 	<!-- <clear render_target="false" depth_stencil="false"/> -->
 	<set_light_constants/>
@@ -186,6 +184,8 @@
 	<set_depth_stencil_state enable_z_test="false" write_z_buffer="false"/>
 	
 	<render_debug_gui/>
+	<render_gui/>
+	
 	<!-- <render_debug_grid/> -->
 	<!--
 	-->

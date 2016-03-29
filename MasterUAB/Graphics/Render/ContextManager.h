@@ -51,8 +51,8 @@ public:
 
 	void Resize(HWND hWnd, unsigned int Width, unsigned int Height);
 
-	HRESULT CreateContext(HWND hWnd, int Width, int Height);
-	HRESULT CreateBackBuffer(HWND hWnd, int Width, int Height);
+	HRESULT CreateContext(HWND hWnd, unsigned int Width, unsigned int Height);
+	HRESULT CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height);
 	void InitStates();
 
 	float GetAspectRatio() const { return (float)m_Width / (float)m_Height; }
@@ -79,8 +79,8 @@ public:
 	D3D11_VIEWPORT GetViewPort();
 	void SetDefaultViewPort();
 	
-	int GetFrameBufferWidth(){return m_Width;};
-	int GetFrameBufferHeight(){return m_Height;};
+	unsigned int GetFrameBufferWidth(){return m_Width;};
+	unsigned int GetFrameBufferHeight(){ return m_Height; };
 	
 	void SetRenderTargets(int NumViews, ID3D11RenderTargetView *const*RenderTargetViews, ID3D11DepthStencilView *DepthStencilView);
 	void UnsetRenderTargets();
@@ -111,7 +111,7 @@ private:
 	ID3D11RenderTargetView *const *m_CurrentRenderTargetViews;
 	ID3D11DepthStencilView *m_CurrentDepthStencilView;
 
-	int m_Width, m_Height;
+	unsigned int m_Width, m_Height;
 	int m_NumViews;
 
 	ID3D11RasterizerState*	m_RasterizerSates[RS_COUNT];

@@ -15,6 +15,7 @@
 	
 	<render_debug_layer layer="solid" active="true"/>
 	
+	<render_debug_gui/>
 	<render_debug_grid/>
 	
 	<present/>

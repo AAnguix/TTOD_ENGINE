@@ -21,7 +21,7 @@
 	<pixel_shader name="gbuffer_animated_models_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS"/>
 	<effect_technique name="gbuffer_animated_models_technique" vertex_shader="gbuffer_animated_models_vs" pixel_shader="gbuffer_animated_models_ps"/>
 	
-	<!-- <vertex_shader name="gbuffer_animated_models_normal_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" macro="HAS_WEIGHTS;HAS_NORMAL"/>
+	<!-- <vertex_shader name="gbuffer_animated_models_normal_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX" macro="HAS_WEIGHTS;HAS_NORMAL"/>
 	<pixel_shader name="gbuffer_animated_models_normal_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS;HAS_NORMAL"/>
 	<effect_technique name="gbuffer_animated_models_normal_technique" vertex_shader="gbuffer_animated_models_normal_vs" pixel_shader="gbuffer_animated_models_normal_ps"/>
 	
@@ -29,7 +29,7 @@
 	<pixel_shader name="gbuffer_animated_models_environment_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS;HAS_ENVIRONMENT"/>
 	<effect_technique name="gbuffer_animated_models_environment_technique" vertex_shader="gbuffer_animated_models_environment_vs" pixel_shader="gbuffer_animated_models_environment_ps"/>
 	
-	<vertex_shader name="gbuffer_animated_models_normal_environment_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" macro="HAS_WEIGHTS;HAS_NORMAL;HAS_ENVIRONMENT"/>
+	<vertex_shader name="gbuffer_animated_models_normal_environment_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX" macro="HAS_WEIGHTS;HAS_NORMAL;HAS_ENVIRONMENT"/>
 	<pixel_shader name="gbuffer_animated_models_normal_environment_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS;HAS_NORMAL;HAS_ENVIRONMENT"/>
 	<effect_technique name="gbuffer_animated_models_normal_environment_technique" vertex_shader="gbuffer_animated_models_normal_environment_vs" pixel_shader="gbuffer_animated_models_normal_environment_ps"/>
 	 -->
@@ -55,8 +55,30 @@
 	<pixel_shader name="shadowmap_animated_models_ps" file="./Data/Effects/UBERSHADER_SHADOWMAP.fx" shader_model="ps_5_0" entry_point="PS"  macro="HAS_WEIGHTS"/>
 	<effect_technique name="shadowmap_animated_models_technique" vertex_shader="shadowmap_animated_models_vs" pixel_shader="shadowmap_animated_models_ps"/>
 	
-
-	<vertex_shader name="diffuse_vs" file="./Data/Effects/MV_POSITION_NORMAL_TEXTURE_VERTEXShader.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX"/> <!-- macro="HAS_FOG;HAS_NORMAL;HAS_DEPTH" -->
+	
+	<!--UBERSHADER FORWARD-->
+	
+	<vertex_shader name="diffuse_vs" file="./Data/Effects/UBERSHADER_FORWARD_RENDERING.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX"/> 
+	<pixel_shader name="diffuse_ps" file="./Data/Effects/UBERSHADER_FORWARD_RENDERING.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="diffuse_technique" vertex_shader="diffuse_vs" pixel_shader="diffuse_ps"/>
+	
+	<vertex_shader name="animated_model_render_vs" file="./Data/Effects/UBERSHADER_FORWARD_RENDERING.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" macro="HAS_WEIGHTS" /> 
+	<pixel_shader name="animated_model_render_ps" file="./Data/Effects/UBERSHADER_FORWARD_RENDERING.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS" /> 
+	<effect_technique name="animated_diffuse_technique" vertex_shader="animated_model_render_vs" pixel_shader="animated_model_render_ps"/>
+	
+	<vertex_shader name="lightmap_vs" file="./Data/Effects/MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEXShader.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX"/>
+	<pixel_shader name="lightmap_ps" file="./Data/Effects/MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEXShader.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="lightmap_technique" vertex_shader="lightmap_vs" pixel_shader="lightmap_ps"/>
+	
+	<vertex_shader name="debug_vs" file="./Data/Effects/MV_POSITION_COLOR_VERTEXShader.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_COLOR_VERTEX"/>
+	<pixel_shader name="debug_ps" file="./Data/Effects/MV_POSITION_COLOR_VERTEXShader.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="debug_technique" vertex_shader="debug_vs" pixel_shader="debug_ps"/>
+	
+	<vertex_shader name="bumpmap_vs" file="./Data/Effects/UBERSHADER_FORWARD_RENDERING.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX" macro="HAS_NORMAL" />
+	<pixel_shader name="bumpmap_ps" file="./Data/Effects/UBERSHADER_FORWARD_RENDERING.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_NORMAL" />
+	<effect_technique name="bumpmap_technique" vertex_shader="bumpmap_vs" pixel_shader="bumpmap_ps"/>
+	
+	<!-- <vertex_shader name="diffuse_vs" file="./Data/Effects/MV_POSITION_NORMAL_TEXTURE_VERTEXShader.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX"/> 
 	<pixel_shader name="diffuse_ps" file="./Data/Effects/MV_POSITION_NORMAL_TEXTURE_VERTEXShader.fx" shader_model="ps_5_0" entry_point="PS"/>
 	<effect_technique name="diffuse_technique" vertex_shader="diffuse_vs" pixel_shader="diffuse_ps"/>
 	
@@ -74,7 +96,7 @@
 	
 	<vertex_shader name="bumpmap_vs" file="./Data/Effects/MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEXShader.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>
 	<pixel_shader name="bumpmap_ps" file="./Data/Effects/MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEXShader.fx" shader_model="ps_5_0" entry_point="PS"/>
-	<effect_technique name="bumpmap_technique" vertex_shader="bumpmap_vs" pixel_shader="bumpmap_ps"/>
+	<effect_technique name="bumpmap_technique" vertex_shader="bumpmap_vs" pixel_shader="bumpmap_ps"/> -->
 	
 	<!--Particles-->
 	<vertex_shader name="particles_vs" file="./Data/Effects/Particles.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_PARTICLE_VERTEX"/>
@@ -163,7 +185,11 @@
 		<pixel_shader name="shadowmap_ps" file="./Data/Effects/ShadowMap.fx" shader_model="ps_5_0" entry_point="PS"/>
 		<effect_technique name="shadowmap_technique" vertex_shader="shadowmap_vs" pixel_shader="shadowmap_ps"/> -->
 		
-		<!--GUI-->
+		<!--DrawQuad-->
+		<vertex_shader name="drawquad_vs" file="./Data/Effects/Drawquad.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
+		<pixel_shader name="drawquad_ps" file="./Data/Effects/Drawquad.fx" shader_model="ps_5_0" entry_point="PS"/>
+		<effect_technique name="drawquad_technique" vertex_shader="drawquad_vs" pixel_shader="drawquad_ps"/>
+		
 		<vertex_shader name="GUI_vs" file="./Data/Effects/GUI.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
 		<pixel_shader name="GUI_ps" file="./Data/Effects/GUI.fx" shader_model="ps_5_0" entry_point="PS"/>
 		<effect_technique name="GUI_technique" vertex_shader="GUI_vs" pixel_shader="GUI_ps"/>

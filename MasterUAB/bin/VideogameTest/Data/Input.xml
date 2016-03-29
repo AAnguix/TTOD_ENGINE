@@ -50,4 +50,8 @@
 	<axis name="X_AXIS" type="MOUSE" axis="0" scale="0.5" /> 
 	<axis name="Y_AXIS" type="MOUSE" axis="1" scale="0.5" />
 	<!--<axis name="ZOOM" type="MOUSE" axis="2" scale="0.5" />-->
+	
+	<action name="ZOOM_IN_CAMERA" type="KEYBOARD" mode="ON_PRESS" key="M" needs_alt="false"/>
+	<action name="ZOOM_OUT_CAMERA" type="KEYBOARD" mode="ON_PRESS" key="N" needs_alt="false"/>
+	
 </input>

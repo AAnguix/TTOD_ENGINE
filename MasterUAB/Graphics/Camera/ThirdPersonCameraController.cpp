@@ -12,6 +12,7 @@ CThirdPersonCameraController::CThirdPersonCameraController()
 , m_FastSpeed(10.0f)
 , m_Zoom(3.0f)
 , m_ZoomSpeed(2.f)
+, m_LookAtPitch(1.6f)
 {
 	m_Position = v3fZERO;
 	m_Position = Vect3f(0.0f, 1.0f, 0.0f);
@@ -25,6 +26,7 @@ CThirdPersonCameraController::CThirdPersonCameraController(CXMLTreeNode &TreeNod
 , m_FastSpeed(10.0f)
 , m_Zoom(3.0f)
 , m_ZoomSpeed(2.f)
+, m_LookAtPitch(1.6f)
 {
 	m_Position = v3fZERO;
 }
@@ -104,9 +106,6 @@ void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 	Vect3f l_PlayerPos = m_Position;
 	CRenderableObject* l_Player = CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->GetResource("bruja");
 
-	Vect3f T_CameraForward = CCameraController::GetForward();
-	Vect3f T_PlayerForward = l_Player->GetForward();
-	Vect3f T_PlayerTranslation = l_Player->GetTranslation();
 
 	if (l_Player != NULL)
 	{
@@ -117,6 +116,7 @@ void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 
 	l_Direction = GetDirection();
 	Vect3f l_Position = l_PlayerPos - l_Direction;
+	l_Position.y = l_Position.y + m_LookAtPitch;
 
 	Camera->SetFOV(1.047f);
 	Camera->SetAspectRatio(16.0f / 9.0f);
@@ -158,6 +158,27 @@ void CThirdPersonCameraController::Update(Vect3f Rotation)
 void CThirdPersonCameraController::AddZoom(float Zoom)
 {
 	m_Zoom += Zoom;
+	if (m_Zoom > 5.0f)
+	{
+		m_Zoom = 5.0f;
+	}
+	else if (m_Zoom < 1.0f)
+	{
+		m_Zoom = 1.0f;
+	}
+}
+
+void CThirdPersonCameraController::AddLookAtPitch(float Pitch)
+{
+	m_LookAtPitch += Pitch;
+	if (m_LookAtPitch > 2.5f)
+	{
+		m_LookAtPitch = 2.5f;
+	}
+	else if (m_LookAtPitch < -0.1f)
+	{
+		m_LookAtPitch = -0.1f;
+	}
 }
 
 float CThirdPersonCameraController::GetPlayerCameraAngleDif(Vect3f PlayerForward)

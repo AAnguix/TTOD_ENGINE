@@ -161,7 +161,9 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 		std::string actorName = m_ActorNames[indexActor];
 
 		std::stringstream l_Ss;
-		l_Ss << "OnTriggerAction(" << "'" << triggerName << "'" << "," << "'" << actorName << "'" << ")";
+
+		l_Ss << "OnCollide" << triggerName << "('" << actorName << "')";
+
 		std::string l_Code = l_Ss.str();
 		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
 	}
@@ -174,9 +176,9 @@ void CPhysXManagerImplementation::CreateCharacterController(const std::string &N
 	physx::PxCapsuleControllerDesc l_Desc;
 	l_Desc.height=Height;
 	l_Desc.radius=Radius;
-	l_Desc.climbingMode = physx::PxCapsuleClimbingMode::eEASY;
-	l_Desc.slopeLimit = cosf(3.1415f / 6); //The maximum slope which the character can walk up.
-	l_Desc.stepOffset = 0.01f; //maximum height of an obstacle which the character can climb.
+	l_Desc.climbingMode = physx::PxCapsuleClimbingMode::eCONSTRAINED;
+	l_Desc.slopeLimit = cosf(3.1415f / 6); //The maximum slope which the character can walk up. //cosf(3.1415f / 6);
+	l_Desc.stepOffset = 0.001f; //maximum height of an obstacle which the character can climb.
 	l_Desc.contactOffset = 0.001f;
 	l_Desc.density = Density;
 	l_Desc.reportCallback = this;

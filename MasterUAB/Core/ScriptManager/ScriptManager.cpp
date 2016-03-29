@@ -176,6 +176,7 @@ void CScriptManager::RegisterLUAFunctions()
 	RegisterBase();
 	RegisterCore();
 	RegisterGraphics();
+	RegisterGUI();
 	RegisterPhysics();
 }
 
@@ -348,6 +349,7 @@ void CScriptManager::RegisterCamera()
 		.def("Update", &CThirdPersonCameraController::Update)
 		.def("GetType", &CThirdPersonCameraController::GetType)
 		.def("GetPlayerCameraAngleDif", &CThirdPersonCameraController::GetPlayerCameraAngleDif)
+		.def("AddLookAtPitch", &CThirdPersonCameraController::AddLookAtPitch)
 	];
 
 	module(LUA_STATE) 

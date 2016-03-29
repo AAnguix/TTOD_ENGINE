@@ -29,6 +29,7 @@ function InitializeDebugBar()
 	-- l_DebugHelper:RegisterButton("[9]Commands","OpenSceneRendererCommands()")
 	l_DebugHelper:RegisterButton("[7]Materials","OpenMaterials()")
 	l_DebugHelper:RegisterButton("[8]Commands","ReloadSceneRendererCommands()")
+	l_DebugHelper:RegisterButton("[9]GUI","ReloadGUI()")
 end
 
 function OpenEffects()

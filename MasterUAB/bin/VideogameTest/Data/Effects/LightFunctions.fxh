@@ -53,7 +53,7 @@ float4 GetLightsSummation( float3 Diffuse, float3 Specular, float Alpha)
 	return float4 ( clamp(float3(Diffuse),0,1) + clamp(float3(Specular),0,1), Alpha );
 }
 
-void GetSingleIluminatedPixelColor(int IdLight, float4 DiffuseTexture, float SpecularPower, float3 WorldPos, float3 Nn, out float3 DiffuseLight, out float3 SpecularLight, float ShadowMapContrib)
+void GetSingleIluminatedPixelColor(int IdLight, float4 DiffuseTexture, float SpecularFactor, float SpecularPower, float3 WorldPos, float3 Nn, out float3 DiffuseLight, out float3 SpecularLight, float ShadowMapContrib)
 {
 	DiffuseLight = float3(0.0,0.0,0.0);
 	SpecularLight = float3(0.0,0.0,0.0);
@@ -69,7 +69,7 @@ void GetSingleIluminatedPixelColor(int IdLight, float4 DiffuseTexture, float Spe
 			
 			float l_DiffuseContrib = GetOmniDiffuseContrib(Nn,lightDirection);
 			
-			float l_SpecularContrib = GetOmniSpecularContrib(Nn,m_CameraPosition,WorldPos,lightDirection,SpecularPower);
+			float l_SpecularContrib = GetOmniSpecularContrib(Nn,m_CameraPosition,WorldPos,lightDirection,SpecularPower) * SpecularFactor;
 			
 			DiffuseLight=(l_DiffuseContrib * m_LightColor[IdLight].xyz * DiffuseTexture.xyz * m_LightIntensityArray[IdLight] * l_Attenuation);
 			
@@ -79,7 +79,7 @@ void GetSingleIluminatedPixelColor(int IdLight, float4 DiffuseTexture, float Spe
 		{
 			float l_DiffuseContrib = GetDirectionalDiffuseContrib(Nn,m_LightDirection[IdLight]);
 			
-			float l_SpecularContrib = GetDirectionalSpecularContrib(Nn,m_CameraPosition,WorldPos,m_LightDirection[IdLight],SpecularPower);
+			float l_SpecularContrib = GetDirectionalSpecularContrib(Nn,m_CameraPosition,WorldPos,m_LightDirection[IdLight],SpecularPower) * SpecularFactor;
 			
 			DiffuseLight=(l_DiffuseContrib * m_LightColor[IdLight].xyz * DiffuseTexture.xyz * m_LightIntensityArray[IdLight]);
 			
@@ -96,7 +96,7 @@ void GetSingleIluminatedPixelColor(int IdLight, float4 DiffuseTexture, float Spe
 			
 			float l_DiffuseContrib = GetSpotDiffuseContrib(Nn,lightDirection);
 			
-			float l_SpecularContrib = GetSpotSpecularContrib(Nn,m_CameraPosition,WorldPos,lightDirection,SpecularPower);
+			float l_SpecularContrib = GetSpotSpecularContrib(Nn,m_CameraPosition,WorldPos,lightDirection,SpecularPower) * SpecularFactor;
 			
 			DiffuseLight=(l_DiffuseContrib * m_LightColor[IdLight].xyz * DiffuseTexture.xyz * m_LightIntensityArray[IdLight] * l_Attenuation * l_SpotAttenuation);
 			
@@ -107,7 +107,7 @@ void GetSingleIluminatedPixelColor(int IdLight, float4 DiffuseTexture, float Spe
 	SpecularLight*=ShadowMapContrib;
 }
 
-float3 GetIluminatedPixelColor( float4 DiffuseTexture, float SpecularPower, float3 WorldPos, float3 WorldNormal, float4 AmbientLight, int NumLights)
+float3 GetIluminatedPixelColor( float4 DiffuseTexture, float SpecularFactor, float SpecularPower, float3 WorldPos, float3 WorldNormal, float4 AmbientLight, int NumLights)
 {
 	float3 l_AmbientLight = (DiffuseTexture.xyz*AmbientLight.xyz);
 	float3 l_AccDiffuseLight = float3(0.0,0.0,0.0);
@@ -118,7 +118,7 @@ float3 GetIluminatedPixelColor( float4 DiffuseTexture, float SpecularPower, floa
 	{ 
 		float3 l_DiffuseLight = float3(0.0,0.0,0.0);
 		float3 l_SpecularLight = float3(0.0,0.0,0.0);
-		GetSingleIluminatedPixelColor(i, DiffuseTexture, SpecularPower, WorldPos, Nn, l_DiffuseLight, l_SpecularLight,1.0f);
+		GetSingleIluminatedPixelColor(i, DiffuseTexture, SpecularFactor, SpecularPower, WorldPos, Nn, l_DiffuseLight, l_SpecularLight,1.0f);
 		l_AccDiffuseLight+=l_DiffuseLight;
 		l_AccSpecularLight+=l_SpecularLight;
 	}

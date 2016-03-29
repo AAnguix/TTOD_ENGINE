@@ -6,12 +6,15 @@
 #include "Utils\Utils.h"
 
 #include "Input\InputManager.h"
+#include "Input\MouseInput.h"
 
 class CInputManagerImplementation : public CInputManager
 {
 public:
-	CInputManagerImplementation(HWND hWnd);
+	CInputManagerImplementation();
 	~CInputManagerImplementation();
+
+	void Initialize(HWND Hwnd);
 
 	void LoadCommandsFromFile(const std::string& path);
 
@@ -25,7 +28,11 @@ public:
 	void UpdateCursor(int x, int y) { m_Cursor.x = x; m_Cursor.y = y; }
 	void UpdateCursorMovement(int x, int y) { m_CursorD.x += x; m_CursorD.y += y; }
 
+	CMouseInput* GetMouse() const;
+
 private:
+
+	HWND m_HWND;
 
 	enum InputType {
 		KEYBOARD,
@@ -124,6 +131,7 @@ private:
 
 	LPDIRECTINPUT8						m_DI;
 	LPDIRECTINPUTDEVICE8				m_Mouse;
+	CMouseInput* m_MouseInput;
 
 	int									m_MovementX;
 	int									m_MovementY;
