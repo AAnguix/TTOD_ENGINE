@@ -106,7 +106,9 @@ void CEffectManager::Load(const std::string &Filename)
 				}
 			}
 		}
+		else { assert(false); }
 	}
+	else { assert(false); }
 }
 
 CEffectVertexShader * CEffectManager::GetVertexShader(const std::string &VertexShader)

@@ -22,14 +22,20 @@
 	<action name="ON_ALT9_PRESSED" type="KEYBOARD" mode="ON_PRESS" key="9" needs_alt="true"/>  
 	<action name="RELOAD_LUA" type="KEYBOARD" mode="ON_PRESS" key="L" needs_alt="true"/>
 	
-	<action name="PLAYER_WALK_FORWARD" type="KEYBOARD" mode="ON_PRESS" key="W" needs_alt="false"/> 
+	<action name="PLAYER_WALK_FORWARD" type="KEYBOARD" mode="WHILE_PRESSED" key="W" needs_alt="false"/> 
+	<action name="PLAYER_WALK_BACK" type="KEYBOARD" mode="WHILE_PRESSED" key="S" needs_alt="false"/> 
+	<action name="PLAYER_WALK_RIGHT" type="KEYBOARD" mode="WHILE_PRESSED" key="D" needs_alt="false"/>  
+	<action name="PLAYER_WALK_LEFT" type="KEYBOARD" mode="WHILE_PRESSED" key="A" needs_alt="false"/> 
+	
+	<!-- <action name="PLAYER_WALK_FORWARD" type="KEYBOARD" mode="ON_PRESS" key="W" needs_alt="false"/> 
 	<action name="PLAYER_WALK_FORWARD_END" type="KEYBOARD" mode="ON_RELEASE" key="W" needs_alt="false"/> 
 	<action name="PLAYER_WALK_BACK" type="KEYBOARD" mode="ON_PRESS" key="S" needs_alt="false"/> 
 	<action name="PLAYER_WALK_BACK_END" type="KEYBOARD" mode="ON_RELEASE" key="S" needs_alt="false"/> 
 	<action name="PLAYER_WALK_RIGHT" type="KEYBOARD" mode="ON_PRESS" key="D" needs_alt="false"/> 
 	<action name="PLAYER_WALK_RIGHT_END" type="KEYBOARD" mode="ON_RELEASE" key="D" needs_alt="false"/> 
 	<action name="PLAYER_WALK_LEFT" type="KEYBOARD" mode="ON_PRESS" key="A" needs_alt="false"/> 
-	<action name="PLAYER_WALK_LEFT_END" type="KEYBOARD" mode="ON_RELEASE" key="A" needs_alt="false"/> 
+	<action name="PLAYER_WALK_LEFT_END" type="KEYBOARD" mode="ON_RELEASE" key="A" needs_alt="false"/>  -->
+	
 	<action name="PLAYER_JUMP" type="KEYBOARD" mode="WHILE_PRESSED" key="J" needs_alt="false"/> 
 	
 	

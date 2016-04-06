@@ -2,31 +2,32 @@
 #define _ENGINE_H
 
 //#include "Utils\SingletonPattern.h"
+#include <string>
 
 template <class T> 
 class CSingleton
 {
 protected:
-		static T* ms_Singleton;		///< Puntero a la variable de la propia clase.
+	static T* ms_Singleton; /*Pointer to member var*/
 
-		CSingleton()
-		{
-		}
+	CSingleton()
+	{
+	}
+
 public:
-		
-		virtual ~CSingleton()
-		{  
-		}
-		static T & GetSingleton()
-		{	
-			return *GetSingletonPtr();
-		}
-		static T * GetSingletonPtr()
-		{ 
-			if(ms_Singleton==0)
-				ms_Singleton=new T;
-			return ms_Singleton;
-		}
+	virtual ~CSingleton()
+	{  
+	}
+	static T & GetSingleton()
+	{	
+		return *GetSingletonPtr();
+	}
+	static T * GetSingletonPtr()
+	{ 
+		if(ms_Singleton==0)
+			ms_Singleton=new T;
+		return ms_Singleton;
+	}
 };
 
 template<class T> T* CSingleton<T>::ms_Singleton = 0;
@@ -51,6 +52,7 @@ class CDebugHelperImplementation;
 class CParticleManager;
 class CInputManagerImplementation;
 class CGUIManager;
+class ISoundManager;
 
 class CEngine : public CSingleton<CEngine>
 {
@@ -76,12 +78,14 @@ private:
 	CParticleManager* m_ParticleSystemManager;
 	CInputManagerImplementation* m_InputManager;
 	CGUIManager* m_GUIManager;
+	ISoundManager* m_SoundManager;
 	CEngine();
 
 public:
 	virtual ~CEngine();
 
 	void Init();
+	void LoadLevel(const std::string& Level);
 
 	CMaterialManager* GetMaterialManager() const;
 	CEffectManager* GetEffectManager() const;
@@ -102,6 +106,7 @@ public:
 	CParticleManager* GetParticleSystemManager() const;
 	CInputManagerImplementation* GetInputManager() const;
 	CGUIManager* GetGUIManager() const;
+	ISoundManager* GetSoundManager() const;
 	void SetRenderManager(CRenderManager *RenderManager) {m_RenderManager=RenderManager;}
 };
 

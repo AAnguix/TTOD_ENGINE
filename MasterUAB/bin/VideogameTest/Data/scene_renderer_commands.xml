@@ -172,20 +172,25 @@
 	<!-- <render_layer layer="solid" active="true"/> -->
 	<!-- <render_debug_layer layer="solid" active="true"/> -->
 	
-	<set_matrices/>
+	<!-- <set_matrices/> -->
 	<set_pool_renderable_objects_technique pool="forward_shading"/>
-	<!-- <render_layer layer="particles" active="true"/> -->
-	<!-- <render_layer layer="particles" active="true"/> -->
+	<enable_alpha_blend/>
+	<set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/>
+	<render_layer layer="particles" active="true"/>
+	<disable_alpha_blend/>
 	
 	<!-- <clear render_target="false" depth_stencil="false"/> -->
 	<set_light_constants/>
-	<set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/>
-	<render_layer layer="skybox" active="true"/>
+	
+	<!-- <set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/> -->
+	<!-- <render_layer layer="skybox" active="true"/> -->
+	
 	<set_depth_stencil_state enable_z_test="false" write_z_buffer="false"/>
 	
 	<render_debug_gui/>
+	<!-- <enable_alpha_blend/>
 	<render_gui/>
-	
+	<disable_alpha_blend/> -->
 	<!-- <render_debug_grid/> -->
 	<!--
 	-->

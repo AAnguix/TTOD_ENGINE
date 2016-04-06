@@ -2,61 +2,64 @@
 
 /*
 Vect3f  m_Position, m_PrevPos;  
-	float  m_Yaw, m_Pitch, m_Roll;  
-	bool  m_TranslationUpdate, m_RotationUpdate, m_ScaleUpdate;  
-	Mat44f  m_TransformMatrix, m_RotationMatrix, m_TranslationMatrix, m_ScaleMatrix;  
-	Vect3f  m_Scale; 
+float  m_Yaw, m_Pitch, m_Roll;  
+bool  m_TranslationUpdate, m_RotationUpdate, m_ScaleUpdate;  
+Mat44f  m_TransformMatrix, m_RotationMatrix, m_TranslationMatrix, m_ScaleMatrix;  
+Vect3f  m_Scale; 
 
-	bool m_Visible;
-	*/
+bool m_Visible;
+*/
 C3DElement::C3DElement(): 
-	m_Position(v3fZERO),
-	m_PrevPos(v3fZERO),
-	m_Yaw(0.0f),
-	m_Pitch(0.0f),
-	m_Roll(0.0f),
-	m_Scale(v3fZERO),
-	m_Visible(true)
+m_Position(v3fZERO),
+m_PrevPos(v3fZERO),
+m_Yaw(0.0f),
+m_Pitch(0.0f),
+m_Roll(0.0f),
+m_Scale(v3fZERO),
+m_Visible(true)
 {
-	m_Position=v3fZERO;
-	m_Yaw=0.0f;
-	m_Pitch=0.0f;
-	m_Roll=0.0f;
-	m_Visible=true;
 }
-C3DElement::C3DElement(const Vect3f &Position)
+
+C3DElement::C3DElement(const Vect3f &Position):
+m_Position(Position),
+m_PrevPos(v3fZERO),
+m_Yaw(0.0f),
+m_Pitch(0.0f),
+m_Roll(0.0f),
+m_Scale(v3fZERO),
+m_Visible(true)
 {
-	m_Position=Position;
-	m_Visible=true;
 }
-C3DElement::C3DElement(const Vect3f &Position, float Yaw, float Pitch, float Roll)
+
+C3DElement::C3DElement(const Vect3f &Position, float Yaw, float Pitch, float Roll):
+m_Position(Position),
+m_PrevPos(v3fZERO),
+m_Yaw(Yaw),
+m_Pitch(Pitch),
+m_Roll(Roll),
+m_Scale(v3fZERO)
 {
-	m_Position=Position;
-	m_Yaw=Yaw;
-	m_Pitch=Pitch;
-	m_Roll=Roll;
-	m_Visible=true;
 }
   
-C3DElement::C3DElement(float Yaw, float Pitch, float Roll)
+C3DElement::C3DElement(float Yaw, float Pitch, float Roll):
+m_Position(v3fZERO),
+m_PrevPos(v3fZERO),
+m_Yaw(Yaw),
+m_Pitch(Pitch),
+m_Roll(Roll),
+m_Scale(v3fZERO)
 {
-	m_Yaw=Yaw;
-	m_Pitch=Pitch;
-	m_Roll=Roll;
-	m_Visible=true;
 }
 
-C3DElement::C3DElement(const CXMLTreeNode &XMLTreeNode)
+C3DElement::C3DElement(const CXMLTreeNode &XMLTreeNode):
+m_Position(XMLTreeNode.GetVect3fProperty("pos", v3fZERO)),
+m_PrevPos(v3fZERO),
+m_Yaw(XMLTreeNode.GetFloatProperty("yaw", 0.0f)),
+m_Pitch(XMLTreeNode.GetFloatProperty("pitch", 0.0f)),
+m_Roll(XMLTreeNode.GetFloatProperty("roll", 0.0f)),
+m_Scale(XMLTreeNode.GetVect3fProperty("scale", 1.0f)),
+m_Visible(XMLTreeNode.GetBoolProperty("visible", true))
 {
-	m_Position=XMLTreeNode.GetVect3fProperty("pos", v3fZERO);
-	
-	m_Yaw=XMLTreeNode.GetFloatProperty("yaw",0.0f);
-	m_Pitch=XMLTreeNode.GetFloatProperty("pitch",0.0f);
-	m_Roll=XMLTreeNode.GetFloatProperty("roll",0.0f);
-	
-	m_Scale=XMLTreeNode.GetVect3fProperty("scale",0.0f);
-
-	m_Visible=true;
 } 
 
 void C3DElement::SetPosition(const Vect3f &Position)

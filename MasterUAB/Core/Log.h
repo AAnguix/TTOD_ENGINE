@@ -2,6 +2,9 @@
 #define _LOG_H
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <iostream>
+#include "Math\Vector3.h"
 
 class CLog
 {
@@ -16,7 +19,9 @@ public:
 
 	void Log(int Value);
 	void Log(float Value);
-	void Log(const std::string &Text);
+	void Log(const std::string& Value);
+	void Log(const Vect3f& Value);
+
 	void Erase();
 };
 

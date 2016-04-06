@@ -17,8 +17,8 @@ public:
 	bool InsertRenderableObjectTechnique(CPoolRenderableObjectTechnique *PoolRenderableObjectTechniques, 
 		const std::string &RenderableObjectTechniqueName, const std::string &TechniqueName);  
 	//void Destroy();  
-	bool Load(const std::string &Filename);  
-	bool Reload();  
+	void Load(const std::string &Filename);  
+	void Reload();
 	CTemplatedMapManager<CPoolRenderableObjectTechnique> & GetPoolRenderableObjectTechniques(); 
 };
 

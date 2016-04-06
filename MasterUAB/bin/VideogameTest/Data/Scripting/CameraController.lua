@@ -5,21 +5,22 @@ function CameraController(ElapsedTime)
 	if CInputManager.GetInputManager():IsActionActive("BLOCK_CAMERA") then
 			BlockCamera(l_CameraControllerManager)
 	end
-	if CInputManager.GetInputManager():IsActionActive("CENTER_CAMERA") then
-		CenterCamera(l_CameraController)
-	end
-	if CInputManager.GetInputManager():GetAxis("X_AXIS") then
-		RotateCamera(l_CameraController,ElapsedTime)
-	end
-	if CInputManager.GetInputManager():GetAxis("Y_AXIS") then
-		AddLookAtPitch(l_CameraController,ElapsedTime)
-	end
-	if CInputManager.GetInputManager():IsActionActive("ZOOM_IN_CAMERA") then
-		AddZoom(l_CameraController,1.0)
-	end
-	if CInputManager.GetInputManager():IsActionActive("ZOOM_OUT_CAMERA") then
-		AddZoom(l_CameraController,-1.0)
-	end
+	
+		if CInputManager.GetInputManager():IsActionActive("CENTER_CAMERA") then
+			CenterCamera(l_CameraController)
+		end
+		if CInputManager.GetInputManager():GetAxis("X_AXIS") then
+			RotateCamera(l_CameraController,ElapsedTime)
+		end
+		if CInputManager.GetInputManager():GetAxis("Y_AXIS") then
+			AddLookAtPitch(l_CameraController,ElapsedTime)
+		end
+		if CInputManager.GetInputManager():IsActionActive("ZOOM_IN_CAMERA") then
+			AddZoom(l_CameraController,1.0)
+		end
+		if CInputManager.GetInputManager():IsActionActive("ZOOM_OUT_CAMERA") then
+			AddZoom(l_CameraController,-1.0)
+		end
 end
 
 function RotateCamera(CameraController,ElapsedTime)

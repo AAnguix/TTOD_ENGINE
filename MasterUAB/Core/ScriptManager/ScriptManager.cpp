@@ -30,6 +30,8 @@
 #include "Camera\CameraControllerManager.h"
 #include "Camera\FixedCameraController.h"
 #include "Camera\ThirdPersonCameraController.h"
+#include "Camera\FPSCameraController.h"
+#include "Camera\SphericalCameraController.h"
 
 #include "Lights\LightManager.h"
 #include "Lights\OmniLight.h"
@@ -178,6 +180,7 @@ void CScriptManager::RegisterLUAFunctions()
 	RegisterGraphics();
 	RegisterGUI();
 	RegisterPhysics();
+	RegisterSound();
 }
 
 void CScriptManager::RegisterGraphics()
@@ -197,8 +200,8 @@ void CScriptManager::RegisterGraphics()
 	RegisterEffects();
 	RegisterLights();
 	RegisterMaterials();
-	RegisterParticles();
 	RegisterRenderableObjects();
+	RegisterParticles();
 	RegisterCinematics();
 	RegisterAnimations();
 	RegisterSceneRendererCommands();
@@ -747,18 +750,60 @@ void CScriptManager::RegisterMaterials()
 
 void CScriptManager::RegisterParticles()
 {
-	/*module(LUA_STATE)
+	module(LUA_STATE)
 	[
 		class_<CParticleSystemType, CNamed>("CParticleSystemType")
 		.def(constructor<CXMLTreeNode>())
+		.def("GetMaterial", &CParticleSystemType::GetMaterial)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CParticleSystemType::ControlPointColor>("ControlPointColor")
+		.def(constructor<CColor, CColor, Vect2f>())
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CParticleSystemType::ControlPointSize>("ControlPointSize")
+		.def(constructor<Vect2f, Vect2f>())
 	];
 
 	module(LUA_STATE)
 	[
 		class_<CParticleSystemInstance, CRenderableObject>("CParticleSystemInstance")
+		.def(constructor<CXMLTreeNode>())
 		.def("Render", &CParticleSystemInstance::Render)
 		.def("Update", &CParticleSystemInstance::Update)
-	];*/
+	];
+
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedMapManager<CParticleSystemType>::TMapResource::iterator>("iterator")
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedMapManager<CParticleSystemType>::TMapResource>("TMapResources")
+		.def("size", &CTemplatedMapManager<CParticleSystemType>::TMapResource::size)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedMapManager<CParticleSystemType>>("CTemplatedMapManager")
+		.def("GetResource", &CTemplatedMapManager<CParticleSystemType>::GetResource)
+		.def("AddResource", &CTemplatedMapManager<CParticleSystemType>::AddResource)
+		.def("GetResourcesMap", &CTemplatedMapManager<CParticleSystemType>::GetResourcesMap)
+	];
+
+	module(LUA_STATE)
+	[
+		class_< CParticleManager, CTemplatedMapManager<CParticleSystemType>>("CParticleManager")
+		.def("Load", &CParticleManager::Load)
+		.def("Reload", &CParticleManager::Reload)
+		//.def("GetLUAParticles", &CParticleManager::GetLUAParticles, return_stl_iterator)
+	];
 
 }
 

@@ -25,6 +25,7 @@
 #include "Components\ScriptedComponent.h"
 #include "Components\PhysxComponent.h"
 #include "GUIManager.h"
+#include "Particles\ParticleManager.h"
 //#include "AStar.h"
 
 using namespace luabind;
@@ -57,6 +58,7 @@ void CScriptManager::RegisterCore()
 		.def("GetLightManager", &CEngine::GetLightManager)
 		.def("GetSceneRendererCommandManager", &CEngine::GetSceneRendererCommandManager)
 		.def("GetCameraControllerManager", &CEngine::GetCameraControllerManager)
+		.def("GetParticleSystemManager", &CEngine::GetParticleSystemManager)
 
 		.def("GetTextureManager", &CEngine::GetTextureManager)
 		.def("GetRenderManager", &CEngine::GetRenderManager)
@@ -65,6 +67,7 @@ void CScriptManager::RegisterCore()
 		.def("GetDebugHelper", &CEngine::GetDebugHelper)
 		.def("GetPhysXManager", &CEngine::GetPhysXManager)
 		.def("GetGUIManager", &CEngine::GetGUIManager)
+		.def("LoadLevel", &CEngine::LoadLevel)
 	];
 
 	/*Components*/
@@ -137,6 +140,7 @@ void CScriptManager::RegisterCore()
 		.def("Log", (void(CLog::*)(int))&CLog::Log)
 		.def("Log", (void(CLog::*)(float))&CLog::Log)
 		.def("Log", (void(CLog::*)(const std::string&))&CLog::Log)
+		.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)
 		//.def("Log", (void(*)(int)) &CLog::Log)
 	];
 

@@ -6,23 +6,20 @@
 #include "RenderableObjects\RenderableObjectTechnique.h"
 #include "Engine.h"
 #include "ParticleManager.h"
+#include "Camera\CameraControllerManager.h"
 
 #define s_epsilon std::pow(1.0f,-10)
 
 CParticleSystemInstance::CParticleSystemInstance(CXMLTreeNode &TreeNode) : 
-m_ActiveParticles(0), m_RandomEngine(rnd()), m_UnitDistribution(0.0f,1.0f),
-m_NextParticleEmission(0.0f), m_Awake(false), m_AwakeTimer(0.0f)
+CRenderableObject()
+, m_ActiveParticles(0), m_RandomEngine(rnd()), m_UnitDistribution(0.0f,1.0f)
+, m_NextParticleEmission(0.0f), m_Awake(false), m_AwakeTimer(0.0f)
+, m_Type(CEngine::GetSingleton().GetParticleSystemManager()->GetResource(TreeNode.GetPszProperty("type")))
+, m_EmissionBoxHalfSize(TreeNode.GetVect3fProperty("emission_box_size", Vect3f(1, 1, 1))*0.5f)
 {
-	m_Type = CEngine::GetSingleton().GetParticleSystemManager()->GetResource(TreeNode.GetPszProperty("type"));
 	assert(m_Type != nullptr);
-	m_EmissionBoxHalfSize = TreeNode.GetVect3fProperty("emission_box_size", Vect3f(1, 1, 1))*0.5f;
 	m_EmissionVolume = m_EmissionBoxHalfSize.x * m_EmissionBoxHalfSize.y * m_EmissionBoxHalfSize.z * 8;
 	m_EmissionScaler = m_Type->m_EmitAbsolute ? 1 : 1.0f / m_EmissionVolume;
-
-	m_Position = TreeNode.GetVect3fProperty("pos", v3fZERO);
-	SetYaw(TreeNode.GetFloatProperty("yaw", 0.0f));
-	SetPitch(TreeNode.GetFloatProperty("pitch", 0.0f));
-	SetRoll(TreeNode.GetFloatProperty("roll", 0.0f));
 
 	CEngine::GetSingleton().GetRenderManager()->GetContextManager()->SetWorldMatrix(GetTransform());
 
@@ -56,13 +53,15 @@ void CParticleSystemInstance::Render(CRenderManager *RenderManager)
 		m_ParticleRenderableData[i].UV2.x = (float)l_Particle->CurrentFrame;
 		m_ParticleRenderableData[i].UV2.y = 0;
 	}
-	
-	RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
-	CMaterial*  l_Material = m_Type->GetMaterial();
-	l_Material->Apply();
-	m_Vertices->UpdateVertexs(m_ParticleRenderableData, s_MaxParticlesPerInstance);
 
-	m_Vertices->Render(RenderManager, l_Material->GetRenderableObjectTechnique()->GetEffectTechnique(), (void*)&CEffectManager::m_SceneEffectParameters, 3);
+	if (m_ActiveParticles > 0)
+	{
+		CMaterial*  l_Material = m_Type->GetMaterial();
+		l_Material->Apply();
+		RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
+		m_Vertices->UpdateVertexs(m_ParticleRenderableData, s_MaxParticlesPerInstance);
+		m_Vertices->Render(RenderManager, l_Material->GetRenderableObjectTechnique()->GetEffectTechnique(), (void*)&CEffectManager::m_SceneEffectParameters, m_ActiveParticles);
+	}
 }
 
 void CParticleSystemInstance::Update(float ElapsedTime)
@@ -138,9 +137,18 @@ void CParticleSystemInstance::GenerateNewParticles(float ElapsedTime)
 
 float CParticleSystemInstance::GetParticleDepth(Vect3f Position)
 {
-	Vect4f l_HPos = Vect4f(Position, 1.0);
+	/*Vect4f l_HPos = Vect4f(Position, 1.0);
 	l_HPos = l_HPos * m_WorldViewProjMatrix;
-	return l_HPos.z / l_HPos.w;
+	return l_HPos.z / l_HPos.w;*/
+
+	CCameraController* l_CController = CEngine::GetSingleton().GetCameraControllerManager()->GetCurrentCameraController();
+	Vect3f l_CameraPosition = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera().GetPosition();
+	Vect3f l_Diff = (Position) - l_CameraPosition;
+	
+	Vect3f l_Forward = l_CController->GetForward();
+	float l_Depth = l_Diff * l_Forward;
+
+	return l_Depth;
 }
 
 void CParticleSystemInstance::UpdateParticles(float ElapsedTime)
@@ -295,7 +303,7 @@ void CParticleSystemInstance::InsertSort()
 	{
 		int j = i;
 
-		while (j > 0 && m_ParticleDepth[j-1] > m_ParticleDepth[j])
+		while (j > 0 && (m_ParticleDepth[j-1] < m_ParticleDepth[j]))
 		{
 			float l_Depth = m_ParticleDepth[j-1];
 			m_ParticleDepth[j - 1] = m_ParticleDepth[j];
@@ -308,4 +316,6 @@ void CParticleSystemInstance::InsertSort()
 			--j;
 		}
 	}
+
+	int a = 0;
 }

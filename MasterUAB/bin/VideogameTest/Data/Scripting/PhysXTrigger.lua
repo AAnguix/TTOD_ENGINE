@@ -7,6 +7,7 @@
 function OnCollideTrigger_Box(Actor)
 	if (Actor == "bruja")then	
 		g_WindMildEnter = true
+		g_PlayerLUA:Damage(20.0)
 	end
 end
 

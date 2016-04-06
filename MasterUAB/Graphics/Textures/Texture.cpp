@@ -5,11 +5,12 @@
 #include "Render\ContextManager.h"
 
 CTexture::CTexture() : CNamed("")
+,m_SamplerState(NULL)
+,m_Texture(NULL)
+,m_Width(0)
+,m_Height(0)
 {
-	m_SamplerState=NULL;
-	m_Texture=NULL;
-	m_Width=0;
-	m_Height=0;
+	
 }
 
 CTexture::~CTexture()

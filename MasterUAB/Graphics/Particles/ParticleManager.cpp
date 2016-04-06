@@ -39,6 +39,7 @@ void CParticleManager::Load(const std::string &Filename)
 
 void CParticleManager::Reload()
 {
+	m_DefaultType = nullptr;
 	Destroy();
 	Load(m_Filename);
 
@@ -50,7 +51,10 @@ void CParticleManager::Reload()
 		assert(m_ParticleSystemInstances[i]->GetClassType() == CRenderableObject::PARTICLE_EMITER);
 
 		/*Reload particle system type*/
-		CParticleSystemType* l_NewSystemType = GetResource( ((CParticleSystemInstance*)m_ParticleSystemInstances[i])->GetType()->GetName());
+
+		CParticleSystemType* l_OldType = ((CParticleSystemInstance*)m_ParticleSystemInstances[i])->GetType();
+
+		CParticleSystemType* l_NewSystemType = GetResource(l_OldType->GetName());
 		((CParticleSystemInstance*)m_ParticleSystemInstances[i])->SetType(l_NewSystemType);
 
 		((CParticleSystemInstance*)m_ParticleSystemInstances[i])->SetEmissionScaler

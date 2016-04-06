@@ -9,9 +9,11 @@ function DefineLUAModules()
 end
 
 function DefineFunctions()
+	dofile("./Data/Scripting/PlayerLUA.lua")
 	dofile("./Data/Scripting/Globals.lua")
 	dofile("./Data/Scripting/AIGlobals.lua")
-	dofile("./Data/Scripting/GUI.lua")
+	--dofile("./Data/Scripting/GUI.lua")
+	dofile("./Data/Scripting/GUIStartScreen.lua")
 	dofile("./Data/Scripting/CameraController.lua")
 	dofile("./Data/Scripting/EnemyController.lua")
 	dofile("./Data/Scripting/CharacterController.lua")
@@ -39,7 +41,7 @@ end
 
 function Update(ElapsedTime)
 	Reload(ElapsedTime)
-	CharacterController(ElapsedTime)
+	CameraController(ElapsedTime)
 	UpdateGUI(ElapsedTime)
 	UpdateCinematics(ElapsedTime)
 end

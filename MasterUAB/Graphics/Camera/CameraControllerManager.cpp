@@ -50,7 +50,7 @@ void CCameraControllerManager::Load(const std::string &Filename)
 							m_CurrentCameraController=l_CameraKeyController;
 					}
 				}
-				else if (l_Element.GetName() == std::string("fixed_camera"))
+				else if (l_Element.GetName() == std::string("fps_camera"))
 				{
 					//CFPSCameraController *l_FPSCameraController=new CFPSCameraController(l_Element);
 					CThirdPersonCameraController* l_ThirdPersonCameraController = new CThirdPersonCameraController(l_Element);
@@ -65,9 +65,27 @@ void CCameraControllerManager::Load(const std::string &Filename)
 							m_CurrentCameraController=l_ThirdPersonCameraController;
 					}
 				}
+				else if (l_Element.GetName() == std::string("fixed_camera"))
+				{
+					//CFPSCameraController *l_FPSCameraController=new CFPSCameraController(l_Element);
+					CFixedCameraController* l_FixedCameraController = new CFixedCameraController(l_Element);
+
+					if (!AddResource(l_Element.GetPszProperty("name", ""), l_FixedCameraController))
+					{
+						CHECKED_DELETE(l_FixedCameraController);
+					}
+					else
+					{
+						if (!m_CurrentCameraController)
+							m_CurrentCameraController = l_FixedCameraController;
+					}
+				}
+				else { assert(false); }
 			}
 		}
+		else { assert(false); }
 	}
+	else { assert(false); }
 }
 
 void CCameraControllerManager::Reload()

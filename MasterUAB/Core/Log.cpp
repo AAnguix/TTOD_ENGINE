@@ -7,9 +7,6 @@
 #include <locale.h>
 #include <stdio.h>
 
-#include <sstream>
-#include <iostream>
-
 CLog::CLog()
 {
 
@@ -76,6 +73,17 @@ void CLog::Log(int Value)
 {
 	std::ostringstream ostr;
 	ostr << Value;
+	std::string value = ostr.str();
+
+	m_LogFile << "-->" << value;
+	m_LogFile << "\n";
+	m_LogFile.flush();
+}
+
+void CLog::Log(const Vect3f& Value)
+{
+	std::ostringstream ostr;
+	ostr << Value.x << "," << Value.y << "," << Value.z;
 	std::string value = ostr.str();
 
 	m_LogFile << "-->" << value;

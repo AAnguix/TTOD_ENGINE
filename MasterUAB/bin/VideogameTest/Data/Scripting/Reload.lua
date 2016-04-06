@@ -136,7 +136,12 @@ end
 
 function ReloadGUI()
 	g_GUIManager:Reload()
+	dofile("./Data/Scripting/GUI.lua")
 	InitializeGUI()
+end
+
+function ReloadParticles()
+	g_ParticleSystemManager:Reload()
 end
 
 function ReloadCameras()

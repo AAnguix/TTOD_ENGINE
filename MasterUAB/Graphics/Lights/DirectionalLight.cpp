@@ -2,8 +2,8 @@
 #include "Render\RenderManager.h"
 #include "Textures\DynamicTexture.h"
 
-CDirectionalLight::CDirectionalLight():CLight(),
-	m_Direction(v3fZERO)
+CDirectionalLight::CDirectionalLight():CLight()
+, m_Direction(v3fZERO)
 {
 	SetType(DIRECTIONAL);
 }

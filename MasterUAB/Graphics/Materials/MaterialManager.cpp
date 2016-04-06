@@ -37,8 +37,10 @@ void CMaterialManager::Load(const std::string &Filename)
 					}
 				}
 			}
-		}
+		} 
+		else {assert(false); }
 	}
+	else { assert(false); }
 }
 
 void CMaterialManager::Reload()

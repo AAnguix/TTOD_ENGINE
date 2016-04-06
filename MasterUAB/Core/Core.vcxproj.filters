@@ -44,6 +44,12 @@
     <ClCompile Include="ScriptManager\RegisterGUI.cpp">
       <Filter>ScriptManager</Filter>
     </ClCompile>
+    <ClCompile Include="Input\KeyBoardInput.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager\RegisterSound.cpp">
+      <Filter>ScriptManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugHelper.h" />
@@ -78,6 +84,9 @@
       <Filter>ScriptManager</Filter>
     </ClInclude>
     <ClInclude Include="Input\MouseInput.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\KeyBoardInput.h">
       <Filter>Input</Filter>
     </ClInclude>
   </ItemGroup>

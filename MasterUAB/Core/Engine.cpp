@@ -18,6 +18,7 @@
 #include "Particles\ParticleManager.h"
 #include "Input\InputManagerImplementation.h"
 #include "GUIManager.h"
+#include "ISoundManager.h"
 
 CEngine::CEngine()
 : m_RenderManager(NULL)
@@ -41,10 +42,12 @@ CEngine::CEngine()
 	m_ParticleSystemManager = new CParticleManager;
 	m_InputManager = new CInputManagerImplementation;
 	m_GUIManager = new CGUIManager;
+	m_SoundManager = ISoundManager::CreateSoundManager();
 }
 
 CEngine::~CEngine()
 {
+	{ CHECKED_DELETE(m_SoundManager); }
 	{CHECKED_DELETE(m_GUIManager);}
 	{CHECKED_DELETE(m_InputManager); }
 	{CHECKED_DELETE(m_ParticleSystemManager); }
@@ -68,6 +71,23 @@ CEngine::~CEngine()
 void CEngine::Init()
 {
 
+}
+
+void CEngine::LoadLevel(const std::string& Level)
+{
+	m_CameraControllerManager->Load("./Data/Level" + Level + "/cameras.xml");
+	m_MaterialManager->Load("./Data/Level" + Level + "/materials.xml");
+	m_StaticMeshManager->Load("./Data/Level" + Level + "/static_meshes.xml");
+	m_ParticleSystemManager->Load("./Data/Level" + Level + "/particles_systems.xml");
+	m_AnimatedModelManager->Load("./Data/Level" + Level + "/animated_models.xml");
+	m_LayerManager->Load("./Data/Level" + Level + "/renderable_objects.xml");
+	m_LightManager->Load("./Data/Level" + Level + "/lights.xml");
+
+	/*m_SoundManager->SetPath("./Data/Audio/Soundbanks/");
+	m_SoundManager->Init();
+	m_SoundManager->Load("sound_banks.xml", "./Data/Level" + Level + "/speakers.xml");
+	*/
+	//m_SceneRendererCommandManager->Load("./Data/Level" + Level + "/scene_renderer_commands.xml");
 }
 
 CEffectManager* CEngine::GetEffectManager() const
@@ -159,6 +179,11 @@ CInputManagerImplementation* CEngine::GetInputManager() const
 CGUIManager* CEngine::GetGUIManager() const
 {
 	return m_GUIManager;
+}
+
+ISoundManager* CEngine::GetSoundManager() const
+{
+	return m_SoundManager;
 }
 
 CRenderManager* CEngine::GetRenderManager() const

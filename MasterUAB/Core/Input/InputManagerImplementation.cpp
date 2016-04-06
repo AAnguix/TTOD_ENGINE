@@ -80,6 +80,8 @@ CInputManagerImplementation::CInputManagerImplementation()
 		m_Mouse->Acquire();
 		m_MouseInput = new CMouseInput();
 	}
+
+	m_KeyBoardInput = new CKeyBoardInput();
 	//else
 		//MessageBox(hWnd, "Problem with de mouse input!", "Mouse", MB_ICONERROR | MB_OK);
 }
@@ -97,6 +99,7 @@ CInputManagerImplementation::~CInputManagerImplementation()
 	CHECKED_RELEASE(m_Mouse);
 	CHECKED_RELEASE(m_DI);
 	CHECKED_DELETE(m_MouseInput);
+	CHECKED_DELETE(m_KeyBoardInput);
 }
 
 CMouseInput* CInputManagerImplementation::GetMouse() const
@@ -112,6 +115,11 @@ CMouseInput* CInputManagerImplementation::GetMouse() const
 	}
 
 	return m_MouseInput;
+}
+
+CKeyBoardInput* CInputManagerImplementation::GetKeyBoard() const
+{
+	return m_KeyBoardInput;
 }
 
 void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)

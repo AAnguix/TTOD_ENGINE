@@ -7,6 +7,7 @@
 
 #include "Input\InputManager.h"
 #include "Input\MouseInput.h"
+#include "Input\KeyBoardInput.h"
 
 class CInputManagerImplementation : public CInputManager
 {
@@ -29,6 +30,7 @@ public:
 	void UpdateCursorMovement(int x, int y) { m_CursorD.x += x; m_CursorD.y += y; }
 
 	CMouseInput* GetMouse() const;
+	CKeyBoardInput* GetKeyBoard() const;
 
 private:
 
@@ -132,6 +134,8 @@ private:
 	LPDIRECTINPUT8						m_DI;
 	LPDIRECTINPUTDEVICE8				m_Mouse;
 	CMouseInput* m_MouseInput;
+	CKeyBoardInput* m_KeyBoardInput;
+	WPARAM m_LastChar;
 
 	int									m_MovementX;
 	int									m_MovementY;

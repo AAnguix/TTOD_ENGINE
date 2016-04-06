@@ -91,26 +91,14 @@ void CThirdPersonCameraController::AddPitch(float Radians)
 
 void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 {
-	/*
-	Vect3f l_Direction = GetDirection();
-	Camera->SetFOV(1.047f);
-	Camera->SetAspectRatio(16.0f/9.0f);
-	Camera->SetPosition(m_Position);
-	Camera->SetLookAt(m_Position+l_Direction);
-	Camera->SetUp(GetUp());
-	Camera->SetZNear(0.1f);
-	Camera->SetZFar(100.f);
-	Camera->SetMatrixs();
-	*/
-
 	Vect3f l_PlayerPos = m_Position;
 	CRenderableObject* l_Player = CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->GetResource("bruja");
 
 
-	if (l_Player != NULL)
+	if (l_Player != nullptr)
 	{
 		l_PlayerPos = l_Player->GetPosition();
-		l_PlayerPos.y = l_PlayerPos.y + 1.0f;
+		l_PlayerPos.y = l_PlayerPos.y + 1.6f;
 	}
 	Vect3f l_Direction;
 

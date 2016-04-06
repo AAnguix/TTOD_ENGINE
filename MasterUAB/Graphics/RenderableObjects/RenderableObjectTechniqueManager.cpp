@@ -31,9 +31,9 @@ void CRenderableObjectTechniqueManager::Destroy()
 
 }*/ 
 
-bool CRenderableObjectTechniqueManager::Load(const std::string &Filename)
+void CRenderableObjectTechniqueManager::Load(const std::string &Filename)
 {
-	m_Filename=Filename;
+	m_Filename = Filename;
 
 	CXMLTreeNode l_XML;
 
@@ -52,7 +52,7 @@ bool CRenderableObjectTechniqueManager::Load(const std::string &Filename)
 					CPoolRenderableObjectTechnique* l_PoolROTechnique = new CPoolRenderableObjectTechnique(l_Element);
 					//Crea Pool vacía
 
-					if(!m_PoolRenderableObjectTechniques.AddResource(l_PoolROTechnique->GetName(),l_PoolROTechnique))
+					if (!m_PoolRenderableObjectTechniques.AddResource(l_PoolROTechnique->GetName(), l_PoolROTechnique))
 					{
 						CHECKED_DELETE(l_PoolROTechnique);
 					}
@@ -65,7 +65,7 @@ bool CRenderableObjectTechniqueManager::Load(const std::string &Filename)
 							if (l_ROT.GetName() == std::string("default_technique"))
 							{
 								std::string l_VertexType = l_ROT.GetPszProperty("vertex_type", "");
-								std::string l_Name =  l_VertexType;
+								std::string l_Name = l_VertexType;
 								std::string l_Technique = l_ROT.GetPszProperty("technique", "");
 								InsertRenderableObjectTechnique(l_PoolROTechnique, l_Name, l_Technique);
 							}
@@ -79,19 +79,17 @@ bool CRenderableObjectTechniqueManager::Load(const std::string &Filename)
 					}
 				}
 			}
+		}
+		else { assert(false); }
+	}
+	else { assert(false); }
+}
 
-			return true;
-
-		} else return false;
-
-	} else return false;
-} 
-
-bool CRenderableObjectTechniqueManager::Reload()
+void CRenderableObjectTechniqueManager::Reload()
 {
 	m_PoolRenderableObjectTechniques.Destroy();
 	Destroy();
-	return Load(m_Filename);
+	Load(m_Filename);
 } 
 
 CTemplatedMapManager<CPoolRenderableObjectTechnique> & CRenderableObjectTechniqueManager::GetPoolRenderableObjectTechniques()

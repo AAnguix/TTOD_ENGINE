@@ -102,7 +102,12 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 			return 0;
 		}
-		break;
+		case WM_CHAR:
+		{
+			CEngine::GetSingleton().GetInputManager()->GetKeyBoard()->SetLastChar(wParam);
+			break;
+		}
+
 	}//end switch( msg )
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -111,7 +116,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void CheckMemoryLeaks()
 {
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_CrtSetBreakAlloc(217429); //26598 29214 30923 32011
+	//_CrtSetBreakAlloc(450064); //26598 29214 30923 32011
 }
 
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
@@ -171,7 +176,6 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 							INT nHeight = HIWORD(msg.lParam);
 							s_Context.Resize(hWnd, nWidth, nHeight); 
 						}*/
-							break;
 						case WM_SETFOCUS:
 							hasFocus = true;
 							CEngine::GetSingleton().GetInputManager()->SetFocus(true);

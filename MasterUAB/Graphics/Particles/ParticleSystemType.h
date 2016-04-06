@@ -18,11 +18,13 @@ public:
 	{
 		Vect2f m_Time;
 		CColor m_Color1, m_Color2;
+		ControlPointColor(CColor Color1, CColor Color2, Vect2f Time) :m_Color1(Color1), m_Color2(Color2), m_Time(Time){};
 	};
 	struct ControlPointSize
 	{
 		Vect2f m_Time;
 		Vect2f m_Size;
+		ControlPointSize(Vect2f Size, Vect2f Time) : m_Size(Size), m_Time(Time){};
 	};
 
 	std::vector<ControlPointColor> m_ControlPointColor;

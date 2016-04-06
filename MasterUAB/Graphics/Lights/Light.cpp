@@ -24,12 +24,12 @@ CLight::TLightType CLight::GetLightTypeByName(const std::string &StrLightType)
 }
 
 CLight::CLight(CXMLTreeNode &TreeNode) : CNamed(TreeNode)
-	,m_ShadowMap(0)
-	,m_ShadowMaskTexture(0)
-	,m_ViewShadowMap(m44fZERO)
-	,m_ProjectionShadowMap(m44fZERO)
+,m_ShadowMap(0)
+,m_ShadowMaskTexture(0)
+,m_ViewShadowMap(m44fZERO)
+,m_ProjectionShadowMap(m44fZERO)
+,m_Active(TreeNode.GetBoolProperty("active", true))
 {	
-	SetActive(TreeNode.GetBoolProperty("active",true));
 	SetPosition(TreeNode.GetVect3fProperty("pos",v3fZERO));
 	Vect4f l_V4=TreeNode.GetVect4fProperty("color",v4fZERO);
 	SetColor(CColor(l_V4));

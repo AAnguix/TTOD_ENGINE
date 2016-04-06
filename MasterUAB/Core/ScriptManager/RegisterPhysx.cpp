@@ -31,6 +31,8 @@ void CScriptManager::RegisterPhysics()
 		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Quatf&))&CPhysXManager::MoveKinematicActor)
 		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Vect3f&, const Quatf&))&CPhysXManager::MoveKinematicActor)
 		.def("Reload", &CPhysXManager::Reload)
+		.def("DisplacementCharacterController", &CPhysXManager::DisplacementCharacterController)
+		//.def("DisplacementCharacterController2", &CPhysXManager::DisplacementCharacterController2)
 	];
 	module(LUA_STATE) 
 	[

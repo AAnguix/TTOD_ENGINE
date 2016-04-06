@@ -14,6 +14,7 @@ g_PhysXManager = g_Engine:GetPhysXManager()
 g_LogManager = g_Engine:GetLogManager()
 g_CameraControllerManager = g_Engine:GetCameraControllerManager()
 g_GUIManager = g_Engine:GetGUIManager()
+g_ParticleSystemManager = g_Engine:GetParticleSystemManager()
 
 function GetPlayer()
 	player = CEngine.GetSingleton():GetLayerManager():GetPlayer()
