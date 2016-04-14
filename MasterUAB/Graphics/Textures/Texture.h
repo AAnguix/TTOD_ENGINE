@@ -16,6 +16,7 @@ protected:
 	int m_Height;
 
 	virtual bool LoadFile();
+	virtual bool LoadFileNew();
 	void Unload();
 
 public:

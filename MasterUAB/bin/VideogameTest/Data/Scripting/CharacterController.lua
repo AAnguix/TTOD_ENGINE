@@ -7,11 +7,8 @@ CharBlock = false
 l_CCVelocity = Vect3f(0.0,0.0,0.0)
 
 function CharacterController(ElapsedTime)
-	l_Engine = CEngine.GetSingleton()
-	l_CameraControllerManager = l_Engine:GetCameraControllerManager()
-	l_CameraController = l_CameraControllerManager:GetCurrentCameraController()
-	l_PhysicsManager = l_Engine:GetPhysXManager()
-	
+
+	l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 	
 	if CInputManager.GetInputManager():IsActionActive("PRUEBA") then
 		
@@ -36,9 +33,6 @@ function CharacterController(ElapsedTime)
 			GetPlayer():ClearCycle(2,0.1)
 			GetPlayer():BlendCycle(0,1.0,0.1)
 		end
-		
-		g_LogManager:Log("Velocidad1")
-		g_LogManager:Log(l_CCVelocity)
 		
 		l_CCVelocity.x = 0;
 		l_CCVelocity.z = 0;
@@ -78,8 +72,6 @@ function CharacterController(ElapsedTime)
 		l_CCVelocity = l_CCVelocity + Vect3f(0,-10.0,0) * ElapsedTime
 		
 		--g_PhysXManager:DisplacementCharacterController(GetPlayer():GetName(), GetMoveBuffer(), ElapsedTime,3)
-		g_LogManager:Log("Velocidad2")
-		g_LogManager:Log(l_CCVelocity)
 		
 		if ElapsedTime>0.0 then
 			l_CCVelocity = g_PhysXManager:DisplacementCharacterController(GetPlayer():GetName(), (l_CCVelocity * ElapsedTime), ElapsedTime)
@@ -122,7 +114,7 @@ function MovePlayerPhisics(Displacement,Speed, ElapsedTime, Slow)
 	if Slow then 
 		MoveSpeed = g_PlayerStrafeSpeed
 	end
-	--l_Engine = CEngine.GetSingleton()
+	
 	local l_ConstantSpeed=ElapsedTime*MoveSpeed
 	
 	if Speed then
@@ -141,7 +133,6 @@ end
 
 function Jump(Speed, ElapsedTime)
 
-	l_Engine = CEngine.GetSingleton()
 	local l_ConstantSpeed=ElapsedTime*g_PlayerSpeed
 	
 	if Speed then
@@ -153,7 +144,7 @@ function Jump(Speed, ElapsedTime)
 	if Displacement:SquaredLength() > 0 then
 		 Displacement:Normalize(1)
 		 Displacement = Displacement*l_ConstantSpeed
-		l_Position = l_Engine:GetPhysXManager():MoveCharacterController(GetPlayer():GetName(),Displacement,ElapsedTime)
+		l_Position = g_PhysXManager:MoveCharacterController(GetPlayer():GetName(),Displacement,ElapsedTime)
 		GetPlayer():SetPosition(l_Position)
 	end
 end

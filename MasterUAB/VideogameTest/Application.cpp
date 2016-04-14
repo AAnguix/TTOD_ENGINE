@@ -94,9 +94,10 @@ void CApplication::Initialize(HWND Hwnd)
 	l_Engine.GetMaterialManager()->Load("./Data/effects_materials.xml");
 	l_Engine.GetMaterialManager()->Load("./Data/gui_materials.xml");
 	l_Engine.GetGUIManager()->Load("./Data/gui_start_screen.xml");
-	//l_Engine.GetCameraControllerManager()->Load("./Data/Level1/cameras.xml");
+	l_Engine.GetCameraControllerManager()->Load("./Data/cameras.xml");
 	//l_Engine.GetCameraControllerManager()->Load("./Data/start_screen_camera.xml");
-	l_Engine.LoadLevel("1");
+	
+	//l_Engine.LoadLevel("1");
 
 	/*Used in particles rendering order*/
 	//GetRenderManager()->GetContextManager()->SetMatrices(GetRenderManager()->GetCurrentCamera());

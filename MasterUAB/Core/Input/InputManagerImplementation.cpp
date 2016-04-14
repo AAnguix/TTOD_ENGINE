@@ -17,16 +17,16 @@ typedef DWORD WINAPI TF_XInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState);
 TF_XInputGetState *s_XInputGetState = FakeXInputGetState;
 
 CInputManagerImplementation::CInputManagerImplementation()
-	: m_MovementX(0)
-	, m_MovementY(0)
-	, m_MovementZ(0)
-	, m_ButtonLeft(false)
-	, m_ButtonMiddle(false)
-	, m_ButtonRight(false)
-	, m_PreviousButtonLeft(false)
-	, m_PreviousButtonMiddle(false)
-	, m_PreviousButtonRight(false)
-	, m_MouseSpeed(1)
+:m_MovementX(0)
+,m_MovementY(0)
+,m_MovementZ(0)
+,m_ButtonLeft(false)
+,m_ButtonMiddle(false)
+,m_ButtonRight(false)
+,m_PreviousButtonLeft(false)
+,m_PreviousButtonMiddle(false)
+,m_PreviousButtonRight(false)
+,m_MouseSpeed(1)
 {
 	m_Alt = false;
 	m_Ctrl = false;
@@ -241,11 +241,16 @@ void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)
 					switch (action.inputType)
 					{
 						case KEYBOARD:
-							action.keyboard.key = l_Action.GetPszProperty("key", "A")[0];
+						{
+							std::string l_S = l_Action.GetPszProperty("key");
+							if (l_S.size() > 1)
+								action.keyboard.key = GetAsciiCode(l_S);
+							else 
+								action.keyboard.key = l_Action.GetPszProperty("key")[0];
 							action.keyboard.needsAlt = l_Action.GetBoolProperty("needs_alt", false, false);
 							action.keyboard.needsCtrl = l_Action.GetBoolProperty("needs_ctrl", false, false);
 							break;
-
+						}
 						case MOUSE:
 							//action.mouse.button = l_Action.GetPszProperty("button")[0];
 							//break;
@@ -309,6 +314,18 @@ void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)
 	}
 
 	EndFrame();
+}
+
+uint8_t CInputManagerImplementation::GetAsciiCode(const std::string& Characters)
+{
+	uint8_t l_Return;
+
+	if (Characters == "ESC")
+	{
+		l_Return = 0x1B;
+	}
+
+	return l_Return;
 }
 
 CInputManagerImplementation::Action::Mode CInputManagerImplementation::ParseMode(const std::string& mode)

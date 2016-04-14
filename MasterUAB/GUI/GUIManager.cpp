@@ -327,6 +327,13 @@ void CGUIManager::Destroy()
 	}
 	m_HealthBars.clear();
 
+	std::map<std::string, SImageInfo*>::iterator itImage;
+	for (itImage = m_Images.begin(); itImage != m_Images.end(); ++itImage)
+	{
+		CHECKED_DELETE(itImage->second);
+	}
+	m_Images.clear();
+
 	std::map<std::string, SButtonInfo*>::iterator itButton;
 	for (itButton = m_Buttons.begin(); itButton != m_Buttons.end(); ++itButton)
 	{
@@ -366,6 +373,18 @@ CGUIManager::SSpriteInfo* CGUIManager::GetSprite(const std::string& Name)
 		assert(false);
 		return nullptr;
 	}
+	else
+		return itMap->second;
+}
+
+CGUIManager::SImageInfo* CGUIManager::GetImage(const std::string& ImageID)
+{
+	std::map<std::string, SImageInfo*>::iterator itMap;
+
+	itMap = m_Images.find(ImageID);
+
+	if (itMap == m_Images.end())
+		return nullptr;
 	else
 		return itMap->second;
 }
@@ -413,6 +432,16 @@ CGUIManager::SHealthBarInfo* CGUIManager::GetHealthBar(const std::string& Health
 }
 
 
+void CGUIManager::AddImage(const std::string& ImageID, const std::string& Sprite)
+{
+	SSpriteInfo* l_Sprite = GetSprite(Sprite);
+	assert(l_Sprite != nullptr);
+
+
+	SImageInfo* l_Image = new SImageInfo(l_Sprite);
+	m_Images.insert(std::pair<std::string, SImageInfo*>(ImageID, l_Image));
+}
+
 void CGUIManager::AddButton(const std::string& ButtonID, const std::string& Normal, const std::string& Highlight, const std::string& Pressed)
 {
 	SSpriteInfo* l_Normal = GetSprite(Normal);
@@ -456,6 +485,20 @@ void CGUIManager::AddHealthBar(const std::string& HealthBarID, const std::string
 	m_HealthBars.insert(std::pair<std::string, SHealthBarInfo*>(HealthBarID, l_HealthBar));
 }
 
+void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position)
+{
+	CheckInput();
+
+	SImageInfo* l_Image = GetImage(ImageID);
+	SSpriteInfo* l_Sprite = l_Image->sprite;
+
+	{
+		SGUICommand l_Command = { l_Sprite, Position.x, Position.y, Position.x + Position.width, Position.y + Position.height
+		, 0, 0, 1, 1,
+		CColor(1.0f, 1.0f, 1.0f, 1.0f) };
+		m_Commands.push_back(l_Command);
+	}
+}
 
 bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position)
 {

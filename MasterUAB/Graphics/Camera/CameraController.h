@@ -16,14 +16,10 @@ protected:
 	float m_Yaw;
 	float m_Pitch;
 
-	float m_FOV;
-	float m_Aspect;
-	float m_ZFar;
-	float m_ZNear;
-
 	enum EType
 	{
 		FIXED=0,
+		THIRD_PERSON,
 		KEY,
 		COUNT
 	};
@@ -45,11 +41,9 @@ public:
 	const Vect3f & GetPosition() const { return m_Position; }
 	void SetPosition(const Vect3f &Position) { m_Position = Position; }
 
-	virtual EType GetType() const;
+	virtual EType GetType() const = 0;
 
-	virtual void Update(float ElapsedTime)
-	{
-	}
+	virtual void Update(float ElapsedTime);
 };
 
 #endif

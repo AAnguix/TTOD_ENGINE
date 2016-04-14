@@ -188,9 +188,9 @@
 	<set_depth_stencil_state enable_z_test="false" write_z_buffer="false"/>
 	
 	<render_debug_gui/>
-	<!-- <enable_alpha_blend/>
+	<enable_alpha_blend/>
 	<render_gui/>
-	<disable_alpha_blend/> -->
+	<disable_alpha_blend/>
 	<!-- <render_debug_grid/> -->
 	<!--
 	-->

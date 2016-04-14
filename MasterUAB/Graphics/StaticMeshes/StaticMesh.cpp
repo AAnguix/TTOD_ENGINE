@@ -9,7 +9,12 @@
 #include "RenderableObjects\RenderableObjectTechnique.h"
 #include <cmath>
 
-CStaticMesh::CStaticMesh() : m_NumVertexs(0),m_NumFaces(0),m_RVs(NULL),m_Materials(NULL), CNamed("")
+CStaticMesh::CStaticMesh() 
+: m_NumVertexs(0)
+,m_NumFaces(0)
+,m_RVs(NULL)
+,m_Materials(NULL)
+,CNamed("")
 {
 	
 }

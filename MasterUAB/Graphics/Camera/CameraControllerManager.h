@@ -4,11 +4,15 @@
 #include "Utils\TemplatedMapManager.h"
 #include "Camera\CameraController.h"
 #include "Camera\Camera.h"
+#include <vector>
 
 class CCameraControllerManager : public CTemplatedMapManager<CCameraController>
 {
 
 private:
+	std::vector<CCameraController *> l_CameraControllerVector; /*To list CControllers in LUA*/
+
+
 	std::string m_Filename;
 	CCamera m_CurrentCamera;
 	bool m_Locked;
@@ -27,6 +31,8 @@ public:
 	bool GetLocked() const {return m_Locked;};
 	void SetLocked(bool Value){m_Locked=Value;};
 	void ChangeLockState(){m_Locked=!m_Locked;};
+
+	const std::vector<CCameraController *> & GetLUACameraControllers();
 };
 
 #endif

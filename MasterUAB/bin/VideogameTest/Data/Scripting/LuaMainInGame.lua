@@ -10,10 +10,9 @@ end
 
 function DefineFunctions()
 	dofile("./Data/Scripting/PlayerLUA.lua")
-	dofile("./Data/Scripting/Globals.lua")
+	dofile("./Data/Scripting/GlobalsInGame.lua")
 	dofile("./Data/Scripting/AIGlobals.lua")
-	--dofile("./Data/Scripting/GUI.lua")
-	dofile("./Data/Scripting/GUIStartScreen.lua")
+	dofile("./Data/Scripting/GUIInGame.lua")
 	dofile("./Data/Scripting/CameraController.lua")
 	dofile("./Data/Scripting/EnemyController.lua")
 	dofile("./Data/Scripting/CharacterController.lua")

@@ -3,34 +3,47 @@
 #include "XML\XMLTreeNode.h"
 #include "Engine.h"
 #include "RenderableObjects\LayerManager.h"
+#include "Animation\AnimatedInstanceModel.h"
+
+const float YAW_SPEED = 1.0f;
+const float PITCH_SPEED = 60.0f;
+const float ROLL_SPEED = 60.0f;
+const float SPEED = 5.0f;
+const float FAST_SPEED = 10.0f;
+const float ZOOM = 3.0f;
+const float ZOOM_SPEED = 2.0f;
+const float LOOK_AT_PITCH = 1.6f;
+
+const float PI = 3.14159f;
+const float Y_STRAFE = 1.6f;
+
 
 CThirdPersonCameraController::CThirdPersonCameraController()
-: m_YawSpeed(50.f)
-, m_PitchSpeed(60.f)
-, m_RollSpeed(60.f)
-, m_Speed(5.0f)
-, m_FastSpeed(10.0f)
-, m_Zoom(3.0f)
-, m_ZoomSpeed(2.f)
-, m_LookAtPitch(1.6f)
+:CCameraController()
+,m_YawSpeed(YAW_SPEED)
+,m_PitchSpeed(PITCH_SPEED)
+,m_RollSpeed(ROLL_SPEED)
+,m_Speed(SPEED)
+,m_FastSpeed(FAST_SPEED)
+,m_Zoom(ZOOM)
+,m_ZoomSpeed(ZOOM_SPEED)
+,m_LookAtPitch(LOOK_AT_PITCH)
 {
-	m_Position = v3fZERO;
-	m_Position = Vect3f(0.0f, 1.0f, 0.0f);
-
 }
+
 CThirdPersonCameraController::CThirdPersonCameraController(CXMLTreeNode &TreeNode)
-: m_YawSpeed(50.f)
-, m_PitchSpeed(60.f)
-, m_RollSpeed(60.f)
-, m_Speed(5.0f)
-, m_FastSpeed(10.0f)
-, m_Zoom(3.0f)
-, m_ZoomSpeed(2.f)
-, m_LookAtPitch(1.6f)
+:CCameraController(TreeNode)
+,m_YawSpeed(TreeNode.GetFloatProperty("yaw_speed", YAW_SPEED))
+,m_PitchSpeed(TreeNode.GetFloatProperty("pitch_speed", PITCH_SPEED))
+,m_RollSpeed(TreeNode.GetFloatProperty("roll_speed", ROLL_SPEED))
+,m_Speed(TreeNode.GetFloatProperty("speed", SPEED))
+,m_FastSpeed(TreeNode.GetFloatProperty("fast_speed", FAST_SPEED))
+,m_Zoom(TreeNode.GetFloatProperty("zoom", ZOOM))
+,m_ZoomSpeed(TreeNode.GetFloatProperty("zoom_speed", ZOOM_SPEED))
+,m_LookAtPitch(TreeNode.GetFloatProperty("look_at_pitch", LOOK_AT_PITCH))
 {
-	m_Position = v3fZERO;
+	
 }
-
 
 CThirdPersonCameraController::~CThirdPersonCameraController()
 {
@@ -44,8 +57,8 @@ void CThirdPersonCameraController::Move(float Strafe, float Forward, bool Speed,
 	//Speed=true;
 	Vect3f l_AddPos;
 	l_AddPos.y = 0.0f;
-	l_AddPos.x = Forward*(cos(m_Yaw)) + Strafe*(cos(m_Yaw + 3.14159f*0.5f));
-	l_AddPos.z = Forward*(sin(m_Yaw)) + Strafe*(sin(m_Yaw + 3.14159f*0.5f));
+	l_AddPos.x = Forward*(cos(m_Yaw)) + Strafe*(cos(m_Yaw + PI*0.5f));
+	l_AddPos.z = Forward*(sin(m_Yaw)) + Strafe*(sin(m_Yaw + PI*0.5f));
 
 	float l_ConstantSpeed = ElapsedTime*m_Speed;
 	if (Speed)
@@ -81,7 +94,7 @@ void CThirdPersonCameraController::MoveUpDown(float Movement, bool Speed, float 
 void CThirdPersonCameraController::AddYaw(float Radians)
 {
 	//CCameraController::AddYaw(-Radians*m_YawSpeed);
-	CCameraController::AddYaw(Radians);
+	CCameraController::AddYaw(Radians * m_YawSpeed);
 }
 
 void CThirdPersonCameraController::AddPitch(float Radians)
@@ -92,13 +105,14 @@ void CThirdPersonCameraController::AddPitch(float Radians)
 void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 {
 	Vect3f l_PlayerPos = m_Position;
-	CRenderableObject* l_Player = CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->GetResource("bruja");
 
+	CRenderableObject* l_Player = CEngine::GetSingleton().GetLayerManager()->GetPlayer();
+	assert(l_Player != nullptr);
 
 	if (l_Player != nullptr)
 	{
 		l_PlayerPos = l_Player->GetPosition();
-		l_PlayerPos.y = l_PlayerPos.y + 1.6f;
+		l_PlayerPos.y = l_PlayerPos.y + Y_STRAFE;
 	}
 	Vect3f l_Direction;
 
@@ -106,13 +120,13 @@ void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 	Vect3f l_Position = l_PlayerPos - l_Direction;
 	l_Position.y = l_Position.y + m_LookAtPitch;
 
-	Camera->SetFOV(1.047f);
-	Camera->SetAspectRatio(16.0f / 9.0f);
+	Camera->SetFOV(FOV);
+	Camera->SetAspectRatio(ASPECT_RATIO);
 	Camera->SetPosition(l_Position);
 	Camera->SetLookAt(l_PlayerPos);
 	Camera->SetUp(GetUp());
-	Camera->SetZNear(0.5f);
-	Camera->SetZFar(200.0f);
+	Camera->SetZNear(ZNEAR);
+	Camera->SetZFar(ZFAR);
 	Camera->SetMatrixs();
 
 }
@@ -136,12 +150,14 @@ Vect3f CThirdPersonCameraController::GetDirection() const
 
 }
 
-void CThirdPersonCameraController::Update(Vect3f Rotation)
-{
-	AddYaw(Rotation.x*1.0f);
-	//AddPitch(Rotation.y*1.0f);
-	//AddZoom(-Rotation.z*2.0f);
-}
+
+
+//void CThirdPersonCameraController::Update(Vect3f Rotation)
+//{
+//	AddYaw(Rotation.x);
+//	//AddPitch(Rotation.y*1.0f);
+//	//AddZoom(-Rotation.z*2.0f);
+//}
 
 void CThirdPersonCameraController::AddZoom(float Zoom)
 {

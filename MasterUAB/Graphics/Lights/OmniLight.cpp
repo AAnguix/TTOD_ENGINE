@@ -1,6 +1,7 @@
 #include "Lights\OmniLight.h"
 
-COmniLight::COmniLight() : CLight()
+COmniLight::COmniLight() 
+: CLight()
 {
 	SetType(OMNI);
 }

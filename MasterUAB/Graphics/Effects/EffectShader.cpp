@@ -4,17 +4,20 @@
 #include "Effects\EffectParameters.h"
 #include "Engine.h"
 #include <assert.h>
-#include <D3Dcompiler.h>
-#include <D3DX11async.h>
+#include <d3dcompiler.h>
+//#include <D3DX11async.h>
+
 #include "Vertex\VertexTypes.h"
 #include "Log.h"
+#include "Tools.h"
 
 CEffectShader::CEffectShader(const CXMLTreeNode &TreeNode)
 : CNamed(TreeNode)
 , m_PreprocessorMacros(NULL)
 , m_ShaderMacros(0)
+, m_Preprocessor(TreeNode.GetPszProperty("macro", ""))
+, m_Filename(TreeNode.GetPszProperty("file", ""))
 {
-	m_Preprocessor = TreeNode.GetPszProperty("macro","");
 }
 
 CEffectShader::~CEffectShader()
@@ -126,6 +129,43 @@ bool CEffectShader::Reload()
 	return Load();
 }
 
+
+bool CEffectShader::LoadShader(const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut)
+{
+	HRESULT hr = S_OK;
+	ID3DBlob* pErrorBlob = nullptr;
+
+	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+
+	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+
+	#if defined( DEBUG ) || defined( _DEBUG )  
+		dwShaderFlags |= D3DCOMPILE_DEBUG;
+	#endif  
+	
+	std::wstring ws;
+	ws.assign(Filename.begin(), Filename.end());
+
+	//const wchar_t* l_Name = CTools::CharToWChar(Filename.c_str());
+	hr = D3DCompileFromFile(ws.c_str(), m_ShaderMacros, D3D_COMPILE_STANDARD_FILE_INCLUDE, EntryPoint.c_str(), ShaderModel.c_str(), dwShaderFlags, 0, BlobOut, &pErrorBlob);
+
+	if (FAILED(hr))
+	{
+		if (pErrorBlob != NULL)
+			OutputDebugStringA((char*)pErrorBlob->GetBufferPointer());
+		if (pErrorBlob)
+			pErrorBlob->Release();
+		return false;
+	}
+
+	if (pErrorBlob)
+		pErrorBlob->Release();
+
+	return true;
+}
+
+
+/*
 bool CEffectShader::LoadShader(const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut) 
 {  
 	HRESULT hr = S_OK;
@@ -150,8 +190,8 @@ bool CEffectShader::LoadShader(const std::string &Filename, const std::string &E
 	 if( pErrorBlob )    
 		 pErrorBlob->Release();  
 
-	 return true; 
-}
+	return true;
+}*/
 
 /*Copy from RAM to VRAM*/
 bool CEffectShader::CreateConstantBuffer(int IdBuffer, unsigned int BufferSize)

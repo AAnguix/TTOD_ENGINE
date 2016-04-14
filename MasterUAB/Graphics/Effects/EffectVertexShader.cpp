@@ -29,8 +29,6 @@ CEffectVertexShader::CEffectVertexShader(const CXMLTreeNode &TreeNode)
 , m_VertexShader(NULL)
 , m_VertexLayout(NULL)
 {
-	m_Name = TreeNode.GetPszProperty("name","diffuse_vs");
-	m_Filename = TreeNode.GetPszProperty("file","");
 	m_ShaderModel = TreeNode.GetPszProperty("shader_model","vs_4_0");
 	m_EntryPoint = TreeNode.GetPszProperty("entry_point","VS");
 	m_VertexType = TreeNode.GetPszProperty("vertex_type","MV_POSITION_NORMAL_TEXTURE_VERTEX");			

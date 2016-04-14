@@ -11,6 +11,9 @@
 
 class CInputManagerImplementation : public CInputManager
 {
+private: 
+	uint8_t GetAsciiCode(const std::string& Characters);
+
 public:
 	CInputManagerImplementation();
 	~CInputManagerImplementation();

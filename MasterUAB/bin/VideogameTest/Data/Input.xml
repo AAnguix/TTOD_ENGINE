@@ -9,6 +9,10 @@
 	<action name="MOVE_FWD" type="KEYBOARD" mode="WHILE_PRESSED" axis="MOVE_FWD" axis_value="1" triggers_axis="true" key="W" />
 	<action name="MOVE_BACK" type="KEYBOARD" mode="WHILE_PRESSED" axis="MOVE_FWD" axis_value="-1" triggers_axis="true" key="S" />-->
 	
+	
+	<!-- GUI -->
+	<action name="ESC_PRESSED" type="KEYBOARD" mode="ON_PRESS" key="ESC" needs_alt="false"/> 
+	<action name="SPACEBAR_PRESSED" type="KEYBOARD" mode="ON_PRESS" key=" " needs_alt="false"/> 
 	<!-- Player Controls -->
 	
 	<action name="ON_ALT1_PRESSED" type="KEYBOARD" mode="ON_PRESS" key="1" needs_alt="true"/> 
@@ -41,7 +45,7 @@
 	
 	<action name="BLOCK_CAMERA" type="KEYBOARD" mode="ON_PRESS" key="B" needs_alt="false"/> 
 	<action name="CENTER_CAMERA" type="KEYBOARD" mode="ON_PRESS" key="C" needs_alt="false"/> 
-	<action name="PRUEBA" type="KEYBOARD" mode="ON_PRESS" key="R" needs_alt="false"/> 
+	<action name="CHANGE_CAMERA" type="KEYBOARD" mode="ON_PRESS" key="C" needs_alt="true"/> 
 	
 	<action name="MOVE_FWD" type="KEYBOARD" mode="WHILE_PRESSED" axis="MOVE_FWD" axis_value="1" triggers_axis="true" key="W" />
 	<action name="MOVE_BACK" type="KEYBOARD" mode="WHILE_PRESSED" axis="MOVE_BACK" axis_value="-1" triggers_axis="true" key="S" />

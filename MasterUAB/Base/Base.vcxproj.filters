@@ -59,6 +59,9 @@
     <ClInclude Include="Utils\EmptyPointerClass.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Tools.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Math">
@@ -85,6 +88,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\3DElement.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Tools.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>

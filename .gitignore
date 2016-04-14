@@ -25,6 +25,7 @@ MasterUAB/VideogameTest/debug32
 *.sdf
 
 # Own libraries
+MasterUAB/3rdParty/DirectXTK/
 MasterUAB/3rdParty/boost_1_34_0/
 MasterUAB/3rdParty/PhysX/
 MasterUAB/3rdParty/iconv-1.9.2.win32/

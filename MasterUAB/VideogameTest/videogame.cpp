@@ -27,12 +27,12 @@
 #include "Render\RenderManager.h"
 #include "Render\ContextManager.h"
 
-#include "Materials\MaterialManager.h"
-#include "Textures\TextureManager.h"
+//#include "Materials\MaterialManager.h"
+//#include "Textures\TextureManager.h"
 
-#include "Lights\LightManager.h"
+//#include "Lights\LightManager.h"
 
-#include "Effects\EffectManager.h"
+//#include "Effects\EffectManager.h"
 
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
@@ -40,9 +40,7 @@
 #pragma comment(lib, "Graphics_d.lib")
 #pragma comment(lib, "Winmm.lib")
 
-#include "Cinematics\Cinematic.h"
-
-#define APPLICATION_NAME	"The Tale Of Daigann"
+#define APPLICATION_NAME	"The Tale Of Degann"
 #define APPLICATTION_WIDTH  1280 //1280
 #define APPLICATTION_HEIGHT 720 //720
 
@@ -116,7 +114,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void CheckMemoryLeaks()
 {
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_CrtSetBreakAlloc(450064); //26598 29214 30923 32011
+	//_CrtSetBreakAlloc(178286); //26598 29214 30923 32011
 }
 
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
@@ -209,10 +207,10 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 											consumed = true;
 										}
 										break;
-									case VK_ESCAPE:
-										PostQuitMessage(0);
+									case VK_ESCAPE: /*Now, ESC opens a menu*/
+										/*PostQuitMessage(0);
 										consumed = true;
-										break;
+										break;*/
 									case VK_F4:
 										if (Alt)
 										{

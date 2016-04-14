@@ -4,7 +4,7 @@
 #include "Utils\Named.h"
 #include "Utils\Utils.h"
 #include <d3d11.h>
-#include <D3Dcommon.h>
+#include <d3dcommon.h>
 #include <vector>
 
 class CEffectShader : public CNamed
@@ -22,7 +22,8 @@ protected:
 	
 	virtual void Destroy();
 	void CreateShaderMacro();
-	bool LoadShader(const std::string &FileName,const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
+	bool LoadShader(const std::string &FileName, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
+	//bool LoadShader(const std::string &FileName,const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
 	bool CreateConstantBuffer(int IdBuffer, unsigned int BufferSize);
 	bool CreateConstantBuffer();
 

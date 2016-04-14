@@ -1,7 +1,10 @@
 #include "StaticMeshes\StaticMeshManager.h"
 #include "Utils\Utils.h"
 
-CStaticMeshManager::CStaticMeshManager(){m_FileName="";}
+CStaticMeshManager::CStaticMeshManager()
+: m_FileName("")
+{
+}
 
 CStaticMeshManager::~CStaticMeshManager(){}
 

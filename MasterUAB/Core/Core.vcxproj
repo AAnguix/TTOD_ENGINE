@@ -104,14 +104,14 @@
     <OutDir>$(SolutionDir)\bin\lib\</OutDir>
     <IntDir>$(SolutionDir)\bin\Intermediate\$(ProjectName)$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_d</TargetName>
-    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\bin\lib</OutDir>
     <IntDir>$(SolutionDir)\bin\Intermediate\$(ProjectName)$(Configuration)\</IntDir>
-    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -120,7 +120,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)PhysX;$(SolutionDir)Graphics;$(SolutionDir)Core;$(SolutionDir)GUI;$(SolutionDir)Sound;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\include\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\include\;$(SolutionDir)3rdParty\AntTweakBar\include;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)Videogametest\;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)PhysX;$(SolutionDir)Graphics;$(SolutionDir)Core;$(SolutionDir)GUI;$(SolutionDir)Sound;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\include\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\include\;$(SolutionDir)3rdParty\AntTweakBar\include;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)Videogametest\</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>
       </RuntimeTypeInfo>
     </ClCompile>
@@ -138,7 +138,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)PhysX;$(SolutionDir)Graphics;$(SolutionDir)Core;$(SolutionDir)GUI;$(SolutionDir)Sound;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\include\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\include\;$(SolutionDir)3rdParty\AntTweakBar\include;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)Videogametest\;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)PhysX;$(SolutionDir)Graphics;$(SolutionDir)Core;$(SolutionDir)GUI;$(SolutionDir)Sound;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\include\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\include\;$(SolutionDir)3rdParty\AntTweakBar\include;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)Videogametest\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

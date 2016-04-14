@@ -3,25 +3,25 @@
 #include "XML\XMLTreeNode.h"
 
 CFPSCameraController::CFPSCameraController()
-: m_YawSpeed(100.f)
-, m_PitchSpeed(60.f)
-, m_RollSpeed(60.f)
-, m_Speed(5.0f)
-, m_FastSpeed(10.0f)
+:CCameraController()
+,m_YawSpeed(100.f)
+,m_PitchSpeed(60.f)
+,m_RollSpeed(60.f)
+,m_Speed(5.0f)
+,m_FastSpeed(10.0f)
 {
 	m_Position=v3fZERO;
 	m_Position=Vect3f(0.0f,15.0f,0.0f);
 }
 CFPSCameraController::CFPSCameraController(CXMLTreeNode &TreeNode)
-: m_YawSpeed(100.f)
-, m_PitchSpeed(60.f)
-, m_RollSpeed(60.f)
-, m_Speed(5.0f)
-, m_FastSpeed(10.0f)
+:CCameraController(TreeNode)
+,m_YawSpeed(100.f)
+,m_PitchSpeed(60.f)
+,m_RollSpeed(60.f)
+,m_Speed(5.0f)
+,m_FastSpeed(10.0f)
 {
-	m_Position=TreeNode.GetVect3fProperty("position",v3fZERO);
 }
-
 
 CFPSCameraController::~CFPSCameraController()
 {	

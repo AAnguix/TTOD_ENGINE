@@ -16,6 +16,8 @@ public:
 
 	void SetCamera(CCamera *Camera) const;
 	Vect3f GetDirection() const;
+
+	EType GetType() const{ return FIXED; };
 };
 
 #endif

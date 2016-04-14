@@ -316,6 +316,4 @@ void CParticleSystemInstance::InsertSort()
 			--j;
 		}
 	}
-
-	int a = 0;
 }

@@ -7,6 +7,11 @@
 
 class CXMLTreeNode;
 
+const float FOV = 1.047198f;
+const float ASPECT_RATIO = 16.0f/9.0f;
+const float ZNEAR = 0.5f;
+const float ZFAR = 200.0f;
+
 class CCamera : public CNamed
 {	
 
@@ -42,7 +47,7 @@ public:
 	{
 		m_Position=Position;
 	}
-	const Vect3f & GetPosition() const
+	const Vect3f& GetPosition() const
 	{
 		return m_Position;
 	}
@@ -50,7 +55,7 @@ public:
 	{
 		m_LookAt=LookAt;
 	}
-	const Vect3f & GetLookAt() const
+	const Vect3f& GetLookAt() const
 	{
 		return m_LookAt;
 	}
@@ -58,7 +63,7 @@ public:
 	{
 		m_Up=Up;
 	}
-	const Vect3f & GetUp() const
+	const Vect3f& GetUp() const
 	{
 		return m_Up;
 	}

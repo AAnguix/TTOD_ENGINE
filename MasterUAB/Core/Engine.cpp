@@ -75,7 +75,6 @@ void CEngine::Init()
 
 void CEngine::LoadLevel(const std::string& Level)
 {
-	m_CameraControllerManager->Load("./Data/Level" + Level + "/cameras.xml");
 	m_MaterialManager->Load("./Data/Level" + Level + "/materials.xml");
 	m_StaticMeshManager->Load("./Data/Level" + Level + "/static_meshes.xml");
 	m_ParticleSystemManager->Load("./Data/Level" + Level + "/particles_systems.xml");
@@ -189,4 +188,9 @@ ISoundManager* CEngine::GetSoundManager() const
 CRenderManager* CEngine::GetRenderManager() const
 {
 	return m_RenderManager;
+}
+
+void CEngine::TerminateApplication()
+{
+	PostQuitMessage(0);
 }

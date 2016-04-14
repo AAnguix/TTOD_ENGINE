@@ -2,16 +2,17 @@
 #include "Camera\Camera.h"
 #include "XML\XMLTreeNode.h"
 
-CFixedCameraController::CFixedCameraController()
+CFixedCameraController::CFixedCameraController() 
+: CCameraController()
+,m_LookAt(v3fZERO)
 {
-	m_Position=v3fZERO;
-	m_LookAt=v3fZERO;
 }
 
-CFixedCameraController::CFixedCameraController(CXMLTreeNode &TreeNode) : CCameraController()
+CFixedCameraController::CFixedCameraController(CXMLTreeNode &TreeNode) 
+: CCameraController(TreeNode)
+,m_LookAt(TreeNode.GetVect3fProperty("look_at", v3fZERO))
 {
-	m_Position=TreeNode.GetVect3fProperty("position",v3fZERO);
-	m_LookAt=TreeNode.GetVect3fProperty("look_at",v3fZERO);
+	
 }
 
 CFixedCameraController::~CFixedCameraController()

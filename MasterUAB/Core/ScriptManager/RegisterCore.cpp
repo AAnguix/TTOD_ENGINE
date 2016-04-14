@@ -26,7 +26,9 @@
 #include "Components\PhysxComponent.h"
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
+#include "ISoundManager.h"
 //#include "AStar.h"
+
 
 using namespace luabind;
 
@@ -48,7 +50,10 @@ void CScriptManager::RegisterCore()
 	module(LUA_STATE) 
 	[
 		class_<CEngine, CSingleton<CEngine>>("CEngine")
-		
+		.scope
+		[
+			def("TerminateApplication", &CEngine::TerminateApplication)
+		]
 		.def("GetEffectManager", &CEngine::GetEffectManager)
 		.def("GetRenderableObjectTechniqueManager", &CEngine::GetRenderableObjectTechniqueManager)
 		.def("GetMaterialManager", &CEngine::GetMaterialManager)
@@ -67,6 +72,7 @@ void CScriptManager::RegisterCore()
 		.def("GetDebugHelper", &CEngine::GetDebugHelper)
 		.def("GetPhysXManager", &CEngine::GetPhysXManager)
 		.def("GetGUIManager", &CEngine::GetGUIManager)
+		.def("GetSoundManager", &CEngine::GetSoundManager)
 		.def("LoadLevel", &CEngine::LoadLevel)
 	];
 

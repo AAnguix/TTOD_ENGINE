@@ -21,8 +21,7 @@ CEffectPixelShader::CEffectPixelShader(const CXMLTreeNode &TreeNode)
 : CEffectShader(TreeNode)
 , m_PixelShader(NULL)
 {
-	m_Name = TreeNode.GetPszProperty("name","diffuse_ps");
-	m_Filename = TreeNode.GetPszProperty("file","");
+	
 	m_ShaderModel = TreeNode.GetPszProperty("shader_model","ps_4_0");
 	m_EntryPoint = TreeNode.GetPszProperty("entry_point","PS");
 }

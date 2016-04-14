@@ -101,21 +101,27 @@ void CAnimatedInstanceModel::LoadMaterials()
 	m_CalModel->setMaterialSet(0);*/
 }
 
-CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode) : 
-m_CalModel(NULL),
-m_AnimatedCoreModel(NULL),
-m_CalHardwareModel(NULL),
-m_Materials(NULL),
-m_RenderableVertexs(NULL),
-m_NumVertices(0),
-m_NumFaces(0)
+CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode) 
+:m_CalModel(NULL)
+,m_AnimatedCoreModel(NULL)
+,m_CalHardwareModel(NULL)
+,m_Materials(NULL)
+,m_RenderableVertexs(NULL)
+,m_NumVertices(0)
+,m_NumFaces(0)
+,m_lastTick(0)
+,m_fpsDuration(0.0f)
+,m_fpsFrames(0)
+,m_fps(0)
+,m_bPaused(false)
+,m_blendTime(0.3f)
 {
-	m_lastTick = 0;
+	/*m_lastTick = 0;
 	m_fpsDuration = 0.0f;
 	m_fpsFrames = 0;
 	m_fps = 0;
 	m_bPaused = false;
-	m_blendTime = 0.3f;
+	m_blendTime = 0.3f;*/
 
 	m_Name = TreeNode.GetPszProperty("name");
 	

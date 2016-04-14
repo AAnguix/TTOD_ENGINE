@@ -8,11 +8,9 @@ class CXMLTreeNode;
 class CFPSCameraController : public CCameraController
 {
 private:
-	float						m_YawSpeed;
-	float						m_PitchSpeed;
-	float						m_RollSpeed;
-	float						m_Speed;
-	float						m_FastSpeed;
+	float m_YawSpeed, m_PitchSpeed, m_RollSpeed;
+	float m_Speed, m_FastSpeed;
+
 public:
 	CFPSCameraController();
 	CFPSCameraController(CXMLTreeNode &TreeNode);

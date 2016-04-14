@@ -87,6 +87,8 @@ public:
 	void Init();
 	void LoadLevel(const std::string& Level);
 
+	static void TerminateApplication(); /*Called from LUA when exit button is pressed*/
+
 	CMaterialManager* GetMaterialManager() const;
 	CEffectManager* GetEffectManager() const;
 	CTextureManager* GetTextureManager() const;

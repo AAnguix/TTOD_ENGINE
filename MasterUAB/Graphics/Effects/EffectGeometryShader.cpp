@@ -21,9 +21,7 @@ CEffectGeometryShader::CEffectGeometryShader(const CXMLTreeNode &TreeNode)
 : CEffectShader(TreeNode)
 , m_GeometryShader(NULL)
 {
-	m_Name = TreeNode.GetPszProperty("name", "");
-	m_Filename = TreeNode.GetPszProperty("file", "");
-	m_ShaderModel = TreeNode.GetPszProperty("shader_model", "ps_4_0");
+	m_ShaderModel = TreeNode.GetPszProperty("shader_model", "gs_4_0");
 	m_EntryPoint = TreeNode.GetPszProperty("entry_point", "GS");
 }
 

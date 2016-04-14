@@ -93,6 +93,8 @@ private:
 		float u1, v1, u2, v2;
 		CColor color;
 	};
+	
+	/*GUI Elements*/
 	struct SSliderInfo
 	{
 		SSpriteInfo* base;
@@ -136,6 +138,11 @@ private:
 		SSpriteInfo* highlight;
 		SSpriteInfo* pressed;
 		SButtonInfo(SSpriteInfo* Normal, SSpriteInfo* HighLight, SSpriteInfo* Pressed) : normal(Normal), highlight(HighLight), pressed(Pressed){};
+	};
+	struct SImageInfo
+	{
+		SSpriteInfo* sprite;
+		SImageInfo(SSpriteInfo* Sprite) : sprite(Sprite){};
 	};
 
 private:
@@ -183,12 +190,14 @@ private:
 	std::map<std::string, SSliderInfo*> m_Sliders;
 	std::map<std::string, SHealthBarInfo*> m_HealthBars;
 	std::map<std::string, SButtonInfo*> m_Buttons;
+	std::map<std::string, SImageInfo*> m_Images;
 
 	void AddSpriteMap(CXMLTreeNode &TreeNode);
 	SSpriteInfo* GetSprite(const std::string& Name);
 	SSliderInfo* GetSlider(const std::string& SliderID);
 	SHealthBarInfo* GetHealthBar(const std::string& HealthBarID);
 	SButtonInfo* GetButton(const std::string& ButtonID);
+	SImageInfo* GetImage(const std::string& ImageID);
 
 	bool IsMouseInside(unsigned int MouseX, unsigned int MouseY, unsigned int X, unsigned int Y, unsigned int Width, unsigned int Height);
 	void SortCommands();
@@ -215,6 +224,7 @@ public:
 	void Reload();
 	void Render(CRenderManager* RenderManager);
 
+	void AddImage(const std::string& ImageID, const std::string& Sprite);
 	void AddButton(const std::string& ButtonID, const std::string& Normal, const std::string& Highlight, const std::string& Pressed);
 	void AddSlider(const std::string& SliderID, const std::string& Base, const std::string& Top, const std::string& Handle, const std::string& PressedHandle);
 	void AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top, const std::string& Background);
@@ -222,6 +232,7 @@ public:
 	bool DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position);
 	SSliderResult DoSlider(const std::string& GuiID, const std::string& SliderID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);
 	void DoHealthBar(const std::string& GuiID, const std::string& HealthBarID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);
+	void DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position);
 
 	void AddFont(const std::string& FontName, const std::string& FontPath);
 

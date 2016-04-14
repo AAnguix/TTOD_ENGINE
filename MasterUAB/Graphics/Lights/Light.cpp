@@ -23,23 +23,22 @@ CLight::TLightType CLight::GetLightTypeByName(const std::string &StrLightType)
 	return OMNI;
 }
 
-CLight::CLight(CXMLTreeNode &TreeNode) : CNamed(TreeNode)
+CLight::CLight(CXMLTreeNode &TreeNode) 
+: CNamed(TreeNode)
+, C3DElement(TreeNode)
 ,m_ShadowMap(0)
 ,m_ShadowMaskTexture(0)
 ,m_ViewShadowMap(m44fZERO)
 ,m_ProjectionShadowMap(m44fZERO)
 ,m_Active(TreeNode.GetBoolProperty("active", true))
+,m_Color(CColor(TreeNode.GetVect4fProperty("color", v4fZERO)))
+,m_StartRangeAttenuation(TreeNode.GetFloatProperty("att_start_range", 0.0f))
+,m_EndRangeAttenuation(TreeNode.GetFloatProperty("att_end_range", 0.0f))
+,m_Intensity(TreeNode.GetFloatProperty("intensity", 0.0f))
+,m_GenerateShadowMap(TreeNode.GetBoolProperty("generate_shadow_map", false))
 {	
-	SetPosition(TreeNode.GetVect3fProperty("pos",v3fZERO));
-	Vect4f l_V4=TreeNode.GetVect4fProperty("color",v4fZERO);
-	SetColor(CColor(l_V4));
-	SetStartRangeAttenuation(TreeNode.GetFloatProperty("att_start_range",0.0f));
-	SetEndRangeAttenuation(TreeNode.GetFloatProperty("att_end_range",0.0f));
-	SetIntensity(TreeNode.GetFloatProperty("intensity",0.0f));
-	bool l_G=TreeNode.GetBoolProperty("generate_shadow_map",false);
-	SetGenerateShadowMap(l_G);
-	
-	if (l_G)
+	//SetPosition(TreeNode.GetVect3fProperty("pos",v3fZERO));
+	if (m_GenerateShadowMap)
 	{
 		std::string l_ShadowTextureMask = TreeNode.GetPszProperty("shadow_texture_mask","");
 		if(l_ShadowTextureMask!="")
@@ -67,16 +66,17 @@ CLight::CLight(CXMLTreeNode &TreeNode) : CNamed(TreeNode)
 	//memcpy(address,(void*)&m_Intensity,sizeof(float));
 }
 
-CLight::CLight() : CNamed("")
-	,m_GenerateShadowMap(false)
-	,m_ShadowMap(0)
-	,m_ShadowMaskTexture(0)
-	,m_Color(NULL)
-	,m_Position(v3fZERO)
-	,m_Intensity(0)
-	,m_StartRangeAttenuation(0)
-	,m_EndRangeAttenuation(0)
-	,m_Active(true)
+CLight::CLight() 
+: CNamed("")
+,m_GenerateShadowMap(false)
+,m_ShadowMap(0)
+,m_ShadowMaskTexture(0)
+,m_Color(NULL)
+,m_Position(v3fZERO)
+,m_Intensity(0)
+,m_StartRangeAttenuation(0)
+,m_EndRangeAttenuation(0)
+,m_Active(true)
 {	
 }
 

@@ -29,6 +29,7 @@ void CCameraControllerManager::Load(const std::string &Filename)
 	if (l_XML.LoadFile(Filename.c_str()))
 	{
 		CXMLTreeNode l_Cameras = l_XML["cameras"];
+		bool l_Default = false;
 
 		if (l_Cameras.Exists())
 		{
@@ -36,51 +37,38 @@ void CCameraControllerManager::Load(const std::string &Filename)
 			{
 				CXMLTreeNode l_Element = l_Cameras(i);
 
+				CCameraController* l_CameraController = nullptr;
+				l_Default = l_Element.GetBoolProperty("default", false);
+
 				if (l_Element.GetName() == std::string("key_camera"))
 				{
-					CCameraKeyController *l_CameraKeyController=new CCameraKeyController(l_Element);
-
-					if(!AddResource(l_Element.GetPszProperty("name",""), l_CameraKeyController))
-					{
-						CHECKED_DELETE(l_CameraKeyController);
-
-					}else
-					{
-						if(!m_CurrentCameraController)
-							m_CurrentCameraController=l_CameraKeyController;
-					}
+					l_CameraController = new CCameraKeyController(l_Element);	
 				}
 				else if (l_Element.GetName() == std::string("fps_camera"))
 				{
-					//CFPSCameraController *l_FPSCameraController=new CFPSCameraController(l_Element);
-					CThirdPersonCameraController* l_ThirdPersonCameraController = new CThirdPersonCameraController(l_Element);
-					
-					if(!AddResource(l_Element.GetPszProperty("name",""), l_ThirdPersonCameraController))
-					{
-						CHECKED_DELETE(l_ThirdPersonCameraController);
-					}
-					else
-					{
-						if(!m_CurrentCameraController)
-							m_CurrentCameraController=l_ThirdPersonCameraController;
-					}
+					l_CameraController = new CFPSCameraController(l_Element);
+				}
+				else if (l_Element.GetName() == std::string("third_person_camera"))
+				{
+					l_CameraController = new CThirdPersonCameraController(l_Element);
 				}
 				else if (l_Element.GetName() == std::string("fixed_camera"))
 				{
-					//CFPSCameraController *l_FPSCameraController=new CFPSCameraController(l_Element);
-					CFixedCameraController* l_FixedCameraController = new CFixedCameraController(l_Element);
+					l_CameraController = new CFixedCameraController(l_Element);
+				}
 
-					if (!AddResource(l_Element.GetPszProperty("name", ""), l_FixedCameraController))
+				if (l_CameraController != nullptr)
+				{
+					if (!AddResource(l_Element.GetPszProperty("name", ""), l_CameraController))
 					{
-						CHECKED_DELETE(l_FixedCameraController);
+						CHECKED_DELETE(l_CameraController);
 					}
 					else
 					{
-						if (!m_CurrentCameraController)
-							m_CurrentCameraController = l_FixedCameraController;
+						if (l_Default)
+							m_CurrentCameraController = l_CameraController;
 					}
 				}
-				else { assert(false); }
 			}
 		}
 		else { assert(false); }
@@ -120,3 +108,12 @@ void CCameraControllerManager::Update(float ElapsedTime)
 	}
 }
  
+const std::vector<CCameraController *> & CCameraControllerManager::GetLUACameraControllers()
+{
+	l_CameraControllerVector.clear();
+	CTemplatedMapManager<CCameraController>::TMapResource &l_CControllersMap = GetResourcesMap();
+	for (CTemplatedMapManager<CCameraController>::TMapResource::iterator it = l_CControllersMap.begin(); it != l_CControllersMap.end(); ++it)
+		l_CameraControllerVector.push_back(it->second);
+
+	return l_CameraControllerVector;
+}
