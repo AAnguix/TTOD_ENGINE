@@ -19,7 +19,7 @@ function CameraController(ElapsedTime)
 	l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 	
 	if CInputManager.GetInputManager():IsActionActive("BLOCK_CAMERA") then
-		BlockCamera(l_CameraControllerManager)
+		BlockCamera(g_CameraControllerManager)
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("CENTER_CAMERA") then

@@ -1,6 +1,8 @@
 -- Used to define global variables and functions at start screen
 g_CameraXAxisRotationSpeed=0.3
 
+g_CurrentLevel = 0
+
 g_GuiFile = "./Data/Scripting/GUIStartScreen.lua"
 
 g_Engine = CEngine.GetSingleton()

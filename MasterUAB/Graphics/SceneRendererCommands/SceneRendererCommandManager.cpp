@@ -17,6 +17,7 @@
 
 #include "EnableAlphaBlendSceneRendererCommand.h"
 #include "DisableAlphaBlendSceneRendererCommand.h"
+#include "EnableAdditiveAlphaBlendSceneRendererCommand.h"
 
 #include "SetLightConstantsSceneRendererCommand.h"
 
@@ -131,6 +132,14 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 					if(!AddResource(l_EnableAB->GetName()+l_S,l_EnableAB))
 					{
 						CHECKED_DELETE(l_EnableAB);
+					}
+				}
+				else if (l_Element.GetName() == std::string("enable_additive_alpha_blend"))
+				{
+					CEnableAdditiveAlphaBlendSceneRendererCommand* l_EnableAdditiveAB = new CEnableAdditiveAlphaBlendSceneRendererCommand(l_Element);
+					if (!AddResource(l_EnableAdditiveAB->GetName() + l_S, l_EnableAdditiveAB))
+					{
+						CHECKED_DELETE(l_EnableAdditiveAB);
 					}
 				}
 				else if(l_Element.GetName() == std::string("disable_alpha_blend"))

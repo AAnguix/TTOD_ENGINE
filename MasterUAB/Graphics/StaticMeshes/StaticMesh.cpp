@@ -28,7 +28,8 @@ CStaticMesh::~CStaticMesh()
 
 	m_RVs.clear();
 	m_Materials.clear();
-	m_ConvexMeshVertices.clear();
+	m_MeshVertex.clear();
+	m_MeshIndex.clear();
 }
 
 bool CStaticMesh::Load(const std::string &FileName)
@@ -136,27 +137,30 @@ bool CStaticMesh::Load(const std::string &FileName)
 				l_VtxsData = malloc(l_NumBytes);
 				fread(l_VtxsData, l_NumBytes, 1, l_File);
 
-				//Physyx
+				//Physyx. Storing vertex for cooking meshes
 				long offset = (l_NumBytes / l_NumVertexs) - sizeof(Vect3f);
 				void* read = l_VtxsData;
 
 				for (size_t i = 0; i < l_NumVertexs; ++i)
 				{
-					m_ConvexMeshVertices.push_back(v3fZERO);
+					m_MeshVertex.push_back(v3fZERO);
 
-					memcpy(&m_ConvexMeshVertices[m_ConvexMeshVertices.size() - 1].x, read, sizeof(float));
+					memcpy(&m_MeshVertex[m_MeshVertex.size() - 1].x, read, sizeof(float));
 					read = static_cast<char*>(read)+4;
-					memcpy(&m_ConvexMeshVertices[m_ConvexMeshVertices.size() - 1].y, read, sizeof(float));
+					memcpy(&m_MeshVertex[m_MeshVertex.size() - 1].y, read, sizeof(float));
 					read = static_cast<char*>(read)+4;
-					memcpy(&m_ConvexMeshVertices[m_ConvexMeshVertices.size() - 1].z, read, sizeof(float));
+					memcpy(&m_MeshVertex[m_MeshVertex.size() - 1].z, read, sizeof(float));
 					read = static_cast<char*>(read)+4;
 					read = static_cast<char*>(read)+offset;
 				}
+				//
 
 				unsigned short l_IndexType = 0;
 				fread(&l_IndexType, sizeof(unsigned short), 1, l_File);
 
 				unsigned int m_NumIndexs;
+
+				bool l_32bits = false;
 
 				if (l_IndexType == 16)
 				{
@@ -167,6 +171,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 				}
 				else if (l_IndexType == 32)
 				{
+					l_32bits = true;
 					unsigned int l_NumIndexsFile;
 					fread(&l_NumIndexsFile, sizeof(unsigned int), 1, l_File);
 					l_NumBytes = sizeof(unsigned int)*l_NumIndexsFile;
@@ -175,6 +180,25 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 				l_IdxData = malloc(l_NumBytes);
 				fread(l_IdxData, 1, l_NumBytes, l_File);
+
+				/*Index for cooking triangle meshes*/
+				void* l_ReadIndex = l_IdxData;
+				
+				for (size_t i = 0; i < m_NumIndexs; ++i)
+				{
+					m_MeshIndex.push_back(0);
+					if (l_32bits)
+					{
+						memcpy(&m_MeshIndex[m_MeshIndex.size() - 1], l_ReadIndex, sizeof(unsigned int));
+						l_ReadIndex = static_cast<char*>(l_ReadIndex)+sizeof(unsigned int);
+					}
+					else
+					{
+						memcpy(&m_MeshIndex[m_MeshIndex.size() - 1], l_ReadIndex, sizeof(unsigned short));
+						l_ReadIndex = static_cast<char*>(l_ReadIndex)+sizeof(unsigned short);
+					}
+				}
+				/*end*/
 
 				CRenderableVertexs *l_RV = NULL;
 
@@ -291,14 +315,14 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 				m_RVs.push_back(l_RV);
 
+				m_NumFaces += (m_NumIndexs - 2);
+
 			} // > 0 vertex
 
 			free(l_VtxsData);
 			free(l_IdxData);
 
 		} //materials
-
-		m_NumFaces=m_NumVertexs/2;
 
 		unsigned short l_Footer=0;
 		fread(&l_Footer, sizeof(unsigned short), 1, l_File);
@@ -362,4 +386,16 @@ Vect3f CStaticMesh::GetBoundingBoxSize() const
 float CStaticMesh::GetBoundingSphereRadius() const
 {
 	return m_BoundingSphere.radius;
+}
+
+float CStaticMesh::GetCapsuleHalfHeight() const
+{
+	float l_Result = abs(m_BoundingBox.y_max - m_BoundingBox.y_min) / 2;
+	return l_Result;
+}
+
+float CStaticMesh::GetCapsuleRadius() const
+{
+	float l_Result = (abs(m_BoundingBox.x_max - m_BoundingBox.x_min)) / 2;
+	return l_Result;
 }

@@ -204,6 +204,7 @@ void CDebugHelperImplementation::RemoveBar()
 void TW_CALL CDebugHelperImplementation::CallLuaFunction(void *ClientData)
 {
 	const char *l_Script=(const char *)ClientData;
+
 	CEngine::GetSingleton().GetScriptManager()->RunCode(l_Script);
 }
 
@@ -288,6 +289,12 @@ void CDebugHelperImplementation::RegisterPositionOrientationParameter(const std:
 void CDebugHelperImplementation::RegisterLUAButton(const std::string &ButtonName, const std::string &Script)
 {
 	m_LuaParameters.push_back(Script);
+
+	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaFunction,(void*)m_LuaParameters[m_LuaParameters.size() - 1].c_str(),NULL);
+	assert(l_Return == 1);
+	
+	/*m_LuaParameters.push_back(Script);
 	void *l_Data=(void *)m_LuaParameters[m_LuaParameters.size()-1].c_str();
-	TwAddButton(m_Bars[m_CurrentBarName],ButtonName.c_str(),&CDebugHelperImplementation::CallLuaFunction,l_Data,"");
+	TwAddButton(m_Bars[m_CurrentBarName],ButtonName.c_str(),&CDebugHelperImplementation::CallLuaFunction,l_Data,"");*/
+	
 }

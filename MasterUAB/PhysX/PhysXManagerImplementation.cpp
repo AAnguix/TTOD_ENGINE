@@ -118,7 +118,11 @@ void CPhysXManagerImplementation::onWake(physx::PxActor** actors, physx::PxU32 c
 	{
 		size_t index = (size_t)(*actors)->userData;
 		std::string objectName = m_ActorNames[index];
-		//printf("\"%s\" has awake",objectName.c_str());
+		
+		std::stringstream l_Call;
+		l_Call << "OnWake" << "('" << objectName << "')";
+		std::string l_Code = l_Call.str();
+		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
 	}
 }
 
@@ -128,7 +132,11 @@ void CPhysXManagerImplementation::onSleep(physx::PxActor** actors, physx::PxU32 
 	{
 		size_t index = (size_t)(*actors)->userData;
 		std::string objectName = m_ActorNames[index];
-		//printf("\"%s\" sleeping",objectName.c_str());
+
+		std::stringstream l_Call;
+		l_Call << "OnSleep" << "('" << objectName << "')";
+		std::string l_Code = l_Call.str();
+		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
 	}
 }
 
@@ -141,6 +149,11 @@ void CPhysXManagerImplementation::onContact(const physx::PxContactPairHeader& pa
 
 		std::string objectOneName = m_ActorNames[indexOne];
 		std::string objectTwoName = m_ActorNames[indexTwo];
+
+		std::stringstream l_Call;
+		l_Call << "OnContact" << "('" << objectOneName << "','" << objectTwoName << "')";
+		std::string l_Code = l_Call.str();
+		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
 
 		//printf("\"%s\" in contact with \"%s\"",objectOneName.c_str(),objectTwoName.c_str());
 	}

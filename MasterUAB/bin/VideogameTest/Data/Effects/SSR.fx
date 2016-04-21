@@ -2,12 +2,12 @@
 #include "samplers.fxh"
 #include "functions.fxh"
 
-static float m_Enabled=1.0;
-static float m_SSRQuality=1.5;
-static float m_SSROpacity=0.3;
-static float m_SSRIncrementMultiplier=1.3; 
-static float m_OffsetScreen=0.05;
-static float2 m_ScreenResolution=float2(800.0,600.0);
+static float m_Enabled=m_RawDataValues[0];
+static float m_SSRQuality=m_RawDataValues[1];
+static float m_SSROpacity=m_RawDataValues[2];
+static float m_SSRIncrementMultiplier=m_RawDataValues[3]; 
+static float m_OffsetScreen=m_RawDataValues[4];
+static float2 m_ScreenResolution=float2(m_RawDataValues[5], m_RawDataValues[6]);
 
 struct VS_INPUT
 {

@@ -34,10 +34,13 @@ protected:
 
 	std::vector<CRenderableVertexs*> m_RVs;
 	std::vector<CMaterial *> m_Materials;
-	std::vector<Vect3f> m_ConvexMeshVertices;
-	unsigned int m_NumVertexs, m_NumFaces;
+	unsigned int m_NumVertexs;
+
+	std::vector<Vect3f> m_MeshVertex;
+	std::vector<unsigned int> m_MeshIndex;
 	
 public:
+	unsigned int  m_NumFaces;
 	CStaticMesh();
 	~CStaticMesh();
 	bool Load (const std::string &FileName);
@@ -47,7 +50,10 @@ public:
 	CMaterial* GetPhysxMaterial();
 	Vect3f GetBoundingBoxSize() const;
 	float GetBoundingSphereRadius() const;
-	std::vector<Vect3f> GetConvexMeshVertices() const{return m_ConvexMeshVertices;};
+	float GetCapsuleHalfHeight() const;
+	float GetCapsuleRadius() const;
+	std::vector<Vect3f> GetVertex() const{ return m_MeshVertex; };
+	std::vector<unsigned int> GetIndex() const{ return m_MeshIndex; };
 };
 
 #endif 

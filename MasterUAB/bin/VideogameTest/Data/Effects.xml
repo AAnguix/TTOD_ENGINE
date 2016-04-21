@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <effects>
+
+	<!--Light Scattering-->
+	<vertex_shader name="light_scattering_vs" file="./Data/Effects/LightScattering.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
+	<pixel_shader name="light_scattering_ps" file="./Data/Effects/LightScattering.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="light_scattering_technique" vertex_shader="light_scattering_vs" pixel_shader="light_scattering_ps"/>
+
+
 	<!--UBERSHADER GBUFFER-->
 	<vertex_shader name="gbuffer_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX"/>
 	<pixel_shader name="gbuffer_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS"/>
@@ -154,11 +161,7 @@
 	<pixel_shader name="color_grading_ps" file="./Data/Effects/ColorGrading.fx" shader_model="ps_5_0" entry_point="PS"/>
 	<effect_technique name="color_grading_technique" vertex_shader="color_grading_vs" pixel_shader="color_grading_ps"/>
 
-	<!--Light Scattering-->
-	<vertex_shader name="light_scattering_vs" file="./Data/Effects/LightScattering.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
-	<pixel_shader name="light_scattering_ps" file="./Data/Effects/LightScattering.fx" shader_model="ps_5_0" entry_point="PS"/>
-	<effect_technique name="light_scattering_technique" vertex_shader="light_scattering_vs" pixel_shader="light_scattering_ps"/>
-
+	
 	<!--SSR-->
 	<vertex_shader name="ssr_vs" file="./Data/Effects/SSR.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
 	<pixel_shader name="ssr_ps" file="./Data/Effects/SSR.fx" shader_model="ps_5_0" entry_point="PS"/>

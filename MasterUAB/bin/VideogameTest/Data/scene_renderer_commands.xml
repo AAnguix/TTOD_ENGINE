@@ -42,14 +42,14 @@
 	</render_deferred_shading> 
 	
 	<!-- Fog -->
-	<capture_frame_buffer>
+	<!-- <capture_frame_buffer>
 		<capture_texture name="DeferredCapturedTexture" texture_width_as_frame_buffer="true"/>
 	</capture_frame_buffer>
 	<set_pool_renderable_objects_technique pool="deferred_fog_shading_pool_renderable_object_technique"/>
 	<render_draw_quad material="DeferredFogMaterial">
 		<texture stage_id="0" file="DeferredCapturedTexture"/>
 		<texture stage_id="1" file="DepthMapTexture"/>
-	</render_draw_quad>
+	</render_draw_quad> -->
 	
 	<!-- ZBlur -->
 	<capture_frame_buffer>
@@ -122,26 +122,29 @@
 	
 	
 	<!-- LightScattering -->
-	<!-- <set_render_target>
-		<dynamic_texture name="LightScatteringTextureSkybox" texture_width_as_frame_buffer="true" create_depth_stencil_buffer="false"/>
+	<!-- <capture_frame_buffer>
+		<capture_texture name="LightScatteringCapturedTexture" texture_width_as_frame_buffer="true"/>
+	</capture_frame_buffer>
+
+	<set_render_target>
+		<dynamic_texture name="LightScatteringLightVolumeTexture" texture_width_as_frame_buffer="true" create_depth_stencil_buffer="false" format_type="R8G8B8A8_UNORM"/>
 	</set_render_target>
+	
 	<clear render_target="true" depth_stencil="false"/>
-	<set_pool_renderable_objects_technique pool="light_scattering_pool"/>
-	<set_matrices/>
 	<render_layer layer="skybox" active="true"/>
-	<unset_render_target/> -->
+	<unset_render_target/>
 	
-	<!-- <apply_filters>
-		<texture stage_id="0" file="LightScatteringTextureSkybox"/>
-		<dynamic_texture name="StartLightScatteringTexture" width="512" height="512" material="GUIMaterial"/>
-		<dynamic_texture name="LightScatteringTextureSkyboxBlurred2" width="512" height="512" material="GaussianFilterMaterial"/>
-		<dynamic_texture name="LightScatteringTextureSkyboxBlurred1" width="512" height="512" material="GaussianFilterMaterial"/>
-		<dynamic_texture name="LightScatteringTextureSkyboxBlurred" width="512" height="512" material="GaussianFilterMaterial"/>
-	</apply_filters> -->
-	
-	<!-- <enable_additive_alpha_blend/>
 	<set_pool_renderable_objects_technique pool="light_scattering_pool"/>
-	<render_draw_quad material="LightScatteringMaterial">
+	<apply_filters>
+		<texture stage_id="0" file="LightScatteringLightVolumeTexture"/>
+		<dynamic_texture name="LightScatteringTextureSkyboxBlurred2" width="512" height="512" material="GaussianFilterMaterial" format_type="R8G8B8A8_UNORM"/>
+		<dynamic_texture name="LightScatteringTextureSkyboxBlurred1" width="512" height="512" material="GaussianFilterMaterial" format_type="R8G8B8A8_UNORM"/>
+		<dynamic_texture name="LightScatteringTextureSkyboxBlurred" width="512" height="512" material="GaussianFilterMaterial" format_type="R8G8B8A8_UNORM" />
+	</apply_filters>
+	
+	<enable_additive_alpha_blend/>
+	LightScatteringMaterial 
+	<render_draw_quad material="LightScatteringMaterial"> 							
 		<texture stage_id="0" file="LightScatteringTextureSkyboxBlurred"/>
 	</render_draw_quad> -->
 	
@@ -173,11 +176,13 @@
 	<!-- <render_debug_layer layer="solid" active="true"/> -->
 	
 	<!-- <set_matrices/> -->
-	<set_pool_renderable_objects_technique pool="forward_shading"/>
+	
+	<!-- Particles -->
+	<!-- <set_pool_renderable_objects_technique pool="forward_shading"/>
 	<enable_alpha_blend/>
 	<set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/>
 	<render_layer layer="particles" active="true"/>
-	<disable_alpha_blend/>
+	<disable_alpha_blend/> -->
 	
 	<!-- <clear render_target="false" depth_stencil="false"/> -->
 	<set_light_constants/>

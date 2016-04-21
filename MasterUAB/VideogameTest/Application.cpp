@@ -48,6 +48,7 @@ CApplication::CApplication(CContextManager *_ContextManager)
 	, m_CurrentCamera(0)
 	, m_RenderManager(_ContextManager)
 {
+	//CSingleton<CEngine> *l_Sing = new CSingleton<CEngine>();
 	CEngine::GetSingleton().SetRenderManager(&m_RenderManager);
 	CDebugHelper::GetDebugHelper()->Log("CApplication::CApplication");
 

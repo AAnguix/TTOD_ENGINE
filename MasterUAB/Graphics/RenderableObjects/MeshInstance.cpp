@@ -25,7 +25,6 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(l_Core);
 	std::string l_ActorType = TreeNode.GetPszProperty("actor_type","");
 	std::string l_Geometry = TreeNode.GetPszProperty("geometry","");
-	bool l_Trigger = TreeNode.GetBoolProperty("trigger", false);
 
 	m_Position=TreeNode.GetVect3fProperty("pos",v3fZERO);
 	SetYaw(TreeNode.GetFloatProperty("yaw",0.0f));
@@ -44,63 +43,71 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 		{
 			if (l_ActorType != "")
 			{
+				bool l_Trigger = TreeNode.GetBoolProperty("trigger", false);
+				unsigned int l_Group = TreeNode.GetIntProperty("group", 0);
+				bool l_IsKinematic = false;
+				if (l_ActorType == "kinematic")
+					l_IsKinematic = true;
+				float l_Density = TreeNode.GetFloatProperty("density", 1.0f);
+
+				bool l_AbleToBeTrigger = true;
+
 				CPhysxComponent::CreatePhysxComponent("Physyx", this, false);
 				CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, 30.0f, 40.0f, 0.0f);
-				float l_Density = 0.3f;
+
 				//Quatf l_Rotation(0.0f, 0.0f, 0.0f, 1.0f);
 				Quatf l_Rotation(m_Yaw, m_Pitch, m_Roll);
 
-				if (l_ActorType == "static")
+				if (l_Geometry == "plane")
 				{
-					if (l_Geometry == "plane")
-					{
-						//CEngine::GetSingleton().GetPhysXManager()->CreateRigidStatic(l_Name, m_StaticMesh->GetBoundingBoxSize(), m_Position, l_Rotation, l_MaterialName);
-						CEngine::GetSingleton().GetPhysXManager()->CreatePlane(l_Name, Vect3f(0.0f, 1.0f, 0.0f), 0.0f, m_Position, l_Rotation, l_MaterialName);
+					assert(l_ActorType == "static");
+					CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticPlane(l_Name, Vect3f(0.0f, 1.0f, 0.0f), 0.0f, l_MaterialName, m_Position, l_Rotation, l_Group);
+				}
+				else if (l_Geometry == "box")
+				{
+					if (l_ActorType == "static")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticBox(l_Name, m_StaticMesh->GetBoundingBoxSize(), l_MaterialName, m_Position, l_Rotation, l_Group);
+					else if (l_ActorType == "dynamic" || l_ActorType == "kinematic")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicBox(l_Name, m_StaticMesh->GetBoundingBoxSize(), l_MaterialName, m_Position, l_Rotation, 1, l_Density, l_IsKinematic);
+				}
+				else if (l_Geometry == "sphere")
+				{
+					if (l_ActorType == "static")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticSphere(l_Name, m_StaticMesh->GetBoundingSphereRadius(), l_MaterialName, m_Position, l_Rotation, l_Group);
+					else if (l_ActorType == "dynamic" || l_ActorType == "kinematic")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicSphere(l_Name, m_StaticMesh->GetBoundingSphereRadius(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density, l_IsKinematic);
+				}
+				else if (l_Geometry == "capsule")
+				{
+					if (l_ActorType == "static")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticCapsule(l_Name, m_StaticMesh->GetCapsuleRadius(), m_StaticMesh->GetCapsuleHalfHeight(), l_MaterialName, m_Position, l_Rotation, l_Group);
+					else if (l_ActorType == "kinematic" || l_ActorType == "dynamic")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicCapsule(l_Name, m_StaticMesh->GetCapsuleRadius(), m_StaticMesh->GetCapsuleHalfHeight(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density, l_IsKinematic);
+				}
+				else if (l_Geometry == "convex")
+				{
+					if (l_ActorType == "static")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticConvexMesh(l_Name, m_StaticMesh->GetVertex(), l_MaterialName, m_Position, l_Rotation, l_Group);
+					else if (l_ActorType == "kinematic" || l_ActorType == "dynamic")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicConvexMesh(l_Name, m_StaticMesh->GetVertex(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density, l_IsKinematic);
+				}
+				else if (l_Geometry == "triangle")
+				{
+					l_AbleToBeTrigger = false;
+					if (l_ActorType == "static")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticTriangleMesh(l_Name, m_StaticMesh->GetVertex(), m_StaticMesh->GetIndex(), l_MaterialName, m_Position, l_Rotation, l_Group);
+					else if (l_ActorType == "kinematic")
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidKinematicTriangleMesh(l_Name, m_StaticMesh->GetVertex(), m_StaticMesh->GetIndex(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density);
+				}
+				else assert(false);
 
-					}
-					else if (l_Geometry == "box")
-					{
-						CEngine::GetSingleton().GetPhysXManager()->CreateSTBOX(l_Name, m_StaticMesh->GetBoundingBoxSize(), l_MaterialName, m_Position, l_Rotation, 1 );
-						if (l_Trigger)
-							CEngine::GetSingleton().GetPhysXManager()->SetShapeAsTrigger(l_Name);
-						//CEngine::GetSingleton().GetPhysXManager()->CreateRigidStatic(l_Name, m_StaticMesh->GetBoundingBoxSize(), m_Position, l_Rotation, l_MaterialName);
-					}
-					else if (l_Geometry == "sphere")
-					{
-						CEngine::GetSingleton().GetPhysXManager()->CreateSTSphere(l_Name, m_StaticMesh->GetBoundingSphereRadius(), l_MaterialName, m_Position, l_Rotation, 1);
-						if (l_Trigger)
-							CEngine::GetSingleton().GetPhysXManager()->SetShapeAsTrigger(l_Name);
-					}
-				}
-				else if (l_ActorType == "dynamic")
+				if (l_Trigger)
 				{
-
-					/*if(l_Geometry=="box")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicBox(l_Name,m_StaticMesh->GetBoundingBoxSize(),m_Position,l_Rotation,l_MaterialName,1,l_Density,false);
-						else if(l_Geometry=="sphere")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicSphere(l_Name,m_StaticMesh->GetBoundingSphereRadius(),m_Position,l_Rotation,l_MaterialName,1,l_Density,false);
-						*/
-				}
-				else if (l_ActorType == "kinematic")
-				{
-					/*if(l_Geometry=="box")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicBox(l_Name,m_StaticMesh->GetBoundingBoxSize(),m_Position,l_Rotation,l_MaterialName,1,l_Density,true);
-						else if(l_Geometry=="sphere")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicSphere(l_Name,m_StaticMesh->GetBoundingSphereRadius(),m_Position,l_Rotation,l_MaterialName,1,l_Density,true);*/
-					if (l_Geometry == "convex")
-						CEngine::GetSingleton().GetPhysXManager()->CreateConvexMesh(m_StaticMesh->GetConvexMeshVertices(), l_Name, m_Position, l_Rotation, l_MaterialName);
-					if (l_Trigger)
-						CEngine::GetSingleton().GetPhysXManager()->SetShapeAsTrigger(l_Name);
-				}
-				else
-				{
-					//CEngine::GetSingleton().GetPhysXManager()->CreateRigidStatic(l_Name, m_StaticMesh->GetBoundingBoxSize(), m_Position, l_Rotation, l_MaterialName);
-					//CEngine::GetSingleton().GetPhysXManager()->CreateSTBOX(l_Name, m_StaticMesh->GetBoundingBoxSize(), l_MaterialName, m_Position, l_Rotation, 1);
-					//CEngine::GetSingleton().GetPhysXManager()->CreateConvexMesh(m_StaticMesh->GetConvexMeshVertices(), l_Name, m_Position, l_Rotation, l_MaterialName);
-					//if (l_Trigger)
-						//CEngine::GetSingleton().GetPhysXManager()->SetShapeAsTrigger(l_Name);
+					assert(l_AbleToBeTrigger);
+					CEngine::GetSingleton().GetPhysXManager()->SetShapeAsTrigger(l_Name);
 				}
 			}
+		
 		}
 	}
 }

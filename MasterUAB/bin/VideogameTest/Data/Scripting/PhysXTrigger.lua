@@ -1,3 +1,5 @@
+-- These functions manage the Physyx events (collision, triggerEnter, wake, sleep, contact)
+
 -- function OnCollidefountain(Actor)
 	-- if (Actor == "bruja")then	
 		-- g_WindMildEnter = true
@@ -17,5 +19,16 @@ function OnCollideTrigger_Sphere(Actor)
 	end
 end
 
+function OnWake(Actor)
+	
+end
+
+function OnSleep(Actor)
+	
+end
+
+function OnContact(Actor)
+	
+end
 
 

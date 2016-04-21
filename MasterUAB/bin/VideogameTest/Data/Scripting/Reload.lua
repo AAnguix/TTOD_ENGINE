@@ -44,16 +44,19 @@ end
 
 function ReloadScene()
 	local l_Engine = CEngine.GetSingleton()
-	l_Engine:GetPhysXManager():Reload()
-	l_Engine:GetEffectManager():ReloadFile()
-	l_Engine:GetRenderableObjectTechniqueManager():Reload()
-	l_Engine:GetMaterialManager():Reload()
-	l_Engine:GetAnimatedModelManager():Reload()
-	l_Engine:GetStaticMeshManager():Reload()
-	l_Engine:GetLayerManager():Reload()
-	l_Engine:GetLightManager():Reload()
-	l_Engine:GetSceneRendererCommandManager():Reload()
-	l_Engine:GetCameraControllerManager():Reload()
+	if g_CurrentLevel ~= 0 then 
+		g_PhysXManager:Reload()
+		l_Engine:GetEffectManager():ReloadFile()
+		l_Engine:GetRenderableObjectTechniqueManager():Reload()
+		l_Engine:GetMaterialManager():Reload()
+		l_Engine:GetAnimatedModelManager():Reload()
+		l_Engine:GetStaticMeshManager():Reload()
+		g_LayerManager:Reload()
+		l_Engine:GetLightManager():Reload()
+		g_SceneRendererCommandManager:Reload()
+		g_CameraControllerManager:Reload()
+		g_GUIManager:Reload()
+	end
 end
 
 function ReloadEffects() 

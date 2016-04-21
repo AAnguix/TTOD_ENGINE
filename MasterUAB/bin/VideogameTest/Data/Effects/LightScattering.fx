@@ -1,22 +1,22 @@
 #include "globals.fxh"
 #include "samplers.fxh"
 
-/*static bool m_Active=m_RawDataValues[0]==1.0;
+static bool m_Active=m_RawDataValues[0]==1.0;
 static float m_Exposure=m_RawDataValues[1];
 static float m_Decay=m_RawDataValues[2];
 static float m_Density=m_RawDataValues[3];
 static float m_Weight=m_RawDataValues[4];
 static int m_NumSamples=(int)m_RawDataValues[5];
 static float2 m_LightScatteringPosition=float2(m_RawDataValues[6], m_RawDataValues[7]);
-*/
 
-static bool m_Active=1.0;
-static float m_Exposure=0.082;
-static float m_Decay=0.945;
-static float m_Density=0.89;
-static float m_Weight=1.0;
-static int m_NumSamples=20;
-static float2 m_LightScatteringPosition=float2(0.5,0.5);
+
+// static bool m_Active=1.0;
+// static float m_Exposure=0.082;
+// static float m_Decay=0.945;
+// static float m_Density=0.89;
+// static float m_Weight=1.0;
+// static int m_NumSamples=20;
+// static float2 m_LightScatteringPosition=float2(0.5,0.5);
 
 struct VS_INPUT
 {

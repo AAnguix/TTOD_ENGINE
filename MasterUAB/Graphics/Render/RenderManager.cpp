@@ -11,11 +11,10 @@
 #include "Lights\SpotLight.h"
 
 CRenderManager::CRenderManager(CContextManager *ContextManager)
-		: 
-		m_ContextManager(ContextManager)
-		, m_UseDebugCamera(false)
-		, m_CurrentRenderlistLength(0)
-		, m_DebugRender(NULL)
+: m_ContextManager(ContextManager)
+, m_UseDebugCamera(false)
+, m_CurrentRenderlistLength(0)
+, m_DebugRender(NULL)
 {
 	
 }

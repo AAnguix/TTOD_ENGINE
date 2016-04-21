@@ -642,7 +642,6 @@ void CContextManager::SetAlphaBlendState(ID3D11BlendState* AlphaBlendState)
 	m_DeviceContext->OMSetBlendState(AlphaBlendState, &l_BlendFactors.x, 0xffffffff);
 }
 
-
 void CContextManager::EnableAlphaBlendState()
 {
 	m_DeviceContext->OMSetBlendState(m_AlphaBlendState, NULL, 0xffffffff); 
