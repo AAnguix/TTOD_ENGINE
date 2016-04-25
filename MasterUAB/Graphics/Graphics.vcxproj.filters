@@ -253,6 +253,48 @@
     <ClInclude Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
+    <ClInclude Include="RenderableObjects\Enemy.h">
+      <Filter>RenderableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableObjects\Armor.h">
+      <Filter>RenderableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableObjects\Weapon.h">
+      <Filter>RenderableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableObjects\DamageReduction.h">
+      <Filter>RenderableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableObjects\BasicEnemy.h">
+      <Filter>RenderableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableObjects\BruteEnemy.h">
+      <Filter>RenderableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimatorController.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\State.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimatorControllerParameter.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimatorControllerIntegerParameter.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimatorControllerFloatParameter.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimatorControllerBoolParameter.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimatorControllerTriggerParameter.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableObjects\RangedEnemy.h">
+      <Filter>RenderableObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -491,6 +533,45 @@
     </ClCompile>
     <ClCompile Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.cpp">
       <Filter>SceneRendererCommands</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObjects\Enemy.cpp">
+      <Filter>RenderableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObjects\Armor.cpp">
+      <Filter>RenderableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObjects\Weapon.cpp">
+      <Filter>RenderableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObjects\DamageReduction.cpp">
+      <Filter>RenderableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObjects\BasicEnemy.cpp">
+      <Filter>RenderableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObjects\BruteEnemy.cpp">
+      <Filter>RenderableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimatorController.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\State.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimatorControllerIntegerParameter.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimatorControllerFloatParameter.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimatorControllerBoolParameter.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimatorControllerTriggerParameter.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObjects\RangedEnemy.cpp">
+      <Filter>RenderableObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

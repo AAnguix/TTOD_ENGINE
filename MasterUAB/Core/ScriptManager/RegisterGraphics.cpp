@@ -54,6 +54,7 @@
 
 #include "Input\InputManagerImplementation.h"
 #include "Components\ComponentManager.h"
+#include "Animation\AnimatorController.h"
 
 using namespace luabind;
 
@@ -88,6 +89,21 @@ void CScriptManager::RegisterAnimations()
 {
 	module(LUA_STATE)
 	[
+		class_<CAnimatorController>("CAnimatorController")
+		.def(constructor<>())
+		.def("AddState", &CAnimatorController::AddState)
+		.def("AddInteger", &CAnimatorController::AddInteger)
+		.def("AddFloat", &CAnimatorController::AddFloat)
+		.def("AddBool", &CAnimatorController::AddBool)
+		.def("AddTrigger", &CAnimatorController::AddTrigger)
+		.def("SetInteger", &CAnimatorController::SetInteger)
+		.def("SetFloat", &CAnimatorController::SetFloat)
+		.def("SetBool", &CAnimatorController::SetBool)
+		.def("SetTrigger", &CAnimatorController::SetTrigger)
+	];
+
+	module(LUA_STATE)
+	[
 		class_<CAnimatedCoreModel, CNamed>("CAnimatedCoreModel")
 		.def(constructor<>())
 		.def("GetMaterials", &CAnimatedCoreModel::GetMaterials)
@@ -100,6 +116,7 @@ void CScriptManager::RegisterAnimations()
 		class_<CAnimatedInstanceModel, CRenderableObject>("CAnimatedInstanceModel")
 		.def(constructor<CXMLTreeNode>())
 		.def(constructor<const std::string>())
+		.def("GetAnimatorController", &CAnimatedInstanceModel::GetAnimatorController)
 		.def("Initialize", &CAnimatedInstanceModel::Initialize)
 		.def("Render", &CAnimatedInstanceModel::Render)
 		.def("Update", &CAnimatedInstanceModel::Update)

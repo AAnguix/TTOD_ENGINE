@@ -103,18 +103,10 @@ void CAnimatedInstanceModel::LoadMaterials()
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode) 
 :m_CalModel(NULL)
-,m_AnimatedCoreModel(NULL)
-,m_CalHardwareModel(NULL)
-,m_Materials(NULL)
-,m_RenderableVertexs(NULL)
-,m_NumVertices(0)
-,m_NumFaces(0)
-,m_lastTick(0)
-,m_fpsDuration(0.0f)
-,m_fpsFrames(0)
-,m_fps(0)
-,m_bPaused(false)
-,m_blendTime(0.3f)
+,m_AnimatedCoreModel(NULL),m_CalHardwareModel(NULL),m_Materials(NULL),m_RenderableVertexs(NULL)
+,m_NumVertices(0),m_NumFaces(0),m_lastTick(0)
+,m_fpsDuration(0.0f),m_fpsFrames(0),m_fps(0)
+,m_bPaused(false),m_blendTime(0.3f)
 {
 	/*m_lastTick = 0;
 	m_fpsDuration = 0.0f;
@@ -123,28 +115,33 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
 	m_bPaused = false;
 	m_blendTime = 0.3f;*/
 
-	m_Name = TreeNode.GetPszProperty("name");
+	/*m_Name = TreeNode.GetPszProperty("name");
 	
 	m_Position = TreeNode.GetVect3fProperty("pos",v3fZERO);
 	m_Yaw = TreeNode.GetFloatProperty("yaw",0.0f);
 	m_Pitch = TreeNode.GetFloatProperty("pitch",0.0f);
 	m_Roll = TreeNode.GetFloatProperty("roll",0.0f);
 	m_Scale = TreeNode.GetFloatProperty("scale");
-	m_Visible = TreeNode.GetBoolProperty("visible",true);
+	m_Visible = TreeNode.GetBoolProperty("visible",true);*/
 	
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(TreeNode.GetPszProperty("model_name")));
 
 	//if(TreeNode.GetBoolProperty("player"))
 	{
-		CPhysxComponent::CreatePhysxComponent("Physyx",this,true);
-		std::string l_MaterialName = m_AnimatedCoreModel->GetMaterials()[0]->GetName();
-		/*TODO Obtener propiedades del material*/
-		CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName,0.1f,0.1f,0.1f);
-		Vect3f l_CControlerPos(m_Position.x, m_Position.y, m_Position.z);
-		
-		//CalBoundingBox Height = m_CalModel->getBoundingBox(false); 
-	
-		CEngine::GetSingleton().GetPhysXManager()->CreateCharacterController(m_Name,CCONTROLLER_HEIGHT,0.3f,30.0f,l_CControlerPos,l_MaterialName);
+		std::string l_ActorType = TreeNode.GetPszProperty("actor_type", "");
+
+		if (TreeNode.GetBoolProperty("player"))
+		{
+			CPhysxComponent::CreatePhysxComponent("Physyx", this, true);
+			std::string l_MaterialName = m_AnimatedCoreModel->GetMaterials()[0]->GetName();
+			/*TODO Obtener propiedades del material*/
+			CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, 0.1f, 0.1f, 0.1f);
+			Vect3f l_CControlerPos(m_Position.x, m_Position.y, m_Position.z);
+
+			//CalBoundingBox Height = m_CalModel->getBoundingBox(false); 
+
+			CEngine::GetSingleton().GetPhysXManager()->CreateCharacterController(m_Name, CCONTROLLER_HEIGHT, 0.3f, 30.0f, l_CControlerPos, l_MaterialName);
+		}
 	}
 }
 
@@ -177,12 +174,14 @@ void CAnimatedInstanceModel::Destroy()
 	CHECKED_DELETE(m_CalModel);
 	CHECKED_DELETE(m_CalHardwareModel);
 	CHECKED_DELETE(m_RenderableVertexs);
+	CHECKED_DELETE(m_AnimatorController);
 }
 
 void CAnimatedInstanceModel::Initialize(CAnimatedCoreModel *AnimatedCoreModel)
 {
 	//onCreate
 	m_AnimatedCoreModel=AnimatedCoreModel;
+	m_AnimatorController = new CAnimatorController(this);
 
 	LoadMaterials();
 

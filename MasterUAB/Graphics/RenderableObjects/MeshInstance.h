@@ -9,7 +9,7 @@ class CMeshInstance : public CRenderableObject
 {  
 
 private:   
-	CStaticMesh   *m_StaticMesh;  
+	CStaticMesh *m_StaticMesh;  
 
 public:   
 	CMeshInstance(const std::string &Name, const std::string &CoreName);   

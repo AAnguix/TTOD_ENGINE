@@ -64,7 +64,7 @@ void CLayerManager::Load(const std::string &Filename)
 					AddLayer(l_Element);
 				}
 
-				if (l_Element.GetName() == std::string("mesh_instance"))
+				else if (l_Element.GetName() == std::string("mesh_instance"))
 				{
 					CMeshInstance *l_MeshInstance = new CMeshInstance(l_Element);
 

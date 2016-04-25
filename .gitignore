@@ -34,6 +34,7 @@ MasterUAB/3rdParty/cal3d-0.11rc2/src/cal3d/Debug
 MasterUAB/3rdParty/cal3d-0.11rc2/src/cal3d/Release
 MasterUAB/3rdParty/AntTweakBar/debug32
 MasterUAB/3rdParty/AntTweakBar/release32
+MasterUAB/3rdParty/WWise/Win32_vc120
 
 # Executables
 *.exe
