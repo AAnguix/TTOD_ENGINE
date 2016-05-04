@@ -457,7 +457,7 @@ AkGameObjectID CSoundManager::GenerateObjectID()
 
 void CSoundManager::PlayEvent(const SoundEvent& Event, const AkGameObjectID& ID)
 {
-	AK::SoundEngine::PostEvent(Event.eventName.c_str(), ID); //TODO 
+	AK::SoundEngine::PostEvent(Event.m_EventName.c_str(), ID); //TODO 
 }
 void CSoundManager::SetSwitch(const SoundSwitchValue &SwitchValue, const AkGameObjectID& ID)
 {

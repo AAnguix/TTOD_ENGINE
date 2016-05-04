@@ -25,7 +25,8 @@ protected:
 	CComponentManager* m_ComponentManager;
 
 public:
-	CRenderableObject();
+	CRenderableObject(const CXMLTreeNode &XMLTreeNode);
+	CRenderableObject(const std::string &Name, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	virtual ~CRenderableObject();
 	virtual void Update(float ElapsedTime);
 	virtual void Render(CRenderManager *RM) = 0;

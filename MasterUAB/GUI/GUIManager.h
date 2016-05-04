@@ -236,6 +236,7 @@ public:
 
 	void AddFont(const std::string& FontName, const std::string& FontPath);
 
+	void DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text);
 	std::string DoTextBox(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& CurrentText, float ElapsedTime);
 	void CreateConsole(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, float ElapsedTime);
 };

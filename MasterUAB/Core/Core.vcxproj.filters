@@ -26,12 +26,6 @@
     <ClCompile Include="Components\ComponentManager.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Components\PhysxComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\ScriptedComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptManager\RegisterPhysx.cpp">
       <Filter>ScriptManager</Filter>
     </ClCompile>
@@ -49,6 +43,18 @@
     </ClCompile>
     <ClCompile Include="ScriptManager\RegisterSound.cpp">
       <Filter>ScriptManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Script.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Collider.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\CharacterCollider.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\AudioSource.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,12 +80,6 @@
     <ClInclude Include="Components\ComponentManager.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Components\PhysxComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\ScriptedComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="AStar.h">
       <Filter>ScriptManager</Filter>
     </ClInclude>
@@ -88,6 +88,18 @@
     </ClInclude>
     <ClInclude Include="Input\KeyBoardInput.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Script.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Collider.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\CharacterCollider.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AudioSource.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

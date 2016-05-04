@@ -18,15 +18,14 @@ class CRenderableVertexs;
 
 class CAnimatedInstanceModel : public CRenderableObject 
 { 
+	friend class CAnimatorController;
 
 private:  
-	CalModel   *m_CalModel;
-	CAnimatedCoreModel  *m_AnimatedCoreModel;
+	CalModel *m_CalModel;
 	CalHardwareModel  *m_CalHardwareModel;
 	std::vector<CMaterial *> m_Materials; 
 	CRenderableVertexs  *m_RenderableVertexs;
-	CAnimatorController* m_AnimatorController;
-
+	
 	int m_NumVertices;
 	int m_NumFaces;  
 	bool LoadVertexBuffer();
@@ -41,16 +40,19 @@ private:
 	float m_blendTime;
 	int m_currentAnimationId;
 
+protected:
+	CAnimatedCoreModel  *m_AnimatedCoreModel;
+
 public:  
 	CAnimatedInstanceModel(CXMLTreeNode &TreeNode);  
-	CAnimatedInstanceModel(const std::string &Name);  //Own 
+	CAnimatedInstanceModel(const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll);  //Own 
 	virtual ~CAnimatedInstanceModel();  
 	void Initialize(CAnimatedCoreModel *AnimatedCoreModel);  
 	void Render(CRenderManager* RenderManager);  
 	void Update(float ElapsedTime);  
 	void Destroy(); 
 
-	CAnimatorController* GetAnimatorController() const { return m_AnimatorController;};
+	CAnimatorController* GetAnimatorController() const;
 	void ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget=1.0f, bool AutoLock=true);  
 	void BlendCycle(int Id, float Weight, float DelayIn);  
 	void ClearCycle(int Id, float DelayOut);  

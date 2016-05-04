@@ -7,29 +7,25 @@
 #include "Render\RenderManager.h"
 #include "XML\XMLTreeNode.h"
 #include "Materials\Material.h"
-#include "Components\PhysxComponent.h"
+#include "Components\Collider.h"
 #include "Components\ComponentManager.h"
 
-CMeshInstance::CMeshInstance(const std::string &Name, const std::string &CoreName)
+/*Used to create a mesh instance when game is runing*/
+CMeshInstance::CMeshInstance(const std::string &Name, const std::string &CoreName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+:CRenderableObject(Name,Position,Yaw,Pitch,Roll)
 {
-	SetName(Name);
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(CoreName);
 }
 
+/*Used to create a mesh instance when game starts*/
 CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
+:CRenderableObject(TreeNode)
 {
-	std::string l_Name = TreeNode.GetPszProperty("name");
-	m_Name=l_Name;
-	m_Visible = TreeNode.GetBoolProperty("visible",true);
+	std::string l_Name = TreeNode.GetPszProperty("name", "");
 	std::string l_Core = TreeNode.GetPszProperty("core_name","");
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(l_Core);
 	std::string l_ActorType = TreeNode.GetPszProperty("actor_type","");
 	std::string l_Geometry = TreeNode.GetPszProperty("geometry","");
-
-	m_Position=TreeNode.GetVect3fProperty("pos",v3fZERO);
-	SetYaw(TreeNode.GetFloatProperty("yaw",0.0f));
-	SetPitch(TreeNode.GetFloatProperty("pitch",0.0f));
-	SetRoll(TreeNode.GetFloatProperty("roll",0.0f));
 	
 	if(m_StaticMesh!=nullptr)
 	{
@@ -52,7 +48,7 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 
 				bool l_AbleToBeTrigger = true;
 
-				CPhysxComponent::CreatePhysxComponent("Physyx", this, false);
+				CCollider::AddCollider("Collider", this);
 				CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, 30.0f, 40.0f, 0.0f);
 
 				//Quatf l_Rotation(0.0f, 0.0f, 0.0f, 1.0f);

@@ -25,17 +25,29 @@ bool CAnimatedCoreModel::LoadSkeleton(const std::string &Filename)
 	return m_CalCoreModel->loadCoreSkeleton(Filename);
 }
 
-bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename)
+bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, const bool &Loop)
 {
 	//int r=m_CalCoreModel->loadCoreAnimation(Filename);
 	//return r;
 	int l_AnimationID = m_CalCoreModel->loadCoreAnimation(Filename);
 	if (l_AnimationID != -1)
 	{
-		m_Animations.insert(std::pair<const std::string, int>(Name,l_AnimationID));
+		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID));
+		//m_Animations.insert(std::pair<const std::string, int>(Name,l_AnimationID));
 		return true;
 	}
 	return false;
+}
+
+EAnimation CAnimatedCoreModel::GetAnimation(const std::string &Name)
+{
+	for (unsigned int i = 0; i < m_Animations.size(); ++i)
+	{
+		if (m_Animations[i].m_Name == Name)
+			return m_Animations[i];
+	}
+	assert(false);
+	return m_Animations[0];
 }
 
 CAnimatedCoreModel::CAnimatedCoreModel() : 
@@ -69,7 +81,7 @@ CAnimatedCoreModel::~CAnimatedCoreModel()
     }
 
 	m_Materials.clear();
-	m_Animations.clear();
+	//m_Animations.clear();
 }
 
 CalCoreModel* CAnimatedCoreModel::GetCoreModel()
@@ -77,16 +89,16 @@ CalCoreModel* CAnimatedCoreModel::GetCoreModel()
 	return m_CalCoreModel;
 }
 
-int CAnimatedCoreModel::GetAnimationID(const std::string &Name)
-{
-	std::map<const std::string, int>::iterator it;
-
-	it = m_Animations.find(Name);
-	if (it == m_Animations.end())
-		return -1;
-	else
-		return it->second;
-}
+//int CAnimatedCoreModel::GetAnimationID(const std::string &Name)
+//{
+//	std::map<const std::string, int>::iterator it;
+//
+//	it = m_Animations.find(Name);
+//	if (it == m_Animations.end())
+//		return -1;
+//	else
+//		return it->second;
+//}
   
 void CAnimatedCoreModel::Load(const std::string &Path)
 {
@@ -134,7 +146,7 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 				}
 				else if (l_Element.GetName() == std::string("animation"))
 				{
-					LoadAnimation(Path+l_Element.GetPszProperty("name"),Path+l_Element.GetPszProperty("filename"));
+					LoadAnimation(l_Element.GetPszProperty("name"),Path+l_Element.GetPszProperty("filename"),l_Element.GetBoolProperty("loop",false));
 				}
 			}
 		}

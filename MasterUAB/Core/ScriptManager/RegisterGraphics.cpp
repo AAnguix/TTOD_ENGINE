@@ -90,7 +90,7 @@ void CScriptManager::RegisterAnimations()
 	module(LUA_STATE)
 	[
 		class_<CAnimatorController>("CAnimatorController")
-		.def(constructor<>())
+		.def(constructor<const std::string, CAnimatedInstanceModel*>())
 		.def("AddState", &CAnimatorController::AddState)
 		.def("AddInteger", &CAnimatorController::AddInteger)
 		.def("AddFloat", &CAnimatorController::AddFloat)
@@ -100,6 +100,10 @@ void CScriptManager::RegisterAnimations()
 		.def("SetFloat", &CAnimatorController::SetFloat)
 		.def("SetBool", &CAnimatorController::SetBool)
 		.def("SetTrigger", &CAnimatorController::SetTrigger)
+		.scope
+		[
+			def("AddAnimatorController", &CAnimatorController::AddAnimatorController)
+		]
 	];
 
 	module(LUA_STATE)
@@ -115,7 +119,7 @@ void CScriptManager::RegisterAnimations()
 	[
 		class_<CAnimatedInstanceModel, CRenderableObject>("CAnimatedInstanceModel")
 		.def(constructor<CXMLTreeNode>())
-		.def(constructor<const std::string>())
+		.def(constructor<const std::string ,const std::string,const Vect3f,float,float,float>())
 		.def("GetAnimatorController", &CAnimatedInstanceModel::GetAnimatorController)
 		.def("Initialize", &CAnimatedInstanceModel::Initialize)
 		.def("Render", &CAnimatedInstanceModel::Render)
@@ -729,6 +733,8 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("Load", &CLayerManager::Load)
 		.def("Reload", &CLayerManager::Reload)
 		.def("GetPlayer", &CLayerManager::GetPlayer)
+		.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
+		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)
 	];
 
 	module(LUA_STATE)
@@ -778,7 +784,7 @@ void CScriptManager::RegisterRenderableObjects()
 	[
 		class_<CMeshInstance, CRenderableObject>("CMeshInstance")
 		.def(constructor<CXMLTreeNode>())
-		.def(constructor<const std::string, const std::string>())
+		.def(constructor<const std::string, const std::string, const Vect3f , float, float, float>())
 		.def("Render", &CMeshInstance::Render)
 	];
 
@@ -805,10 +811,6 @@ void CScriptManager::RegisterRenderableObjects()
 		class_< CRenderableObjectsManager, bases<CTemplatedVectorMapManager<CRenderableObject>, CNamed>>("CRenderableObjectsManager")
 		.def("Update", &CRenderableObjectsManager::Update)
 		.def("Render", &CRenderableObjectsManager::Render)
-		.def("AddMeshInstance", &CRenderableObjectsManager::AddMeshInstance)
-		.def("AddAnimatedInstanceModel", &CRenderableObjectsManager::AddAnimatedInstanceModel)
-		.def("Load", &CRenderableObjectsManager::Load)
-		.def("Reload", &CRenderableObjectsManager::Reload)
 	];
 
 	//Static Meshes

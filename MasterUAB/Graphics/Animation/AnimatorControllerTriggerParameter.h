@@ -11,10 +11,14 @@ private:
 	bool m_TriggerEnter;
 
 public:
-	CAnimatorControllerTriggerParameter(const std::string &Name);
+	CAnimatorControllerTriggerParameter(const std::string &Name, const bool &Triggered);
 	virtual ~CAnimatorControllerTriggerParameter();
-	void TriggerEnter();
-	bool Launch();
+	
+	void TriggerEnter(){ m_TriggerEnter = true; };
+	void RaiseTrigger(){ m_TriggerEnter = false; };
+
+	bool Triggered() const { return m_TriggerEnter; };
+	
 };
 
 #endif

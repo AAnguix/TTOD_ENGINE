@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Archivos de recursos">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Enemies">
+      <UniqueIdentifier>{9ef75b79-4c66-4740-8e36-c2f0410c1203}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inventory">
+      <UniqueIdentifier>{2c857c9c-b588-420d-98b5-00c033aa5a77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{95f9cbd6-798f-40e2-b0e2-8eb7d805dccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Weapons">
+      <UniqueIdentifier>{06bf798a-7039-424b-8bc5-f57ba1194b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other">
+      <UniqueIdentifier>{795cab08-e1d0-4cd6-9cc9-b249d5290ced}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="videogame.cpp" />
+    <ClCompile Include="..\bin\Game\Enemies\BasicEnemy.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Enemies\BruteEnemy.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Enemies\Enemy.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Enemies\RangedEnemy.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Inventory\HealthPotion.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Inventory\Inventory.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Inventory\Item.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Player\Player.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Weapons\Armor.cpp">
+      <Filter>Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Weapons\DamageReduction.cpp">
+      <Filter>Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Weapons\Weapon.cpp">
+      <Filter>Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bin\Game\Other\Pedestal.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="..\bin\Game\Enemies\BasicEnemy.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Enemies\BruteEnemy.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Enemies\Enemy.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Enemies\RangedEnemy.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Inventory\HealthPotion.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Inventory\Inventory.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Inventory\Item.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Player\Player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Weapons\Armor.h">
+      <Filter>Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Weapons\DamageReduction.h">
+      <Filter>Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Weapons\Weapon.h">
+      <Filter>Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Other\Pedestal.h">
+      <Filter>Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\Game\Other\ItemGuiData.h">
+      <Filter>Other</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

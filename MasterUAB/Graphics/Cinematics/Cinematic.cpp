@@ -3,8 +3,8 @@
 #include "Components\ComponentManager.h"
 
 CCinematic::CCinematic(CXMLTreeNode &TreeNode)
+:CRenderableObject(TreeNode)
 {
-	SetName(TreeNode.GetPszProperty("name"));
 	m_FileName=TreeNode.GetPszProperty("file");
 	m_Cycle=true;
 }

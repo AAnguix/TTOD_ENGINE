@@ -1,11 +1,9 @@
 #include "Animation\AnimatorControllerFloatParameter.h"
 
 
-CAnimatorControllerFloatParameter::CAnimatorControllerFloatParameter(const std::string &Name, const float &LaunchValue, EFloatCondition Condition)
+CAnimatorControllerFloatParameter::CAnimatorControllerFloatParameter(const std::string &Name, const float &Value)
 :CAnimatorControllerParameter(Name)
-,m_LaunchValue(LaunchValue)
-,m_Condition(Condition)
-,m_CurrentValue(0.0f)
+,m_Value(Value)
 {
 
 }
@@ -13,25 +11,10 @@ CAnimatorControllerFloatParameter::~CAnimatorControllerFloatParameter()
 {
 
 }
-bool CAnimatorControllerFloatParameter::Launch()
-{
-	if (m_Condition == GREATER)
-	{
-		if (m_CurrentValue > m_LaunchValue)
-			return true;
-	}
-	else if (m_Condition == LESS)
-	{
-		if (m_CurrentValue < m_LaunchValue)
-			return true;
-	}
 
-	return false;
-
-}
-void CAnimatorControllerFloatParameter::UpdateParameter(const float &CurrentValue)
+void CAnimatorControllerFloatParameter::UpdateParameter(const float &Value)
 {
-	m_CurrentValue = CurrentValue;
+	m_Value = Value;
 }
 
 

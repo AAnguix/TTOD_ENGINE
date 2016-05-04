@@ -8,15 +8,16 @@ class C3DElement;
 
 struct SoundEvent
 {
-	std::string eventName;
+	std::string m_EventName;
+	SoundEvent(const std::string EventName) :m_EventName(EventName){};
 };
 struct SoundSwitch
 {
-	std::string switchName;
+	std::string m_SwitchName;
 };
 struct SoundSwitchValue
 {
-	SoundSwitch soundSwitch;
+	SoundSwitch m_SoundSwitch;
 };
 struct SoundRTPC
 {

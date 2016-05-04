@@ -1,30 +1,17 @@
 #include "Animation\AnimatorControllerTriggerParameter.h"
 
 
-CAnimatorControllerTriggerParameter::CAnimatorControllerTriggerParameter(const std::string &Name)
+CAnimatorControllerTriggerParameter::CAnimatorControllerTriggerParameter(const std::string &Name, const bool &Triggered)
 :CAnimatorControllerParameter(Name)
-,m_TriggerEnter(false)
+, m_TriggerEnter(Triggered)
 {
 
 }
+
 CAnimatorControllerTriggerParameter::~CAnimatorControllerTriggerParameter()
 {
 
 }
-bool CAnimatorControllerTriggerParameter::Launch()
-{
-	if (m_TriggerEnter)
-	{
-		m_TriggerEnter = false;
-		return true;
-	}
 
-	return false;
-}
-
-void CAnimatorControllerTriggerParameter::TriggerEnter()
-{
-	m_TriggerEnter = true;
-}
 
 

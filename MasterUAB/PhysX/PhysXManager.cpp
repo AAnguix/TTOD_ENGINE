@@ -364,6 +364,8 @@ physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(std::vector<Vect3f> Ve
 	physx::PxDefaultMemoryOutputStream l_Buffer;
 	bool success = m_Cooking->cookTriangleMesh(l_TriangleDesc, l_Buffer);
 	assert(success);
+	//WriteCookingDataToFile("cocinando", l_Buffer);
+
 	physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
 	physx::PxTriangleMesh* l_TriangleMesh = m_PhysX->createTriangleMesh(l_Input);
 
@@ -729,7 +731,54 @@ void CPhysXManager::Reload()
 }
 
 
+void CPhysXManager::WriteCookingDataToFile(const std::string &FileName, physx::PxDefaultMemoryOutputStream &Data)
+{
+	FILE *l_File;
+	errno_t l_Error;
+	l_Error = fopen_s(&l_File, FileName.c_str(), "wb");
+
+	fwrite(Data.getData(), sizeof(Data.getSize()), 1, l_File);
+	
+	fclose(l_File);
+
+	/*physx::PxSerializationRegistry* registry;                        
+
+	physx::PxDefaultFileInputData inputData(pathTo30RepXFile);       
+	physx::PxCollection* collection =
+	physx::PxSerialization::createCollectionFromXml(inputData, *cooking, *registry);
+
+	physx::PxDefaultFileOutputStream outStream(pathToNewRepXFile);
+	physx::PxSerialization::serializeCollectionToXml(outStream, *collection, *registry);*/
+	
+	
+	
+	//physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
 
 
+	//physx::PxSerializationRegistry* registry = physx::PxSerialization::createSerializationRegistry(PxGetPhysics());
 
+	//physx::PxCollection* collection = PxCreateCollection();
+	//collection->adadd(Data);
+	//physx::PxSerialization::complete(*collection, *registry);
+
+	//// Serialize either to binary or RepX
+	//physx::PxDefaultFileOutputStream outStream("serialized.dat");
+
+	//// Binary
+	//physx::PxSerialization::serializeCollectionToBinary(outStream, *collection, *registry);
+	////~Binary
+
+}
+
+//physx::PxDefaultMemoryOutputStream CPhysXManager::ReadCookingDataFromFile(const std::string &FileName)
+//{
+//	FILE *l_File;
+//	errno_t l_Error;
+//	l_Error = fopen_s(&l_File, FileName.c_str(), "rb");
+//
+//	physx::PxDefaultMemoryOutputStream l_Buffer;
+//	fread(&l_Buffer, sizeof(), 1, l_File);
+//}
+//
+//
 

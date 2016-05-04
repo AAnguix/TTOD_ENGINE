@@ -14,6 +14,7 @@
     <ClInclude Include="Animation\AnimatedCoreModel.h" />
     <ClInclude Include="Animation\AnimatedInstanceModel.h" />
     <ClInclude Include="Animation\AnimatedModelManager.h" />
+    <ClInclude Include="Animation\Animation.h" />
     <ClInclude Include="Animation\AnimatorController.h" />
     <ClInclude Include="Animation\AnimatorControllerBoolParameter.h" />
     <ClInclude Include="Animation\AnimatorControllerFloatParameter.h" />
@@ -24,6 +25,7 @@
     <ClInclude Include="Animation\AnimatorControllerTriggerParameter.h" />
     <ClInclude Include="Animation\State.h" />
     <ClInclude Include="Animation\tick.h" />
+    <ClInclude Include="Animation\Transition.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Camera\CameraController.h" />
     <ClInclude Include="Camera\CameraControllerManager.h" />
@@ -69,20 +71,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="RenderableObjects\Armor.h" />
-    <ClInclude Include="RenderableObjects\BasicEnemy.h" />
-    <ClInclude Include="RenderableObjects\BruteEnemy.h" />
-    <ClInclude Include="RenderableObjects\DamageReduction.h" />
-    <ClInclude Include="RenderableObjects\Enemy.h" />
     <ClInclude Include="RenderableObjects\LayerManager.h" />
     <ClInclude Include="RenderableObjects\PoolRenderableObjectTechnique.h" />
     <ClInclude Include="RenderableObjects\MeshInstance.h" />
-    <ClInclude Include="RenderableObjects\RangedEnemy.h" />
     <ClInclude Include="RenderableObjects\RenderableObject.h" />
     <ClInclude Include="RenderableObjects\RenderableObjectsManager.h" />
     <ClInclude Include="RenderableObjects\RenderableObjectTechnique.h" />
     <ClInclude Include="RenderableObjects\RenderableObjectTechniqueManager.h" />
-    <ClInclude Include="RenderableObjects\Weapon.h" />
     <ClInclude Include="Render\ContextManager.h" />
     <ClInclude Include="Render\DebugRender.h" />
     <ClInclude Include="Render\Frustum.h" />
@@ -134,6 +129,7 @@
     <ClCompile Include="Animation\AnimatorControllerTriggerParameter.cpp" />
     <ClCompile Include="Animation\State.cpp" />
     <ClCompile Include="Animation\tick.cpp" />
+    <ClCompile Include="Animation\Transition.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Camera\CameraController.cpp" />
     <ClCompile Include="Camera\CameraControllerManager.cpp" />
@@ -174,20 +170,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="RenderableObjects\Armor.cpp" />
-    <ClCompile Include="RenderableObjects\BasicEnemy.cpp" />
-    <ClCompile Include="RenderableObjects\BruteEnemy.cpp" />
-    <ClCompile Include="RenderableObjects\DamageReduction.cpp" />
-    <ClCompile Include="RenderableObjects\Enemy.cpp" />
     <ClCompile Include="RenderableObjects\LayerManager.cpp" />
     <ClCompile Include="RenderableObjects\PoolRenderableObjectTechnique.cpp" />
     <ClCompile Include="RenderableObjects\MeshInstance.cpp" />
-    <ClCompile Include="RenderableObjects\RangedEnemy.cpp" />
     <ClCompile Include="RenderableObjects\RenderableObject.cpp" />
     <ClCompile Include="RenderableObjects\RenderableObjectsManager.cpp" />
     <ClCompile Include="RenderableObjects\RenderableObjectTechnique.cpp" />
     <ClCompile Include="RenderableObjects\RenderableObjectTechniqueManager.cpp" />
-    <ClCompile Include="RenderableObjects\Weapon.cpp" />
     <ClCompile Include="Render\ContextManager.cpp" />
     <ClCompile Include="Render\DebugRender.cpp" />
     <ClCompile Include="Render\Frustum.cpp" />
@@ -276,7 +265,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\include;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\include;$(SolutionDir)\3rdParty;$(SolutionDir)Core;$(SolutionDir)Base\Utils;$(SolutionDir)Graphics;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)PhysX;$(SolutionDir)GUI;$(SolutionDir)\3rdParty\DirectXTK\Inc;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)\3rdParty\luabind</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\include;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\include;$(SolutionDir)\3rdParty;$(SolutionDir)Core;$(SolutionDir)Base\Utils;$(SolutionDir)Graphics;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)PhysX;$(SolutionDir)GUI;$(SolutionDir)\3rdParty\DirectXTK\Inc;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\bin\Game</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
@@ -293,7 +282,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\include;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\include;$(SolutionDir)\3rdParty;$(SolutionDir)Core;$(SolutionDir)Base\Utils;$(SolutionDir)Graphics;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)PhysX;$(SolutionDir)GUI;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)\3rdParty\luabind</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\include;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\include;$(SolutionDir)\3rdParty;$(SolutionDir)Core;$(SolutionDir)Base\Utils;$(SolutionDir)Graphics;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)PhysX;$(SolutionDir)GUI;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\bin\Game</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

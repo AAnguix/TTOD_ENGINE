@@ -253,24 +253,6 @@
     <ClInclude Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableObjects\Enemy.h">
-      <Filter>RenderableObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableObjects\Armor.h">
-      <Filter>RenderableObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableObjects\Weapon.h">
-      <Filter>RenderableObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableObjects\DamageReduction.h">
-      <Filter>RenderableObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableObjects\BasicEnemy.h">
-      <Filter>RenderableObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableObjects\BruteEnemy.h">
-      <Filter>RenderableObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Animation\AnimatorController.h">
       <Filter>Animation</Filter>
     </ClInclude>
@@ -292,8 +274,11 @@
     <ClInclude Include="Animation\AnimatorControllerTriggerParameter.h">
       <Filter>Animation</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableObjects\RangedEnemy.h">
-      <Filter>RenderableObjects</Filter>
+    <ClInclude Include="Animation\Transition.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Animation.h">
+      <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -534,24 +519,6 @@
     <ClCompile Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.cpp">
       <Filter>SceneRendererCommands</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableObjects\Enemy.cpp">
-      <Filter>RenderableObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableObjects\Armor.cpp">
-      <Filter>RenderableObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableObjects\Weapon.cpp">
-      <Filter>RenderableObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableObjects\DamageReduction.cpp">
-      <Filter>RenderableObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableObjects\BasicEnemy.cpp">
-      <Filter>RenderableObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableObjects\BruteEnemy.cpp">
-      <Filter>RenderableObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Animation\AnimatorController.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
@@ -570,8 +537,8 @@
     <ClCompile Include="Animation\AnimatorControllerTriggerParameter.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableObjects\RangedEnemy.cpp">
-      <Filter>RenderableObjects</Filter>
+    <ClCompile Include="Animation\Transition.cpp">
+      <Filter>Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

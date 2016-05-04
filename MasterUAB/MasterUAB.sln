@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{BB47EFCD-C73D-4442-B00F-B801520EDBCE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{128B05C8-768F-4504-A0E8-1FC426D30D73}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{124440ED-9FE0-46D9-8260-EFE57E44CED6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj", "{77B0C728-54BB-429B-925A-3F8CB72784F9}"
@@ -23,7 +21,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysX", "PhysX\PhysX.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sound", "Sound\Sound.vcxproj", "{4B6544F4-2FDB-40B7-9BF0-7CD6ECE063A0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VideogameTest", "VideogameTest\VideogameTest.vcxproj", "{592AE8B7-2809-4245-AD53-A8F8299B7CD2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{592AE8B7-2809-4245-AD53-A8F8299B7CD2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{69430B34-6C84-44A0-896C-24E980D9B718} = {69430B34-6C84-44A0-896C-24E980D9B718}
 	EndProjectSection

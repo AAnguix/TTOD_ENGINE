@@ -12,7 +12,7 @@ private:
 	CStaticMesh *m_StaticMesh;  
 
 public:   
-	CMeshInstance(const std::string &Name, const std::string &CoreName);   
+	CMeshInstance(const std::string &Name, const std::string &CoreName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	CMeshInstance(CXMLTreeNode &TreeNode);   
 	~CMeshInstance();  
 	void Render(CRenderManager* RenderManager); 

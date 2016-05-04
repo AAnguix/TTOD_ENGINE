@@ -52,13 +52,13 @@ m_Scale(v3fZERO)
 }
 
 C3DElement::C3DElement(const CXMLTreeNode &XMLTreeNode):
-m_Position(XMLTreeNode.GetVect3fProperty("pos", v3fZERO)),
-m_PrevPos(v3fZERO),
-m_Yaw(XMLTreeNode.GetFloatProperty("yaw", 0.0f)),
-m_Pitch(XMLTreeNode.GetFloatProperty("pitch", 0.0f)),
-m_Roll(XMLTreeNode.GetFloatProperty("roll", 0.0f)),
-m_Scale(XMLTreeNode.GetVect3fProperty("scale", 1.0f)),
-m_Visible(XMLTreeNode.GetBoolProperty("visible", true))
+m_Position(XMLTreeNode.GetVect3fProperty("pos", v3fZERO))
+,m_PrevPos(v3fZERO)
+,m_Yaw(XMLTreeNode.GetFloatProperty("yaw", 0.0f))
+,m_Pitch(XMLTreeNode.GetFloatProperty("pitch", 0.0f))
+,m_Roll(XMLTreeNode.GetFloatProperty("roll", 0.0f))
+,m_Scale(XMLTreeNode.GetVect3fProperty("scale", 1.0f))
+,m_Visible(XMLTreeNode.GetBoolProperty("visible", true))
 {
 } 
 

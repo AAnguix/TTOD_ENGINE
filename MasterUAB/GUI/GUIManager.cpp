@@ -701,6 +701,19 @@ void CGUIManager::DoHealthBar(const std::string& GuiID, const std::string& Healt
 	}
 }
 
+void CGUIManager::DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text)
+{
+	CheckInput();
+	SSpriteInfo* l_Sprite = GetSprite(Sprite);
+
+	SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
+	, 0, 0, 1, 1,
+	CColor(1.0f, 1.0f, 1.0f, 1.0f) };
+	m_Commands.push_back(l_Command);
+
+	FillCommandQueueWithText(Font, Text, Vect2f(Position.x + Position.width * 0.05f, Position.y + Position.height * 0.75f), GUIAnchor::BASE_LEFT);
+}
+
 std::string CGUIManager::DoTextBox(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& CurrentText, float ElapsedTime)
 {
 	CheckInput();

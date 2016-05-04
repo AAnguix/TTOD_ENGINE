@@ -1,10 +1,9 @@
 #include "Animation\AnimatorControllerBoolParameter.h"
 
 
-CAnimatorControllerBoolParameter::CAnimatorControllerBoolParameter(const std::string &Name, const bool &LaunchValue)
+CAnimatorControllerBoolParameter::CAnimatorControllerBoolParameter(const std::string &Name, const bool &Value)
 :CAnimatorControllerParameter(Name)
-,m_LaunchValue(LaunchValue)
-,m_CurrentValue(0)
+,m_Value(Value)
 {
 
 }
@@ -12,17 +11,17 @@ CAnimatorControllerBoolParameter::~CAnimatorControllerBoolParameter()
 {
 
 }
-bool CAnimatorControllerBoolParameter::Launch()
-{
-	if (m_CurrentValue == m_LaunchValue)
-			return true;	
+//bool CAnimatorControllerBoolParameter::Launch()
+//{
+//	/*if (m_CurrentValue == m_LaunchValue)
+//			return true;	
+//
+//	return false;*/
+//}
 
-	return false;
-}
-
-void CAnimatorControllerBoolParameter::UpdateParameter(const bool &CurrentValue)
+void CAnimatorControllerBoolParameter::UpdateParameter(const bool &Value)
 {
-	m_CurrentValue = CurrentValue;
+	m_Value = Value;
 }
 
 

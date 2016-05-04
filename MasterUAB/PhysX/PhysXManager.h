@@ -29,6 +29,8 @@ namespace physx
 	class PxConvexMesh;
 	class PxTriangleMesh;
 
+	class PxDefaultMemoryOutputStream;
+
 	namespace debugger
 	{
 		namespace comm
@@ -78,6 +80,9 @@ protected:
 
 	physx::PxConvexMesh*  CreateConvexMesh(std::vector<Vect3f> Vertices);
 	physx::PxTriangleMesh*  CreateTriangleMesh(std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices);
+
+	void WriteCookingDataToFile(const std::string &FileName, physx::PxDefaultMemoryOutputStream &Data);
+	/*physx::PxDefaultMemoryOutputStream ReadCookingDataFromFile(const std::string &FileName);*/
 
 public:
 	struct SRaycastData

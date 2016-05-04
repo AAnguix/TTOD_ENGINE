@@ -9,15 +9,21 @@ class CLayerManager : public CTemplatedVectorMapManager<CRenderableObjectsManage
 
 private:  
 	std::string m_Filename;  
-	CRenderableObjectsManager     *m_DefaultLayer;  
+	CRenderableObjectsManager *m_DefaultLayer;  
 	CAnimatedInstanceModel* m_Player;
 
-	CRenderableObjectsManager * GetLayer(CXMLTreeNode &Node);  
-	CRenderableObjectsManager * AddLayer(CXMLTreeNode &TreeNode); 
+	CRenderableObjectsManager* GetLayer(CXMLTreeNode &Node);
+	CRenderableObjectsManager* AddLayer(CXMLTreeNode &TreeNode); 
+
+	bool AddElementToLayer(const std::string &Layer, CRenderableObject* RenderableObject);
 
 public:  
 	CLayerManager();  
 	virtual ~CLayerManager();  
+
+	CRenderableObject* AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
+	CRenderableObject* AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
+
 	//void Destroy();  
 	void Load(const std::string &Filename);  
 	void Reload();  

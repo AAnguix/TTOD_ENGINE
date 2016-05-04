@@ -1,10 +1,20 @@
 #include "RenderableObject.h"
 #include "Components\ComponentManager.h"
 #include "Components\Component.h"
+#include <string>
 
-CRenderableObject::CRenderableObject() : CNamed("")
+CRenderableObject::CRenderableObject(const CXMLTreeNode &XMLTreeNode) 
+:CNamed(XMLTreeNode)
+,C3DElement(XMLTreeNode)
 {
 	m_ComponentManager= new CComponentManager();
+}
+
+CRenderableObject::CRenderableObject(const std::string &Name, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+:CNamed(Name)
+,C3DElement(Position,Yaw,Pitch,Roll)
+{
+
 }
 
 CRenderableObject::~CRenderableObject()

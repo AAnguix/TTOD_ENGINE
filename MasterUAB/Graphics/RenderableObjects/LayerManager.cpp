@@ -1,8 +1,15 @@
 #include "LayerManager.h"
+#include "Player\Player.h"
+#include "Enemies\BasicEnemy.h"
+#include "Enemies\RangedEnemy.h"
+#include "Enemies\BruteEnemy.h"
 #include "RenderableObjects\MeshInstance.h"
 #include "Animation\AnimatedInstanceModel.h"
+
 #include "Cinematics\Cinematic.h"
 #include "Particles\ParticleSystemInstance.h"
+#include "Animation\AnimatedModelManager.h"
+#include "Engine.h"
 
 CRenderableObjectsManager* CLayerManager::GetLayer(CXMLTreeNode &Node)
 {
@@ -38,6 +45,31 @@ CLayerManager::~CLayerManager()
 {
 	
 }
+
+CRenderableObject * CLayerManager::AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+{
+	CMeshInstance *l_MeshInstance = nullptr;
+	l_MeshInstance = new CMeshInstance(InstanceMeshName, CoreMeshName, Position, Yaw, Pitch, Roll);
+	
+	if(AddElementToLayer(Layer, l_MeshInstance))
+		return l_MeshInstance;
+	return nullptr;
+}
+
+CRenderableObject * CLayerManager::AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+{
+	CAnimatedInstanceModel *l_AnimatedInstanceModel;
+	l_AnimatedInstanceModel = new CAnimatedInstanceModel(InstanceModelName, CoreModelName,Position,Yaw,Pitch,Roll);
+
+	if (AddElementToLayer(Layer, l_AnimatedInstanceModel))
+	{
+		l_AnimatedInstanceModel->Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(CoreModelName));
+		return l_AnimatedInstanceModel;
+	}
+	return nullptr;
+}
+
+
 /*
 void CLayerManager::Destroy()
 {
@@ -134,6 +166,35 @@ void CLayerManager::Load(const std::string &Filename)
 						CHECKED_DELETE(l_ParticleSystemInstance);
 					}
 				}
+				else if (l_Element.GetName() == std::string("enemy"))
+				{
+					std::string l_EnemyType = l_Element.GetPszProperty("enemy_type");
+					std::string l_Layer = l_Element.GetPszProperty("layer");
+					CEnemy* l_Enemy = nullptr;
+
+					if (l_EnemyType == "basic_enemy")
+					{
+						l_Enemy = new CBasicEnemy(l_Element);
+					}
+					else if (l_EnemyType == "rangued_enemy")
+					{
+						l_Enemy = new CRangedEnemy(l_Element);
+					}
+					else if (l_EnemyType == "brute_enemy")
+					{
+						l_Enemy = new CBruteEnemy(l_Element);
+					}
+
+					AddElementToLayer(l_Layer, l_Enemy);
+				}
+				else if (l_Element.GetName() == std::string("player"))
+				{
+					CPlayer* l_Player = new CPlayer(l_Element);
+					std::string l_Layer = l_Element.GetPszProperty("layer");
+
+					if (AddElementToLayer(l_Layer, l_Player))
+						m_Player = l_Player;
+				}
 			}
 		}
 	}
@@ -171,4 +232,22 @@ void CLayerManager::Render(CRenderManager &RenderManager, const std::string &Lay
 CAnimatedInstanceModel* CLayerManager::GetPlayer() const
 {
 	return m_Player;
+}
+
+bool CLayerManager::AddElementToLayer(const std::string &Layer, CRenderableObject* RenderableObject)
+{
+	CRenderableObjectsManager* l_Layer = GetResource(Layer);
+
+	if (!l_Layer)
+	{
+		l_Layer = m_DefaultLayer;
+	}
+
+	if (!l_Layer->AddResource(RenderableObject->GetName(), RenderableObject))
+	{
+		CHECKED_DELETE(RenderableObject);
+		return false;
+	}
+
+	return true;
 }

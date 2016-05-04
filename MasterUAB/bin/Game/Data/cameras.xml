@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<cameras> 
+	<third_person_camera name="ThirdPersonCamera" position="0.0 0.0 0.0" /> <!-- look_at="0.0 1.0 0.0" fov="1.0470001" aspect="1.77778" near="0.5" far="200.0" yaw="0.0" -->
+	<fixed_camera name="FixedCamera" default="true" position="0.0 0.0 -25.0" look_at="0.0 1.0 0.0"  /> <!-- look_at="0.0 1.0 0.0" fov="1.0470001" aspect="1.77778" near="0.5" far="200.0" yaw="0.0" -->
+	<key_camera name="Camera001" filename="Data/Cameras/Camera01.xml"/>
+</cameras>

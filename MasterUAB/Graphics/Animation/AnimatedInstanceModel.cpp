@@ -13,154 +13,39 @@
 
 #include "Vertex\VertexTypes.h"
 #include "Engine.h"
-#include "Materials\MaterialManager.h"
+
 #include "Animation\AnimatedModelManager.h"
 #include "Animation\tick.h"
 #include "Textures\TextureManager.h"
 
 #include "RenderableObjects\RenderableObjectTechnique.h"
 
-#include "PhysXManager.h"
+
 #include "Components\ComponentManager.h"
-#include "Components\PhysxComponent.h"
 
-bool CAnimatedInstanceModel::LoadVertexBuffer()
+CAnimatedInstanceModel::CAnimatedInstanceModel(const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+:CRenderableObject(Name, Position, Yaw, Pitch, Roll)
+,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL)
+,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
+,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
+,m_bPaused(false), m_blendTime(0.3f)
 {
-	m_NumVertices=0;
-	m_NumFaces=0;
-
-	CalCoreModel *l_CalCoreModel=m_AnimatedCoreModel->GetCoreModel();
-	for(int i=0; i<l_CalCoreModel->getCoreMeshCount(); ++i)
-	{
-		CalCoreMesh *l_CalCoreMesh=l_CalCoreModel->getCoreMesh(i);
-		for(int j=0; j<l_CalCoreMesh->getCoreSubmeshCount(); ++j)
-		{
-			CalCoreSubmesh *l_CalCoreSubmesh=l_CalCoreMesh->getCoreSubmesh(j);
-			m_NumVertices+=l_CalCoreSubmesh->getVertexCount();
-			m_NumFaces+=l_CalCoreSubmesh->getFaceCount();
-		}
-	}
-
-	MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*l_Vertexs=(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*)malloc(m_NumFaces*3*sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	CalIndex *l_Faces=(CalIndex *)malloc(m_NumFaces*3*sizeof(CalIndex));
-	m_CalHardwareModel->setVertexBuffer((char*)l_Vertexs,sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setWeightBuffer(((char*)l_Vertexs) + 12,sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setMatrixIndexBuffer(((char*)l_Vertexs) + 28,sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setNormalBuffer(((char*)l_Vertexs)+44,sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setTextureCoordNum(1);
-	m_CalHardwareModel->setTextureCoordBuffer(0,((char*)l_Vertexs)+56,sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setIndexBuffer(l_Faces);
-	m_CalHardwareModel->load( 0, 0, MAXBONES);
-	m_NumFaces=m_CalHardwareModel->getTotalFaceCount();
-	m_NumVertices=m_CalHardwareModel->getTotalVertexCount();
-	
-	if(sizeof(CalIndex)==2)
-		m_RenderableVertexs=new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces*3, false);
-	else
-		m_RenderableVertexs=new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces*3, false);
-	
-	free(l_Vertexs);
-	free(l_Faces);
-
-	return true;
+	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(ModelName));
 }
 
-void CAnimatedInstanceModel::LoadMaterials()
+CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
+:CRenderableObject(TreeNode)
+,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL)
+,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
+,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
+,m_bPaused(false), m_blendTime(0.3f)
 {
-	m_Materials = m_AnimatedCoreModel->GetMaterials();
-	/*int materialId;
-	for(materialId = 0; materialId < m_AnimatedCoreModel->GetCoreModel()->getCoreMaterialCount(); ++materialId)
-	{
-		CalCoreMaterial *pCoreMaterial;
-		pCoreMaterial =  m_AnimatedCoreModel->GetCoreModel()->getCoreMaterial(materialId);
-
-		int mapId;
-		for(mapId = 0; mapId < pCoreMaterial->getMapCount(); ++mapId)
-		{
-			//std::string strFilename;
-			//strFilename = pCoreMaterial->getMapFilename(mapId);
-			
-			CMaterial* l_Material = CEngine::GetSingleton().GetMaterialManager()->GetResource(pCoreMaterial->getName());
-			if(l_Material!=NULL)
-			{
-				m_Materials.push_back(l_Material);
-			}else
-			{
-				CHECKED_DELETE(l_Material)
-			}
-			//CTexture *l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(strFilename);
-			//m_Textures.push_back(l_Texture);
-			//CEngine::GetSingleton().GetMaterialManager()->AddResource("",new CMaterial());
-			
-			//LPDIRECT3DTEXTURE9 texture;
-			//texture = loadTexture(strFilename);
-			//pCoreMaterial->setMapUserData(mapId, (Cal::UserData)texture);
-		}
-	}
-
-	m_CalModel->setMaterialSet(0);*/
-}
-
-CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode) 
-:m_CalModel(NULL)
-,m_AnimatedCoreModel(NULL),m_CalHardwareModel(NULL),m_Materials(NULL),m_RenderableVertexs(NULL)
-,m_NumVertices(0),m_NumFaces(0),m_lastTick(0)
-,m_fpsDuration(0.0f),m_fpsFrames(0),m_fps(0)
-,m_bPaused(false),m_blendTime(0.3f)
-{
-	/*m_lastTick = 0;
-	m_fpsDuration = 0.0f;
-	m_fpsFrames = 0;
-	m_fps = 0;
-	m_bPaused = false;
-	m_blendTime = 0.3f;*/
-
-	/*m_Name = TreeNode.GetPszProperty("name");
-	
-	m_Position = TreeNode.GetVect3fProperty("pos",v3fZERO);
-	m_Yaw = TreeNode.GetFloatProperty("yaw",0.0f);
-	m_Pitch = TreeNode.GetFloatProperty("pitch",0.0f);
-	m_Roll = TreeNode.GetFloatProperty("roll",0.0f);
-	m_Scale = TreeNode.GetFloatProperty("scale");
-	m_Visible = TreeNode.GetBoolProperty("visible",true);*/
-	
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(TreeNode.GetPszProperty("model_name")));
-
-	//if(TreeNode.GetBoolProperty("player"))
-	{
-		std::string l_ActorType = TreeNode.GetPszProperty("actor_type", "");
-
-		if (TreeNode.GetBoolProperty("player"))
-		{
-			CPhysxComponent::CreatePhysxComponent("Physyx", this, true);
-			std::string l_MaterialName = m_AnimatedCoreModel->GetMaterials()[0]->GetName();
-			/*TODO Obtener propiedades del material*/
-			CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, 0.1f, 0.1f, 0.1f);
-			Vect3f l_CControlerPos(m_Position.x, m_Position.y, m_Position.z);
-
-			//CalBoundingBox Height = m_CalModel->getBoundingBox(false); 
-
-			CEngine::GetSingleton().GetPhysXManager()->CreateCharacterController(m_Name, CCONTROLLER_HEIGHT, 0.3f, 30.0f, l_CControlerPos, l_MaterialName);
-		}
-	}
 }
 
-CAnimatedInstanceModel::CAnimatedInstanceModel(const std::string &Name):
-m_CalModel(NULL),
-m_AnimatedCoreModel(NULL),
-m_CalHardwareModel(NULL),
-m_Materials(NULL),
-m_RenderableVertexs(NULL),
-m_NumVertices(0),
-m_NumFaces(0)
+CAnimatorController* CAnimatedInstanceModel::GetAnimatorController() const
 {
-	SetName(Name);
-	m_lastTick = 0;
-	m_fpsDuration = 0.0f;
-	m_fpsFrames = 0;
-	m_fps = 0;
-	m_bPaused = false;
-	m_blendTime = 0.3f;
+	return (CAnimatorController*)m_ComponentManager->GetResource("AnimatorController");
 }
 
 CAnimatedInstanceModel::~CAnimatedInstanceModel()
@@ -174,14 +59,12 @@ void CAnimatedInstanceModel::Destroy()
 	CHECKED_DELETE(m_CalModel);
 	CHECKED_DELETE(m_CalHardwareModel);
 	CHECKED_DELETE(m_RenderableVertexs);
-	CHECKED_DELETE(m_AnimatorController);
 }
 
 void CAnimatedInstanceModel::Initialize(CAnimatedCoreModel *AnimatedCoreModel)
 {
 	//onCreate
 	m_AnimatedCoreModel=AnimatedCoreModel;
-	m_AnimatorController = new CAnimatorController(this);
 
 	LoadMaterials();
 
@@ -231,7 +114,7 @@ void CAnimatedInstanceModel::Initialize(CAnimatedCoreModel *AnimatedCoreModel)
 
 	if (m_AnimatedCoreModel->GetCoreModel()->getCoreAnimationCount() > 1)
 	{
-		m_CalModel->getMixer()->blendCycle(m_currentAnimationId, 0.1f, 0.0f);
+		//m_CalModel->getMixer()->blendCycle(m_currentAnimationId, 0.1f, 0.0f);
 	}
 
 	m_CalModel->disableInternalData();
@@ -316,4 +199,81 @@ bool CAnimatedInstanceModel::IsActionAnimationActive(int Id) const
 		return true;
 
 	return false;
+}
+
+bool CAnimatedInstanceModel::LoadVertexBuffer()
+{
+	m_NumVertices = 0;
+	m_NumFaces = 0;
+
+	CalCoreModel *l_CalCoreModel = m_AnimatedCoreModel->GetCoreModel();
+	for (int i = 0; i<l_CalCoreModel->getCoreMeshCount(); ++i)
+	{
+		CalCoreMesh *l_CalCoreMesh = l_CalCoreModel->getCoreMesh(i);
+		for (int j = 0; j<l_CalCoreMesh->getCoreSubmeshCount(); ++j)
+		{
+			CalCoreSubmesh *l_CalCoreSubmesh = l_CalCoreMesh->getCoreSubmesh(j);
+			m_NumVertices += l_CalCoreSubmesh->getVertexCount();
+			m_NumFaces += l_CalCoreSubmesh->getFaceCount();
+		}
+	}
+
+	MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*l_Vertexs = (MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*)malloc(m_NumFaces * 3 * sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+	CalIndex *l_Faces = (CalIndex *)malloc(m_NumFaces * 3 * sizeof(CalIndex));
+	m_CalHardwareModel->setVertexBuffer((char*)l_Vertexs, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+	m_CalHardwareModel->setWeightBuffer(((char*)l_Vertexs) + 12, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+	m_CalHardwareModel->setMatrixIndexBuffer(((char*)l_Vertexs) + 28, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+	m_CalHardwareModel->setNormalBuffer(((char*)l_Vertexs) + 44, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+	m_CalHardwareModel->setTextureCoordNum(1);
+	m_CalHardwareModel->setTextureCoordBuffer(0, ((char*)l_Vertexs) + 56, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+	m_CalHardwareModel->setIndexBuffer(l_Faces);
+	m_CalHardwareModel->load(0, 0, MAXBONES);
+	m_NumFaces = m_CalHardwareModel->getTotalFaceCount();
+	m_NumVertices = m_CalHardwareModel->getTotalVertexCount();
+
+	if (sizeof(CalIndex) == 2)
+		m_RenderableVertexs = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
+	else
+		m_RenderableVertexs = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
+
+	free(l_Vertexs);
+	free(l_Faces);
+
+	return true;
+}
+
+void CAnimatedInstanceModel::LoadMaterials()
+{
+	m_Materials = m_AnimatedCoreModel->GetMaterials();
+	/*int materialId;
+	for(materialId = 0; materialId < m_AnimatedCoreModel->GetCoreModel()->getCoreMaterialCount(); ++materialId)
+	{
+	CalCoreMaterial *pCoreMaterial;
+	pCoreMaterial =  m_AnimatedCoreModel->GetCoreModel()->getCoreMaterial(materialId);
+
+	int mapId;
+	for(mapId = 0; mapId < pCoreMaterial->getMapCount(); ++mapId)
+	{
+	//std::string strFilename;
+	//strFilename = pCoreMaterial->getMapFilename(mapId);
+
+	CMaterial* l_Material = CEngine::GetSingleton().GetMaterialManager()->GetResource(pCoreMaterial->getName());
+	if(l_Material!=NULL)
+	{
+	m_Materials.push_back(l_Material);
+	}else
+	{
+	CHECKED_DELETE(l_Material)
+	}
+	//CTexture *l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(strFilename);
+	//m_Textures.push_back(l_Texture);
+	//CEngine::GetSingleton().GetMaterialManager()->AddResource("",new CMaterial());
+
+	//LPDIRECT3DTEXTURE9 texture;
+	//texture = loadTexture(strFilename);
+	//pCoreMaterial->setMapUserData(mapId, (Cal::UserData)texture);
+	}
+	}
+
+	m_CalModel->setMaterialSet(0);*/
 }

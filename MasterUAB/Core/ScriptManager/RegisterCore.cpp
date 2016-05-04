@@ -21,9 +21,12 @@
 #include "Animation\AnimatedModelManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "PhysXManager.h"
+
 #include "Components\ComponentManager.h"
-#include "Components\ScriptedComponent.h"
-#include "Components\PhysxComponent.h"
+#include "Components\Script.h"
+#include "Components\Collider.h"
+#include "Components\CharacterCollider.h"
+
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
 #include "ISoundManager.h"
@@ -110,21 +113,31 @@ void CScriptManager::RegisterCore()
 
 	module(LUA_STATE) 
 	[
-		class_<CScriptedComponent, CComponent>("CScriptedComponent")
+		class_<CScript, CComponent>("CScript")
 		.def(constructor<const std::string&,CRenderableObject*,const std::string&,const std::string&,const std::string&,const std::string&,const std::string&>())
 		.scope
 		[
-			def("CreateScriptedComponent", &CScriptedComponent::CreateScriptedComponent) 
+			def("AddScript", &CScript::AddScript) 
 		]
 	];
 	
 	module(LUA_STATE) 
 	[
-		class_<CPhysxComponent, CComponent>("CPhysxComponent")
-		.def(constructor<const std::string&,CRenderableObject*,bool>())
+		class_<CCollider, CComponent>("CCollider")
+		.def(constructor<const std::string&,CRenderableObject*>())
 		.scope
 		[
-			def("CreatePhysxComponent", &CPhysxComponent::CreatePhysxComponent) 
+			def("AddCollider", &CCollider::AddCollider) 
+		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CCharacterCollider, CComponent>("CCharacterCollider")
+		.def(constructor<const std::string&, CRenderableObject*>())
+		.scope
+		[
+			def("AddCharacterCollider", &CCharacterCollider::AddCharacterCollider)
 		]
 	];
 

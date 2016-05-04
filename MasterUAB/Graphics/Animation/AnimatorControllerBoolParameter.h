@@ -6,16 +6,16 @@
 
 class CAnimatorControllerBoolParameter : CAnimatorControllerParameter
 {
+public:
+	bool GetValue() const{ return m_Value; };
 
 private:
-	bool m_CurrentValue;
-	bool m_LaunchValue;
+	bool m_Value;
 
 public:
-	CAnimatorControllerBoolParameter(const std::string &Name, const bool &LaunchValue);
+	CAnimatorControllerBoolParameter(const std::string &Name, const bool &Value);
 	virtual ~CAnimatorControllerBoolParameter();
-	void UpdateParameter(const bool &CurrentValue);
-	bool Launch();
+	void UpdateParameter(const bool &Value);
 };
 
 #endif

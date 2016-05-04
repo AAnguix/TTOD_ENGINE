@@ -7,24 +7,17 @@
 class CAnimatorControllerIntegerParameter : CAnimatorControllerParameter
 {
 public:
-	enum EIntegerCondition
-	{
-		GREATER = 0,
-		LESS,
-		EQUALS,
-		NOT_EQUAL
-	};
+	int GetValue() const{ return m_Value; };
 
 private:
-	int m_CurrentValue;
-	int m_LaunchValue;
-	EIntegerCondition m_Condition;
+	int m_Value;
+	/*int m_LaunchValue;
+	EIntegerCondition m_Condition;*/
 
 public:
-	CAnimatorControllerIntegerParameter(const std::string &Name, const int &LaunchValue, EIntegerCondition Condition);
+	CAnimatorControllerIntegerParameter(const std::string &Name, const int &Value);
 	virtual ~CAnimatorControllerIntegerParameter();
-	void UpdateParameter(const int &CurrentValue);
-	bool Launch();
+	void UpdateParameter(const int &Value);
 };
 
 #endif

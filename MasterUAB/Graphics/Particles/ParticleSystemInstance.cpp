@@ -10,12 +10,12 @@
 
 #define s_epsilon std::pow(1.0f,-10)
 
-CParticleSystemInstance::CParticleSystemInstance(CXMLTreeNode &TreeNode) : 
-CRenderableObject()
-, m_ActiveParticles(0), m_RandomEngine(rnd()), m_UnitDistribution(0.0f,1.0f)
-, m_NextParticleEmission(0.0f), m_Awake(false), m_AwakeTimer(0.0f)
-, m_Type(CEngine::GetSingleton().GetParticleSystemManager()->GetResource(TreeNode.GetPszProperty("type")))
-, m_EmissionBoxHalfSize(TreeNode.GetVect3fProperty("emission_box_size", Vect3f(1, 1, 1))*0.5f)
+CParticleSystemInstance::CParticleSystemInstance(CXMLTreeNode &TreeNode) 
+:CRenderableObject(TreeNode)
+,m_ActiveParticles(0), m_RandomEngine(rnd()), m_UnitDistribution(0.0f,1.0f)
+,m_NextParticleEmission(0.0f), m_Awake(false), m_AwakeTimer(0.0f)
+,m_Type(CEngine::GetSingleton().GetParticleSystemManager()->GetResource(TreeNode.GetPszProperty("type")))
+,m_EmissionBoxHalfSize(TreeNode.GetVect3fProperty("emission_box_size", Vect3f(1, 1, 1))*0.5f)
 {
 	assert(m_Type != nullptr);
 	m_EmissionVolume = m_EmissionBoxHalfSize.x * m_EmissionBoxHalfSize.y * m_EmissionBoxHalfSize.z * 8;

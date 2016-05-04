@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<gui_elements>
+	<gui_spritemap name="player_health_bar" width="512" height="256" material="healthBar_material">
+		<sprite name="player_health_bar_background" x="0" y="0" w="512" h="128" />
+		<sprite name="player_health_bar_top" x="0" y="128" w="512" h="64" />
+		<sprite name="player_health_bar_base" x="0" y="192" w="512" h="64" />
+	</gui_spritemap>
+	<gui_spritemap name="health_potion" width="512" height="512" material="health_potion_material">
+		<sprite name="health_potion_normal" x="0" y="0" w="512" h="512" />
+		<sprite name="health_potion_highlight" x="0" y="0" w="512" h="512" />
+		<sprite name="health_potion_pressed" x="0" y="0" w="512" h="512" />
+	</gui_spritemap>
+</gui_elements>

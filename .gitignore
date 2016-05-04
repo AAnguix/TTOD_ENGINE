@@ -3,20 +3,26 @@
 MasterUAB/bin/Intermediate/
 MasterUAB/bin/lib/
 
-MasterUAB/bin/VideogameTest/*
-!MasterUAB/bin/VideogameTest/Data
-MasterUAB/bin/VideogameTest/Data/*
-!MasterUAB/bin/VideogameTest/Data/Scripting
-!MasterUAB/bin/VideogameTest/Data/Effects
-!MasterUAB/bin/VideogameTest/Data/basic_scene_renderer_commands.xml
-!MasterUAB/bin/VideogameTest/Data/scene_renderer_commands.xml
-!MasterUAB/bin/VideogameTest/Data/renderable_objects_techniques.xml
-!MasterUAB/bin/VideogameTest/Data/Input.xml
-!MasterUAB/bin/VideogameTest/Data/Effects.xml
-!MasterUAB/bin/VideogameTest/Data/GUI.xml
+MasterUAB/bin/Game/*
+!MasterUAB/bin/Game/Data
+MasterUAB/bin/Game/Data/*
+!MasterUAB/bin/Game/Data/Scripting
+!MasterUAB/bin/Game/Data/Effects
+!MasterUAB/bin/Game/Data/basic_scene_renderer_commands.xml
+!MasterUAB/bin/Game/Data/scene_renderer_commands.xml
+!MasterUAB/bin/Game/Data/renderable_objects_techniques.xml
+!MasterUAB/bin/Game/Data/input.xml
+!MasterUAB/bin/Game/Data/effects.xml
+!MasterUAB/bin/Game/Data/effects_materials.xml
+!MasterUAB/bin/Game/Data/cameras.xml
+!MasterUAB/bin/Game/Data/start_screen_camera.xml
+
+!MasterUAB/bin/Game/Data/gui_start_screen.xml
+!MasterUAB/bin/Game/Data/gui_in_game.xml
+!MasterUAB/bin/Game/Data/gui_materials.xml
 
 MasterUAB/ipch/
-MasterUAB/VideogameTest/debug32
+MasterUAB/Game/debug32
 
 # Other files
 *.pdb

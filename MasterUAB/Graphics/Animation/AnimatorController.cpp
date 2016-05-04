@@ -1,13 +1,50 @@
 #include "AnimatorController.h"
 #include "Animation\AnimatorControllerTriggerParameter.h"
 #include "Animation\AnimatorControllerBoolParameter.h"
-#include "RenderableObjects\RenderableObject.h"
+#include "Animation\AnimatedInstanceModel.h"
+#include "Animation\Animation.h"
 
-CAnimatorController::CAnimatorController(CRenderableObject* Owner)
+CAnimatorController* CAnimatorController::AddAnimatorController(const std::string &Name, CAnimatedInstanceModel *Owner)
 {
-	m_PreviousState = nullptr;
-	m_CurrentState = nullptr;
-	m_Owner = Owner;
+	CAnimatorController* l_AnimatorController = new CAnimatorController(Name, Owner);
+
+	if (!Owner->AddComponent(l_AnimatorController))
+	{
+		if (l_AnimatorController != NULL) 
+			delete(l_AnimatorController); 
+		l_AnimatorController = NULL;
+	}
+
+	return l_AnimatorController;
+}
+
+CAnimatorController::CAnimatorController(const std::string &Name, CAnimatedInstanceModel* Owner)
+:CComponent(Name,Owner)
+,m_PreviousState(nullptr)
+,m_CurrentState(nullptr)
+{
+}
+
+CState* CAnimatorController::GetState(const std::string &Name)
+{
+	std::map<const std::string, CState*>::iterator it;
+
+	it = m_States.find(Name);
+	if (it == m_States.end())
+		return nullptr;
+	else
+		return it->second;
+}
+
+CAnimatorControllerParameter* CAnimatorController::GetParameter(const std::string &Name)
+{
+	std::map<const std::string, CAnimatorControllerParameter*>::iterator it;
+
+	it = m_Parameters.find(Name);
+	if (it == m_Parameters.end())
+		return nullptr;
+	else
+		return it->second;
 }
 
 CAnimatorController::~CAnimatorController()
@@ -31,12 +68,23 @@ CAnimatorController::~CAnimatorController()
 	m_Parameters.clear();
 }
 
-CRenderableObject* CAnimatorController::GetOwner() const
+void CAnimatorController::Update(float ElapsedTime)
 {
-	return m_Owner;
+	m_CurrentState->OnUpdate(ElapsedTime);
 }
 
-bool CAnimatorController::AddState(const std::string &Name, const std::string &Animation, const float &Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
+void CAnimatorController::Render(CRenderManager &RenderManager)
+{
+
+}
+
+void CAnimatorController::RenderDebug(CRenderManager &RenderManager)
+{
+
+}
+
+
+CState* CAnimatorController::AddState(const std::string &Name, const std::string &Animation, const float &Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
 {
 	std::map<const std::string, CState*>::iterator itMap;
 
@@ -44,21 +92,23 @@ bool CAnimatorController::AddState(const std::string &Name, const std::string &A
 
 	if (itMap != m_States.end())
 	{
-		return false;
+		return nullptr;
 	}
 	else
-	{
-		CState* l_State = new CState(this,Name, Animation, Speed, OnEnter, OnUpdate, OnExit);
+	{	
+	 	EAnimation l_Animation = ((CAnimatedInstanceModel*)m_Owner)->m_AnimatedCoreModel->GetAnimation(Animation);
+
+		CState* l_State = new CState(this, Name, l_Animation, Speed, OnEnter, OnUpdate, OnExit);
 
 		m_States.insert(std::pair<const std::string, CState*>(Name, l_State));
 		
 		if (m_CurrentState == nullptr)
 		{
 			m_CurrentState = l_State;
-			m_CurrentState->OnEnter();
+			m_CurrentState->OnEnter(nullptr);
 		}
 		
-		return true;
+		return l_State;
 	}
 }
 bool CAnimatorController::SearchParameter(const std::string &Name)
@@ -75,48 +125,48 @@ bool CAnimatorController::SearchParameter(const std::string &Name)
 	return false;
 }
 
-bool CAnimatorController::AddInteger(const std::string &Name, const int &LaunchValue, CAnimatorControllerIntegerParameter::EIntegerCondition Condition)
+bool CAnimatorController::AddInteger(const std::string &Name, const int &Value)
 {
 	if (!SearchParameter(Name))
 	{
 		CAnimatorControllerIntegerParameter* l_IntegerParameter;
-		l_IntegerParameter = new CAnimatorControllerIntegerParameter(Name, LaunchValue, Condition);
+		l_IntegerParameter = new CAnimatorControllerIntegerParameter(Name, Value);
 		
 		m_Parameters.insert(std::pair<const std::string, CAnimatorControllerParameter*>(Name, (CAnimatorControllerParameter*)l_IntegerParameter));
 		return true;
 	}
 	return false;
 }
-bool CAnimatorController::AddFloat(const std::string &Name, const float &LaunchValue, CAnimatorControllerFloatParameter::EFloatCondition Condition)
+bool CAnimatorController::AddFloat(const std::string &Name, const float &Value)
 {
 	if (!SearchParameter(Name))
 	{
 		CAnimatorControllerFloatParameter* l_FloatParameter;
-		l_FloatParameter = new CAnimatorControllerFloatParameter(Name, LaunchValue, Condition);
+		l_FloatParameter = new CAnimatorControllerFloatParameter(Name, Value);
 
 		m_Parameters.insert(std::pair<const std::string, CAnimatorControllerParameter*>(Name, (CAnimatorControllerParameter*)l_FloatParameter));
 		return true;
 	}
 	return false;
 }
-bool CAnimatorController::AddBool(const std::string &Name, const bool &LaunchValue)
+bool CAnimatorController::AddBool(const std::string &Name, const bool &Value)
 {
 	if (!SearchParameter(Name))
 	{
 		CAnimatorControllerBoolParameter* l_BoolParameter;
-		l_BoolParameter = new CAnimatorControllerBoolParameter(Name, LaunchValue);
+		l_BoolParameter = new CAnimatorControllerBoolParameter(Name, Value);
 
 		m_Parameters.insert(std::pair<const std::string, CAnimatorControllerParameter*>(Name, (CAnimatorControllerParameter*)l_BoolParameter));
 		return true;
 	}
 	return false;
 }
-bool CAnimatorController::AddTrigger(const std::string &Name)
+bool CAnimatorController::AddTrigger(const std::string &Name, const bool &Value)
 {
 	if (!SearchParameter(Name))
 	{
 		CAnimatorControllerTriggerParameter* l_TriggerParameter;
-		l_TriggerParameter = new CAnimatorControllerTriggerParameter(Name);
+		l_TriggerParameter = new CAnimatorControllerTriggerParameter(Name, Value);
 
 		m_Parameters.insert(std::pair<const std::string, CAnimatorControllerParameter*>(Name, (CAnimatorControllerParameter*)l_TriggerParameter));
 		return true;
@@ -169,14 +219,10 @@ void CAnimatorController::SetTrigger(const std::string &Name)
 	}
 }
 
-void CAnimatorController::Update(float ElapsedTime)
-{
-	m_CurrentState->OnUpdate(ElapsedTime);
-}
-void CAnimatorController::ChangeCurrentState(CState* NewState)
+void CAnimatorController::ChangeCurrentState(CState* NewState, CTransition* Transition)
 {
 	m_PreviousState = m_CurrentState;
-	m_CurrentState->OnExit();
+	m_CurrentState->OnExit(Transition);
 	m_CurrentState = NewState;
-	NewState->OnEnter();
+	NewState->OnEnter(Transition);
 }

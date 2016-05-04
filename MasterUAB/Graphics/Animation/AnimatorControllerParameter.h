@@ -11,7 +11,6 @@ protected:
 public:
 	CAnimatorControllerParameter(const std::string &Name) :m_Name(Name){};
 	virtual ~CAnimatorControllerParameter(){};
-	virtual bool Launch() = 0;
 };
 
 #endif
