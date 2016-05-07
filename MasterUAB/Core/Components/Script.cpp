@@ -24,6 +24,7 @@ CScript::CScript(const std::string &Name, CRenderableObject *Owner, const std::s
 	}
 	catch(const luabind::error &e)
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("Error in function: " + m_FnOnCreate + ". " + std::string(e.what()));
 		//luabind::object error_msg(luabind::from_stack(e.state(), -1));
 		//CEngine::GetSingleton().GetLogManager()->Log(error_msg);
 	}
@@ -39,6 +40,7 @@ CScript::~CScript()
 	}
 	catch(const luabind::error &e)
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("Error in function: " + m_FnOnDestroy + ". " + std::string(e.what()));
 	}
 }
 
@@ -52,6 +54,7 @@ void CScript::Update(float ElapsedTime)
 	}
 	catch(const luabind::error &e)
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("Error in function: " + m_FnOnUpdate + ". " + std::string(e.what()));
 		//ShowLuabindError(e);
 	}
 }
@@ -66,6 +69,7 @@ void CScript::Render(CRenderManager &RenderManager)
 	}
 	catch(const luabind::error &e)
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("Error in function: " + m_FnOnRender + ". " + std::string(e.what()));
 	}
 
 }

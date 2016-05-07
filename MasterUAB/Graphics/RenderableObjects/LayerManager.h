@@ -30,7 +30,9 @@ public:
 	void Update(float ElapsedTime); 
 	void Render(CRenderManager &RenderManager);  
 	void Render(CRenderManager &RenderManager, const std::string &LayerName);
-	CAnimatedInstanceModel* GetPlayer() const;
+	
+	CAnimatedInstanceModel* GetPlayer() const{assert(m_Player != nullptr); return m_Player;};
+	void SetPlayer(CAnimatedInstanceModel* Player){ m_Player = Player; };
 };
 
 #endif

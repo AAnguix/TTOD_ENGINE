@@ -30,7 +30,7 @@ public:
 	void onControllerHit(const physx::PxControllersHit& hit){};
 	void onObstacleHit(const physx::PxControllerObstacleHit& hit){};
 	
-	void CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, Vect3f &Position, const std::string &MaterialName);
+	void CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName);
 };
 
 #endif

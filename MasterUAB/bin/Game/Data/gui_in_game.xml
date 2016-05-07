@@ -10,4 +10,9 @@
 		<sprite name="health_potion_highlight" x="0" y="0" w="512" h="512" />
 		<sprite name="health_potion_pressed" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>
+	<gui_spritemap name="health_potion_font" width="256" height="256" material="health_potion_font_material">
+		<sprite name="health_potion_font_sprite" x="0" y="0" w="256" h="256" />
+	</gui_spritemap>
 </gui_elements>
+
+

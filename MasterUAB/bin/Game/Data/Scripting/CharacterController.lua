@@ -24,23 +24,31 @@ function CharacterController(ElapsedTime)
 	
 	if (CharBlock==false) then
 	
+		if CInputManager.GetInputManager():IsActionActive("PLAYER_ATTACKS") then	
+			GetPlayer():GetAnimatorController():SetTrigger("Attack");	
+		end
+		if CInputManager.GetInputManager():IsActionActive("PLAYER_BLOCKS") then	
+			GetPlayer():GetAnimatorController():SetTrigger("Block");	
+		end
+	
 		if ((CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_FORWARD")) or 
 		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_BACK")) or 
 		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_LEFT")) or 
 		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_RIGHT")))  then
 			local l_Player = GetPlayer()
 			local l_Position = l_Player:GetPosition()
-			l_Player:BlendCycle(2,1.0,0.1)
+			g_Walk = true
+			--l_Player:BlendCycle(2,1.0,0.1)
 			--g_LogManager:Log("Entrado Aca")
-		else
-			GetPlayer():ClearCycle(2,0.1)
-			GetPlayer():BlendCycle(0,1.0,0.1)
+		--else
+			--GetPlayer():ClearCycle(2,0.1)
+			--GetPlayer():BlendCycle(0,1.0,0.1)
 		end
 		
 		l_CCVelocity.x = 0;
 		l_CCVelocity.z = 0;
 		
-		l_Speed = 1
+		l_Speed = 3
 		
 		if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then			
 			MatchPlayerYawToCameraYaw(l_CameraController)				

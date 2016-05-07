@@ -15,6 +15,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Components\AnimatorController\AnimatorController.cpp" />
+    <ClCompile Include="Components\AnimatorController\State.cpp" />
+    <ClCompile Include="Components\AnimatorController\Transition.cpp" />
     <ClCompile Include="Components\AudioSource.cpp" />
     <ClCompile Include="Components\CharacterCollider.cpp" />
     <ClCompile Include="Components\ComponentManager.cpp" />
@@ -41,11 +44,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Components\AnimatorController\Animation.h" />
+    <ClInclude Include="Components\AnimatorController\AnimatorController.h" />
+    <ClInclude Include="Components\AnimatorController\State.h" />
+    <ClInclude Include="Components\AnimatorController\Transition.h" />
     <ClInclude Include="Components\AudioSource.h" />
     <ClInclude Include="Components\CharacterCollider.h" />
     <ClInclude Include="Components\Component.h" />
     <ClInclude Include="Components\ComponentManager.h" />
     <ClInclude Include="Components\Collider.h" />
+    <ClInclude Include="Components\LuaComponent.h" />
     <ClInclude Include="Components\Script.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="DebugHelper.h" />

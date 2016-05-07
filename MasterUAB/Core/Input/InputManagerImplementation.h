@@ -65,18 +65,22 @@ private:
 
 		InputType inputType;
 		Mode mode;
-		union {
-			struct Keyboard {
+		union 
+		{
+			struct Keyboard 
+			{
 				uint8_t key;
 				bool needsAlt;
 				bool needsCtrl;
 			} keyboard;
 
-			struct Mouse {
+			struct Mouse 
+			{
 				MouseButton button;
 			} mouse;
 
-			struct Gamepad {
+			struct Gamepad 
+			{
 				unsigned short button;
 				uint8_t gamepadNumber;
 			} gamepad;
@@ -86,13 +90,15 @@ private:
 		float axisValue;
 	};
 
-	enum MouseAxis {
+	enum MouseAxis 
+	{
 		X,
 		Y,
 		WHEEL
 	};
 
-	enum GamepadAxis {
+	enum GamepadAxis 
+	{
 		LEFT_X,
 		LEFT_Y,
 		RIGHT_X,
@@ -106,12 +112,15 @@ private:
 		std::string name;
 
 		InputType inputType;
-		union {
-			struct Mouse {
+		union 
+		{
+			struct Mouse 
+			{
 				MouseAxis axis;
 				float scale;
 			} mouse;
-			struct Gamepad {
+			struct Gamepad 
+			{
 				GamepadAxis axis;
 				uint8_t gamepadNumber;
 			} gamepad;
@@ -121,6 +130,7 @@ private:
 
 	Action::Mode ParseMode(const std::string& mode);
 	InputType ParseInputType(const std::string& inputType);
+	Action::MouseButton CInputManagerImplementation::ParseMouseButton(const std::string& MouseButton);
 
 	bool m_KeysCurrent[256], m_KeysPrevious[256];
 	bool m_Alt, m_Ctrl;
@@ -134,18 +144,18 @@ private:
 
 	// mouse data
 
-	LPDIRECTINPUT8						m_DI;
-	LPDIRECTINPUTDEVICE8				m_Mouse;
+	LPDIRECTINPUT8 m_DI;
+	LPDIRECTINPUTDEVICE8 m_Mouse;
 	CMouseInput* m_MouseInput;
 	CKeyBoardInput* m_KeyBoardInput;
 	WPARAM m_LastChar;
 
-	int									m_MovementX;
-	int									m_MovementY;
-	int									m_MovementZ;
-	bool								m_ButtonRight, m_PreviousButtonRight;
-	bool								m_ButtonLeft, m_PreviousButtonLeft;
-	bool								m_ButtonMiddle, m_PreviousButtonMiddle;
+	int m_MovementX;
+	int m_MovementY;
+	int m_MovementZ;
+	bool m_ButtonRight, m_PreviousButtonRight;
+	bool m_ButtonLeft, m_PreviousButtonLeft;
+	bool m_ButtonMiddle, m_PreviousButtonMiddle;
 };
 
 #endif

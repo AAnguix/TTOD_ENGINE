@@ -78,10 +78,11 @@ protected:
 	void CheckMapAndVectors();
 	physx::PxActor* IsRigidDynamic(const std::string& ActorName);
 
-	physx::PxConvexMesh*  CreateConvexMesh(std::vector<Vect3f> Vertices);
-	physx::PxTriangleMesh*  CreateTriangleMesh(std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices);
+	physx::PxConvexMesh*  CreateConvexMesh(const std::string &FileName, std::vector<Vect3f> Vertices);
+	physx::PxTriangleMesh*  CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices);
 
-	void WriteCookingDataToFile(const std::string &FileName, physx::PxDefaultMemoryOutputStream &Data);
+	void WriteCookingDataToFile(const std::string &FileName, void *Data, unsigned int DataSize);
+	void ReadCookingDataFromFile(const std::string &FileName, void **Data, unsigned int &DataSize);
 	/*physx::PxDefaultMemoryOutputStream ReadCookingDataFromFile(const std::string &FileName);*/
 
 public:
@@ -113,32 +114,32 @@ public:
 
 	/*Testing*/
 
-		/*Static*/
-		void CreateRigidStaticBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-		void CreateRigidStaticSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-		void CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-		void CreateRigidStaticPlane(const std::string &Name, const Vect3f &Normal, float Distance, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-		void CreateRigidStaticConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-		void CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	/*Static*/
+	void CreateRigidStaticBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticPlane(const std::string &Name, const Vect3f &Normal, float Distance, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 
-		/*Dynamic*/
-		void CreateRigidDynamicBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-		void CreateRigidDynamicSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-		void CreateRigidDynamicCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-		void CreateRigidDynamicConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-		/*Triangle meshes can't be dynamic*/
-		/*Triangle,heightField cant be trigger*/
-		/*Plane,triangle,height must be kinematic*/
-		void CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density);
-		
+	/*Dynamic*/
+	void CreateRigidDynamicBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
+	void CreateRigidDynamicSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
+	void CreateRigidDynamicCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
+	void CreateRigidDynamicConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
+	/*Triangle meshes can't be dynamic*/
+	/*Triangle,heightField cant be trigger*/
+	/*Plane,triangle,height must be kinematic*/
+	void CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density);
 
-		physx::PxShape* CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-		physx::PxShape* CreateDinamicShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic = false);
 
-		size_t AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor);
+	physx::PxShape* CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	physx::PxShape* CreateDinamicShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic = false);
 
-		void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation, int Group);
-		void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidBody* Body, Vect3f Position, Quatf Orientation, int Group, float Density, bool IsKinematic);
+	size_t AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor);
+
+	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation, int Group);
+	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidBody* Body, Vect3f Position, Quatf Orientation, int Group, float Density, bool IsKinematic);
 	/**/
 
 	void RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution);
@@ -151,10 +152,10 @@ public:
 
 	bool RemoveActor(const std::string &ActorName);
 
-	virtual void CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, Vect3f &Position, const std::string &MaterialName);
+	virtual void CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName);
 	Vect3f MoveCharacterController(const std::string& CharacterControllerName, const Vect3f &Movement, float ElapsedTime);
 	Vect3f DisplacementCharacterController(const std::string& CharacterControllerName, const Vect3f &Displacement, float ElapsedTime);
-	
+
 	Vect3f GetCharacterControllerPosition(const std::string& CharacterControllerName);
 	Vect3f GetCharacterControllerFootPosition(const std::string& CharacterControllerName);
 

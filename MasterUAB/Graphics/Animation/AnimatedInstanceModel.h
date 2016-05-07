@@ -12,7 +12,7 @@ class CRenderableVertexs;
 #include "cal3d\hardwaremodel.h"
 #include "cal3d\model.h"
 #include "RenderableObjects\RenderableObject.h"
-#include "Animation\AnimatorController.h"
+#include "Components\AnimatorController\AnimatorController.h"
 
 #define CCONTROLLER_HEIGHT 1.4f
 
@@ -52,7 +52,7 @@ public:
 	void Update(float ElapsedTime);  
 	void Destroy(); 
 
-	CAnimatorController* GetAnimatorController() const;
+	CAnimatedCoreModel* GetAnimatedCoreModel() const { return m_AnimatedCoreModel; };
 	void ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget=1.0f, bool AutoLock=true);  
 	void BlendCycle(int Id, float Weight, float DelayIn);  
 	void ClearCycle(int Id, float DelayOut);  

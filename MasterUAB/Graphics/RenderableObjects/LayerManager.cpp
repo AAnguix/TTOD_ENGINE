@@ -9,7 +9,11 @@
 #include "Cinematics\Cinematic.h"
 #include "Particles\ParticleSystemInstance.h"
 #include "Animation\AnimatedModelManager.h"
+
+#include <luabind/luabind.hpp>
 #include "Engine.h"
+#include "ScriptManager\ScriptManager.h"
+#include "Utils\EmptyPointerClass.h"
 
 CRenderableObjectsManager* CLayerManager::GetLayer(CXMLTreeNode &Node)
 {
@@ -37,6 +41,8 @@ CRenderableObjectsManager* CLayerManager::AddLayer(CXMLTreeNode &TreeNode)
 }
 
 CLayerManager::CLayerManager()
+:m_Player(nullptr),
+m_DefaultLayer(nullptr)
 {
 
 }
@@ -166,35 +172,6 @@ void CLayerManager::Load(const std::string &Filename)
 						CHECKED_DELETE(l_ParticleSystemInstance);
 					}
 				}
-				else if (l_Element.GetName() == std::string("enemy"))
-				{
-					std::string l_EnemyType = l_Element.GetPszProperty("enemy_type");
-					std::string l_Layer = l_Element.GetPszProperty("layer");
-					CEnemy* l_Enemy = nullptr;
-
-					if (l_EnemyType == "basic_enemy")
-					{
-						l_Enemy = new CBasicEnemy(l_Element);
-					}
-					else if (l_EnemyType == "rangued_enemy")
-					{
-						l_Enemy = new CRangedEnemy(l_Element);
-					}
-					else if (l_EnemyType == "brute_enemy")
-					{
-						l_Enemy = new CBruteEnemy(l_Element);
-					}
-
-					AddElementToLayer(l_Layer, l_Enemy);
-				}
-				else if (l_Element.GetName() == std::string("player"))
-				{
-					CPlayer* l_Player = new CPlayer(l_Element);
-					std::string l_Layer = l_Element.GetPszProperty("layer");
-
-					if (AddElementToLayer(l_Layer, l_Player))
-						m_Player = l_Player;
-				}
 			}
 		}
 	}
@@ -227,11 +204,6 @@ void CLayerManager::Render(CRenderManager &RenderManager)
 void CLayerManager::Render(CRenderManager &RenderManager, const std::string &LayerName)
 {
 	m_ResourcesMap[LayerName].m_Value->Render(&RenderManager);
-}
-
-CAnimatedInstanceModel* CLayerManager::GetPlayer() const
-{
-	return m_Player;
 }
 
 bool CLayerManager::AddElementToLayer(const std::string &Layer, CRenderableObject* RenderableObject)

@@ -42,6 +42,8 @@
 	
 	<action name="PLAYER_JUMP" type="KEYBOARD" mode="WHILE_PRESSED" key="J" needs_alt="false"/> 
 	
+	<action name="PLAYER_ATTACKS" type="MOUSE" mode="ON_PRESS" button="LEFT"/> 
+	<action name="PLAYER_BLOCKS" type="MOUSE" mode="ON_PRESS" button="RIGHT"/> 
 	
 	<action name="BLOCK_CAMERA" type="KEYBOARD" mode="ON_PRESS" key="B" needs_alt="false"/> 
 	<action name="CENTER_CAMERA" type="KEYBOARD" mode="ON_PRESS" key="C" needs_alt="false"/> 

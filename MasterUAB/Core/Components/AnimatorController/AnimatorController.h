@@ -7,7 +7,7 @@
 #include "Animation\AnimatorControllerFloatParameter.h"
 #include "Components\Component.h"
 
-class CAnimatedInstanceModel;
+class CRenderableObject;
 
 class CAnimatorController : public CComponent
 {
@@ -21,9 +21,9 @@ private:
 	bool SearchParameter(const std::string &Name);
 	
 public:
-	static CAnimatorController * AddAnimatorController(const std::string &Name, CAnimatedInstanceModel *Owner);
+	static CAnimatorController * AddAnimatorController(const std::string &Name, CRenderableObject *Owner);
 
-	CAnimatorController(const std::string &Name, CAnimatedInstanceModel* Owner);
+	CAnimatorController(const std::string &Name, CRenderableObject* Owner);
 	virtual ~CAnimatorController();
 	void Update(float ElapsedTime);
 	void Render(CRenderManager &RenderManager);

@@ -90,9 +90,13 @@ void CScriptManager::Initialize()
 	luabind::set_pcall_callback(ShowLuaErrorDebugInfo);
 
 	RegisterLUAFunctions();
+} 
+
+void CScriptManager::RunLuaMain()
+{
 	RunFile("./Data/scripting/LuaMainStartScreen.lua");
 	RunCode("LuaMain()");
-} 
+}
 
 void CScriptManager::Destroy() 
 {  

@@ -31,7 +31,7 @@ PS_INPUT VS( VS_INPUT IN )
 	return l_Output;
 }
 
-float4 CalcSSRColor(float2 UV, float4x4 ViewProjection, float4 SourceColor, float3 WorldPosition, float3 Nn)
+float4 CalcSSRColor(float2 UV, float4x4 ViewProjection, float4 SourceColor, float3 WorldPosition, float3 Nn, float SsrFactor)
 {
 	float4 l_Color=float4(0, 0, 0, 0);
 	
@@ -88,11 +88,17 @@ float4 CalcSSRColor(float2 UV, float4x4 ViewProjection, float4 SourceColor, floa
 	}
 	
 	l_Color=SourceColor*l_SSRContrib+l_Color*(1-l_SSRContrib);
+	//return float4(SsrFactor,0.0,0.0,1.0);
 	return l_Color;
+	
+	//Porc reflejo * color reflejado + color real pixel
+	//establecer tresold, cuando el color es negro, y no hacerlo por debajo de el.
 }
 
 float4 PS(PS_INPUT IN) : SV_Target
 {
+	float l_SsrFactor = T2Texture.Sample(S2Sampler, IN.UV.xy).w;
+	
 	float4 l_Color=T0Texture.Sample(S0Sampler, IN.UV);
 	if(m_Enabled)
 	{
@@ -100,7 +106,7 @@ float4 PS(PS_INPUT IN) : SV_Target
 		float l_Depth=T1Texture.Sample(S1Sampler, IN.UV.xy).x;
 		float3 l_WorldPosition=GetPositionFromZDepthView(l_Depth, IN.UV, m_InverseView, m_InverseProjection);
 		float4x4 l_ViewProjection=mul(m_View, m_Projection);
-		return float4(CalcSSRColor(IN.UV.xy, l_ViewProjection, l_Color, l_WorldPosition, Nn).xyz, m_SSROpacity);
+		return float4(CalcSSRColor(IN.UV.xy, l_ViewProjection, l_Color, l_WorldPosition, Nn, l_SsrFactor).xyz, m_SSROpacity);
 	}
 	clip(-1);
 	return l_Color;

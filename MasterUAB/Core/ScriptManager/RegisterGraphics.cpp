@@ -54,7 +54,6 @@
 
 #include "Input\InputManagerImplementation.h"
 #include "Components\ComponentManager.h"
-#include "Animation\AnimatorController.h"
 
 using namespace luabind;
 
@@ -89,25 +88,6 @@ void CScriptManager::RegisterAnimations()
 {
 	module(LUA_STATE)
 	[
-		class_<CAnimatorController>("CAnimatorController")
-		.def(constructor<const std::string, CAnimatedInstanceModel*>())
-		.def("AddState", &CAnimatorController::AddState)
-		.def("AddInteger", &CAnimatorController::AddInteger)
-		.def("AddFloat", &CAnimatorController::AddFloat)
-		.def("AddBool", &CAnimatorController::AddBool)
-		.def("AddTrigger", &CAnimatorController::AddTrigger)
-		.def("SetInteger", &CAnimatorController::SetInteger)
-		.def("SetFloat", &CAnimatorController::SetFloat)
-		.def("SetBool", &CAnimatorController::SetBool)
-		.def("SetTrigger", &CAnimatorController::SetTrigger)
-		.scope
-		[
-			def("AddAnimatorController", &CAnimatorController::AddAnimatorController)
-		]
-	];
-
-	module(LUA_STATE)
-	[
 		class_<CAnimatedCoreModel, CNamed>("CAnimatedCoreModel")
 		.def(constructor<>())
 		.def("GetMaterials", &CAnimatedCoreModel::GetMaterials)
@@ -120,7 +100,7 @@ void CScriptManager::RegisterAnimations()
 		class_<CAnimatedInstanceModel, CRenderableObject>("CAnimatedInstanceModel")
 		.def(constructor<CXMLTreeNode>())
 		.def(constructor<const std::string ,const std::string,const Vect3f,float,float,float>())
-		.def("GetAnimatorController", &CAnimatedInstanceModel::GetAnimatorController)
+		.def("GetAnimatedCoreModel", &CAnimatedInstanceModel::GetAnimatedCoreModel)
 		.def("Initialize", &CAnimatedInstanceModel::Initialize)
 		.def("Render", &CAnimatedInstanceModel::Render)
 		.def("Update", &CAnimatedInstanceModel::Update)
@@ -733,6 +713,7 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("Load", &CLayerManager::Load)
 		.def("Reload", &CLayerManager::Reload)
 		.def("GetPlayer", &CLayerManager::GetPlayer)
+		.def("SetPlayer", &CLayerManager::SetPlayer)
 		.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
 		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)
 	];
@@ -769,7 +750,9 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("Update", &CRenderableObject::Update)
 		.def("Render", &CRenderableObject::Render)
 		.def("GetComponentManager", &CRenderableObject::GetComponentManager)
+		.def("GetAnimatorController", &CRenderableObject::GetAnimatorController)
 		.def("AddComponent", &CRenderableObject::AddComponent)
+		.def("AddLuaComponent", &CRenderableObject::AddLuaComponent)
 		.def("GetClassType", &CRenderableObject::GetClassType)
 		.enum_("TRenderableObjectType")
 		[

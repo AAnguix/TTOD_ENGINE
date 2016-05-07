@@ -5,7 +5,7 @@
 #include <vector>
 class CMaterial;
 #include "cal3d\coremodel.h"
-#include "Animation\Animation.h"
+#include "Components\AnimatorController\Animation.h"
 
 class CAnimatedCoreModel : public CNamed 
 { 
@@ -20,7 +20,7 @@ private:
 
 	bool LoadMesh(const std::string &Filename);  
 	bool LoadSkeleton(const std::string &Filename);  
-	bool LoadAnimation(const std::string &Name, const std::string &Filename, const bool &Loop);
+	bool LoadAnimation(const std::string &Name, const std::string &Filename, const bool &Loop, const float &Weight);
 
 public: 
 	CAnimatedCoreModel();  

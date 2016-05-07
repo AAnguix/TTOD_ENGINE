@@ -48,12 +48,12 @@ function OpenRenderableObjectTechniques()
 end
 
 function OpenMaterials()
-	-- ClickOnElement("Materials")
-	-- local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
-	-- local l_Materials=CEngine.GetSingleton():GetMaterialManager():GetLUAMaterials()
-	-- for l_Material in l_Materials do
-		-- l_DebugHelper:RegisterButton(l_Material:GetName(),"OpenMaterial('"..l_Material:GetName().."')")
-	-- end
+	ClickOnElement("Materials")
+	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
+	local l_Materials=CEngine.GetSingleton():GetMaterialManager():GetLUAMaterials()
+	for l_Material in l_Materials do
+		l_DebugHelper:RegisterButton(l_Material:GetName(),"OpenMaterial('"..l_Material:GetName().."')")
+	end
 end
 
 function OpenMaterial(MaterialName)

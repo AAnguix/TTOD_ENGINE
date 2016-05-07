@@ -11,10 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="PhysXManager.cpp" />
     <ClCompile Include="PhysXManagerImplementation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="PhysXManager.h" />
     <ClInclude Include="PhysXManagerImplementation.h" />
   </ItemGroup>

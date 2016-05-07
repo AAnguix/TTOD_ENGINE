@@ -252,7 +252,7 @@ void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)
 							break;
 						}
 						case MOUSE:
-							//action.mouse.button = l_Action.GetPszProperty("button")[0];
+							action.mouse.button = ParseMouseButton(l_Action.GetPszProperty("button"));
 							//break;
 
 						case GAMEPAD:
@@ -371,6 +371,28 @@ CInputManagerImplementation::InputType CInputManagerImplementation::ParseInputTy
 		return (InputType) - 1;
 	}
 }
+
+CInputManagerImplementation::Action::MouseButton CInputManagerImplementation::ParseMouseButton(const std::string& MouseButton)
+{
+	
+	if (MouseButton == "LEFT")
+	{
+		return CInputManagerImplementation::Action::MouseButton::LEFT;
+	}
+	else if (MouseButton == "RIGHT")
+	{
+		return CInputManagerImplementation::Action::MouseButton::RIGHT;
+	}
+	else if (MouseButton == "CENTER")
+	{
+		return CInputManagerImplementation::Action::MouseButton::CENTER;
+	}
+	else
+	{
+		return CInputManagerImplementation::Action::MouseButton::LEFT;
+	}
+}
+
 
 void CInputManagerImplementation::BeginFrame()
 {

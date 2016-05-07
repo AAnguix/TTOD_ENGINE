@@ -2,9 +2,9 @@
 #include "Animation\AnimatorControllerTriggerParameter.h"
 #include "Animation\AnimatorControllerBoolParameter.h"
 #include "Animation\AnimatedInstanceModel.h"
-#include "Animation\Animation.h"
+#include "Components\AnimatorController\Animation.h"
 
-CAnimatorController* CAnimatorController::AddAnimatorController(const std::string &Name, CAnimatedInstanceModel *Owner)
+CAnimatorController* CAnimatorController::AddAnimatorController(const std::string &Name, CRenderableObject *Owner)
 {
 	CAnimatorController* l_AnimatorController = new CAnimatorController(Name, Owner);
 
@@ -18,7 +18,7 @@ CAnimatorController* CAnimatorController::AddAnimatorController(const std::strin
 	return l_AnimatorController;
 }
 
-CAnimatorController::CAnimatorController(const std::string &Name, CAnimatedInstanceModel* Owner)
+CAnimatorController::CAnimatorController(const std::string &Name, CRenderableObject* Owner)
 :CComponent(Name,Owner)
 ,m_PreviousState(nullptr)
 ,m_CurrentState(nullptr)

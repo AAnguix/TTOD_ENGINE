@@ -1,6 +1,6 @@
 function InitializeRenderableObjectsScripts()
 	InitCharacterController()
-	InitEnemys()
+	--InitEnemys()
 end
 
 function InitCharacterController()
@@ -9,6 +9,7 @@ function InitCharacterController()
 end
 
 function FnOnCreatePlayer(RenderableObject, ElapsedTime)
+
 end
 
 function FnOnDestroyPlayer(RenderableObject, ElapsedTime)

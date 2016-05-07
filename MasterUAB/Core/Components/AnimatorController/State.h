@@ -8,7 +8,7 @@
 #include "Animation\AnimatorControllerFloatParameter.h"
 #include "Animation\AnimatorControllerBoolParameter.h"
 #include "Animation\AnimatorControllerTriggerParameter.h"
-#include "Animation\Animation.h"
+#include "Components\AnimatorController\Animation.h"
 
 class CTransition;
 class CAnimatorController;

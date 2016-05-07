@@ -11,8 +11,8 @@ class CMaterial;
 struct AxisAlignedBoundingBox
 {
 	float center;
-	float x_min,y_min,z_min;
-	float x_max,y_max,z_max;
+	float x_min, y_min, z_min;
+	float x_max, y_max, z_max;
 };
 
 struct AxisAlignedBoundingSphere
@@ -38,14 +38,14 @@ protected:
 
 	std::vector<Vect3f> m_MeshVertex;
 	std::vector<unsigned int> m_MeshIndex;
-	
+
 public:
 	unsigned int  m_NumFaces;
 	CStaticMesh();
 	~CStaticMesh();
-	bool Load (const std::string &FileName);
-	bool Reload ();
-	void Render (CRenderManager *RM) const;
+	bool Load(const std::string &FileName);
+	bool Reload();
+	void Render(CRenderManager *RM) const;
 
 	CMaterial* GetPhysxMaterial();
 	Vect3f GetBoundingBoxSize() const;

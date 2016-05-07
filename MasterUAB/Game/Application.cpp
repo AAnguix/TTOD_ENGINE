@@ -86,6 +86,8 @@ void CApplication::Initialize(HWND Hwnd)
 	l_Engine.GetGUIManager()->Initialize(m_ContextManager->GetFrameBufferWidth(), m_ContextManager->GetFrameBufferHeight());
 	l_Engine.GetLogManager()->Initialize(true);
 
+	l_Engine.GetScriptManager()->Initialize();
+
 	//CAStar l_AStar;
 	//m_RenderManager.GetDebugRender()->InitializeASTarDebug(l_AStar.SearchPathA(Vect3f(0.0f,0.0f,0.0f),Vect3f(-10.0f,0.0f,5.0f)));
 	/*TODO ARREGLAR*/
@@ -108,8 +110,7 @@ void CApplication::Initialize(HWND Hwnd)
 	m_RenderManager.InitializeDebugRender();
 
 	CEngine::GetSingleton().GetSceneRendererCommandManager()->Load("./Data/scene_renderer_commands.xml");
-
-	l_Engine.GetScriptManager()->Initialize();
+	l_Engine.GetScriptManager()->RunLuaMain();
 }
 
 void CApplication::SwitchCamera()
@@ -221,7 +222,9 @@ void CApplication::Update(float ElapsedTime)
 
 	m_RenderManager.SetUseDebugCamera(m_CurrentCamera == 0);*/
 	
-	CEngine::GetSingleton().GetCameraControllerManager()->Update(ElapsedTime);
+	CCameraControllerManager* l_CController = CEngine::GetSingleton().GetCameraControllerManager();
+	assert(l_CController != nullptr);
+	l_CController->Update(ElapsedTime);
 
 	CEngine::GetSingleton().GetPhysXManager()->Update(ElapsedTime);
 

@@ -8,6 +8,7 @@
 #include <WICTextureLoader.h>
 #include <wrl.h>
 #include "Tools.h"
+#include "Log.h"
 
 CTexture::CTexture() : CNamed("")
 ,m_SamplerState(NULL)
@@ -70,6 +71,11 @@ bool CTexture::LoadFileNew()
 	{
 		ID3D11DeviceContext *l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
 		l_Hresult = DirectX::CreateWICTextureFromFile(l_Device, l_DeviceContext, ws.c_str(), nullptr, &m_Texture, 0);
+	}
+
+	if (l_Hresult == ERROR_FILE_NOT_FOUND)
+	{
+		CEngine::GetSingleton().GetLogManager()->Log("File " + m_Name + " not found.");
 	}
 
 	if (FAILED(l_Hresult))

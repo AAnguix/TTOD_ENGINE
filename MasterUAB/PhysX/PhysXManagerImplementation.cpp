@@ -183,7 +183,7 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 }
 
 
-void CPhysXManagerImplementation::CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, Vect3f &Position, const std::string &MaterialName)
+void CPhysXManagerImplementation::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName)
 {
 	CheckMapAndVectors();
 	physx::PxCapsuleControllerDesc l_Desc;

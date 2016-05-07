@@ -9,36 +9,6 @@ function LoadAStarPoints()
 	g_EnemyWayPoints[4] = Vect3f(4.0,0.0,4.0)
 end
 
-function FollowPlayer(ElapsedTime, Enemy, EnemySpeed)
-	
-	local l_Player = GetPlayer()
-	
-	l_PlayerPos = l_Player:GetPosition()
-	l_EnemyPos = Enemy:GetPosition()
-	
-	l_VectorToPlayer = l_PlayerPos - l_EnemyPos
-	l_VectorToPlayer:Normalize(1.0)
-	
-	l_Yaw = Enemy:GetYaw()
-	l_Forward = Enemy:GetForward()
-	
-	l_Dot = l_Forward*l_VectorToPlayer
-	if l_Dot>1.0 then l_Dot=1.0 end
-	
-	l_NewAngle = math.acos(l_Dot)
-	
-	l_Cross = l_VectorToPlayer:cross(l_Forward)
-	
-	if l_Cross.y < 0.0 then
-		l_NewAngle = (l_NewAngle*(-1.0))
-	end 
-	
-	Enemy:SetPosition(l_EnemyPos+(l_VectorToPlayer*ElapsedTime))
-	
-	Enemy:SetYaw(l_Yaw+(l_NewAngle*ElapsedTime))
-	
-end
-
 function PatrolWayPoints(Waypoints, ElapsedTime, Enemy, EnemySpeed, Radius)
 
 	local l_EnemyPos = Enemy:GetPosition()

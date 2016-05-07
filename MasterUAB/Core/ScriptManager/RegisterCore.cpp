@@ -26,20 +26,34 @@
 #include "Components\Script.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
+#include "Components\LuaComponent.h"
+#include "Components\AnimatorController\AnimatorController.h"
+#include "Components\AnimatorController\Transition.h"
 
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
 #include "ISoundManager.h"
 //#include "AStar.h"
 
-
 using namespace luabind;
 
 #define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
+struct CLUAComponent_wrap : CLUAComponent, luabind::wrap_base
+{
+};
+CLUAComponent* f(CLUAComponent *Pointer) { return Pointer; }
+
+//CRenderableObject* GetEntity(const std::string &Layer, const std::string &Object)
+//{
+//	return CEngine::GetSingleton().GetLayerManager()->GetResource(Layer)->GetResource(Object);
+//}
+
 void CScriptManager::RegisterCore()
 {
+	RegisterComponents();
+
 	module(LUA_STATE) 
 	[  
 		class_<CSingleton<CEngine>>("EngineSingleton")  
@@ -77,68 +91,6 @@ void CScriptManager::RegisterCore()
 		.def("GetGUIManager", &CEngine::GetGUIManager)
 		.def("GetSoundManager", &CEngine::GetSoundManager)
 		.def("LoadLevel", &CEngine::LoadLevel)
-	];
-
-	/*Components*/
-	module(LUA_STATE) 
-	[  
-		class_<CTemplatedVectorMapManager<CComponent>>("CTemplatedVectorMapManager")   
-		.def("GetResource", &CTemplatedVectorMapManager<CComponent>::GetResource) 
-		.def("GetResourceById", &CTemplatedVectorMapManager<CComponent>::GetResourceById) 
-		.def("AddResource", &CTemplatedVectorMapManager<CComponent>::AddResource) 
-		.def("RemoveResource", &CTemplatedVectorMapManager<CComponent>::RemoveResource) 
-		.def("GetResourcesMap", &CTemplatedVectorMapManager<CComponent>::GetResourcesMap) 
-		.def("GetResourcesVector", &CTemplatedVectorMapManager<CComponent>::GetResourcesVector) 
-	]; 
-
-	module(LUA_STATE) 
-	[ 
-		class_< CComponentManager, CTemplatedVectorMapManager<CComponent>>("CComponentManager")   
-		.def(constructor<>())
-		.def("Update", &CComponentManager::Update)
-		.def("Render", &CComponentManager::Render)
-		.def("RenderDebug", &CComponentManager::RenderDebug)
-		.def("AddComponent", &CComponentManager::AddComponent)
-	];
-
-	module(LUA_STATE) 
-	[
-		class_<CComponent, CNamed>("CComponent")
-		.def(constructor<const std::string&,CRenderableObject*>())
-		.def("Update", &CComponent::Update)
-		.def("Render", &CComponent::Render)
-		.def("RenderDebug", &CComponent::RenderDebug)
-		.def("GetOwner", &CComponent::GetOwner)
-	];
-
-	module(LUA_STATE) 
-	[
-		class_<CScript, CComponent>("CScript")
-		.def(constructor<const std::string&,CRenderableObject*,const std::string&,const std::string&,const std::string&,const std::string&,const std::string&>())
-		.scope
-		[
-			def("AddScript", &CScript::AddScript) 
-		]
-	];
-	
-	module(LUA_STATE) 
-	[
-		class_<CCollider, CComponent>("CCollider")
-		.def(constructor<const std::string&,CRenderableObject*>())
-		.scope
-		[
-			def("AddCollider", &CCollider::AddCollider) 
-		]
-	];
-
-	module(LUA_STATE)
-	[
-		class_<CCharacterCollider, CComponent>("CCharacterCollider")
-		.def(constructor<const std::string&, CRenderableObject*>())
-		.scope
-		[
-			def("AddCharacterCollider", &CCharacterCollider::AddCharacterCollider)
-		]
 	];
 
 	/*module(LUA_STATE) 
@@ -272,5 +224,129 @@ void CScriptManager::RegisterCore()
 		.def("RegisterColor32Parameter", & CDebugHelperImplementation::RegisterColor32Parameter)
 		.def("RegisterStringParameter", & CDebugHelperImplementation::RegisterStringParameter)
 		.def("RegisterPositionOrientationParameter", & CDebugHelperImplementation::RegisterPositionOrientationParameter)
+	];
+}
+
+void CScriptManager::RegisterComponents()
+{
+	module(LUA_STATE)
+	[
+		class_<CTemplatedVectorMapManager<CComponent>>("CTemplatedVectorMapManager")
+		.def("GetResource", &CTemplatedVectorMapManager<CComponent>::GetResource)
+		.def("GetResourceById", &CTemplatedVectorMapManager<CComponent>::GetResourceById)
+		.def("AddResource", &CTemplatedVectorMapManager<CComponent>::AddResource)
+		.def("RemoveResource", &CTemplatedVectorMapManager<CComponent>::RemoveResource)
+		.def("GetResourcesMap", &CTemplatedVectorMapManager<CComponent>::GetResourcesMap)
+		.def("GetResourcesVector", &CTemplatedVectorMapManager<CComponent>::GetResourcesVector)
+	];
+
+	module(LUA_STATE)
+	[
+		class_< CComponentManager, CTemplatedVectorMapManager<CComponent>>("CComponentManager")
+		.def(constructor<>())
+		.def("Update", &CComponentManager::Update)
+		.def("Render", &CComponentManager::Render)
+		.def("RenderDebug", &CComponentManager::RenderDebug)
+		.def("AddComponent", &CComponentManager::AddComponent)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CComponent, CNamed>("CComponent")
+		.def(constructor<const std::string&, CRenderableObject*>())
+		.def("Update", &CComponent::Update)
+		.def("Render", &CComponent::Render)
+		.def("RenderDebug", &CComponent::RenderDebug)
+		.def("GetOwner", &CComponent::GetOwner)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CScript, CComponent>("CScript")
+		.def(constructor<const std::string&, CRenderableObject*, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&>())
+		.scope
+		[
+			def("AddScript", &CScript::AddScript)
+		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CCollider, CComponent>("CCollider")
+		.def(constructor<const std::string&, CRenderableObject*>())
+		.scope
+		[
+			def("AddCollider", &CCollider::AddCollider)
+		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CCharacterCollider, CComponent>("CCharacterCollider")
+		.def(constructor<const std::string&, CAnimatedInstanceModel*>())
+		.scope
+		[
+			def("AddCharacterCollider", &CCharacterCollider::AddCharacterCollider)
+		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CLUAComponent, CLUAComponent_wrap>("CLUAComponent"),
+		//def("Pointer", &CLUAComponent::Pointer)
+		def("f", &f)
+
+	];
+	//void AddLUAComponent(CLUAComponent *LuaComponent);
+
+	/*module(LUA_STATE)
+	[
+	def("GetEntity", &GetEntity)
+	];*/
+
+	module(LUA_STATE)
+	[
+		class_<CTransition>("CTransition")
+		.def(constructor<CState*, const bool, const float, const float, const float >())
+
+		.def("AddFloatCondition", &CTransition::AddFloatCondition)
+		.def("AddIntegerCondition", &CTransition::AddIntegerCondition)
+		.def("AddBoolCondition", &CTransition::AddBoolCondition)
+		.def("AddTriggerCondition", &CTransition::AddTriggerCondition)
+
+		.def("MeetsConditions", &CTransition::MeetsConditions)
+		.def("GetNewState", &CTransition::GetNewState)
+		.def("GetDelayIn", &CTransition::GetDelayIn)
+		.def("GetDelayOut", &CTransition::GetDelayOut)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CState>("CState")
+		.def(constructor<CAnimatorController*, const std::string, const EAnimation, const float, const std::string, const std::string, const std::string>())
+		.def("AddTransition", &CState::AddTransition)
+		.def("OnEnter", &CState::OnEnter)
+		.def("OnUpdate", &CState::OnUpdate)
+		.def("OnExit", &CState::OnExit)
+		.def("GetOwnAnimatorController", &CState::GetOwnAnimatorController)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CAnimatorController>("CAnimatorController")
+		.def(constructor<const std::string, CRenderableObject*>())
+		.def("AddState", &CAnimatorController::AddState)
+		.def("AddInteger", &CAnimatorController::AddInteger)
+		.def("AddFloat", &CAnimatorController::AddFloat)
+		.def("AddBool", &CAnimatorController::AddBool)
+		.def("AddTrigger", &CAnimatorController::AddTrigger)
+		.def("SetInteger", &CAnimatorController::SetInteger)
+		.def("SetFloat", &CAnimatorController::SetFloat)
+		.def("SetBool", &CAnimatorController::SetBool)
+		.def("SetTrigger", &CAnimatorController::SetTrigger)
+		.scope
+		[
+			def("AddAnimatorController", &CAnimatorController::AddAnimatorController)
+		]
 	];
 }

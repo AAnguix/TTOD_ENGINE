@@ -2,6 +2,7 @@
 #include "Components\ComponentManager.h"
 #include "Components\Component.h"
 #include <string>
+#include "Components\AnimatorController\AnimatorController.h"
 
 CRenderableObject::CRenderableObject(const CXMLTreeNode &XMLTreeNode) 
 :CNamed(XMLTreeNode)
@@ -33,4 +34,15 @@ void CRenderableObject::Update(float ElapsedTime)
 bool CRenderableObject::AddComponent(CComponent *Component)
 {
 	return m_ComponentManager->AddComponent(Component);
+}
+
+CAnimatorController* CRenderableObject::GetAnimatorController() const
+{
+	return (CAnimatorController*)m_ComponentManager->GetResource("AnimatorController");
+}
+
+bool CRenderableObject::AddLuaComponent(CLUAComponent* LUAComponent)
+{
+	m_LuaComponents.push_back(LUAComponent);
+	return true;
 }

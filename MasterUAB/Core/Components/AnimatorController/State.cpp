@@ -1,5 +1,5 @@
 #include "State.h"
-#include "Animation\AnimatorController.h"
+#include "Components\AnimatorController\AnimatorController.h"
 #include <luabind/luabind.hpp>
 #include "Engine.h"
 #include "ScriptManager\ScriptManager.h"
@@ -38,12 +38,12 @@ void CState::OnEnter(CTransition* Transition)
 
 	if (m_Animation.m_Loop)
 	{
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()))->BlendCycle(m_Animation.m_ID, 1.0f, l_DelayIn);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()))->BlendCycle(m_Animation.m_ID, m_Animation.m_Weight, l_DelayIn);
 	}
 	else
 	{
 		float l_DelayOut = Transition != nullptr ? Transition->GetDelayOut() : 0.0f;
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()))->ExecuteAction(m_Animation.m_ID, l_DelayIn, l_DelayOut);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()))->ExecuteAction(m_Animation.m_ID, l_DelayIn, l_DelayOut, m_Animation.m_Weight, false);
 	}
 
 	try

@@ -22,9 +22,6 @@
     <ClInclude Include="RenderableObjects\RenderableObject.h">
       <Filter>RenderableObjects</Filter>
     </ClInclude>
-    <ClInclude Include="StaticMeshes\StaticMesh.h">
-      <Filter>StaticMeshes</Filter>
-    </ClInclude>
     <ClInclude Include="RenderableObjects\RenderableObjectsManager.h">
       <Filter>RenderableObjects</Filter>
     </ClInclude>
@@ -253,12 +250,6 @@
     <ClInclude Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\AnimatorController.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\State.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Animation\AnimatorControllerParameter.h">
       <Filter>Animation</Filter>
     </ClInclude>
@@ -274,11 +265,8 @@
     <ClInclude Include="Animation\AnimatorControllerTriggerParameter.h">
       <Filter>Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\Transition.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\Animation.h">
-      <Filter>Animation</Filter>
+    <ClInclude Include="StaticMeshes\StaticMesh.h">
+      <Filter>StaticMeshes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -302,9 +290,6 @@
     </ClCompile>
     <ClCompile Include="RenderableObjects\RenderableObject.cpp">
       <Filter>RenderableObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticMeshes\StaticMesh.cpp">
-      <Filter>StaticMeshes</Filter>
     </ClCompile>
     <ClCompile Include="RenderableObjects\RenderableObjectsManager.cpp">
       <Filter>RenderableObjects</Filter>
@@ -519,12 +504,6 @@
     <ClCompile Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.cpp">
       <Filter>SceneRendererCommands</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\AnimatorController.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\State.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Animation\AnimatorControllerIntegerParameter.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
@@ -537,8 +516,8 @@
     <ClCompile Include="Animation\AnimatorControllerTriggerParameter.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\Transition.cpp">
-      <Filter>Animation</Filter>
+    <ClCompile Include="StaticMeshes\StaticMesh.cpp">
+      <Filter>StaticMeshes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

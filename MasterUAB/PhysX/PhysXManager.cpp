@@ -1,6 +1,8 @@
 #include "PhysXManager.h"
-
 #include <PxPhysicsAPI.h>
+
+#include <sstream>
+#include "FileUtils.h"
 
 class CPhysxManagerImplementation;
 
@@ -81,21 +83,21 @@ void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* 
 {
 	Body->attachShape(*Shape);
 	physx::PxRigidBodyExt::updateMassAndInertia(*Body, Density);
-	
+
 	//Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Trigger);
 	//Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Trigger);
 	Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, IsKinematic);
 
 	Body->userData = (void*)AddActor(ActorName, Position, Orientation, Body);
 	m_Scene->addActor(*Body);
-	
+
 }
 
 size_t CPhysXManager::AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor)
 {
-	#ifdef USE_PHYSX_DEBUG
-		CheckMapAndVectors();
-	#endif
+#ifdef USE_PHYSX_DEBUG
+	CheckMapAndVectors();
+#endif
 
 	size_t index = m_Actors.size();
 
@@ -176,7 +178,7 @@ void CPhysXManager::CreateRigidStaticSphere(const std::string &Name, const float
 }
 void CPhysXManager::CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
-	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxCapsuleGeometry(Radius,HalfHeight), Material, Position, Orientation, Group);
+	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxCapsuleGeometry(Radius, HalfHeight), Material, Position, Orientation, Group);
 
 	if (l_Shape != nullptr)
 		l_Shape->release();
@@ -186,7 +188,7 @@ void CPhysXManager::CreateRigidStaticPlane(const std::string &Name, const Vect3f
 	physx::PxMaterial* l_Material = GetMaterial(Material);
 
 	physx::PxRigidStatic* l_GroundPlane = PxCreatePlane(*m_PhysX, physx::PxPlane(CastVec(Normal), Distance), *l_Material);
-	
+
 	physx::PxShape* l_Shape;
 	size_t numShapes = l_GroundPlane->getShapes(&l_Shape, 1);
 	assert(numShapes == 1);
@@ -206,14 +208,14 @@ void CPhysXManager::CreateRigidStaticConvexMesh(const std::string &Name, std::ve
 	RegisterActor(Name, l_Shape, l_Body, Position, Orientation, Group);
 	*/
 	//if (l_Shape != nullptr)
-		//l_Shape->release();
+	//l_Shape->release();
 
-	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Vertices);
+	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Name, Vertices);
 	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxConvexMeshGeometry(l_ConvexMesh), Material, Position, Orientation, Group);
 
 	if (l_Shape != nullptr)
 		l_Shape->release();
-	
+
 }
 void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
@@ -231,7 +233,7 @@ void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, std::
 	//if (l_Shape != nullptr)
 	//	l_Shape->release();
 
-	physx::PxTriangleMesh* l_TriangleMesh = CreateTriangleMesh(Vertices, Indices);
+	physx::PxTriangleMesh* l_TriangleMesh = CreateTriangleMesh(Name, Vertices, Indices);
 	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxTriangleMeshGeometry(l_TriangleMesh), Material, Position, Orientation, Group);
 
 	if (l_Shape != nullptr)
@@ -267,7 +269,7 @@ void CPhysXManager::CreateRigidDynamicCapsule(const std::string &Name, const flo
 
 void CPhysXManager::CreateRigidDynamicConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
 {
-	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Vertices);
+	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Name, Vertices);
 
 	physx::PxMaterial* l_Material = GetMaterial(Material);
 
@@ -275,17 +277,17 @@ void CPhysXManager::CreateRigidDynamicConvexMesh(const std::string &Name, std::v
 	physx::PxShape* l_Shape = l_Body->createShape(physx::PxConvexMeshGeometry(l_ConvexMesh), *l_Material);
 
 	l_Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, IsKinematic);
-	
+
 	l_Body->userData = (void*)AddActor(Name, Position, Orientation, l_Body);
 	m_Scene->addActor(*l_Body);
 
 	//if (l_Shape != nullptr)
-		//l_Shape->release();
+	//l_Shape->release();
 }
 
 void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density)
 {
-	physx::PxTriangleMesh* l_ConvexMesh = CreateTriangleMesh(Vertices, Indices);
+	physx::PxTriangleMesh* l_ConvexMesh = CreateTriangleMesh(Name, Vertices, Indices);
 
 	physx::PxMaterial* l_Material = GetMaterial(Material);
 
@@ -300,11 +302,11 @@ void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, st
 
 
 /*Meshes that need to be cooked*/
-physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(std::vector<Vect3f> Vertices)
+physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &FileName, std::vector<Vect3f> Vertices)
 {
-	#if USE_PHYSX_DEBUG
-		CheckMapAndVectors();
-	#endif
+#if USE_PHYSX_DEBUG
+	CheckMapAndVectors();
+#endif
 
 	physx::PxConvexMeshDesc l_ConvexDesc;
 	l_ConvexDesc.points.count = Vertices.size();
@@ -315,24 +317,89 @@ physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(std::vector<Vect3f> Vertic
 	physx::PxDefaultMemoryOutputStream l_Buffer;
 	physx::PxConvexMeshCookingResult::Enum l_Result;
 	bool success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
-	
+
 	if (!success)
 	{
 		l_ConvexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eINFLATE_CONVEX;
 		success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
 		assert(success);
 	}
-	
+
 	physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
 	physx::PxConvexMesh* l_ConvexMesh = m_PhysX->createConvexMesh(l_Input);
 
 	return l_ConvexMesh;
 }
-physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices)
+//physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices)
+//{
+//	#if USE_PHYSX_DEBUG
+//		CheckMapAndVectors();
+//	#endif
+//
+//	/*Faster cooking*/
+//	//physx::PxTolerancesScale l_Scale;
+//	//physx::PxCookingParams l_Params(l_Scale);
+//	//// disable mesh cleaning - perform mesh validation on development configurations
+//	//l_Params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+//	//// disable edge precompute, edges are set for each triangle, slows contact generation
+//	//l_Params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
+//	//// lower hierarchy for internal mesh
+//	//l_Params.meshCookingHint = physx::PxMeshCookingHint::eCOOKING_PERFORMANCE;
+//	//m_Cooking->setParams(l_Params);
+//
+//
+//	physx::PxTriangleMeshDesc l_TriangleDesc;
+//	l_TriangleDesc.points.count = Vertices.size();
+//	l_TriangleDesc.points.stride = sizeof(Vect3f);
+//	l_TriangleDesc.points.data = &Vertices[0];
+//
+//	l_TriangleDesc.triangles.count = Indices.size() - 2;
+//	l_TriangleDesc.triangles.stride = 3 * sizeof(physx::PxU32);
+//	l_TriangleDesc.triangles.data = &Indices[0];
+//
+//	//#if USE_PHYSX_DEBUG
+//	//	// mesh should be validated before cooked without the mesh cleaning
+//	//	bool res = m_Cooking->validateTriangleMesh(l_TriangleDesc);
+//	//	PX_ASSERT(res);
+//	//#endif
+//
+//	physx::PxDefaultMemoryOutputStream l_Buffer;
+//	bool success = m_Cooking->cookTriangleMesh(l_TriangleDesc, l_Buffer);
+//	assert(success);
+//	//WriteCookingDataToFile("cocinando", l_Buffer);
+//
+//	std::string l_Cooked = CFileUtils::GetCookedMeshFileName(FileName,1);
+//	std::string l_Mesh = CFileUtils::GetMeshFileName(FileName, 1);
+//
+//	_int64 i = CFileUtils::Delta(CFileUtils::GetFileCreationDate(l_Mesh), CFileUtils::GetFileCreationDate(l_Cooked));
+//
+//	if (i < 0)
+//	{
+//
+//	}
+//
+//	unsigned int l_DataORiginalSize = l_Buffer.getSize();
+//	WriteCookingDataToFile("D:\\a_physics.mesh", (void *)l_Buffer.getData(), l_Buffer.getSize());
+//
+//	unsigned int l_DataSize;
+//	void *l_Data;
+//	ReadCookingDataFromFile("D:\\a_physics.mesh", &l_Data, l_DataSize);
+//
+//	//physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
+//	physx::PxDefaultMemoryInputData l_Input((physx::PxU8 *)l_Data, l_DataSize);
+//
+//	physx::PxTriangleMesh* l_TriangleMesh = m_PhysX->createTriangleMesh(l_Input);
+//
+//	free(l_Data);
+//
+//	return l_TriangleMesh;
+//}
+
+physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices)
 {
-	#if USE_PHYSX_DEBUG
-		CheckMapAndVectors();
-	#endif
+#if USE_PHYSX_DEBUG
+	CheckMapAndVectors();
+#endif
 
 	/*Faster cooking*/
 	//physx::PxTolerancesScale l_Scale;
@@ -345,29 +412,49 @@ physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(std::vector<Vect3f> Ve
 	//l_Params.meshCookingHint = physx::PxMeshCookingHint::eCOOKING_PERFORMANCE;
 	//m_Cooking->setParams(l_Params);
 
+	bool l_CookedMeshFileExists = CFileUtils::CookedMeshFileExists(FileName, 1);
+	std::string l_CookedMeshFileName = CFileUtils::GetCookedMeshFileName(FileName, 1);
 
-	physx::PxTriangleMeshDesc l_TriangleDesc;
-	l_TriangleDesc.points.count = Vertices.size();
-	l_TriangleDesc.points.stride = sizeof(Vect3f);
-	l_TriangleDesc.points.data = &Vertices[0];
+	physx::PxTriangleMesh* l_TriangleMesh = nullptr;
 
-	l_TriangleDesc.triangles.count = Indices.size() - 2;
-	l_TriangleDesc.triangles.stride = 3 * sizeof(physx::PxU32);
-	l_TriangleDesc.triangles.data = &Indices[0];
+	/*Mesh never has been cooked or has been cooked but not need to be updated*/
+	if ((l_CookedMeshFileExists && CFileUtils::MeshFileModified(FileName, 1)) || (!l_CookedMeshFileExists))
+	{
+		physx::PxTriangleMeshDesc l_TriangleDesc;
+		l_TriangleDesc.points.count = Vertices.size();
+		l_TriangleDesc.points.stride = sizeof(Vect3f);
+		l_TriangleDesc.points.data = &Vertices[0];
 
-	//#if USE_PHYSX_DEBUG
-	//	// mesh should be validated before cooked without the mesh cleaning
-	//	bool res = m_Cooking->validateTriangleMesh(l_TriangleDesc);
-	//	PX_ASSERT(res);
-	//#endif
+		l_TriangleDesc.triangles.count = Indices.size() / 3;
+		l_TriangleDesc.triangles.stride = 3 * sizeof(physx::PxU32);
+		l_TriangleDesc.triangles.data = &Indices[0];
 
-	physx::PxDefaultMemoryOutputStream l_Buffer;
-	bool success = m_Cooking->cookTriangleMesh(l_TriangleDesc, l_Buffer);
-	assert(success);
-	//WriteCookingDataToFile("cocinando", l_Buffer);
+		//#if USE_PHYSX_DEBUG
+		//	// mesh should be validated before cooked without the mesh cleaning
+		//	bool res = m_Cooking->validateTriangleMesh(l_TriangleDesc);
+		//	PX_ASSERT(res);
+		//#endif
 
-	physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
-	physx::PxTriangleMesh* l_TriangleMesh = m_PhysX->createTriangleMesh(l_Input);
+		physx::PxDefaultMemoryOutputStream l_Buffer;
+		bool success = m_Cooking->cookTriangleMesh(l_TriangleDesc, l_Buffer);
+		assert(success);
+
+		unsigned int l_DataORiginalSize = l_Buffer.getSize();
+		WriteCookingDataToFile(l_CookedMeshFileName, (void *)l_Buffer.getData(), l_Buffer.getSize());
+
+		physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
+		l_TriangleMesh = m_PhysX->createTriangleMesh(l_Input);
+	}
+	else
+	{
+		unsigned int l_DataSize;
+		void *l_Data;
+		ReadCookingDataFromFile(l_CookedMeshFileName, &l_Data, l_DataSize);
+
+		physx::PxDefaultMemoryInputData l_Input((physx::PxU8 *)l_Data, l_DataSize);
+		l_TriangleMesh = m_PhysX->createTriangleMesh(l_Input);
+		free(l_Data);
+	}
 
 	return l_TriangleMesh;
 }
@@ -571,7 +658,7 @@ return false;
 }
 */
 
-void CPhysXManager::CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, Vect3f &Position, const std::string &MaterialName)
+void CPhysXManager::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName)
 {
 
 }
@@ -579,12 +666,9 @@ void CPhysXManager::CreateCharacterController(const std::string &Name, float Hei
 Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterControllerName, const Vect3f &Movement, float ElapsedTime)
 {
 	Vect3f l_Move = v3fZERO;
-	if (!isnan(Movement.x) && !isnan(Movement.y) && !isnan(Movement.z))
+	if ((!isnan(Movement.x) && !isnan(Movement.y) && !isnan(Movement.z)) && ((!isinf(Movement.x) && !isinf(Movement.y) && !isinf(Movement.z))))
 		l_Move = Movement;
-	else 
-	{
-		int j = 0;
-	}
+
 	physx::PxController* l_Controller = m_CharacterControllers[CharacterControllerName];
 	const physx::PxControllerFilters l_Filters(nullptr, nullptr, nullptr);
 
@@ -601,7 +685,7 @@ Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterContro
 
 	m_ActorPositions[GetActorIndex(CharacterControllerName)] = l_Return;
 	//return GetActorPosition(CharacterControllerName);
-	
+
 	return l_Return;
 }
 
@@ -731,54 +815,31 @@ void CPhysXManager::Reload()
 }
 
 
-void CPhysXManager::WriteCookingDataToFile(const std::string &FileName, physx::PxDefaultMemoryOutputStream &Data)
+void CPhysXManager::WriteCookingDataToFile(const std::string &FileName, void *Data, unsigned int DataSize)
 {
 	FILE *l_File;
 	errno_t l_Error;
 	l_Error = fopen_s(&l_File, FileName.c_str(), "wb");
 
-	fwrite(Data.getData(), sizeof(Data.getSize()), 1, l_File);
-	
+	fwrite(&DataSize, sizeof(unsigned int), 1, l_File);
+	fwrite(Data, sizeof(unsigned char), DataSize, l_File);
+
 	fclose(l_File);
-
-	/*physx::PxSerializationRegistry* registry;                        
-
-	physx::PxDefaultFileInputData inputData(pathTo30RepXFile);       
-	physx::PxCollection* collection =
-	physx::PxSerialization::createCollectionFromXml(inputData, *cooking, *registry);
-
-	physx::PxDefaultFileOutputStream outStream(pathToNewRepXFile);
-	physx::PxSerialization::serializeCollectionToXml(outStream, *collection, *registry);*/
-	
-	
-	
-	//physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
-
-
-	//physx::PxSerializationRegistry* registry = physx::PxSerialization::createSerializationRegistry(PxGetPhysics());
-
-	//physx::PxCollection* collection = PxCreateCollection();
-	//collection->adadd(Data);
-	//physx::PxSerialization::complete(*collection, *registry);
-
-	//// Serialize either to binary or RepX
-	//physx::PxDefaultFileOutputStream outStream("serialized.dat");
-
-	//// Binary
-	//physx::PxSerialization::serializeCollectionToBinary(outStream, *collection, *registry);
-	////~Binary
-
 }
 
-//physx::PxDefaultMemoryOutputStream CPhysXManager::ReadCookingDataFromFile(const std::string &FileName)
-//{
-//	FILE *l_File;
-//	errno_t l_Error;
-//	l_Error = fopen_s(&l_File, FileName.c_str(), "rb");
-//
-//	physx::PxDefaultMemoryOutputStream l_Buffer;
-//	fread(&l_Buffer, sizeof(), 1, l_File);
-//}
+void CPhysXManager::ReadCookingDataFromFile(const std::string &FileName, void **Data, unsigned int &DataSize)
+{
+	FILE *l_File;
+	errno_t l_Error;
+	l_Error = fopen_s(&l_File, FileName.c_str(), "rb");
+	fread(&DataSize, sizeof(unsigned int), 1, l_File);
+	*Data = malloc(DataSize);
+	fread(*Data, sizeof(unsigned char), DataSize, l_File);
+	fclose(l_File);
+	//
+	//	physx::PxDefaultMemoryOutputStream l_Buffer;
+	//	fread(&l_Buffer, sizeof(), 1, l_File);
+}
 //
 //
 

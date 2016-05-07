@@ -7,6 +7,7 @@ static float m_Gloss=m_RawDataValues[1];
 static float m_BumpFactor=m_RawDataValues[2];
 static float n_EnvironmentFactor=m_RawDataValues[3];
 static float m_CutOut=m_RawDataValues[4];
+static float m_SsrFactor=m_RawDataValues[5];
 
 struct VS_INPUT
 {
@@ -163,6 +164,8 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 	
 	l_Output.Target0.w = m_SpecularFactor * (1-l_Spec);
 	l_Output.Target1.w = 1/m_Gloss;
+	
+	l_Output.Target2.w = m_SsrFactor;
 	
 	float l_Depth = IN.HPos.z / IN.HPos.w;
 	l_Output.Target3=float4(l_Depth, l_Depth, l_Depth, 1.0);

@@ -56,6 +56,15 @@
     <ClCompile Include="Components\AudioSource.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Components\AnimatorController\AnimatorController.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\AnimatorController\State.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\AnimatorController\Transition.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugHelper.h" />
@@ -101,6 +110,21 @@
     <ClInclude Include="Components\AudioSource.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="Components\LuaComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\Animation.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\AnimatorController.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\State.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\Transition.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ScriptManager">
@@ -111,6 +135,9 @@
     </Filter>
     <Filter Include="Components">
       <UniqueIdentifier>{fd9d8db8-dfe0-42e7-9ebd-25c5c0e0f733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\AnimatorController">
+      <UniqueIdentifier>{88dd3fc2-3ffe-4648-b657-1168a11836c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

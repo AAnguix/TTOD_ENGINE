@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include "cal3d\coretrack.h"
+#include "Log.h"
 
 bool CAnimatedCoreModel::LoadMesh(const std::string &Filename)
 {
@@ -25,14 +26,14 @@ bool CAnimatedCoreModel::LoadSkeleton(const std::string &Filename)
 	return m_CalCoreModel->loadCoreSkeleton(Filename);
 }
 
-bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, const bool &Loop)
+bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, const bool &Loop, const float &Weight)
 {
 	//int r=m_CalCoreModel->loadCoreAnimation(Filename);
 	//return r;
 	int l_AnimationID = m_CalCoreModel->loadCoreAnimation(Filename);
 	if (l_AnimationID != -1)
 	{
-		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID));
+		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID, Weight));
 		//m_Animations.insert(std::pair<const std::string, int>(Name,l_AnimationID));
 		return true;
 	}
@@ -46,6 +47,7 @@ EAnimation CAnimatedCoreModel::GetAnimation(const std::string &Name)
 		if (m_Animations[i].m_Name == Name)
 			return m_Animations[i];
 	}
+	CEngine::GetSingleton().GetLogManager()->Log("Can't find animation " + Name + " in core model "+m_Name);
 	assert(false);
 	return m_Animations[0];
 }
@@ -146,7 +148,7 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 				}
 				else if (l_Element.GetName() == std::string("animation"))
 				{
-					LoadAnimation(l_Element.GetPszProperty("name"),Path+l_Element.GetPszProperty("filename"),l_Element.GetBoolProperty("loop",false));
+					LoadAnimation(l_Element.GetPszProperty("name"),Path+l_Element.GetPszProperty("filename"),l_Element.GetBoolProperty("loop",false), l_Element.GetFloatProperty("weight",1.0f));
 				}
 			}
 		}

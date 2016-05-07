@@ -43,11 +43,6 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(TreeNode.GetPszProperty("model_name")));
 }
 
-CAnimatorController* CAnimatedInstanceModel::GetAnimatorController() const
-{
-	return (CAnimatorController*)m_ComponentManager->GetResource("AnimatorController");
-}
-
 CAnimatedInstanceModel::~CAnimatedInstanceModel()
 {
 	Destroy();

@@ -24,83 +24,8 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="videogame.cpp" />
-    <ClCompile Include="..\bin\Game\Enemies\BasicEnemy.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Enemies\BruteEnemy.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Enemies\Enemy.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Enemies\RangedEnemy.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Inventory\HealthPotion.cpp">
-      <Filter>Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Inventory\Inventory.cpp">
-      <Filter>Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Inventory\Item.cpp">
-      <Filter>Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Player\Player.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Weapons\Armor.cpp">
-      <Filter>Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Weapons\DamageReduction.cpp">
-      <Filter>Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Weapons\Weapon.cpp">
-      <Filter>Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bin\Game\Other\Pedestal.cpp">
-      <Filter>Other</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="..\bin\Game\Enemies\BasicEnemy.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Enemies\BruteEnemy.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Enemies\Enemy.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Enemies\RangedEnemy.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Inventory\HealthPotion.h">
-      <Filter>Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Inventory\Inventory.h">
-      <Filter>Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Inventory\Item.h">
-      <Filter>Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Player\Player.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Weapons\Armor.h">
-      <Filter>Weapons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Weapons\DamageReduction.h">
-      <Filter>Weapons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Weapons\Weapon.h">
-      <Filter>Weapons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Other\Pedestal.h">
-      <Filter>Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bin\Game\Other\ItemGuiData.h">
-      <Filter>Other</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

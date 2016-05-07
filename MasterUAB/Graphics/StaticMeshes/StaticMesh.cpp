@@ -9,19 +9,19 @@
 #include "RenderableObjects\RenderableObjectTechnique.h"
 #include <cmath>
 
-CStaticMesh::CStaticMesh() 
-: m_NumVertexs(0)
-,m_NumFaces(0)
-,m_RVs(NULL)
-,m_Materials(NULL)
-,CNamed("")
+CStaticMesh::CStaticMesh()
+	: m_NumVertexs(0)
+	, m_NumFaces(0)
+	, m_RVs(NULL)
+	, m_Materials(NULL)
+	, CNamed("")
 {
-	
+
 }
 
 CStaticMesh::~CStaticMesh()
 {
-	for(size_t i=0;i<m_RVs.size();++i)
+	for (size_t i = 0; i<m_RVs.size(); ++i)
 	{
 		delete m_RVs[i];
 	}
@@ -39,35 +39,35 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 	std::string l_BinaryFile = FileName;
 
-	FILE *l_File=NULL;
-	fopen_s(&l_File, (l_BinaryFile.c_str()),"rb");
-	
-	m_Name=FileName;
+	FILE *l_File = NULL;
+	fopen_s(&l_File, (l_BinaryFile.c_str()), "rb");
 
-	unsigned short l_DefaultHeader=0xfe55;
-	unsigned short l_DefaultFooter=0x55fe;
+	m_Name = FileName;
+
+	unsigned short l_DefaultHeader = 0xfe55;
+	unsigned short l_DefaultFooter = 0x55fe;
 
 	unsigned short l_Header;
 
 	fread(&l_Header, sizeof(unsigned short), 1, l_File);
 
-	if(l_Header==l_DefaultHeader)
+	if (l_Header == l_DefaultHeader)
 	{
 		unsigned short l_MaterialsCount;
 		fread(&l_MaterialsCount, sizeof(unsigned short), 1, l_File);
-		
-		for(unsigned short i=0;i<l_MaterialsCount;++i)
+
+		for (unsigned short i = 0; i<l_MaterialsCount; ++i)
 		{
 			unsigned short l_CharactersCount;
 			fread(&l_CharactersCount, sizeof(unsigned short), 1, l_File);
 
 			std::string l_MaterialName;
-			l_MaterialName.resize(l_CharactersCount+1);
+			l_MaterialName.resize(l_CharactersCount + 1);
 			//fread((void *)l_MaterialName.c_str(), sizeof(l_MaterialName), 1, l_File);
-	
+
 			//char * l_MaterialName = new char [l_MaterialName.length()+1];
 			//std::strcpy (l_MName, l_MaterialName.c_str());
-			fread((void *)l_MaterialName.c_str(), 1, l_CharactersCount+1, l_File);
+			fread((void *)l_MaterialName.c_str(), 1, l_CharactersCount + 1, l_File);
 			l_MaterialName.pop_back();
 			m_Materials.push_back(CEngine::GetSingleton().GetMaterialManager()->GetResource(l_MaterialName));
 		}
@@ -88,7 +88,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 		fread(&m_BoundingSphere.y_center, sizeof(float), 1, l_File);
 		fread(&m_BoundingSphere.z_center, sizeof(float), 1, l_File);
 		fread(&m_BoundingSphere.radius, sizeof(float), 1, l_File);
-		
+
 		for (unsigned short i = 0; i < l_MaterialsCount; ++i)
 		{
 			void *l_VtxsData = NULL;
@@ -183,7 +183,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 				/*Index for cooking triangle meshes*/
 				void* l_ReadIndex = l_IdxData;
-				
+
 				for (size_t i = 0; i < m_NumIndexs; ++i)
 				{
 					m_MeshIndex.push_back(0);
@@ -324,15 +324,15 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 		} //materials
 
-		unsigned short l_Footer=0;
+		unsigned short l_Footer = 0;
 		fread(&l_Footer, sizeof(unsigned short), 1, l_File);
-	
-		if(l_Footer!=l_DefaultFooter)
-		{
-			m_NumFaces=0;
-			m_NumVertexs=0;
 
-			for(size_t i=0;i<m_RVs.size();++i)
+		if (l_Footer != l_DefaultFooter)
+		{
+			m_NumFaces = 0;
+			m_NumVertexs = 0;
+
+			for (size_t i = 0; i<m_RVs.size(); ++i)
 			{
 				delete m_RVs[i];
 			}
@@ -346,7 +346,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 	fclose(l_File);
 
-  return 0;
+	return 0;
 }
 
 bool CStaticMesh::Reload()
@@ -354,11 +354,11 @@ bool CStaticMesh::Reload()
 	return Load(m_Name);
 }
 
-void CStaticMesh::Render (CRenderManager *RM) const
+void CStaticMesh::Render(CRenderManager *RM) const
 {
-	for(size_t i=0;i<m_RVs.size();++i)
+	for (size_t i = 0; i<m_RVs.size(); ++i)
 	{
-		if(m_Materials[i]!=NULL)
+		if (m_Materials[i] != NULL)
 		{
 			m_Materials[i]->Apply();
 			m_RVs[i]->RenderIndexed(RM, m_Materials[i]->GetRenderableObjectTechnique()->GetEffectTechnique(), (void *)&CEffectManager::m_SceneEffectParameters);
@@ -368,7 +368,7 @@ void CStaticMesh::Render (CRenderManager *RM) const
 
 CMaterial* CStaticMesh::GetPhysxMaterial()
 {
-	if(m_Materials.size()>0)
+	if (m_Materials.size()>0)
 		return m_Materials[0];
 
 	return nullptr;

@@ -26,6 +26,7 @@ private:
 	void RegisterRenderableObjects();
 	void RegisterBase();
 	void RegisterCore();
+	void RegisterComponents();
 	void RegisterPhysics();
 	void RegisterSceneRendererCommands();
 	void RegisterGUI();
@@ -36,6 +37,7 @@ public:
 	CScriptManager();
 	virtual ~CScriptManager();
 	void Initialize();
+	void RunLuaMain();
 	void Destroy();
 	void RunCode(const std::string &Code) const;
 	void RunFile(const std::string &FileName) const;

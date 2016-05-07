@@ -6,7 +6,7 @@
 #include "RenderableObjects\RenderableObject.h"
 #include "Cinematics\Cinematic.h"
 
-CCharacterCollider::CCharacterCollider(const std::string &Name, CRenderableObject *Owner)
+CCharacterCollider::CCharacterCollider(const std::string &Name, CAnimatedInstanceModel *Owner)
 :CComponent(Name,Owner)
 {
 	
@@ -36,7 +36,7 @@ void CCharacterCollider::RenderDebug(CRenderManager &RenderManager)
 
 }
 
-CCharacterCollider* CCharacterCollider::AddCharacterCollider(const std::string &Name, CRenderableObject *Owner)
+CCharacterCollider* CCharacterCollider::AddCharacterCollider(const std::string &Name, CAnimatedInstanceModel *Owner)
 {
 	CCharacterCollider* l_CharacterCollider = new CCharacterCollider(Name, Owner);
 
