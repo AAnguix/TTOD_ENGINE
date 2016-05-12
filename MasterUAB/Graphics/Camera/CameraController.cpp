@@ -37,7 +37,8 @@ Vect3f CCameraController::GetUp() const
 
 Vect3f CCameraController::GetForward() const
 {
-	return Vect3f(sin(m_Pitch) * sin(0.0f) + cos(m_Pitch) * sin(m_Yaw) * cos(0.0f), -cos(m_Pitch) * sin(0.0f) + sin(m_Pitch) * sin(m_Yaw) * cos(0.0f), cos(m_Yaw) * cos(0.0f));
+	//return Vect3f(sin(m_Pitch) * sin(0.0f) + cos(m_Pitch) * sin(m_Yaw) * cos(0.0f), -cos(m_Pitch) * sin(0.0f) + sin(m_Pitch) * sin(m_Yaw) * cos(0.0f), cos(m_Yaw) * cos(0.0f));
+	return Vect3f(cos(m_Pitch) * sin(m_Yaw),sin(m_Pitch) * sin(m_Yaw), cos(m_Yaw));
 }
 
 void CCameraController::AddYaw(float Radians)

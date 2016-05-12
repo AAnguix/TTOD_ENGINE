@@ -128,7 +128,9 @@ void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 
 	CEffectManager::m_SceneEffectParameters.m_World=GetTransform(); 
 
-	for(int l_HardwareMeshId=0; l_HardwareMeshId<m_CalHardwareModel->getHardwareMeshCount(); ++l_HardwareMeshId)
+	int l_HardwareMeshCount = m_CalHardwareModel->getHardwareMeshCount();
+
+	for(int l_HardwareMeshId = 0; l_HardwareMeshId<l_HardwareMeshCount; ++l_HardwareMeshId)
 	{
 		m_Materials[l_HardwareMeshId]->Apply();
 		m_CalHardwareModel->selectHardwareMesh(l_HardwareMeshId);

@@ -37,10 +37,12 @@ function InitializeLuaMain()
 end
 
 function Update(ElapsedTime)
-	g_GameController:Update(ElapsedTime)
-	Reload(ElapsedTime)
-	CameraController(ElapsedTime)
+	if CApplication.IsGamePaused() == false then
+		g_GameController:Update(ElapsedTime)
+		Reload(ElapsedTime)
+		CameraController(ElapsedTime)
+		UpdateCinematics(ElapsedTime)
+	end
 	UpdateGUI(ElapsedTime)
-	UpdateCinematics(ElapsedTime)
 end
 

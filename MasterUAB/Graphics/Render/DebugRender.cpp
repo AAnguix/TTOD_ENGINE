@@ -335,6 +335,22 @@ void CDebugRender::RenderDebugLayer(CContextManager* ContextManager, CRenderable
 		world.SetIdentity();
 		ContextManager->SetWorldMatrix(Layer->GetResourceById(i)->GetTransform());
 		ContextManager->Draw(GetAxis());
+
+		/*CRenderableObject* l_RObject = Layer->GetResourceById(i);
+		MV_POSITION_COLOR_VERTEX l_AxisVtxs[6] =
+		{
+			{ Vect3f(0.0f, 0.0f, 0.0f), CColor(1.0f, 0.0f, 0.0f, 1.0f) },
+			{ l_RObject->GetRight(), CColor(1.0f, 0.0f, 0.0f, 1.0f) },
+
+			{ Vect3f(0.0f, 0.0f, 0.0f), CColor(0.0f, 1.0f, 0.0f, 1.0f) },
+			{ l_RObject->GetUp(), CColor(0.0f, 1.0f, 0.0f, 1.0f) },
+
+			{ Vect3f(0.0f, 0.0f, 0.0f), CColor(0.0f, 0.0f, 1.0f, 1.0f) },
+			{ l_RObject->GetForward(), CColor(0.0f, 0.0f, 1.0f, 1.0f) }
+		};
+		
+		m_Prueba = CLinesListRenderableVertexs<MV_POSITION_COLOR_VERTEX>(l_AxisVtxs, 6, 3, false);
+		ContextManager->Draw(&m_Prueba);*/
 	}
 }
 

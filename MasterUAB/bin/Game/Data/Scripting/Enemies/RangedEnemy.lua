@@ -1,6 +1,6 @@
 class 'CRangedEnemyComponent' (CEnemyComponent)
 function CRangedEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject)
+	CEnemyComponent.__init(self, CRenderableObject, "rangued")
 	self.m_Health=150.0
 	self.m_Speed=2.0
 	self.m_AttackDelay=2.0
@@ -10,8 +10,6 @@ function CRangedEnemyComponent:__init(CRenderableObject)
 	self.m_ShootingForce=50.0
 	self.m_Weapon = CWeapon(100,"bow")
 	self.m_Armor = CArmor(5,"light")
-	
-	self:Initialize()
 end
 
 function CRangedEnemyComponent:Attack()
@@ -20,6 +18,7 @@ end
 
 function CRangedEnemyComponent:Initialize()
 	
+	CEnemyComponent.Initialize(self)
 	local l_AnimatorController = self.m_RObject:GetAnimatorController()
 
 	l_AnimatorController:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_RangedEnemy", "OnUpdate_Idle_RangedEnemy", "OnExit_Idle_RangedEnemy")

@@ -7,7 +7,6 @@
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
 #include <wrl.h>
-#include "Tools.h"
 #include "Log.h"
 
 CTexture::CTexture() : CNamed("")

@@ -1,33 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <materials>
-	<material name="health_potion_font_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\Fonts\health_potion_font.png"/>
-	</material>
 	<material name="health_potion_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
 		<texture filename="Data\GUI\textures\health_potion.png"/>
 	</material>
 	<material name="background_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\textures\information.dds"/>
-	</material>
-	<material name="healthBar_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\textures\healthbar.png"/>
-	</material>
-	<material name="gui1_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\textures\icon_menu.dds"/>
-	</material>
-	<material name="gui2_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\textures\icon_soundOff.dds"/>
-	</material>
-	<material name="gui3_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\textures\icon_soundOn.dds"/>
-	</material>
-	<material name="gui4_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\textures\icon_stadistics.dds"/>
-	</material>
-	<material name="gui5_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
-		<texture filename="Data\GUI\textures\icon_tutorConfig.dds"/>
-	</material>
-	<material name="gui6_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
 		<texture filename="Data\GUI\textures\information.dds"/>
 	</material>
 	<material name="slider_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
@@ -42,4 +18,34 @@
 	<material name="fontTest" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
 		<texture filename="Data\GUI\Fonts\fontTest_0.png"/>
 	</material>
+	<material name="felix_font_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+		<texture filename="Data\GUI\Fonts\Felix_0.png"/>
+		<texture filename="Data\GUI\Fonts\Felix_1.png"/>
+	</material>
+	
+	<!-- In game -->
+	<material name="pedestal_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+		<texture filename="Data\GUI\textures\pedestal_button.png"/>
+	</material>
+	<material name="health_potion_font_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+		<texture filename="Data\GUI\Fonts\health_potion_font.png"/>
+	</material>
+	<material name="healthBar_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+		<texture filename="Data\GUI\textures\healthbar.png"/>
+	</material>
+	<material name="in_game_menu_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+		<texture filename="Data\GUI\textures\icon_tutorConfig.dds"/>
+	</material>
+		<material name="in_game_pause_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+			<texture filename="Data\GUI\textures\information.dds"/>
+		</material>
+		<material name="in_game_audio_submenu_open_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+			<texture filename="Data\GUI\textures\icon_soundOn.dds"/>
+		</material>
+			<material name="in_game_music_submenu_modify_fx_volume_slider_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+			<texture filename="Data\GUI\textures\slider.dds"/>
+			</material>
+			<material name="in_game_music_submenu_modify_music_volume_slider_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"> 
+			<texture filename="Data\GUI\textures\slider.dds"/>
+			</material>
 </materials>

@@ -93,7 +93,8 @@ void CGUIManager::SortCommands()
 	/*1*/
 	for (size_t i = 0; i < m_Commands.size(); ++i)
 	{
-		m_CommandsPerSpriteMap[m_Commands[i].sprite->spriteMap->materialIndex]++;
+		if (m_Commands[i].sprite!=nullptr)
+			m_CommandsPerSpriteMap[m_Commands[i].sprite->spriteMap->materialIndex]++;
 	}
 
 	/*2*/
@@ -108,17 +109,23 @@ void CGUIManager::SortCommands()
 	/*3*/
 	for (size_t i = 0; i < m_Commands.size(); ++i)
 	{
-		m_CommandsExecutionOrder.push_back(0);
+		if (m_Commands[i].sprite!=nullptr)
+			m_CommandsExecutionOrder.push_back(0);
 	}
 	for (size_t i = 0; i < m_Commands.size(); ++i)
 	{
-		unsigned int l_MatIndex = m_Commands[i].sprite->spriteMap->materialIndex;
+		SSpriteInfo* l_Sprite = m_Commands[i].sprite;
 
-		unsigned int l_Index = m_CommandsPerSpriteMap[l_MatIndex];
+		if (l_Sprite != nullptr)
+		{
+			unsigned int l_MatIndex = l_Sprite->spriteMap->materialIndex;
 
-		m_CommandsExecutionOrder[l_Index] = i;
+			unsigned int l_Index = m_CommandsPerSpriteMap[l_MatIndex];
 
-		m_CommandsPerSpriteMap[l_MatIndex]++;
+			m_CommandsExecutionOrder[l_Index] = i;
+
+			m_CommandsPerSpriteMap[l_MatIndex]++;
+		}
 	}
 }
 
@@ -370,6 +377,7 @@ CGUIManager::SSpriteInfo* CGUIManager::GetSprite(const std::string& Name)
 
 	if (itMap == m_Sprites.end())
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("Can't find sprite " + Name);
 		assert(false);
 		return nullptr;
 	}
@@ -449,7 +457,7 @@ void CGUIManager::AddButton(const std::string& ButtonID, const std::string& Norm
 	SSpriteInfo* l_Pressed = GetSprite(Pressed);
 	assert(l_Normal != nullptr);
 	assert(l_Highlight != nullptr);
-	assert(l_Pressed != nullptr);
+	assert(l_Pressed != nullptr); 
 
 	SButtonInfo* l_Button = new SButtonInfo(l_Normal, l_Highlight, l_Pressed);
 	m_Buttons.insert(std::pair<std::string, SButtonInfo*>(ButtonID, l_Button));
@@ -704,7 +712,13 @@ void CGUIManager::DoHealthBar(const std::string& GuiID, const std::string& Healt
 void CGUIManager::DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text)
 {
 	CheckInput();
-	SSpriteInfo* l_Sprite = GetSprite(Sprite);
+
+	SSpriteInfo* l_Sprite = nullptr;
+	std::map<std::string, SSpriteInfo*>::iterator itMap;
+	itMap = m_Sprites.find(Sprite);
+	if (itMap != m_Sprites.end())
+		l_Sprite = itMap->second;
+
 
 	SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
 	, 0, 0, 1, 1,
@@ -791,8 +805,6 @@ std::string CGUIManager::DoTextBox(const std::string& GuiID, const std::string& 
 
 		FillCommandQueueWithText(Font, l_DisplayText, Vect2f(Position.x + Position.width * 0.05f, Position.y + Position.height * 0.75f), GUIAnchor::BASE_LEFT);
 	}
-
-	
 
 	return l_ActiveText;
 }

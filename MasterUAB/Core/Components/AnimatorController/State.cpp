@@ -49,7 +49,11 @@ void CState::OnEnter(CTransition* Transition)
 	try
 	{
 		if (!m_OnEnter.empty())
-			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnEnter.c_str(), (CAnimatedInstanceModel*)m_AnimatorController->GetOwner());
+		{
+			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
+			assert(l_LuaComponent!=nullptr);
+			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnEnter.c_str(), l_LuaComponent);
+		}
 	}
 	catch (const luabind::error &e)
 	{
@@ -68,7 +72,11 @@ void CState::OnExit(CTransition* Transition)
 	try
 	{
 		if (!m_OnExit.empty())
-			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnExit.c_str(), (CAnimatedInstanceModel*)m_AnimatorController->GetOwner());
+		{
+			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
+			assert(l_LuaComponent != nullptr);
+			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnExit.c_str(), l_LuaComponent); //(CAnimatedInstanceModel*)m_AnimatorController->GetOwner()
+		}
 	}
 	catch (const luabind::error &e)
 	{
@@ -90,7 +98,11 @@ void CState::OnUpdate(float ElapsedTime)
 	try
 	{
 		if (!m_OnUpdate.empty())
-			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnUpdate.c_str(), (CAnimatedInstanceModel*)m_AnimatorController->GetOwner(), ElapsedTime);
+		{
+			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
+			assert(l_LuaComponent != nullptr);
+			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnUpdate.c_str(), l_LuaComponent, ElapsedTime);
+		}
 	}
 	catch (const luabind::error &e)
 	{

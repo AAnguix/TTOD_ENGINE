@@ -62,8 +62,12 @@ g_Run = false
 -- end
 
 --Idle_State
-function OnEnter_Idle_Player(Player)
+function OnEnter_Idle_Player(PlayerComponent)
 	--g_LogManager:Log("Player enters Idle")
+	--local l = ((CPlayerComponent)PlayerComponent):GetSpeed()
+	--g_LogManager:Log("Player "..PlayerComponent:GetType())
+	-- g_LogManager:Log("Speed "..PlayerComponent:GetSpeed())
+	-- g_LogManager:Log("Health "..PlayerComponent:GetHealth())
 end
 
 function OnUpdate_Idle_Player(Player, ElapsedTime)

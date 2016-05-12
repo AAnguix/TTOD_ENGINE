@@ -14,6 +14,7 @@
 #include "Math\Vector3.h"
 #include "Math\Vector4.h"
 #include "Utils\EmptyPointerClass.h"
+#include "Utils\TTODMathUtils.h"
 #include <cmath>
 
 using namespace luabind;
@@ -23,6 +24,15 @@ using namespace luabind;
 
 void CScriptManager::RegisterBase()
 {
+	module(LUA_STATE)
+	[
+		class_<CTTODMathUtils>("CTTODMathUtils")
+		.scope
+		[
+			def("GetAngleToFacePoint", &CTTODMathUtils::GetAngleToFacePoint)
+		]
+	];
+
 	module(LUA_STATE) 
 	[
 		class_<C3DElement>("C3DElement")

@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <gui_elements>
+	
+	<!-- Menu -->
+	<gui_spritemap name="felix_font" width="256" height="256" material="felix_font_material">
+		<sprite name="Felix_0.png" x="0" y="0" w="256" h="256" />
+		<sprite name="Felix_1.png" x="0" y="0" w="256" h="256" />
+	</gui_spritemap>
+	<gui_spritemap name="menu_button" width="512" height="512" material="in_game_menu_button_material">
+		<sprite name="menu_button_normal" x="0" y="0" w="512" h="512" />
+		<sprite name="menu_button_highlight" x="0" y="0" w="512" h="512" />
+		<sprite name="menu_button_pressed" x="0" y="0" w="512" h="512" />
+	</gui_spritemap>
+	<gui_spritemap name="pause_button" width="512" height="512" material="in_game_pause_button_material">
+		<sprite name="pause_button_normal" x="0" y="0" w="512" h="512" />
+		<sprite name="pause_button_highlight" x="0" y="0" w="512" h="512" />
+		<sprite name="pause_button_pressed" x="0" y="0" w="512" h="512" />
+	</gui_spritemap>
+	<gui_spritemap name="open_audio_submenu_material" width="512" height="512" material="in_game_audio_submenu_open_button_material">
+		<sprite name="open_audio_submenu_normal" x="0" y="0" w="512" h="512" />
+		<sprite name="open_audio_submenu_highlight" x="0" y="0" w="512" h="512" />
+		<sprite name="open_audio_submenu_pressed" x="0" y="0" w="512" h="512" />
+	</gui_spritemap>
+		<!-- Audio -->
+		<gui_spritemap name="modify_fx_volume_slider" width="512" height="512" material="in_game_music_submenu_modify_fx_volume_slider_material">
+			<sprite name="modify_fx_volume_slider_base" x="0" y="0" w="512" h="150" />
+			<sprite name="modify_fx_volume_slider_top" x="0" y="150" w="512" h="150" />
+			<sprite name="modify_fx_volume_slider_handle" x="0" y="400" w="64" h="64" />
+			<sprite name="modify_fx_volume_slider_pressed_handle" x="400" y="400" w="64" h="64" />
+		</gui_spritemap>
+		<gui_spritemap name="modify_music_volume_slider" width="512" height="512" material="in_game_music_submenu_modify_music_volume_slider_material">
+			<sprite name="modify_music_volume_slider_base" x="0" y="0" w="512" h="150" />
+			<sprite name="modify_music_volume_slider_top" x="0" y="150" w="512" h="150" />
+			<sprite name="modify_music_volume_slider_handle" x="0" y="400" w="64" h="64" />
+			<sprite name="modify_music_volume_slider_pressed_handle" x="400" y="400" w="64" h="64" />
+		</gui_spritemap>
+	
+	<!-- Gameplay -->
 	<gui_spritemap name="player_health_bar" width="512" height="256" material="healthBar_material">
 		<sprite name="player_health_bar_background" x="0" y="0" w="512" h="128" />
 		<sprite name="player_health_bar_top" x="0" y="128" w="512" h="64" />
@@ -12,6 +48,11 @@
 	</gui_spritemap>
 	<gui_spritemap name="health_potion_font" width="256" height="256" material="health_potion_font_material">
 		<sprite name="health_potion_font_sprite" x="0" y="0" w="256" h="256" />
+	</gui_spritemap>
+	<gui_spritemap name="pedestal_button" width="512" height="512" material="pedestal_button_material">
+		<sprite name="pedestal_button_normal" x="0" y="0" w="256" h="256" />
+		<sprite name="pedestal_button_highlight" x="0" y="0" w="256" h="256" />
+		<sprite name="pedestal_button_pressed" x="0" y="0" w="256" h="256" />
 	</gui_spritemap>
 </gui_elements>
 

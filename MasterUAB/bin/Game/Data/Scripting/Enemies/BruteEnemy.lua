@@ -1,6 +1,6 @@
 class 'CBruteEnemyComponent' (CEnemyComponent)
 function CBruteEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject)
+	CEnemyComponent.__init(self, CRenderableObject, "brute")
 	self.m_Health=300.0
 	self.m_Speed=0.5
 	self.m_AttackDelay=1.0
@@ -10,8 +10,6 @@ function CBruteEnemyComponent:__init(CRenderableObject)
 	self.m_ChargeForce=20.0
 	self.m_Weapon = CWeapon(50,"physique_strength")
 	self.m_Armor = CArmor(20,"heavy")
-	
-	self:Initialize()
 end
 
 function CBruteEnemyComponent:Attack()
@@ -20,15 +18,16 @@ end
 
 function CBruteEnemyComponent:Initialize()
 	
+	CEnemyComponent.Initialize(self)
 	local l_AnimatorController = self.m_RObject:GetAnimatorController()
 
 	local l_Idle = l_AnimatorController:AddState("Idle_State", "Idle_Anim", 1.0, "OnEnter_Idle_BruteEnemy", "OnUpdate_Idle_BruteEnemy", "OnExit_Idle_BruteEnemy")
 	local l_Chargue = self.m_RObject:GetAnimatorController():AddState("Charge_State", "Charge_State", 1.0, "OnEnter_Charge_BruteEnemy", "OnUpdate_Charge_BruteEnemy", "OnExit_Charge_BruteEnemy")
 	local l_Patrol = self.m_RObject:GetAnimatorController():AddState("Patrol_State", "Patrol_Anim", 1.0, "OnEnter_Patrol_BruteEnemy", "OnUpdate_Patrol_BruteEnemy", "OnExit_Patrol_BruteEnemy")
 
-	l_AnimatorController:AddBool("IsPlayerInsideVisionRange", true)
-	l_AnimatorController:AddBool("DelayToPatrol", true)
-	l_AnimatorController:AddTrigger("GoBackToIdle", true)
+	l_AnimatorController:AddBool("IsPlayerInsideVisionRange", false)
+	l_AnimatorController:AddBool("DelayToPatrol", false)
+	l_AnimatorController:AddTrigger("GoBackToIdle", false)
 
 	local l_IdleToCharge = l_Idle:AddTransition("IdleToCharge", l_Chargue, false, 0.0, 0.1, 0.1)
 	l_IdleToCharge:AddBoolCondition("IsPlayerInsideVisionRange", true);

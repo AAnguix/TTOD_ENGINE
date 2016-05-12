@@ -1,6 +1,6 @@
 class 'CEnemyComponent' (CLUAComponent)
-function CEnemyComponent:__init(CRenderableObject)
-	
+function CEnemyComponent:__init(CRenderableObject, ComponentType)
+	CLUAComponent.__init(self,ComponentType)
 	self.m_RObject = CRenderableObject
 	self.m_Dead=false
 	self.m_Health=0.0
@@ -8,30 +8,40 @@ function CEnemyComponent:__init(CRenderableObject)
 	self.m_Armor = nil
 	self.m_Weapon = nil
 	
-	self.m_Speed = 0.0
+	self.m_Speed = 0.1
+	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	self.m_AttackDelay = 0.0
 	self.m_VisionRange = 0.0
 	
-	self.m_DelayToPatrol = 0.0
+	self.m_DelayToPatrol = 2.0
 	self.m_WayPoints = {}
-	self.m_CurrentWayPoint = 0
+	self.m_CurrentWayPoint = 1
 	self.m_ElapsedTime = 0.0
 	
 	self.m_Height = 1.4
-	
+end
+
+function CEnemyComponent:Initialize()
 	--Physyx
-	CCharacterCollider.AddCharacterCollider("CharacterCollider", CRenderableObject)
-	--l_MaterialName = CRenderableObject:GetAnimatedCoreModel():GetMaterials()[0]:GetName()
+	CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
+	--l_MaterialName = self.m_RObject:GetAnimatedCoreModel():GetMaterials()[0]:GetName()
 	l_MaterialName = "aaa"
 	g_PhysXManager:RegisterMaterial(l_MaterialName, 0.1, 0.1, 0.1)
-	m_Position = CRenderableObject:GetPosition()
+	m_Position = self.m_RObject:GetPosition()
 	l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-	g_PhysXManager:CreateCharacterController(CRenderableObject:GetName(), self.m_Height, 0.3, 30.0, l_CControlerPos, l_MaterialName)
+	g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, 0.3, 30.0, l_CControlerPos, l_MaterialName)
 	
 	--Animations
-	CAnimatorController.AddAnimatorController("AnimatorController", CRenderableObject)
+	CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
 	
-	g_LogManager:Log("Enemy "..CRenderableObject:GetName().." created...")
+	g_LogManager:Log("Enemy "..self.m_RObject:GetName().." created...")
+end
+
+function CEnemyComponent:Update(ElapsedTime)
+end
+
+function CEnemyComponent:ResetTime()
+	self.m_ElapsedTime=0.0
 end
 
 function CEnemyComponent:IsDead()
@@ -71,40 +81,61 @@ function CEnemyComponent:Attack()
 end
 -- function CEnemyComponent:GetElapsedTime()
 
--- end
-
 function CEnemyComponent:IsPlayerInsideVisionRange(PlayerPosition)
 
-	l_Distance = 0.0
-	l_IsPlayerInsideVisionRange = false
-	l_Position = GetPosition()
+	local l_Distance = 0.0
+	local l_Position = self.m_RObject:GetPosition()
 	
-	l_Distance = sqrt(pow(l_Position.x - PlayerPosition.x, 2) + pow(l_Position.y - PlayerPosition.y, 2) + pow(l_Position.z - PlayerPosition.z, 2))
-
+	l_Distance = math.sqrt((l_Position.x - PlayerPosition.x)^2 + (l_Position.y - PlayerPosition.y)^2 + (l_Position.z - PlayerPosition.z)^2)
+	
+	-- local s = ""
+	-- s = l_Distance.." distance"
+	-- g_LogManager:Log(s)
+	
 	if l_Distance < self.m_VisionRange then
-		l_IsPlayerInsideVisionRange = true
+		return true
 	end
 	
-	return l_IsPlayerInsideVisionRange
+	return false
 end
 
 function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
-
 	m_Position = self.m_RObject:GetPosition()
+	local l_Name = self.m_RObject:GetName()
 	
-	if (#self.m_WayPoints)>1 then
-		l_Vector = self.m_WayPoints[self.m_CurrentWayPoint] - m_Position;
-		l_Vector.Normalize()
-
-		if self:PointInsideCircle(m_Position, self.m_WayPoints[m_CurrentWayPoint], 0.2) == false then
-			self.m_RObject:SetPosition(m_Position + ((l_Vector*ElapsedTime*m_Speed)))
+	if (#self.m_WayPoints)>0 then
+		local l_Destiny = Vect3f(0.0,0.0,0.0)
+		l_Destiny = self.m_WayPoints[self.m_CurrentWayPoint]
+		local l_Vector =  l_Destiny - m_Position
+		
+		self.m_Velocity.x = 0.0
+		self.m_Velocity.z = 0.0
+		
+		if IsPointInsideCircunference(m_Position, l_Destiny, 0.2) == false then
+			l_Vector:Normalize(1)
+			--local l_VS = l_Vector*self:GetSpeed()
+			self.m_Velocity = self.m_Velocity + (l_Vector*self:GetSpeed())
+			self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
+			
+			local l_Displacement = self.m_Velocity * ElapsedTime
+			self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, l_Displacement, ElapsedTime)
+			
+			local l_Forward = self.m_RObject:GetForward()
+			l_Forward.y = 0.0
+			l_Destiny.y = 0.0
+			local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_RObject:GetPosition(), l_Destiny)
+			
+			local l_CurrentYaw = self.m_RObject:GetYaw()
+			
+			self.m_RObject:SetYaw( l_CurrentYaw + l_Angle)
+		
 		else
 			self.m_CurrentWayPoint = self.m_CurrentWayPoint+1
 		end
 		
-		if self.m_CurrentWayPoint >= (#self.m_WayPoints) then
-			self.m_CurrentWayPoint = 0
+		if self.m_CurrentWayPoint > (#self.m_WayPoints) then
+			self.m_CurrentWayPoint = 1
 		end
+	--else g_LogManager:Log(self.m_RObject:GetName().." doesn't have waypoints")
 	end
 end
-

@@ -2,7 +2,6 @@ class 'CHealthPotion' (CItem)
 function CHealthPotion:__init(Cooldown, HealthPoints)
 	CItem.__init(self, Cooldown)
 	self.m_HealthPoints = HealthPoints
-	g_LogManager:Log("Pocion!")
 end
 
 function CHealthPotion:Use()

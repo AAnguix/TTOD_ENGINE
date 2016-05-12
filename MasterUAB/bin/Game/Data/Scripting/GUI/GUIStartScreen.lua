@@ -86,6 +86,7 @@ function LoadGamePlayScripts()
 	dofile("./Data/Scripting/Enemies/RangedEnemyFSM.lua")
 	dofile("./Data/Scripting/Enemies/BruteEnemy.lua")
 	dofile("./Data/Scripting/Enemies/BruteEnemyFSM.lua")
+	dofile("./Data/Scripting/Elements/Pedestal.lua")
 end
 
 function OptionsMenu()

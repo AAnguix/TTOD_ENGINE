@@ -52,7 +52,7 @@
 	</render_draw_quad> -->
 	
 	<!-- ZBlur -->
-	<capture_frame_buffer>
+	<!-- <capture_frame_buffer>
 		<capture_texture name="ZBlurCapturedTexture" texture_width_as_frame_buffer="true"/>
 	</capture_frame_buffer>
 	<set_pool_renderable_objects_technique pool="gaussian_filter_pool_renderable_object_technique"/>
@@ -69,7 +69,7 @@
 		<texture stage_id="0" file="ZBlurCapturedTexture"/>
 		<texture stage_id="1" file="ZBlur"/>
 		<texture stage_id="2" file="DepthMapTexture"/>
-	</render_draw_quad>
+	</render_draw_quad> -->
 	
 	
 	<!-- HDAO -->
@@ -191,7 +191,7 @@
 	<!-- <render_layer layer="skybox" active="true"/> -->
 	
 	<set_depth_stencil_state enable_z_test="false" write_z_buffer="false"/>
-	
+	<set_pool_renderable_objects_technique pool="forward_shading"/>
 	<render_debug_gui/>
 	<enable_alpha_blend/>
 	<render_gui/>
@@ -199,7 +199,7 @@
 	<!-- <render_debug_grid/> -->
 	<!--
 	-->
-	<!-- <render_debug_layer layer="solid" active="true"/> -->
+	<render_debug_layer layer="solid" active="true"/>
 	<!-- <render_debug_lights/> -->
 	
 	<present/>

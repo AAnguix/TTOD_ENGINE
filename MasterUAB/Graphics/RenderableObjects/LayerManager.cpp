@@ -1,8 +1,8 @@
 #include "LayerManager.h"
-#include "Player\Player.h"
-#include "Enemies\BasicEnemy.h"
-#include "Enemies\RangedEnemy.h"
-#include "Enemies\BruteEnemy.h"
+//#include "Player\Player.h"
+//#include "Enemies\BasicEnemy.h"
+//#include "Enemies\RangedEnemy.h"
+//#include "Enemies\BruteEnemy.h"
 #include "RenderableObjects\MeshInstance.h"
 #include "Animation\AnimatedInstanceModel.h"
 

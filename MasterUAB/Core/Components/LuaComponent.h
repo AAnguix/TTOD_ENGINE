@@ -3,10 +3,14 @@
 
 #include <string>
 
-struct CLUAComponent
+class CLUAComponent
 {
+private:
 	std::string m_Type;
-	//virtual CLUAComponent* Pointer() { return this; };
+public:
+	virtual ~CLUAComponent() {}
+	CLUAComponent(const std::string Type){ m_Type = Type; };
+	virtual std::string GetType(){ return m_Type; };
 };
 
 #endif

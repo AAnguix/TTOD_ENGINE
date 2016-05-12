@@ -25,6 +25,8 @@ function CGameController:LoadXML(Filename)
 				self:LoadEnemy(l_Element)
 			elseif l_ElemName=="player" then
 				self:LoadPlayer(l_Element)
+			elseif l_ElemName=="pedestal" then
+				self:LoadPedestal(l_Element)
 			end 
 		end
 	else
@@ -49,28 +51,46 @@ function CGameController:LoadEnemy(XMLTreeNode)
 			l_EnemyComponent  = CBruteEnemyComponent(l_RObject)
 		end
 		CGameController:LoadWaypoints(l_EnemyComponent,XMLTreeNode)
-		--l_RObject:AddLuaComponent(nil)
-		--table.insert(self.m_Entities,l_EnemyComponent)
+		l_RObject:AddLuaComponent(l_EnemyComponent)
+		l_EnemyComponent:Initialize()
+		table.insert(self.m_Entities,l_EnemyComponent)
 	end
 end
 
 function CGameController:LoadPlayer(XMLTreeNode)
-	local l_RObject = GetElementFromLayer(XMLTreeNode)
-	local l_PlayerComponent=CPlayerComponent(l_RObject)
-	g_PlayerComponent = l_PlayerComponent
-	g_LayerManager:SetPlayer(l_RObject)
-	--local l_c = CLUAComponent()
-	--l_RObject:AddLuaComponent(l_c)
 	
-	l_RObject:AddLuaComponent(nil)
+	local l_RObject = GetElementFromLayer(XMLTreeNode)
+	g_LayerManager:SetPlayer(l_RObject)
+	
+	local l_PlayerComponent=CPlayerComponent()
+	l_RObject:AddLuaComponent(l_PlayerComponent)
+	
+	l_PlayerComponent:Initialize(l_RObject)
+	g_PlayerComponent = l_PlayerComponent
+
 	table.insert(self.m_Entities,l_PlayerComponent)
+end
+
+function CGameController:LoadPedestal(XMLTreeNode)
+	
+	--g_LogManager:Log(XMLTreeNode:GetPszProperty("gui_id", "", false))
+	
+	local l_RObject = GetElementFromLayer(XMLTreeNode)
+	local l_PedestalComponent=CPedestalComponent(l_RObject)
+	l_PedestalComponent:Initialize(XMLTreeNode)
+	l_RObject:AddLuaComponent(l_PedestalComponent)
+	
+	l_PedestalComponent:Initialize(l_RObject)
+	table.insert(self.m_Entities,l_PedestalComponent)
 end
 
 function CGameController:LoadWaypoints(Enemy, XMLTreeNode)
 	for i=0, XMLTreeNode:GetNumChildren() do
 		local l_Element=XMLTreeNode:GetChild(i)
 		if l_Element:GetName()=="way_point" then
-			Enemy:AddWaypoint(Vect3f(l_Element:GetVect3fProperty("way_point"),Vect3f(0.0,0.0,0.0),false))
+			local l_V = Vect3f(0.0,0.0,0.0)
+			l_V = l_Element:GetVect3fProperty("way_point",Vect3f(0.0,0.0,0.0),false)
+			Enemy:AddWaypoint(l_V)
 		end
 	end
 end	

@@ -41,7 +41,8 @@ public:
 	UAB_GET_PROPERTY_POINTER(CComponentManager,ComponentManager);
 	
 	virtual bool AddLuaComponent(CLUAComponent* LUAComponent);
-	
+	CLUAComponent* GetFirstLuaComponent() const;
+
 	virtual TRenderableObjectType GetClassType() const = 0;
 
 };

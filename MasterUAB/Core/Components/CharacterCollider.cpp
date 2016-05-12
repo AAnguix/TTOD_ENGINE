@@ -27,7 +27,7 @@ void CCharacterCollider::Render(CRenderManager &RenderManager)
 	if (IsEnabled())
 	{
 		Vect3f l_PhysxPos = CEngine::GetSingleton().GetPhysXManager()->GetCharacterControllerFootPosition(m_Owner->GetName());
-		m_Owner->SetPosition(Vect3f(l_PhysxPos.x, l_PhysxPos.y, l_PhysxPos.z));
+		m_Owner->SetPosition(l_PhysxPos);
 	}
 }
 

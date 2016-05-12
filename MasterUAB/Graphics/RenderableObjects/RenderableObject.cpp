@@ -46,3 +46,10 @@ bool CRenderableObject::AddLuaComponent(CLUAComponent* LUAComponent)
 	m_LuaComponents.push_back(LUAComponent);
 	return true;
 }
+
+CLUAComponent* CRenderableObject::GetFirstLuaComponent() const
+{
+	CLUAComponent* l_FirstComponent = m_LuaComponents.size() > 0 ? m_LuaComponents[0]:nullptr;
+	return l_FirstComponent;
+}
+	

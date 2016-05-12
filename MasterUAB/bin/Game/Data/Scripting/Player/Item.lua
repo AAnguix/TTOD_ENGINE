@@ -5,7 +5,6 @@ function CItem:__init(Cooldown)
 	self.m_Gui = EItemGui()
 	self.m_Gui.m_HasText = false
 	self.m_Gui.m_HasButton = false
-	g_LogManager:Log("Item!")
 end
 
 function CItem:Use()
@@ -56,7 +55,7 @@ function CItem:UpdateGUI(ElapsedTime)
 		g_GUIManager:DoButton(self.m_Gui.m_Button.m_GuiID, self.m_Gui.m_Button.m_ButtonID, self.m_Gui.m_Button.m_GuiPosition)
 	end
 	if self.m_Gui.m_HasText then
-		g_GUIManager:DoText(self.m_Gui.m_Text.m_GuiID, self.m_Gui.m_Text.m_FontName, self.m_Gui.m_Text.m_Position, self.m_Gui.m_Text.m_Sprite, "pollas enormes" ) --self.m_Gui.m_Text.m_Text
+		g_GUIManager:DoText(self.m_Gui.m_Text.m_GuiID, self.m_Gui.m_Text.m_FontName, self.m_Gui.m_Text.m_Position, self.m_Gui.m_Text.m_Sprite, self.m_Gui.m_Text.m_Text ) --self.m_Gui.m_Text.m_Text
 		--local l_T = "probando text"
 		--l_T = g_GUIManager:DoTextBox(self.m_Gui.m_Text.m_GuiID, self.m_Gui.m_Text.m_FontName, self.m_Gui.m_Text.m_Position, self.m_Gui.m_Text.m_Sprite, l_T, 0.0)
 	end

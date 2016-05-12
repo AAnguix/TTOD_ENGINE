@@ -9,7 +9,6 @@
 
 #include "Vertex\VertexTypes.h"
 #include "Log.h"
-#include "Tools.h"
 
 CEffectShader::CEffectShader(const CXMLTreeNode &TreeNode)
 : CNamed(TreeNode)

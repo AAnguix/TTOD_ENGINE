@@ -37,21 +37,23 @@
 #include "AStar.h"
 #include "Render\DebugRender.h"
 
+bool CApplication::m_Paused = false;
+
 static void __stdcall SwitchCameraCallback(void* _app)
 {
 	((CApplication*)_app)->SwitchCamera();
 }
 
 CApplication::CApplication(CContextManager *_ContextManager)
-	: m_ContextManager(_ContextManager)
-	, m_BackgroundColor(0.8f, 1.0f, 1.0f)
-	, m_CurrentCamera(0)
-	, m_RenderManager(_ContextManager)
+	:m_ContextManager(_ContextManager)
+	,m_BackgroundColor(0.8f, 1.0f, 1.0f)
+	,m_CurrentCamera(0)
+	,m_RenderManager(_ContextManager)
 {
 	//CSingleton<CEngine> *l_Sing = new CSingleton<CEngine>();
 	CEngine::GetSingleton().SetRenderManager(&m_RenderManager);
 	CDebugHelper::GetDebugHelper()->Log("CApplication::CApplication");
-
+	m_Paused = false;
 	/*CDebugHelper::SDebugBar bar;
 	bar.name = "CApplication";
 	{
@@ -130,6 +132,17 @@ void CApplication::Update(float ElapsedTime)
 	l_Ss << "Update(" << ElapsedTime << ")";
 	std::string l_Code = l_Ss.str();
 	CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
+	
+	if (!CApplication::IsGamePaused())
+	{
+		CCameraControllerManager* l_CController = CEngine::GetSingleton().GetCameraControllerManager();
+		assert(l_CController != nullptr);
+		l_CController->Update(ElapsedTime);
+
+		CEngine::GetSingleton().GetPhysXManager()->Update(ElapsedTime);
+
+		CEngine::GetSingleton().GetLayerManager()->Update(ElapsedTime);
+	}
 
 	//CEngine::GetSingleton().GetLogManager()->Log(boost::lexical_cast<string>(ElapsedTime));
 
@@ -137,56 +150,56 @@ void CApplication::Update(float ElapsedTime)
 	/*
 	switch(l_CCManager->GetCurrentCameraController()->GetType())
 	{
-		case 0:
-			if (CInputManager::GetInputManager()->IsActionActive("MOVE_FWD"))
-			{
-				Vect3f cameraMovement(0, 0, 0);
-				float k= CInputManager::GetInputManager()->GetAxis("MOVE_FWD") * ElapsedTime * 0.1f;
-				cameraMovement.x +=k;
-				//cameraMovement.y += CInputManager::GetInputManager()->GetAxis("Y_AXIS") * ElapsedTime * 20.5f;
-
-				
-				((CSphericalCameraController*)CEngine::GetSingleton().GetCameraControllerManager()->GetCurrentCameraController())->Update(cameraMovement);
-				//m_SphericalCamera.Update(cameraMovement);
-			}
-			break;
-
-		case 0: //Fixed
-			{
-				CFPSCameraController* l_FPSController = ((CFPSCameraController*)l_CCManager->GetCurrentCameraController());
-				l_FPSController->AddYaw(-CInputManager::GetInputManager()->GetAxis("X_AXIS") * ElapsedTime * 0.05f);
-				l_FPSController->AddPitch(-CInputManager::GetInputManager()->GetAxis("Y_AXIS") * ElapsedTime * -0.05f);
-				
-				if (CInputManager::GetInputManager()->IsActionActive("MOVE_FWD"))
-				{
-					l_FPSController->Move(0.0f,CInputManager::GetInputManager()->GetAxis("MOVE_FWD")*ElapsedTime,false,ElapsedTime);
-				}
-				if (CInputManager::GetInputManager()->IsActionActive("MOVE_BACK"))
-				{
-					l_FPSController->Move(0.0f,CInputManager::GetInputManager()->GetAxis("MOVE_BACK")*ElapsedTime,false,ElapsedTime);
-				}
-				if (CInputManager::GetInputManager()->IsActionActive("STRAFE_RIGHT"))
-				{
-					l_FPSController->Move(CInputManager::GetInputManager()->GetAxis("STRAFE")*ElapsedTime,0.0f,false,ElapsedTime);
-				}
-				if (CInputManager::GetInputManager()->IsActionActive("STRAFE_LEFT"))
-				{
-					l_FPSController->Move(CInputManager::GetInputManager()->GetAxis("STRAFE")*ElapsedTime,0.0f,false,ElapsedTime);
-				}
-
-				CInputManager::GetInputManager()->GetAxis("ZOOM") * ElapsedTime * -0.05f
-				if (CInputManager::GetInputManager()->IsActionActive("MOVE_BACK"))
-				m_FPSCamera.Move(CInputManager::GetInputManager()->GetAxis("MOVE_BACK") * ElapsedTime * -0.05f,CInputManager::GetInputManager()->GetAxis("MOVE_BACK"),false,ElapsedTime);
+	case 0:
+	if (CInputManager::GetInputManager()->IsActionActive("MOVE_FWD"))
+	{
+	Vect3f cameraMovement(0, 0, 0);
+	float k= CInputManager::GetInputManager()->GetAxis("MOVE_FWD") * ElapsedTime * 0.1f;
+	cameraMovement.x +=k;
+	//cameraMovement.y += CInputManager::GetInputManager()->GetAxis("Y_AXIS") * ElapsedTime * 20.5f;
 
 
-				if (CInputManager::GetInputManager()->IsActionActive("STRAFE_LEFT"))
-				m_FPSCamera.Move(CInputManager::GetInputManager()->GetAxis("STRAFE"), CInputManager::GetInputManager()->GetAxis("MOVE_FWD"), false, ElapsedTime);
-			}
-		break;
+	((CSphericalCameraController*)CEngine::GetSingleton().GetCameraControllerManager()->GetCurrentCameraController())->Update(cameraMovement);
+	//m_SphericalCamera.Update(cameraMovement);
+	}
+	break;
+
+	case 0: //Fixed
+	{
+	CFPSCameraController* l_FPSController = ((CFPSCameraController*)l_CCManager->GetCurrentCameraController());
+	l_FPSController->AddYaw(-CInputManager::GetInputManager()->GetAxis("X_AXIS") * ElapsedTime * 0.05f);
+	l_FPSController->AddPitch(-CInputManager::GetInputManager()->GetAxis("Y_AXIS") * ElapsedTime * -0.05f);
+
+	if (CInputManager::GetInputManager()->IsActionActive("MOVE_FWD"))
+	{
+	l_FPSController->Move(0.0f,CInputManager::GetInputManager()->GetAxis("MOVE_FWD")*ElapsedTime,false,ElapsedTime);
+	}
+	if (CInputManager::GetInputManager()->IsActionActive("MOVE_BACK"))
+	{
+	l_FPSController->Move(0.0f,CInputManager::GetInputManager()->GetAxis("MOVE_BACK")*ElapsedTime,false,ElapsedTime);
+	}
+	if (CInputManager::GetInputManager()->IsActionActive("STRAFE_RIGHT"))
+	{
+	l_FPSController->Move(CInputManager::GetInputManager()->GetAxis("STRAFE")*ElapsedTime,0.0f,false,ElapsedTime);
+	}
+	if (CInputManager::GetInputManager()->IsActionActive("STRAFE_LEFT"))
+	{
+	l_FPSController->Move(CInputManager::GetInputManager()->GetAxis("STRAFE")*ElapsedTime,0.0f,false,ElapsedTime);
+	}
+
+	CInputManager::GetInputManager()->GetAxis("ZOOM") * ElapsedTime * -0.05f
+	if (CInputManager::GetInputManager()->IsActionActive("MOVE_BACK"))
+	m_FPSCamera.Move(CInputManager::GetInputManager()->GetAxis("MOVE_BACK") * ElapsedTime * -0.05f,CInputManager::GetInputManager()->GetAxis("MOVE_BACK"),false,ElapsedTime);
+
+
+	if (CInputManager::GetInputManager()->IsActionActive("STRAFE_LEFT"))
+	m_FPSCamera.Move(CInputManager::GetInputManager()->GetAxis("STRAFE"), CInputManager::GetInputManager()->GetAxis("MOVE_FWD"), false, ElapsedTime);
+	}
+	break;
 	}*/
-	
+
 	//CCamera camera;
-	
+
 	//FPS
 	/*m_FPSCamera.SetCamera(&camera);
 	camera.SetFOV(1.047f);
@@ -195,7 +208,7 @@ void CApplication::Update(float ElapsedTime)
 	camera.SetZFar(100.f);
 	camera.SetMatrixs();
 	m_RenderManager.SetCurrentCamera(camera);*/
-	
+
 	//Fixed
 	/*CEngine::GetSingleton().GetCameraManager()->GetResource("FixedCamera")->SetCamera(&camera);
 	camera.SetAspectRatio(m_ContextManager->GetAspectRatio());
@@ -209,7 +222,7 @@ void CApplication::Update(float ElapsedTime)
 	camera.SetAspectRatio(m_ContextManager->GetAspectRatio());
 	camera.SetMatrixs();
 	m_RenderManager.SetCurrentCamera(camera);*/
-	
+
 
 	//Spherical
 	/*m_SphericalCamera.SetCamera(&camera);
@@ -221,14 +234,6 @@ void CApplication::Update(float ElapsedTime)
 	m_RenderManager.SetDebugCamera(camera);
 
 	m_RenderManager.SetUseDebugCamera(m_CurrentCamera == 0);*/
-	
-	CCameraControllerManager* l_CController = CEngine::GetSingleton().GetCameraControllerManager();
-	assert(l_CController != nullptr);
-	l_CController->Update(ElapsedTime);
-
-	CEngine::GetSingleton().GetPhysXManager()->Update(ElapsedTime);
-
-	CEngine::GetSingleton().GetLayerManager()->Update(ElapsedTime);
 
 	//FollowPlayer(ElapsedTime,0.25f);
 
@@ -263,3 +268,12 @@ void CApplication::Render()
 	
 	//m_ContextManager->EndRender();
 }
+
+bool CApplication::IsGamePaused()
+{
+	return m_Paused; 
+};
+void CApplication::Pause() 
+{ 
+	m_Paused = !m_Paused; 
+};

@@ -45,8 +45,8 @@ function CharacterController(ElapsedTime)
 			--GetPlayer():BlendCycle(0,1.0,0.1)
 		end
 		
-		l_CCVelocity.x = 0;
-		l_CCVelocity.z = 0;
+		l_CCVelocity.x = 0
+		l_CCVelocity.z = 0
 		
 		l_Speed = 3
 		
@@ -89,25 +89,15 @@ function CharacterController(ElapsedTime)
 		else 
 			l_CCVelocity = g_PhysXManager:DisplacementCharacterController(GetPlayer():GetName(), (l_CCVelocity), ElapsedTime)
 		end 
-		--CalculateVelocity(GetMoveBuffer(),ElapsedTime)
-		--l_Displacement = CalculateDisplacement(GetMoveBuffer(),g_Gravity,ElapsedTime)
-		--MovePlayerPhisics(l_Displacement,false,ElapsedTime,false)
+		
+		--SetPlayerPosition(g_PhysXManager:GetCharacterControllerPosition(GetPlayer():GetName()))
+		
+		GetPlayer():GetAnimatorController():SetBool("Walk", g_Walk);
+		GetPlayer():GetAnimatorController():SetBool("Run", g_Run);
 		
 	end --END CharBlock
 	
-	GetPlayer():GetAnimatorController():SetBool("Walk", g_Walk);
-   	GetPlayer():GetAnimatorController():SetBool("Run", g_Run);
-	
 end
-
-function CalculateVelocity(Distance,Time)
-	return Distance/Time
-end
-
-function CalculateDisplacement(InitialVelocity,Acceleration,Time)
-	return (InitialVelocity*Time) + ((Acceleration*0.5)*(Time*Time))
-end
-
 
 function GetCameraPosition() 
 	local l_CController = CEngine.GetSingleton():GetCameraControllerManager():get_current_camera_controller()
@@ -122,45 +112,23 @@ function MatchPlayerYawToCameraYaw (CameraController)
 	GetPlayer():SetYaw(CameraController:GetYaw())
 end
 
-function MovePlayerPhisics(Displacement,Speed, ElapsedTime, Slow)
-	local MoveSpeed = g_PlayerSpeed
-	if Slow then 
-		MoveSpeed = g_PlayerStrafeSpeed
-	end
-	
-	local l_ConstantSpeed=ElapsedTime*MoveSpeed
-	
-	if Speed then
-		l_ConstantSpeed=l_ConstantSpeed*g_PlayerFastSpeed
-	end
+-- function Jump(Speed, ElapsedTime)
 
-	--local Displacement = CameraController:GetForward()
+	-- local l_ConstantSpeed=ElapsedTime*g_PlayerSpeed
 	
-	if Displacement:SquaredLength() > 0 then
-		 Displacement:Normalize(1)
-		 Displacement = Displacement*l_ConstantSpeed
-		l_Position = g_PhysXManager:MoveCharacterController(GetPlayer():GetName(),Displacement,ElapsedTime)
-		GetPlayer():SetPosition(l_Position)
-	end
-end
+	-- if Speed then
+		-- l_ConstantSpeed=l_ConstantSpeed*g_PlayerFastSpeed
+	-- end
 
-function Jump(Speed, ElapsedTime)
-
-	local l_ConstantSpeed=ElapsedTime*g_PlayerSpeed
+	-- local Displacement = Vect3f(0.0,12.0,5.0)
 	
-	if Speed then
-		l_ConstantSpeed=l_ConstantSpeed*g_PlayerFastSpeed
-	end
-
-	local Displacement = Vect3f(0.0,12.0,5.0)
-	
-	if Displacement:SquaredLength() > 0 then
-		 Displacement:Normalize(1)
-		 Displacement = Displacement*l_ConstantSpeed
-		l_Position = g_PhysXManager:MoveCharacterController(GetPlayer():GetName(),Displacement,ElapsedTime)
-		GetPlayer():SetPosition(l_Position)
-	end
-end
+	-- if Displacement:SquaredLength() > 0 then
+		 -- Displacement:Normalize(1)
+		 -- Displacement = Displacement*l_ConstantSpeed
+		-- l_Position = g_PhysXManager:MoveCharacterController(GetPlayer():GetName(),Displacement,ElapsedTime)
+		-- GetPlayer():SetPosition(l_Position)
+	-- end
+-- end
 
 
 function MoveForward(CameraController,ElapsedTime)

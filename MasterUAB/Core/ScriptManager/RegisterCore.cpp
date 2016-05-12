@@ -5,11 +5,12 @@
 #include <luabind/operator.hpp>
 #include <luabind/iterator_policy.hpp>
 
-
+#include "Application.h"
 #include "Engine.h"
 #include "Log.h"
 #include "Input\InputManagerImplementation.h"
 #include "DebugHelperImplementation.h"
+
 #include "Render\RenderManager.h"
 #include "Materials\MaterialManager.h"
 #include "Textures\TextureManager.h"
@@ -40,10 +41,7 @@ using namespace luabind;
 #define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
-struct CLUAComponent_wrap : CLUAComponent, luabind::wrap_base
-{
-};
-CLUAComponent* f(CLUAComponent *Pointer) { return Pointer; }
+//CLUAComponent* f(CLUAComponent *Pointer) { return Pointer; }
 
 //CRenderableObject* GetEntity(const std::string &Layer, const std::string &Object)
 //{
@@ -53,6 +51,16 @@ CLUAComponent* f(CLUAComponent *Pointer) { return Pointer; }
 void CScriptManager::RegisterCore()
 {
 	RegisterComponents();
+
+	module(LUA_STATE)
+	[
+		class_<CApplication>("CApplication")
+		.scope
+		[
+			def("IsGamePaused", &CApplication::IsGamePaused)
+			,def("Pause", &CApplication::Pause)
+		]
+	];
 
 	module(LUA_STATE) 
 	[  
@@ -227,8 +235,25 @@ void CScriptManager::RegisterCore()
 	];
 }
 
+struct CLUAComponent_wrapper : CLUAComponent, luabind::wrap_base
+{
+public:
+	CLUAComponent_wrapper(const std::string Type) :CLUAComponent(Type){}
+	/*std::string GetType() const
+	{
+		return call_member<std::string>(this, "GetType");
+	}*/
+};
+
 void CScriptManager::RegisterComponents()
 {
+	module(LUA_STATE)
+	[
+		class_<CLUAComponent, CLUAComponent_wrapper>("CLUAComponent")
+		.def(constructor<const std::string>())
+		.def("GetType", &CLUAComponent::GetType)
+	];
+
 	module(LUA_STATE)
 	[
 		class_<CTemplatedVectorMapManager<CComponent>>("CTemplatedVectorMapManager")
@@ -289,14 +314,7 @@ void CScriptManager::RegisterComponents()
 			def("AddCharacterCollider", &CCharacterCollider::AddCharacterCollider)
 		]
 	];
-
-	module(LUA_STATE)
-	[
-		class_<CLUAComponent, CLUAComponent_wrap>("CLUAComponent"),
-		//def("Pointer", &CLUAComponent::Pointer)
-		def("f", &f)
-
-	];
+	
 	//void AddLUAComponent(CLUAComponent *LuaComponent);
 
 	/*module(LUA_STATE)

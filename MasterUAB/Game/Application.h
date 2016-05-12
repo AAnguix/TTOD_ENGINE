@@ -11,6 +11,9 @@ class CContextManager;
 class CApplication
 {
 
+private:
+	static bool m_Paused;
+
 public:
 	CApplication(CContextManager *_ContextManager);
 	~CApplication();
@@ -20,6 +23,9 @@ public:
 	void Update(float ElapsedTime);
 	void Render();
 	void Initialize(HWND Hwnd);
+
+	static bool IsGamePaused();
+	static void Pause();
 
 private:
 	//CSphericalCameraController m_SphericalCamera;

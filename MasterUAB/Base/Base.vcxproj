@@ -28,9 +28,7 @@
     <ClInclude Include="Utils\SingletonPattern.h" />
     <ClInclude Include="Utils\TemplatedMapManager.h" />
     <ClInclude Include="Utils\TemplatedVectorMapManager.h" />
-    <ClInclude Include="Utils\Tools.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="Utils\TTODMathUtils.h" />
     <ClInclude Include="Utils\Types.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="XML\XMLTreeNode.h" />
@@ -39,9 +37,7 @@
     <ClCompile Include="Math\MathConstants.cpp" />
     <ClCompile Include="Utils\3DElement.cpp" />
     <ClCompile Include="Utils\Named.cpp" />
-    <ClCompile Include="Utils\Tools.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="Utils\TTODMathUtils.cpp" />
     <ClCompile Include="XML\Example.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

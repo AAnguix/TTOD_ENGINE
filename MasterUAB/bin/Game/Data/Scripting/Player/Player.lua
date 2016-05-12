@@ -15,8 +15,8 @@ dofile("./Data/Scripting/Player/Slot.lua")
 dofile("./Data/Scripting/Player/Inventory.lua")
 
 class 'CPlayerComponent' (CLUAComponent)
-function CPlayerComponent:__init(CAnimatedInstance)
-	
+function CPlayerComponent:__init()
+	CLUAComponent.__init(self,"player")
 	self.m_Health=500.0
 	self.m_Speed=1.0
 	self.m_AttackDelay = 1.0
@@ -26,8 +26,11 @@ function CPlayerComponent:__init(CAnimatedInstance)
 	self.m_CurrentArmor = nil
 	self.m_CurrentWeapon = nil
 	self.m_Inventory = CInventory()
-	
-	--Physyx
+end
+
+function CPlayerComponent:Initialize(CAnimatedInstance)
+
+--Physyx
 	CCharacterCollider.AddCharacterCollider("CharacterCollider", CAnimatedInstance)
 	--l_MaterialName = CAnimatedInstance:GetAnimatedCoreModel():GetMaterials()[0]:GetName()
 	l_MaterialName = "aaa"
@@ -63,6 +66,7 @@ function CPlayerComponent:__init(CAnimatedInstance)
 
 	self:InitializePlayerStats()
 	g_LogManager:Log("Player initialized...")
+
 end
 
 function CPlayerComponent:InitializePlayerStats()
@@ -80,7 +84,7 @@ function CPlayerComponent:InitializePlayerStats()
 	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed", l_ButtonGuiPosition)
 	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", l_TextGuiPosition, "health_potion_font_sprite",  "aaaa")
 	
-	self.m_Inventory:AddItem(l_HealthPotion,5)
+	-- self.m_Inventory:AddItem(l_HealthPotion,5)
 end 
 
 function CPlayerComponent:Update(ElapsedTime)
@@ -110,3 +114,13 @@ end
 function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
 	self.m_Health = self.m_Health - Damage
 end
+
+function CPlayerComponent:GetType()
+	return "plarrrryer "..self:GetSpeed()
+end
+
+function CPlayerComponent:GetReference()
+	return self
+end
+
+--loadstring(string_s)()

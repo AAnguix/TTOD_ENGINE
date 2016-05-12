@@ -2,7 +2,6 @@
 #include <D3DCommon.h>
 #include <Windows.h>
 #include <Windowsx.h>
-#include "Application.h"
 #include "Engine.h"
 
 #include <cassert>
@@ -114,7 +113,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void CheckMemoryLeaks()
 {
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_CrtSetBreakAlloc(178286); //26598 29214 30923 32011
+	//_CrtSetBreakAlloc(187018); //26598 29214 30923 32011
 }
 
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)

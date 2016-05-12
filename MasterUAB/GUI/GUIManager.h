@@ -64,7 +64,7 @@ public:
 	{
 		float real;
 		float temp;
-		SSliderResult(){};
+		SSliderResult():real(0.0f), temp(0.0f){};
 	};
 	struct SHealthBarResult
 	{

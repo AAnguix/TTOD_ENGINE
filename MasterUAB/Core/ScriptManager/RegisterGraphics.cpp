@@ -48,7 +48,6 @@
 #include "Animation\AnimatedModelManager.h"
 #include "testclass.h"
 #include "Log.h"
-#include "Application.h"
 
 #include "DebugHelperImplementation.h"
 

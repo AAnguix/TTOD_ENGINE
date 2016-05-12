@@ -37,8 +37,8 @@ function Reload()
 	
 	if CInputManager.GetInputManager():IsActionActive("RELOAD_LUA") then
 		CEngine.GetSingleton():GetDebugHelper():RemoveBar()
-		LuaMain()
 		ReloadLog()
+		LuaMain()
 	end
 end
 
