@@ -18,6 +18,12 @@ void CScriptManager::RegisterSound()
 {
 	module(LUA_STATE)
 	[
+		class_<SoundEvent>("SoundEvent")
+		.def(constructor<const std::string>())
+	];
+
+	module(LUA_STATE)
+	[
 		class_<ISoundManager>("ISoundManager")
 		.scope
 		[

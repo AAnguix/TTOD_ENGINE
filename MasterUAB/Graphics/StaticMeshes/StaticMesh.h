@@ -37,7 +37,7 @@ protected:
 	unsigned int m_NumVertexs;
 
 	std::vector<Vect3f> m_MeshVertex;
-	std::vector<unsigned int> m_MeshIndex;
+	std::vector<unsigned short> m_MeshIndex;
 
 public:
 	unsigned int  m_NumFaces;
@@ -53,7 +53,7 @@ public:
 	float GetCapsuleHalfHeight() const;
 	float GetCapsuleRadius() const;
 	std::vector<Vect3f> GetVertex() const{ return m_MeshVertex; };
-	std::vector<unsigned int> GetIndex() const{ return m_MeshIndex; };
+	std::vector<unsigned short> GetIndex() const{ return m_MeshIndex; };
 };
 
 #endif 

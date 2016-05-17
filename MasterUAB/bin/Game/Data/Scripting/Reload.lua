@@ -37,7 +37,9 @@ function Reload()
 	
 	if CInputManager.GetInputManager():IsActionActive("RELOAD_LUA") then
 		CEngine.GetSingleton():GetDebugHelper():RemoveBar()
+
 		ReloadLog()
+		dofile(g_CurrentLuaMainFile)
 		LuaMain()
 	end
 end

@@ -82,10 +82,9 @@ void CEngine::LoadLevel(const std::string& Level)
 	m_LayerManager->Load("./Data/Level" + Level + "/renderable_objects.xml");
 	m_LightManager->Load("./Data/Level" + Level + "/lights.xml");
 
-	/*m_SoundManager->SetPath("./Data/Audio/Soundbanks/");
-	m_SoundManager->Init();
-	m_SoundManager->Load("sound_banks.xml", "./Data/Level" + Level + "/speakers.xml");
-	*/
+	//m_SoundManager->SetPath("./Data/Level" + Level + "/Audio/Soundbanks/");
+	//m_SoundManager->Load("SoundbanksInfo.xml", "./Data/Level" + Level + "/Audio/speakers.xml");
+	
 	//m_SceneRendererCommandManager->Load("./Data/Level" + Level + "/scene_renderer_commands.xml");
 }
 

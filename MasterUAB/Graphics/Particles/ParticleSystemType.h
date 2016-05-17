@@ -6,6 +6,7 @@ class CXMLTreeNode;
 #include "Math\Color.h"
 #include "Utils\Named.h"
 #include "Materials\Material.h"
+class CEmptyPointerClass;
 
 class CParticleSystemType : public CNamed
 {
@@ -47,6 +48,35 @@ public:
 	virtual ~CParticleSystemType();
 	UAB_GET_PROPERTY_POINTER(CMaterial, Material);
 
+//private:
+	//void* m_NumFramesAdress;
+
+public:
+	virtual CEmptyPointerClass* GetNumFramesLuaAddress() const;
+	virtual CEmptyPointerClass* GetTimePerFrameLuaAddress() const;
+	virtual CEmptyPointerClass* GetLoopLuaAddress() const;
+	virtual CEmptyPointerClass* GetEmitAbsoluteLuaAddress() const;
+
+	virtual CEmptyPointerClass* GetStartingDirectionAngleLuaAddress() const;
+	virtual CEmptyPointerClass* GetStartingAccelerationAngleLuaAddress() const;
+	virtual CEmptyPointerClass* GetSizeLuaAddress() const;
+
+	virtual CEmptyPointerClass* GetEmitRateLuaAddress() const;
+	virtual CEmptyPointerClass* GetAwakeTimeLuaAddress() const;
+	virtual CEmptyPointerClass* GetSleepTimeLuaAddress() const;
+	virtual CEmptyPointerClass* GetLifeLuaAddress() const;
+
+	virtual CEmptyPointerClass* GetStartingAngleLuaAddress() const;
+	virtual CEmptyPointerClass* GetStartingAngularSpeedLuaAddress() const;
+	virtual CEmptyPointerClass* GetAngularAccelerationLuaAddress() const;
+
+	virtual CEmptyPointerClass* GetStartingSpeed1LuaAddress() const;
+	virtual CEmptyPointerClass* GetStartingSpeed2LuaAddress() const;
+	virtual CEmptyPointerClass* GetStartingAcceleration1LuaAddress() const;
+	virtual CEmptyPointerClass* GetStartingAcceleration2LuaAddress() const;
+	virtual CEmptyPointerClass* GetColor1LuaAddress() const;
+	virtual CEmptyPointerClass* GetColor2LuaAddress() const;
+	
 };
 
 #endif

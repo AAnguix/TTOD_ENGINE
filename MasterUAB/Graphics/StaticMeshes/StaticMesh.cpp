@@ -138,19 +138,17 @@ bool CStaticMesh::Load(const std::string &FileName)
 				fread(l_VtxsData, l_NumBytes, 1, l_File);
 
 				//Physyx. Storing vertex for cooking meshes
-				long offset = (l_NumBytes / l_NumVertexs) - sizeof(Vect3f);
+				long offset = (l_NumBytes / l_NumVertexs);
 				void* read = l_VtxsData;
 
+				size_t l_LastNumberOfVertices = m_MeshVertex.size();
+
+				m_MeshVertex.resize(l_LastNumberOfVertices + l_NumVertexs);
 				for (size_t i = 0; i < l_NumVertexs; ++i)
 				{
-					m_MeshVertex.push_back(v3fZERO);
+					Vect3f* l_Vertex = static_cast<Vect3f*>(read);
+					m_MeshVertex[i + l_LastNumberOfVertices] = *l_Vertex;
 
-					memcpy(&m_MeshVertex[m_MeshVertex.size() - 1].x, read, sizeof(float));
-					read = static_cast<char*>(read)+4;
-					memcpy(&m_MeshVertex[m_MeshVertex.size() - 1].y, read, sizeof(float));
-					read = static_cast<char*>(read)+4;
-					memcpy(&m_MeshVertex[m_MeshVertex.size() - 1].z, read, sizeof(float));
-					read = static_cast<char*>(read)+4;
 					read = static_cast<char*>(read)+offset;
 				}
 				//
@@ -158,7 +156,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 				unsigned short l_IndexType = 0;
 				fread(&l_IndexType, sizeof(unsigned short), 1, l_File);
 
-				unsigned int m_NumIndexs;
+				unsigned short m_NumIndexs;
 
 				bool l_32bits = false;
 
@@ -167,7 +165,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 					unsigned short l_NumIndexsFile;
 					fread(&l_NumIndexsFile, sizeof(unsigned short), 1, l_File);
 					l_NumBytes = sizeof(unsigned short)*l_NumIndexsFile;
-					m_NumIndexs = (unsigned int)l_NumIndexsFile;
+					m_NumIndexs = (unsigned short)l_NumIndexsFile;
 				}
 				else if (l_IndexType == 32)
 				{
@@ -183,21 +181,19 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 				/*Index for cooking triangle meshes*/
 				void* l_ReadIndex = l_IdxData;
+				//m_MeshIndex.resize(m_NumIndexs);
+				//memcpy(&m_MeshIndex[0], l_ReadIndex, sizeof(unsigned short)* m_NumIndexs);
 
+				size_t l_LastNumberOfIndexs = m_MeshIndex.size();
+				m_MeshIndex.resize(l_LastNumberOfIndexs + m_NumIndexs);
 				for (size_t i = 0; i < m_NumIndexs; ++i)
 				{
-					m_MeshIndex.push_back(0);
-					if (l_32bits)
-					{
-						memcpy(&m_MeshIndex[m_MeshIndex.size() - 1], l_ReadIndex, sizeof(unsigned int));
-						l_ReadIndex = static_cast<char*>(l_ReadIndex)+sizeof(unsigned int);
-					}
-					else
-					{
-						memcpy(&m_MeshIndex[m_MeshIndex.size() - 1], l_ReadIndex, sizeof(unsigned short));
-						l_ReadIndex = static_cast<char*>(l_ReadIndex)+sizeof(unsigned short);
-					}
+					unsigned short* l_Index = static_cast<unsigned short*>(l_ReadIndex);
+					m_MeshIndex[i + l_LastNumberOfIndexs] = *l_Index + l_LastNumberOfVertices;
+					//m_MeshIndex[i + l_LastNumberOfIndexs] = *l_Index;
+					l_ReadIndex = static_cast<char*>(l_ReadIndex)+sizeof(unsigned short);
 				}
+
 				/*end*/
 
 				CRenderableVertexs *l_RV = NULL;

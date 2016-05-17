@@ -58,10 +58,10 @@ end
 function StartLevelOne()
 
 	g_LogManager:Log("Level is going to be loaded...")
-	LoadGamePlayScripts()
 	g_GUIManager:Load("./Data/gui_in_game.xml")
 	
 	dofile("./Data/Scripting/LuaMainInGame.lua")
+	LoadGamePlayScripts() --LuaMainInGame.lua
 	g_Engine:LoadLevel("1")
 	g_CurrentLevel = 1
 	g_GameController:LoadXML("Data/Level1/game_entities.xml")
@@ -74,20 +74,7 @@ function StartLevelOne()
 	g_SceneRendererCommandManager:Reload()
 end
 
-function LoadGamePlayScripts()
-	dofile("./Data/Scripting/Player/PlayerFMS.lua") --To fix OnIdleEnter bug
-	dofile("./Data/Scripting/Player/Player.lua")
-	dofile("./Data/Scripting/Weapons/Armor.lua")
-	dofile("./Data/Scripting/Weapons/Weapon.lua")
-	dofile("./Data/Scripting/Enemies/Enemy.lua")
-	dofile("./Data/Scripting/Enemies/BasicEnemy.lua")
-	dofile("./Data/Scripting/Enemies/BasicEnemyFSM.lua")
-	dofile("./Data/Scripting/Enemies/RangedEnemy.lua")
-	dofile("./Data/Scripting/Enemies/RangedEnemyFSM.lua")
-	dofile("./Data/Scripting/Enemies/BruteEnemy.lua")
-	dofile("./Data/Scripting/Enemies/BruteEnemyFSM.lua")
-	dofile("./Data/Scripting/Elements/Pedestal.lua")
-end
+
 
 function OptionsMenu()
 

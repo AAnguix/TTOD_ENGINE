@@ -79,7 +79,7 @@ protected:
 	physx::PxActor* IsRigidDynamic(const std::string& ActorName);
 
 	physx::PxConvexMesh*  CreateConvexMesh(const std::string &FileName, std::vector<Vect3f> Vertices);
-	physx::PxTriangleMesh*  CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices);
+	physx::PxTriangleMesh*  CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices);
 
 	void WriteCookingDataToFile(const std::string &FileName, void *Data, unsigned int DataSize);
 	void ReadCookingDataFromFile(const std::string &FileName, void **Data, unsigned int &DataSize);
@@ -120,7 +120,7 @@ public:
 	void CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 	void CreateRigidStaticPlane(const std::string &Name, const Vect3f &Normal, float Distance, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 	void CreateRigidStaticConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 
 	/*Dynamic*/
 	void CreateRigidDynamicBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
@@ -130,7 +130,7 @@ public:
 	/*Triangle meshes can't be dynamic*/
 	/*Triangle,heightField cant be trigger*/
 	/*Plane,triangle,height must be kinematic*/
-	void CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density);
+	void CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density);
 
 
 	physx::PxShape* CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group);

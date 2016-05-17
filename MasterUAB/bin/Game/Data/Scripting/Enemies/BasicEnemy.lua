@@ -5,7 +5,7 @@ function CBasicEnemyComponent:__init(CRenderableObject)
 	self.m_Speed=1.0
 	self.m_AttackDelay=1.0
 	self.m_VisionRange=2.0
-	self.m_DelayToPatrol = 4.0
+	self.m_DelayToPatrol = 2.0
 	
 	self.m_AttackRange=0.3
 	self.m_Weapon = CWeapon(10,"knife")
@@ -30,57 +30,54 @@ function CBasicEnemyComponent:Initialize()
 	l_AnimatorController:AddBool("DelayToPatrol", false)
 	l_AnimatorController:AddTrigger("AtackPlayer", false)
 
-	local l_IdleToMoveToAttack = l_Idle:AddTransition("IdleToMoveToAttack", l_MoveToAttack, false, 0.0, 0.1, 0.1)
-	l_IdleToMoveToAttack:AddBoolCondition("IsPlayerInsideVisionRange", true)
-
 	local l_IdleToPatrol = l_Idle:AddTransition("IdleToPatrol", l_Patrol, false, 0.0, 0.1, 0.1)
 	l_IdleToPatrol:AddBoolCondition("DelayToPatrol", true)
 	l_IdleToPatrol:AddBoolCondition("IsPlayerInsideVisionRange", false)
-
+	
+	local l_IdleToMoveToAttack = l_Idle:AddTransition("IdleToMoveToAttack", l_MoveToAttack, false, 0.0, 0.1, 0.1)
+	l_IdleToMoveToAttack:AddBoolCondition("IsPlayerInsideVisionRange", true)
+	
+	local l_PatrolToMoveToAttack = l_Patrol:AddTransition("PatrolToMoveToAttack", l_MoveToAttack, false,0.0, 0.1, 0.1)
+	l_PatrolToMoveToAttack:AddBoolCondition("IsPlayerInsideVisionRange", true)
+	
 	local l_MoveToAttackToAttack = l_MoveToAttack:AddTransition("MoveToAttackToAttack", l_Attack, false, 0.0, 0.1, 0.1)
-	l_MoveToAttackToAttack:AddTriggerCondition("AtackPlayer")
-
+	l_MoveToAttackToAttack:AddTriggerCondition("AtackPlayer")	
+	
 	--local l_MoveToAttackToIdle = l_MoveToAttack:AddTransition("MoveToAttackToIdle", l_Idle, false, 0.0, 0.1, 0.1)
 	--l_MoveToAttackToIdle:AddBoolCondition("IsPlayerInsideVisionRange", false)
-
-	local l_PatrolToAttack = l_Patrol:AddTransition("PatrolToAttack", l_Attack, false, 0.0, 0.1, 0.1)
-	l_PatrolToAttack:AddBoolCondition("IsPlayerInsideVisionRange", true)
 
 	--l_AttacktoIdle = l_Attack:AddTransition("AttacktoIdle", l_Idle, false, 0.0, 0.1, 0.1)
 	--l_AttacktoIdle:AddTriggerCondition("GoBackToIdle")
 end
 
-function CBasicEnemyComponent:MoveToPlayerNearestPoint()
-
-end
-
-function CBasicEnemyComponent:FollowPlayer(ElapsedTime)
+function CBasicEnemyComponent:MoveToPlayerNearestPoint(PlayerPos)
 	
-	local l_Player = GetPlayer()
-	local l_Enemy = self.m_AnimatedInstance
-	
-	local l_PlayerPos = l_Player:GetPosition()
+	local l_Enemy = self.m_RObject
 	local l_EnemyPos = l_Enemy:GetPosition()
 	
-	local l_VectorToPlayer = l_PlayerPos - l_EnemyPos
+	local l_VectorToPlayer = PlayerPos - l_EnemyPos
 	l_VectorToPlayer:Normalize(1.0)
 	
-	local l_Yaw = l_Enemy:GetYaw()
 	local l_Forward = l_Enemy:GetForward()
+	l_Forward.y = 0.0
+	-- PlayerPos.y = 0.0 --TODO
 	
-	local l_Dot = l_Forward*l_VectorToPlayer
-	--if l_Dot>1.0 then l_Dot=1.0 end
+	-- local l_NewAngle = 0.0 
 	
-	local l_NewAngle = math.acos(l_Dot)
+	-- local l_CurrentYaw = l_Enemy:GetYaw()
+	-- local l_Velocity = 0.0
+	-- local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, l_EnemyPos, PlayerPos)
+	-- local l_ComputedAngle = 0.0 --CEnemyComponent.CalculateNewAngle(self,l_Angle, l_CurrentYaw, l_Velocity, self.m_ElapsedTime)
+	-- l_Enemy:SetYaw(l_ComputedAngle)
 	
-	local l_Cross = l_Forward:cross(l_VectorToPlayer)
+	self.m_Velocity.x = 0.0
+	self.m_Velocity.z = 0.0
+	self.m_Velocity = self.m_Velocity + (l_VectorToPlayer*self.m_Speed)
+	self.m_Velocity = self.m_Velocity + (g_Gravity*self.m_ElapsedTime)
 	
-	if l_Cross.y < 0.0 then
-		l_NewAngle = (l_NewAngle*(-1.0))
+	if self.m_ElapsedTime>0.0 then
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity * self.m_ElapsedTime), self.m_ElapsedTime)
+	else 
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity), self.m_ElapsedTime)
 	end 
-	
-	l_Enemy:SetPosition(l_EnemyPos+(l_VectorToPlayer*ElapsedTime))
-	
-	l_Enemy:SetYaw(l_Yaw+(l_NewAngle*ElapsedTime))
-	
 end

@@ -15,7 +15,6 @@ function DefineLUAModules()
 	-- dofile("./Data/Scripting/AntTweakBar.lua")
 	
 	--If you dont want start screen
-		dofile("./Data/Scripting/Utils.lua")
 		dofile("./Data/Scripting/Main/GameController.lua")
 		dofile("./Data/Scripting/Globals/GlobalsStartScreen.lua")
 		dofile("./Data/Scripting/GUI/GUIStartScreen.lua")

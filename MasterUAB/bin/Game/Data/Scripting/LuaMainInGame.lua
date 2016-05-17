@@ -6,6 +6,7 @@ end
 function DefineLUAModules()
 	DefineFunctions()
 	DefineClasses()
+	LoadGamePlayScripts()
 end
 
 function DefineFunctions()
@@ -44,5 +45,20 @@ function Update(ElapsedTime)
 		UpdateCinematics(ElapsedTime)
 	end
 	UpdateGUI(ElapsedTime)
+end
+
+function LoadGamePlayScripts()
+	dofile("./Data/Scripting/Player/PlayerFMS.lua") --To fix OnIdleEnter bug
+	dofile("./Data/Scripting/Player/Player.lua")
+	dofile("./Data/Scripting/Weapons/Armor.lua")
+	dofile("./Data/Scripting/Weapons/Weapon.lua")
+	dofile("./Data/Scripting/Enemies/Enemy.lua")
+	dofile("./Data/Scripting/Enemies/BasicEnemy.lua")
+	dofile("./Data/Scripting/Enemies/BasicEnemyFSM.lua")
+	dofile("./Data/Scripting/Enemies/RangedEnemy.lua")
+	dofile("./Data/Scripting/Enemies/RangedEnemyFSM.lua")
+	dofile("./Data/Scripting/Enemies/BruteEnemy.lua")
+	dofile("./Data/Scripting/Enemies/BruteEnemyFSM.lua")
+	dofile("./Data/Scripting/Elements/Pedestal.lua")
 end
 

@@ -12,6 +12,7 @@ function CEnemyComponent:__init(CRenderableObject, ComponentType)
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	self.m_AttackDelay = 0.0
 	self.m_VisionRange = 0.0
+	self.m_RotationVelocity = 5.0
 	
 	self.m_DelayToPatrol = 2.0
 	self.m_WayPoints = {}
@@ -44,6 +45,9 @@ function CEnemyComponent:ResetTime()
 	self.m_ElapsedTime=0.0
 end
 
+function CEnemyComponent:AddTime(ElapsedTime)
+	self.m_ElapsedTime = self.m_ElapsedTime+ElapsedTime
+end
 function CEnemyComponent:IsDead()
 	return self.m_Dead
 end
@@ -99,6 +103,22 @@ function CEnemyComponent:IsPlayerInsideVisionRange(PlayerPosition)
 	return false
 end
 
+function CEnemyComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, ElapsedTime)
+	local l_Result = 0.0
+	if Angle < 0.0 then
+		if (Velocity*(-1)*ElapsedTime) < Angle then
+			l_Result = CurrentYaw + (Angle*ElapsedTime)
+		else l_Result = CurrentYaw + (Velocity*(-1)*ElapsedTime)
+		end
+	else
+		if (Velocity*ElapsedTime) > Angle then
+			l_Result = CurrentYaw + (Angle*ElapsedTime)
+		else l_Result = CurrentYaw + (Velocity*ElapsedTime)
+		end
+	end
+	return l_Result
+end
+
 function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 	m_Position = self.m_RObject:GetPosition()
 	local l_Name = self.m_RObject:GetName()
@@ -111,7 +131,7 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 		self.m_Velocity.x = 0.0
 		self.m_Velocity.z = 0.0
 		
-		if IsPointInsideCircunference(m_Position, l_Destiny, 0.2) == false then
+		if CTTODMathUtils.PointInsideCircle(l_Destiny, m_Position, 0.2) == false then
 			l_Vector:Normalize(1)
 			--local l_VS = l_Vector*self:GetSpeed()
 			self.m_Velocity = self.m_Velocity + (l_Vector*self:GetSpeed())
@@ -124,10 +144,13 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 			l_Forward.y = 0.0
 			l_Destiny.y = 0.0
 			local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_RObject:GetPosition(), l_Destiny)
+
+			-- -k*T    si el ángulo es negativo. K es la velocidad
+			--  si -k*T < angulo, aplicas el angulo, y no la formula, para que no se pase de rotación
 			
 			local l_CurrentYaw = self.m_RObject:GetYaw()
-			
-			self.m_RObject:SetYaw( l_CurrentYaw + l_Angle)
+			local l_Velocity = self.m_RotationVelocity
+			self.m_RObject:SetYaw(self:CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
 		
 		else
 			self.m_CurrentWayPoint = self.m_CurrentWayPoint+1

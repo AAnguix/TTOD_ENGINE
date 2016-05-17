@@ -2,6 +2,7 @@
 #include "XML\XMLTreeNode.h"
 #include "Materials\MaterialManager.h"
 #include "Engine.h"
+#include "Utils\EmptyPointerClass.h"
 
 CParticleSystemType::CParticleSystemType(CXMLTreeNode &TreeNode) : CNamed(TreeNode)
 , m_NumFrames(TreeNode.GetIntProperty("num_frames"))
@@ -49,3 +50,28 @@ CParticleSystemType::~CParticleSystemType()
 	m_ControlPointColor.clear();
 	m_ControlPointSizes.clear();
 }
+
+CEmptyPointerClass* CParticleSystemType::GetNumFramesLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_NumFrames); }
+CEmptyPointerClass* CParticleSystemType::GetTimePerFrameLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_TimerPerFrame); }
+CEmptyPointerClass* CParticleSystemType::GetLoopLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_LoopFrames); }
+CEmptyPointerClass* CParticleSystemType::GetEmitAbsoluteLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_EmitAbsolute); }
+
+CEmptyPointerClass* CParticleSystemType::GetStartingDirectionAngleLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingDirectionAngle); }
+CEmptyPointerClass* CParticleSystemType::GetStartingAccelerationAngleLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingAccelerationAngle); }
+CEmptyPointerClass* CParticleSystemType::GetSizeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Size); }
+
+CEmptyPointerClass* CParticleSystemType::GetEmitRateLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_EmitRate); }
+CEmptyPointerClass* CParticleSystemType::GetAwakeTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_AwakeTime); }
+CEmptyPointerClass* CParticleSystemType::GetSleepTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_SleepTime); }
+CEmptyPointerClass* CParticleSystemType::GetLifeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Life); }
+
+CEmptyPointerClass* CParticleSystemType::GetStartingAngleLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingAngle); }
+CEmptyPointerClass* CParticleSystemType::GetStartingAngularSpeedLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingAngularSpeed); }
+CEmptyPointerClass* CParticleSystemType::GetAngularAccelerationLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_AngularAcceleration); }
+
+CEmptyPointerClass* CParticleSystemType::GetStartingSpeed1LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingSpeed1); }
+CEmptyPointerClass* CParticleSystemType::GetStartingSpeed2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingSpeed2); }
+CEmptyPointerClass* CParticleSystemType::GetStartingAcceleration1LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingAcceleration1); }
+CEmptyPointerClass* CParticleSystemType::GetStartingAcceleration2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingAcceleration2); }
+CEmptyPointerClass* CParticleSystemType::GetColor1LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color1); }
+CEmptyPointerClass* CParticleSystemType::GetColor2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color2); }

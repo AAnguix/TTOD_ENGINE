@@ -5,7 +5,8 @@ g_CurrentLevel = 0
 
 g_PlayerComponent = nil --Store the instance to the player
 
-g_GuiFile = "./Data/Scripting/GUI/GUIStartScreen.lua"
+g_CurrentGuiFile = "./Data/Scripting/GUI/GUIStartScreen.lua"
+g_CurrentLuaMainFile = "./Data/Scripting/LuaMainStartScreen.lua"
 
 g_Engine = CEngine.GetSingleton()
 g_LayerManager = g_Engine:GetLayerManager()
@@ -14,5 +15,6 @@ g_LogManager = g_Engine:GetLogManager()
 g_CameraControllerManager = g_Engine:GetCameraControllerManager()
 g_GUIManager = g_Engine:GetGUIManager()
 g_SceneRendererCommandManager = g_Engine:GetSceneRendererCommandManager()
+g_SoundManager = g_Engine:GetSoundManager()
 
 g_GameController = CGameController()

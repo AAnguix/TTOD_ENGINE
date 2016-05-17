@@ -30,6 +30,7 @@ void CScriptManager::RegisterBase()
 		.scope
 		[
 			def("GetAngleToFacePoint", &CTTODMathUtils::GetAngleToFacePoint)
+			, def("PointInsideCircle", &CTTODMathUtils::PointInsideCircle)
 		]
 	];
 
@@ -55,6 +56,8 @@ void CScriptManager::RegisterBase()
 		.def("GetVisible", &C3DElement::GetVisible)
 		.def("SetVisible", &C3DElement::SetVisible)
 		.def("GetTransform", &C3DElement::GetTransform)
+		.def("GetRight", &C3DElement::GetRight)
+		.def("GetUp", &C3DElement::GetUp)
 		.def("SetYawPitchRoll", &C3DElement::SetYawPitchRoll)
 	];
 	

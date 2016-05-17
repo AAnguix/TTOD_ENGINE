@@ -4,6 +4,7 @@
 class CParticleSystemType;
 class CXMLTreeNode;
 class CRenderableVertexs;
+class CEmptyPointerClass;
 #include "Render\RenderManager.h"
 #include "RenderableObjects\RenderableObject.h"
 
@@ -90,7 +91,21 @@ public:
 
 	void Render(CRenderManager* RenderManager);
 	void Update(float ElapsedTime);
-	
+
+	void WriteDataToXml(const std::string Filename);
+
+private:
+	void* m_EmissionBoxHalfSizeAddress;
+	void* m_YawAdress;
+	void* m_PitchAdress;
+	void* m_RollAdress;
+
+public:
+	virtual CEmptyPointerClass* GetEmissionBoxHalfSizeLuaAddress() const;
+	virtual CEmptyPointerClass* GetYawLuaAddress() const;
+	virtual CEmptyPointerClass* GetPitchLuaAddress() const;
+	virtual CEmptyPointerClass* GetRollLuaAddress() const;
+
 };
 
 #endif

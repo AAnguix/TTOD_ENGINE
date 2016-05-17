@@ -631,6 +631,31 @@ void CScriptManager::RegisterParticles()
 		class_<CParticleSystemType, CNamed>("CParticleSystemType")
 		.def(constructor<CXMLTreeNode>())
 		.def("GetMaterial", &CParticleSystemType::GetMaterial)
+
+		.def("GetNumFramesLuaAddress", &CParticleSystemType::GetNumFramesLuaAddress)
+		.def("GetTimePerFrameLuaAddress", &CParticleSystemType::GetTimePerFrameLuaAddress)
+		.def("GetLoopLuaAddress", &CParticleSystemType::GetLoopLuaAddress)
+		.def("GetEmitAbsoluteLuaAddress", &CParticleSystemType::GetEmitAbsoluteLuaAddress)
+
+		.def("GetStartingDirectionAngleLuaAddress", &CParticleSystemType::GetStartingDirectionAngleLuaAddress)
+		.def("GetStartingAccelerationAngleLuaAddress", &CParticleSystemType::GetStartingAccelerationAngleLuaAddress)
+		.def("GetSizeLuaAddress", &CParticleSystemType::GetSizeLuaAddress)
+
+		.def("GetEmitRateLuaAddress", &CParticleSystemType::GetEmitRateLuaAddress)
+		.def("GetAwakeTimeLuaAddress", &CParticleSystemType::GetAwakeTimeLuaAddress)
+		.def("GetSleepTimeLuaAddress", &CParticleSystemType::GetSleepTimeLuaAddress)
+		.def("GetLifeLuaAddress", &CParticleSystemType::GetLifeLuaAddress)
+
+		.def("GetStartingAngleLuaAddress", &CParticleSystemType::GetStartingAngleLuaAddress)
+		.def("GetStartingAngularSpeedLuaAddress", &CParticleSystemType::GetStartingAngularSpeedLuaAddress)
+		.def("GetAngularAccelerationLuaAddress", &CParticleSystemType::GetAngularAccelerationLuaAddress)
+
+		.def("GetStartingSpeed1LuaAddress", &CParticleSystemType::GetStartingSpeed1LuaAddress)
+		.def("GetStartingSpeed2LuaAddress", &CParticleSystemType::GetStartingSpeed2LuaAddress)
+		.def("GetStartingAcceleration1LuaAddress", &CParticleSystemType::GetStartingAcceleration1LuaAddress)
+		.def("GetStartingAcceleration2LuaAddress", &CParticleSystemType::GetStartingAcceleration2LuaAddress)
+		.def("GetColor1LuaAddress", &CParticleSystemType::GetColor1LuaAddress)
+		.def("GetColor2LuaAddress", &CParticleSystemType::GetColor2LuaAddress)
 	];
 
 	module(LUA_STATE)
@@ -651,6 +676,12 @@ void CScriptManager::RegisterParticles()
 		.def(constructor<CXMLTreeNode>())
 		.def("Render", &CParticleSystemInstance::Render)
 		.def("Update", &CParticleSystemInstance::Update)
+		.def("GetType", &CParticleSystemInstance::GetType)
+
+		.def("GetEmissionBoxHalfSizeLuaAddress", &CParticleSystemInstance::GetEmissionBoxHalfSizeLuaAddress)
+		.def("GetYawLuaAddress", &CParticleSystemInstance::GetYawLuaAddress)
+		.def("GetPitchLuaAddress", &CParticleSystemInstance::GetPitchLuaAddress)
+		.def("GetRollLuaAddress", &CParticleSystemInstance::GetRollLuaAddress)
 	];
 
 

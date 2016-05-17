@@ -30,7 +30,7 @@ function InitializeDebugBar()
 	l_DebugHelper:RegisterButton("[7]Materials","OpenMaterials()")
 	l_DebugHelper:RegisterButton("[8]Commands","ReloadSceneRendererCommands()")
 	l_DebugHelper:RegisterButton("[9]GUI","ReloadGUI()")
-	l_DebugHelper:RegisterButton("Particles","ReloadParticles()")
+	l_DebugHelper:RegisterButton("Particles","OpenParticles()")
 	l_DebugHelper:RegisterButton("Cameras","ReloadCameras()")
 end
 
@@ -179,4 +179,78 @@ end
 function AddLightButton(Light)
 	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
 	l_DebugHelper:RegisterButton(Light:GetName(),"AddLightParameters('"..Light:GetName().."')")
+end
+
+function OpenParticles()
+	ClickOnElement("Particles")
+	local l_ParticleManager=CEngine.GetSingleton():GetLayerManager():GetResource("particles")
+	local l_Particles = l_ParticleManager:GetResourcesVector():size()
+	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
+	
+	for i=0,l_Particles-1 do
+		local l_Particle=l_ParticleManager:GetResourceById(i)
+		l_DebugHelper:RegisterButton(l_Particle:GetName(),"OpenParticle('"..l_Particle:GetName().."')")
+	end
+end
+
+function OpenParticle(ParticleName)
+	ClickOnElement(ParticleName)
+	local l_ParticleSystem = CEngine.GetSingleton():GetLayerManager():GetResource("particles"):GetResource(ParticleName)
+	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
+	
+	l_DebugHelper:RegisterVect3fParameter("EmissionBoxHalfSize",l_ParticleSystem:GetEmissionBoxHalfSizeLuaAddress(),"")
+	l_DebugHelper:RegisterFloatParameter("Yaw",l_ParticleSystem:GetYawLuaAddress(),"min=0.0 max=3.14 step=0.01")
+	l_DebugHelper:RegisterFloatParameter("Pitch",l_ParticleSystem:GetPitchLuaAddress(),"min=0.0 max=3.14 step=0.01")
+	l_DebugHelper:RegisterFloatParameter("Roll",l_ParticleSystem:GetRollLuaAddress(),"min=0.0 max=3.14 step=0.01")
+	
+	local l_Type = l_ParticleSystem:GetType()
+	
+	l_DebugHelper:RegisterInt32Parameter("Num.Frames",l_Type:GetNumFramesLuaAddress(),"min=0 max=100 step=1")
+	l_DebugHelper:RegisterFloatParameter("Time/frame",l_Type:GetTimePerFrameLuaAddress(),"min=0.0 max=5.0 step=0.01")
+	l_DebugHelper:RegisterBoolParameter("Loop",l_Type:GetLoopLuaAddress(),"")
+	l_DebugHelper:RegisterBoolParameter("Emit absolute",l_Type:GetEmitAbsoluteLuaAddress(),"")
+	
+	l_DebugHelper:RegisterFloatParameter("Starting direction angle",l_Type:GetStartingDirectionAngleLuaAddress(),"min=0 max=100 step=1")
+	l_DebugHelper:RegisterFloatParameter("Starting acceleration angle ",l_Type:GetStartingAccelerationAngleLuaAddress(),"min=0 max=100 step=1")
+	l_DebugHelper:RegisterVect2fParameter("Size",l_Type:GetSizeLuaAddress(),"")
+	
+	l_DebugHelper:RegisterVect2fParameter("Emit rate",l_ParticleSystem:GetType():GetEmitRateLuaAddress(),"")
+	l_DebugHelper:RegisterVect2fParameter("Awake time",l_ParticleSystem:GetType():GetAwakeTimeLuaAddress(),"")
+	l_DebugHelper:RegisterVect2fParameter("Sleep time",l_ParticleSystem:GetType():GetSleepTimeLuaAddress(),"")
+	l_DebugHelper:RegisterVect2fParameter("Life",l_ParticleSystem:GetType():GetLifeLuaAddress(),"")
+	
+	l_DebugHelper:RegisterVect2fParameter("Starting angle",l_ParticleSystem:GetType():GetStartingAngleLuaAddress(),"")
+	l_DebugHelper:RegisterVect2fParameter("Starting angular speed",l_ParticleSystem:GetType():GetStartingAngularSpeedLuaAddress(),"")
+	l_DebugHelper:RegisterVect2fParameter("Angular acceleration",l_ParticleSystem:GetType():GetAngularAccelerationLuaAddress(),"")
+	
+	l_DebugHelper:RegisterVect3fParameter("Starting speed 1",l_ParticleSystem:GetType():GetStartingSpeed1LuaAddress(),"")
+	l_DebugHelper:RegisterVect3fParameter("Starting speed 2",l_ParticleSystem:GetType():GetStartingSpeed2LuaAddress(),"")
+	l_DebugHelper:RegisterVect3fParameter("Starting Acceleration 1",l_ParticleSystem:GetType():GetStartingAcceleration1LuaAddress(),"")
+	l_DebugHelper:RegisterVect3fParameter("Starting Acceleration 2",l_ParticleSystem:GetType():GetStartingAcceleration2LuaAddress(),"")
+	l_DebugHelper:RegisterColorParameter("Color1",l_ParticleSystem:GetType():GetColor1LuaAddress(),"")
+	l_DebugHelper:RegisterColorParameter("Color2",l_ParticleSystem:GetType():GetColor2LuaAddress(),"")
+
+	l_DebugHelper:RegisterButton("Save","WriteParticleInfoToXml('"..l_Type:GetName().."')")
+	--l_DebugHelper:RegisterButton("Save","WriteParticleInfoToXml("l_Type")")
+end
+
+function WriteParticleInfoToXml(Type)
+	
+	--local Filename = "Data\Level"..g_CurrentLevel.."\particles_systems.xml"
+	local l_Type = g_ParticleSystemManager:GetResource(Type)
+	local Filename = "Data/Level1/particles_systems.xml"
+	local l_XMLTreeNode=CXMLTreeNode()
+	local l_Loaded=l_XMLTreeNode:LoadFile(Filename)
+	if l_Loaded then
+		for i=0, l_XMLTreeNode:GetNumChildren() do
+			local l_Element=l_XMLTreeNode:GetChild(i)
+			if l_Element:GetName() == "particle_system" and l_Element:GetPszProperty("name", "", false) == Type then
+				g_LogManager:Log("siiiiii")
+				l_Element:WriteIntProperty("num_frames", l_Type:GetNumFramesLuaAddress())
+				l_Element:WriteBoolProperty("loop_frames", l_Type:GetLoopLuaAddress())
+			end
+		end
+	else
+		print("File '"..Filename.."'not correctly loaded")
+	end
 end

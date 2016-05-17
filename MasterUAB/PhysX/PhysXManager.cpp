@@ -217,7 +217,7 @@ void CPhysXManager::CreateRigidStaticConvexMesh(const std::string &Name, std::ve
 		l_Shape->release();
 
 }
-void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
 	//physx::PxTriangleMesh* l_TriangleMesh= CreateTriangleMesh(Vertices);
 
@@ -285,7 +285,7 @@ void CPhysXManager::CreateRigidDynamicConvexMesh(const std::string &Name, std::v
 	//l_Shape->release();
 }
 
-void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density)
+void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density)
 {
 	physx::PxTriangleMesh* l_ConvexMesh = CreateTriangleMesh(Name, Vertices, Indices);
 
@@ -395,7 +395,7 @@ physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &FileNam
 //	return l_TriangleMesh;
 //}
 
-physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> Vertices, std::vector<unsigned int> Indices)
+physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices)
 {
 #if USE_PHYSX_DEBUG
 	CheckMapAndVectors();

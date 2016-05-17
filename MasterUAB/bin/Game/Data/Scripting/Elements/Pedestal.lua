@@ -24,7 +24,7 @@ function CPedestalComponent:Initialize(XMLTreeNode)
 	--g_GUIManager:AddButton(ButtonID, Normal, Highlight, Pressed)
 	g_GUIManager:AddButton("pedestal01_button", "pedestal_button_normal", "pedestal_button_highlight", "pedestal_button_pressed")
 	
-	g_LogManager:Log("Pedestal "..self.m_RObject:GetName().." created...")
+	--g_LogManager:Log("Pedestal "..self.m_RObject:GetName().." created...")
 end
 
 function CPedestalComponent:GetInteractionRange()

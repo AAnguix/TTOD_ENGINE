@@ -1,6 +1,6 @@
 
 --Returns if a 3D Point is inside a circunference arround a point.
-function IsPointInsideCircunference(CircunferenceCenter,Point,Radius)
+function IsPointInsideCircunferenceLUA(CircunferenceCenter,Point,Radius)
 	local l_Vector = Point - CircunferenceCenter
 	local l_Distance = l_Vector:Length()
 

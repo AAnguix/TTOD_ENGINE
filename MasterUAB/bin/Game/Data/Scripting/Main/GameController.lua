@@ -15,7 +15,6 @@ function CGameController:LoadXML(Filename)
 	self.m_Entities={}
 	local l_XMLTreeNode=CXMLTreeNode()
 	local l_Loaded=l_XMLTreeNode:LoadFile(Filename)
-	
 	if l_Loaded then
 		for i=0, l_XMLTreeNode:GetNumChildren() do
 			local l_Element=l_XMLTreeNode:GetChild(i)
@@ -32,7 +31,7 @@ function CGameController:LoadXML(Filename)
 	else
 		print("File '"..Filename.."'not correctly loaded")
 	end
-	g_LogManager:Log("Game entities loaded...")
+	--g_LogManager:Log("Game entities loaded...")
 end 
 
 function CGameController:LoadEnemy(XMLTreeNode)

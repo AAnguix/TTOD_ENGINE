@@ -97,7 +97,11 @@ Vect3f C3DElement::GetRight() const
 	sin(m_Roll)*cos(m_Yaw),
 	-sin(m_Yaw));*/
 	
-	return Vect3f(m_TransformMatrix.m00,m_TransformMatrix.m10,m_TransformMatrix.m20);
+
+	//Vect4f l_Right = (Vect4f(1.0f, 0.0f, 0.0f, 0.0f))*m_TransformMatrix;
+	//return Vect3f(l_Right.x, l_Right.y, l_Right.z);
+	
+	return Vect3f(m_TransformMatrix.m00,m_TransformMatrix.m10,-m_TransformMatrix.m20);
 }
 
 Vect3f C3DElement::GetForward() const
@@ -105,14 +109,11 @@ Vect3f C3DElement::GetForward() const
 	/*return Vect3f( sin(m_Roll) * sin(m_Roll) + cos(m_Roll) * sin(m_Yaw) * cos(m_Roll),
 	-cos(m_Roll) * sin(m_Roll) + sin(m_Roll) * sin(m_Yaw) * cos(m_Roll),
 	cos(m_Yaw) * cos(m_Roll) ); */
+
+	//Vect4f l_Forward = (Vect4f(0.0f,0.0f,1.0f,0.0f))*m_TransformMatrix;
+	//return Vect3f(l_Forward.x, l_Forward.y, l_Forward.z);
 	
-	//return m_TransformMatrix*Vect4f(0.0f, 0.0f, 1.0f, 1.0f);
-
-	//return Vect3f(m_TransformMatrix.m00, m_TransformMatrix.m10, m_TransformMatrix.m20);
-	//return Vect3f(m_TransformMatrix.m01, m_TransformMatrix.m11, m_TransformMatrix.m21);
-
-
-	return Vect3f(m_TransformMatrix.m02,m_TransformMatrix.m12,m_TransformMatrix.m22);
+	return Vect3f(-m_TransformMatrix.m02,m_TransformMatrix.m12,m_TransformMatrix.m22);
 }
 
 Vect3f C3DElement::GetTranslation()  const

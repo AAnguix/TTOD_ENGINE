@@ -10,7 +10,8 @@ g_WindMildEnter = false
 
 g_Enemies = {}
 
-g_GuiFile = "./Data/Scripting/GUI/GUIInGame.lua"
+g_CurrentGuiFile = "./Data/Scripting/GUI/GUIInGame.lua"
+g_CurrentLuaMainFile = "./Data/Scripting/LuaMainInGame.lua"
 
 g_ParticleSystemManager = g_Engine:GetParticleSystemManager()
 gSoundManager = g_Engine:GetSoundManager()

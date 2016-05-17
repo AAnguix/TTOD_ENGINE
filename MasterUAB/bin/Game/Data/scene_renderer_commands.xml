@@ -178,11 +178,11 @@
 	<!-- <set_matrices/> -->
 	
 	<!-- Particles -->
-	<!-- <set_pool_renderable_objects_technique pool="forward_shading"/>
+	<set_pool_renderable_objects_technique pool="forward_shading"/>
 	<enable_alpha_blend/>
 	<set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/>
 	<render_layer layer="particles" active="true"/>
-	<disable_alpha_blend/> -->
+	<disable_alpha_blend/>
 	
 	<!-- <clear render_target="false" depth_stencil="false"/> -->
 	<set_light_constants/>

@@ -28,7 +28,7 @@ float  CTTODMathUtils::AngleBetweenVectors(const Vect3f &VectorOne, const Vect3f
 
 	float l_Angle = acos(l_Value);
 	Vect3f l_CrossProduct = VectorOne^VectorTwo;
-	if (l_CrossProduct.y < 0.0f)
+	if (l_CrossProduct.y > 0.0f)
 	{
 		l_Angle = l_Angle*(-1.0f);
 	}
@@ -41,4 +41,15 @@ float CTTODMathUtils::GetAngleToFacePoint(const Vect3f &Forward, const Vect3f &O
 	Vect3f l_VectorToDestinyPoint = PointToFace - OriginPoint;
 	l_VectorToDestinyPoint.Normalize();
 	return AngleBetweenVectors(l_VectorToDestinyPoint, Forward);
+}
+
+bool CTTODMathUtils::PointInsideCircle(const Vect3f &Point, const Vect3f &CircunferenceCenter, const float &Radius)
+{
+	Vect3f l_Vector = Point - CircunferenceCenter;
+	float l_Distance = l_Vector.Length();
+
+	if (l_Distance < Radius)
+		return true;
+
+	return false;
 }

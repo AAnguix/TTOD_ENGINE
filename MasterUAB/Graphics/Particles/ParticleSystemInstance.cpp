@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "ParticleManager.h"
 #include "Camera\CameraControllerManager.h"
+#include "Utils\EmptyPointerClass.h"
 
 #define s_epsilon std::pow(1.0f,-10)
 
@@ -314,6 +315,59 @@ void CParticleSystemInstance::InsertSort()
 			m_ParticleData[j] = l_Val;
 
 			--j;
+		}
+	}
+}
+
+CEmptyPointerClass* CParticleSystemInstance::GetEmissionBoxHalfSizeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_EmissionBoxHalfSize); }
+CEmptyPointerClass* CParticleSystemInstance::GetYawLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Yaw); }
+CEmptyPointerClass* CParticleSystemInstance::GetPitchLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Pitch); }
+CEmptyPointerClass* CParticleSystemInstance::GetRollLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Roll); }
+
+
+void CParticleSystemInstance::WriteDataToXml(const std::string Filename)
+{
+	CXMLTreeNode l_XML;
+
+	if (l_XML.LoadFile(Filename.c_str()))
+	{
+		CXMLTreeNode l_PartycleSystem = l_XML["particle_system"];
+
+		if (l_PartycleSystem.Exists())
+		{
+			for (int i = 0; i < l_PartycleSystem.GetNumChildren(); ++i)
+			{
+				CXMLTreeNode l_Element = l_PartycleSystem(i);
+				std::string l_TypeName = GetType()->GetName();
+
+				if (l_Element.GetName() == l_TypeName)
+				{
+					l_Element.WriteIntProperty("num_frames", m_Type->m_NumFrames);
+					l_Element.WriteIntProperty("time_per_frame", m_Type->m_TimerPerFrame);
+					l_Element.WriteIntProperty("loop_frames", m_Type->m_LoopFrames);
+					l_Element.WriteIntProperty("emit_absolute", m_Type->m_EmitAbsolute);
+
+					l_Element.WriteFloatProperty("starting_dir_angle", m_Type->m_StartingDirectionAngle);
+					l_Element.WriteFloatProperty("starting_acc_angle", m_Type->m_StartingAccelerationAngle);
+					l_Element.WriteVect2fProperty("num_frames", m_Type->m_Size);
+
+					l_Element.WriteVect2fProperty("emit_rate", m_Type->m_EmitRate);
+					l_Element.WriteVect2fProperty("awake_time", m_Type->m_AwakeTime);
+					l_Element.WriteVect2fProperty("sleep_time", m_Type->m_SleepTime);
+					l_Element.WriteVect2fProperty("life", m_Type->m_Life);
+
+					l_Element.WriteVect2fProperty("starting_angle", m_Type->m_StartingAngle);
+					l_Element.WriteVect2fProperty("starting_ang_speed", m_Type->m_StartingAngularSpeed);
+					l_Element.WriteVect2fProperty("angular_acc", m_Type->m_AngularAcceleration);
+
+					l_Element.WriteVect3fProperty("starting_speed_1", m_Type->m_StartingSpeed1);
+					l_Element.WriteVect3fProperty("starting_speed_2", m_Type->m_StartingSpeed2);
+					l_Element.WriteVect3fProperty("starting_acc_1", m_Type->m_StartingAcceleration1);
+					l_Element.WriteVect3fProperty("starting_acc_2", m_Type->m_StartingAcceleration2);
+					l_Element.WriteVect4fProperty("color1", m_Type->m_Color1);
+					l_Element.WriteVect4fProperty("color2", m_Type->m_Color2);
+				}
+			}
 		}
 	}
 }

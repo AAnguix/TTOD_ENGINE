@@ -158,8 +158,8 @@ void CSoundManager::RegisterSpeaker(const C3DElement* Speaker)
 	float l_Yaw = Speaker->GetYaw();
 	float l_Pitch = Speaker->GetPitch();
 
-	Vect3f l_Orientation(cos(l_Yaw)*cos(l_Pitch), sin(l_Pitch), sin(l_Yaw)*cos(l_Pitch));
-	//Vect3f l_Orientation = Speaker->GetForward(); TODO
+	//Vect3f l_Orientation(cos(l_Yaw)*cos(l_Pitch), sin(l_Pitch), sin(l_Yaw)*cos(l_Pitch));
+	Vect3f l_Orientation = Speaker->GetForward(); 
 
 	AkSoundPosition l_SoundPosition = {};
 	l_SoundPosition.Position.X = l_Position.x;
@@ -330,7 +330,7 @@ void CSoundManager::SetListenerPosition(const CCamera *Camera)
 
 bool CSoundManager::LoadSoundBanksXML()
 {
-	CXMLTreeNode l_XML;
+	/*CXMLTreeNode l_XML;
 
 	if (l_XML.LoadFile((m_Path+m_SoundBanksFilename).c_str()))
 	{
@@ -347,6 +347,55 @@ bool CSoundManager::LoadSoundBanksXML()
 					std::string l_Bank = l_Element.GetPszProperty("name", "");
 					LoadSoundBank(l_Bank);
 				}
+			}
+		}
+	}
+
+	return true;*/
+
+	CXMLTreeNode l_XML;
+
+	if (l_XML.LoadFile((m_Path + m_SoundBanksFilename).c_str()))
+	{
+		CXMLTreeNode l_Soundbanks = l_XML["SoundBanks"];
+
+		if (l_Soundbanks.Exists())
+		{
+			for (int i = 0; i < l_Soundbanks.GetNumChildren(); ++i)
+			{
+				CXMLTreeNode l_Element = l_Soundbanks(i);
+
+				if (l_Element.GetName() == std::string("SoundBank"))
+				{
+					int l_SoundBankID = l_Element.GetIntProperty("Id", 0);
+					if (l_SoundBankID != 1355168291)
+					{
+
+						//std::string l_Bank = l_Element.GetPszProperty("name", "");
+						//LoadSoundBank(l_Bank);
+						for (int j = 0; j < l_Element.GetNumChildren(); ++j)
+						{
+							CXMLTreeNode l_SoundBankElement = l_Element(j);
+
+							if (l_SoundBankElement.GetName() == std::string("Path"))
+							{
+
+								/*int l_TestNumChildren = l_SoundBankElement.GetNumChildren();
+								for (int k = 0; k < l_SoundBankElement.GetNumChildren(); ++k)
+								{
+								CXMLTreeNode l_SoundPathElement = l_SoundBankElement(k);
+
+								std::string l_Bank = l_SoundPathElement.GetName();
+								LoadSoundBank(l_Bank);
+
+								}*/
+								LoadSoundBank("SoundBank.bnk");
+
+							}
+						}
+
+					}
+				}//DE PRUEBA BORRAR LUEGO ES LO DEL ID
 			}
 		}
 	}
