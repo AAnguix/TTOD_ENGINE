@@ -10,6 +10,8 @@
 #include "cal3d\coresubmesh.h"
 #include "cal3d\mixer.h"
 #include "cal3d\animation.h"
+#include "cal3d\skeleton.h"
+#include "cal3d\bone.h"
 
 #include "Vertex\VertexTypes.h"
 #include "Engine.h"
@@ -125,34 +127,50 @@ void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 {
 	//m_Position=CEngine::GetSingleton().GetPhysXManager()->GetActorPosition(m_Name); /*TODO VER SI FUNCIONA*/
 	m_ComponentManager->Render(*RenderManager);
+	
+	//CalBoundingBox l_BoundingBox = m_CalModel->getBoundingBox();
+	//CalVector* l_CalVector[8];
 
-	CEffectManager::m_SceneEffectParameters.m_World=GetTransform(); 
+	//l_BoundingBox.computePoints(l_CalVector[0]);
 
-	int l_HardwareMeshCount = m_CalHardwareModel->getHardwareMeshCount();
-
-	for(int l_HardwareMeshId = 0; l_HardwareMeshId<l_HardwareMeshCount; ++l_HardwareMeshId)
+	if (m_Visible) //&& (RenderManager->GetFrustum().BoxVisible(l_Max, l_Min))
 	{
-		m_Materials[l_HardwareMeshId]->Apply();
-		m_CalHardwareModel->selectHardwareMesh(l_HardwareMeshId);
-		Mat44f l_Transformations[MAXBONES];
+		CEffectManager::m_SceneEffectParameters.m_World = GetTransform();
+		int l_HardwareMeshCount = m_CalHardwareModel->getHardwareMeshCount();
 
-		for(int l_BoneId=0; l_BoneId<m_CalHardwareModel->getBoneCount();++l_BoneId)
+		for (int l_HardwareMeshId = 0; l_HardwareMeshId < l_HardwareMeshCount; ++l_HardwareMeshId)
 		{
-			Quatf l_Quaternion=(const Quatf &)m_CalHardwareModel->getRotationBoneSpace(l_BoneId, m_CalModel->getSkeleton());
-			l_Transformations[l_BoneId].SetIdentity();
-			l_Transformations[l_BoneId].SetRotByQuat(l_Quaternion);
-			CalVector translationBoneSpace=m_CalHardwareModel->getTranslationBoneSpace(l_BoneId, m_CalModel->getSkeleton());
-			l_Transformations[l_BoneId].SetPos(Vect3f(
-			translationBoneSpace.x, translationBoneSpace.y, translationBoneSpace.z));
-		}
+			m_Materials[l_HardwareMeshId]->Apply();
+			m_CalHardwareModel->selectHardwareMesh(l_HardwareMeshId);
+			Mat44f l_Transformations[MAXBONES];
 
-		memcpy(&CEffectManager::m_AnimatedModelEffectParameters
-		.m_Bones, l_Transformations, MAXBONES*sizeof(float)*4*4);
-		m_Materials[l_HardwareMeshId]->GetRenderableObjectTechnique()->GetEffectTechnique()->SetConstantBuffer(2,
-		&CEffectManager::m_AnimatedModelEffectParameters.m_Bones);
-		m_RenderableVertexs->RenderIndexed(RenderManager,
-		m_Materials[l_HardwareMeshId]->GetRenderableObjectTechnique()->GetEffectTechnique(), &CEffectManager::m_SceneEffectParameters,m_CalHardwareModel->getFaceCount()*3, m_CalHardwareModel->getStartIndex(),m_CalHardwareModel->getBaseVertexIndex());
+			for (int l_BoneId = 0; l_BoneId < m_CalHardwareModel->getBoneCount(); ++l_BoneId)
+			{
+				Quatf l_Quaternion = (const Quatf &)m_CalHardwareModel->getRotationBoneSpace(l_BoneId, m_CalModel->getSkeleton());
+				l_Transformations[l_BoneId].SetIdentity();
+				l_Transformations[l_BoneId].SetRotByQuat(l_Quaternion);
+				CalVector translationBoneSpace = m_CalHardwareModel->getTranslationBoneSpace(l_BoneId, m_CalModel->getSkeleton());
+				l_Transformations[l_BoneId].SetPos(Vect3f(translationBoneSpace.x, translationBoneSpace.y, translationBoneSpace.z));
+			}
+
+			memcpy(&CEffectManager::m_AnimatedModelEffectParameters.m_Bones, l_Transformations, MAXBONES*sizeof(float) * 4 * 4);
+			m_Materials[l_HardwareMeshId]->GetRenderableObjectTechnique()->GetEffectTechnique()->SetConstantBuffer(2,&CEffectManager::m_AnimatedModelEffectParameters.m_Bones);
+			m_RenderableVertexs->RenderIndexed(RenderManager,m_Materials[l_HardwareMeshId]->GetRenderableObjectTechnique()->GetEffectTechnique(), &CEffectManager::m_SceneEffectParameters, m_CalHardwareModel->getFaceCount() * 3, m_CalHardwareModel->getStartIndex(), m_CalHardwareModel->getBaseVertexIndex());
+		}
 	}
+}
+
+Mat44f CAnimatedInstanceModel::GetBoneTransformationMatrix(const int BoneID) const
+{
+	Mat44f l_BoneTransformation; 
+	CalBone* l_Bone = m_CalModel->getSkeleton()->getBone(BoneID);
+	CalQuaternion l_Rotation = l_Bone->getRotationAbsolute();
+	CalVector l_Translation = l_Bone->getTranslationAbsolute();
+		
+	l_BoneTransformation.SetIdentity();
+	l_BoneTransformation.SetRotByQuat(Quatf(l_Rotation.x, l_Rotation.y, l_Rotation.z, l_Rotation.w));
+	l_BoneTransformation.SetPos(Vect3f(l_Translation.x, l_Translation.y, l_Translation.z));
+	return l_BoneTransformation;
 }
 
 void CAnimatedInstanceModel::Update(float ElapsedTime)

@@ -379,6 +379,16 @@ Vect3f CStaticMesh::GetBoundingBoxSize() const
 	return l_Size;
 }
 
+Vect3f CStaticMesh::GetBoundingBoxMax() const
+{
+	return Vect3f(m_BoundingBox.x_max, m_BoundingBox.y_max, m_BoundingBox.z_max);
+}
+
+Vect3f CStaticMesh::GetBoundingBoxMin() const
+{
+	return Vect3f(m_BoundingBox.x_min, m_BoundingBox.y_min, m_BoundingBox.z_min);
+}
+
 float CStaticMesh::GetBoundingSphereRadius() const
 {
 	return m_BoundingSphere.radius;

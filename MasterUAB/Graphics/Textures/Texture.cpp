@@ -115,3 +115,5 @@ bool CTexture::Reload()
 	Unload();
 	return LoadFileNew();
 } 
+
+

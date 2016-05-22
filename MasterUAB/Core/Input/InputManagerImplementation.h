@@ -34,6 +34,7 @@ public:
 
 	CMouseInput* GetMouse() const;
 	CKeyBoardInput* GetKeyBoard() const;
+	HWND GetHwnd() const { return m_HWND; };
 
 private:
 

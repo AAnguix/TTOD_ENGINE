@@ -6,13 +6,17 @@
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Materials\TemplatedMaterialParameter.h"
 #include "Effects\EffectManager.h"
+#include "PhysXManager.h"
 
-CMaterial::CMaterial(CXMLTreeNode &TreeNode) :
-m_Textures(NULL),
-m_RenderableObjectTechnique(NULL),
-CNamed(TreeNode.GetPszProperty("name", "defaultMaterial")),
-m_CurrentParameterData(0),
-m_Offset(0)
+CMaterial::CMaterial(CXMLTreeNode &TreeNode)
+:m_Textures(NULL)
+,m_RenderableObjectTechnique(NULL)
+,CNamed(TreeNode.GetPszProperty("name", "defaultMaterial"))
+,m_CurrentParameterData(0)
+,m_Offset(0)
+,m_StaticFriction(0.0f)
+,m_DynamicFriction(0.0f)
+,m_Restitution(0.0f)
 {
 	std::string l_RenderableObjectTechniqueName=TreeNode.GetPszProperty("renderable_object_technique", "");
 
@@ -35,32 +39,48 @@ m_Offset(0)
 		{
 			std::string l_Type = l_Element.GetPszProperty("type");
 			std::string l_Name = l_Element.GetPszProperty("name");
-			CMaterialParameter* l_MaterialParameter;
-	
-			CMaterialParameter::TMaterialType l_MaterialType;
 
-			if(l_Type=="float")
+			if (l_Name == "static_friction")
 			{
-				l_MaterialType = CMaterialParameter::FLOAT;
-				l_MaterialParameter = new CTemplatedMaterialParameter<float>(this,l_Element,l_Element.GetFloatProperty("value",0.0f),l_MaterialType);
-			
-			}else if(l_Type=="vect2f")
-			{
-				l_MaterialType = CMaterialParameter::VECT2F;
-				l_MaterialParameter = new CTemplatedMaterialParameter<Vect2f>(this,l_Element,l_Element.GetVect2fProperty("value",v2fZERO),l_MaterialType);
+				m_StaticFriction = l_Element.GetFloatProperty("value", 0.0f);
 			}
-			else if(l_Type=="vect3f")
+			else if (l_Name == "dynamic_friction")
 			{
-				l_MaterialType = CMaterialParameter::VECT3F;
-				l_MaterialParameter = new CTemplatedMaterialParameter<Vect3f>(this,l_Element,l_Element.GetVect3fProperty("value",v3fZERO),l_MaterialType);
+				m_DynamicFriction = l_Element.GetFloatProperty("value", 0.0f);
 			}
-			else if(l_Type=="vect4f")
+			else if (l_Name == "restitution")
 			{
-				l_MaterialType = CMaterialParameter::VECT4F;
-				l_MaterialParameter = new CTemplatedMaterialParameter<Vect4f>(this,l_Element,l_Element.GetVect4fProperty("value",v4fZERO),l_MaterialType);
+				m_Restitution = l_Element.GetFloatProperty("value", 0.0f);
 			}
+			else
+			{
+				CMaterialParameter* l_MaterialParameter;
+				CMaterialParameter::TMaterialType l_MaterialType;
 
-			m_Parameters.push_back(l_MaterialParameter);
+				if (l_Type == "float")
+				{
+					l_MaterialType = CMaterialParameter::FLOAT;
+					l_MaterialParameter = new CTemplatedMaterialParameter<float>(this, l_Element, l_Element.GetFloatProperty("value", 0.0f), l_MaterialType);
+
+				}
+				else if (l_Type == "vect2f")
+				{
+					l_MaterialType = CMaterialParameter::VECT2F;
+					l_MaterialParameter = new CTemplatedMaterialParameter<Vect2f>(this, l_Element, l_Element.GetVect2fProperty("value", v2fZERO), l_MaterialType);
+				}
+				else if (l_Type == "vect3f")
+				{
+					l_MaterialType = CMaterialParameter::VECT3F;
+					l_MaterialParameter = new CTemplatedMaterialParameter<Vect3f>(this, l_Element, l_Element.GetVect3fProperty("value", v3fZERO), l_MaterialType);
+				}
+				else if (l_Type == "vect4f")
+				{
+					l_MaterialType = CMaterialParameter::VECT4F;
+					l_MaterialParameter = new CTemplatedMaterialParameter<Vect4f>(this, l_Element, l_Element.GetVect4fProperty("value", v4fZERO), l_MaterialType);
+				}
+
+				m_Parameters.push_back(l_MaterialParameter);
+			}
 		}
 	}
 }
@@ -122,4 +142,20 @@ void * CMaterial::GetNextParameterAddress(unsigned int NumBytes)
 		m_CurrentParameterData+=1;
 	}
 	return l_Return;
+}
+
+void CMaterial::ChangeTexture(const std::string Texture, size_t Index)
+{ 
+	m_Textures[Index] = CEngine::GetSingleton().GetTextureManager()->GetTexture(Texture);
+}
+
+CEmptyPointerClass* CMaterial::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }
+CEmptyPointerClass* CMaterial::GetStaticFrictionLuaAddress() const { return (CEmptyPointerClass *)&m_StaticFriction; }
+CEmptyPointerClass*CMaterial::GetDynamicFrictionLuaAddress() const { return (CEmptyPointerClass *)&m_DynamicFriction; }
+CEmptyPointerClass*CMaterial::GetRestitutionLuaAddress() const { return (CEmptyPointerClass *)&m_Restitution; }
+void CMaterial::ApplyLuaPhysxProperties()
+{
+	CEngine::GetSingleton().GetPhysXManager()->SetMaterialStaticFriction(m_Name,m_StaticFriction);
+	CEngine::GetSingleton().GetPhysXManager()->SetMaterialDynamicFriction(m_Name, m_DynamicFriction);
+	CEngine::GetSingleton().GetPhysXManager()->SetMaterialRestitution(m_Name, m_Restitution);
 }

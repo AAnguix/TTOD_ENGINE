@@ -89,6 +89,7 @@ void CScriptManager::RegisterCore()
 		.def("GetSceneRendererCommandManager", &CEngine::GetSceneRendererCommandManager)
 		.def("GetCameraControllerManager", &CEngine::GetCameraControllerManager)
 		.def("GetParticleSystemManager", &CEngine::GetParticleSystemManager)
+		.def("GetInputManager", &CEngine::GetInputManager)
 
 		.def("GetTextureManager", &CEngine::GetTextureManager)
 		.def("GetRenderManager", &CEngine::GetRenderManager)
@@ -160,6 +161,7 @@ void CScriptManager::RegisterCore()
 		.def("key_event_received", &CInputManagerImplementation::KeyEventReceived)
 		.def("update_cursor", &CInputManagerImplementation::UpdateCursor)
 		.def("update_cursor_movement", &CInputManagerImplementation::UpdateCursorMovement)
+		.def("GetHwnd", &CInputManagerImplementation::GetHwnd)
 	];
 
 	/*module(LUA_STATE) [  
@@ -220,7 +222,9 @@ void CScriptManager::RegisterCore()
 		class_<CDebugHelperImplementation>("CDebugHelperImplementation")   
 		.def("CreateBar", & CDebugHelperImplementation::CreateBar)   
 		.def("RemoveBar", & CDebugHelperImplementation::RemoveBar)   
-		.def("RegisterButton", & CDebugHelperImplementation::RegisterLUAButton)   
+		.def("RegisterButton", & CDebugHelperImplementation::RegisterLUAButton) 
+		.def("RegisterExtendedButton", &CDebugHelperImplementation::RegisterLUAExtendedButton)
+		.def("RegisterChangeTextureButton", &CDebugHelperImplementation::RegisterLUAChangeTextureButton)
 		.def("ResetButtons", & CDebugHelperImplementation::ResetButtons) 
 		.def("RegisterBoolParameter", & CDebugHelperImplementation::RegisterBoolParameter)
 		.def("RegisterInt32Parameter", & CDebugHelperImplementation::RegisterInt32Parameter)
@@ -232,6 +236,17 @@ void CScriptManager::RegisterCore()
 		.def("RegisterColor32Parameter", & CDebugHelperImplementation::RegisterColor32Parameter)
 		.def("RegisterStringParameter", & CDebugHelperImplementation::RegisterStringParameter)
 		.def("RegisterPositionOrientationParameter", & CDebugHelperImplementation::RegisterPositionOrientationParameter)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CDebugHelperImplementation::ClientData>("ClientData")
+		.def(constructor<const std::string, CEmptyPointerClass*, const std::string>())
+	];
+	module(LUA_STATE)
+	[
+		class_<CDebugHelperImplementation::ChangeTextureClientData>("ChangeTextureClientData")
+		.def(constructor<const std::string, CMaterial*, CEmptyPointerClass*, unsigned int>())
 	];
 }
 
@@ -298,7 +313,8 @@ void CScriptManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CCollider, CComponent>("CCollider")
-		.def(constructor<const std::string&, CRenderableObject*>())
+		.def(constructor<const std::string&, CMeshInstance*>())
+		.def("GetPhysxMaterial", &CCollider::GetPhysxMaterial)
 		.scope
 		[
 			def("AddCollider", &CCollider::AddCollider)
@@ -309,6 +325,7 @@ void CScriptManager::RegisterComponents()
 	[
 		class_<CCharacterCollider, CComponent>("CCharacterCollider")
 		.def(constructor<const std::string&, CAnimatedInstanceModel*>())
+		.def("GetPhysxMaterial",&CCharacterCollider::GetPhysxMaterial)
 		.scope
 		[
 			def("AddCharacterCollider", &CCharacterCollider::AddCharacterCollider)

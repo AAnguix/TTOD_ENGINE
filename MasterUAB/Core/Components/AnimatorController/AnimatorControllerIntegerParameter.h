@@ -2,7 +2,7 @@
 #define _ANIMATORCONTROLLERINTEGERPARAMETER_H
 
 #include <string>
-#include "Animation\AnimatorControllerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerParameter.h"
 
 class CAnimatorControllerIntegerParameter : CAnimatorControllerParameter
 {
@@ -15,9 +15,9 @@ private:
 	EIntegerCondition m_Condition;*/
 
 public:
-	CAnimatorControllerIntegerParameter(const std::string &Name, const int &Value);
+	CAnimatorControllerIntegerParameter(const std::string &Name, int Value);
 	virtual ~CAnimatorControllerIntegerParameter();
-	void UpdateParameter(const int &Value);
+	void UpdateParameter(int Value);
 };
 
 #endif

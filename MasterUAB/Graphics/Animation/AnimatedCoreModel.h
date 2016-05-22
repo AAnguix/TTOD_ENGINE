@@ -20,7 +20,7 @@ private:
 
 	bool LoadMesh(const std::string &Filename);  
 	bool LoadSkeleton(const std::string &Filename);  
-	bool LoadAnimation(const std::string &Name, const std::string &Filename, const bool &Loop, const float &Weight);
+	bool LoadAnimation(const std::string &Name, const std::string &Filename, bool Loop, float Weight);
 
 public: 
 	CAnimatedCoreModel();  
@@ -28,7 +28,8 @@ public:
 	CalCoreModel *GetCoreModel();  
 	EAnimation GetAnimation(const std::string &Name);
 	const std::vector<CMaterial *> & GetMaterials() const {return m_Materials;}  
-	void Load(const std::string &Path); 
+	void Load(const std::string &Path);
+	int GetBoneId(const std::string &BoneName);
 }; 
 
 #endif

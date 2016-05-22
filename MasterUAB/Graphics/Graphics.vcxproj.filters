@@ -250,21 +250,6 @@
     <ClInclude Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\AnimatorControllerParameter.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\AnimatorControllerIntegerParameter.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\AnimatorControllerFloatParameter.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\AnimatorControllerBoolParameter.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\AnimatorControllerTriggerParameter.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="StaticMeshes\StaticMesh.h">
       <Filter>StaticMeshes</Filter>
     </ClInclude>
@@ -503,18 +488,6 @@
     </ClCompile>
     <ClCompile Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.cpp">
       <Filter>SceneRendererCommands</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\AnimatorControllerIntegerParameter.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\AnimatorControllerFloatParameter.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\AnimatorControllerBoolParameter.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\AnimatorControllerTriggerParameter.cpp">
-      <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="StaticMeshes\StaticMesh.cpp">
       <Filter>StaticMeshes</Filter>

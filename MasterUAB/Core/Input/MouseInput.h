@@ -4,8 +4,8 @@
 class CMouseInput
 {
 private:
-	size_t m_X;
-	size_t m_Y;
+	float m_X;
+	float m_Y;
 
 	bool m_LeftButtonBecomesPressed;
 	bool m_LeftButtonBecomesReleased;
@@ -13,9 +13,9 @@ private:
 public:
 	CMouseInput();
 	virtual ~CMouseInput();
-	size_t GetX() const{ return m_X; };
-	size_t GetY() const{ return m_Y; };
-	void Update(size_t X, size_t Y, bool LeftWentPressed, bool LeftWentReleased);
+	float GetX() const{ return m_X; };
+	float GetY() const{ return m_Y; };
+	void Update(float X, float Y, bool LeftWentPressed, bool LeftWentReleased);
 	bool LeftButtonBecomesPressed() const { return m_LeftButtonBecomesPressed; };
 	bool LeftButtonBecomesReleased() const { return m_LeftButtonBecomesReleased; };
 };

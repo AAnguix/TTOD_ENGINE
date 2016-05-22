@@ -75,3 +75,21 @@ CEmptyPointerClass* CParticleSystemType::GetStartingAcceleration1LuaAddress() co
 CEmptyPointerClass* CParticleSystemType::GetStartingAcceleration2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_StartingAcceleration2); }
 CEmptyPointerClass* CParticleSystemType::GetColor1LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color1); }
 CEmptyPointerClass* CParticleSystemType::GetColor2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color2); }
+CEmptyPointerClass* CParticleSystemType::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }
+
+CEmptyPointerClass* CParticleSystemType::ControlPointSize::GetSizeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Size); }
+CEmptyPointerClass* CParticleSystemType::ControlPointSize::GetTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Time); }
+
+CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Time); }
+CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetColor1LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color1); }
+CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetColor2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color2); }
+
+void CParticleSystemType::AddControlPointSize(Vect2f Size, Vect2f Time)
+{
+	m_ControlPointSizes.push_back(ControlPointSize(Size, Time));
+}
+
+std::vector<CParticleSystemType::ControlPointSize>& CParticleSystemType::GetLUAControlPointsSize()
+{
+	return m_ControlPointSizes;
+}

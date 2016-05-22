@@ -35,13 +35,16 @@ public:
 	virtual void Update(float ElapsedTime);
 	virtual void Render(CRenderManager *RM) = 0;
 	virtual bool AddComponent(CComponent *Component);
-	
+	virtual void RemoveComponent(const std::string &ComponentName);
+	virtual void RemoveComponents();
+
 	CAnimatorController* GetAnimatorController() const;
 
 	UAB_GET_PROPERTY_POINTER(CComponentManager,ComponentManager);
 	
 	virtual bool AddLuaComponent(CLUAComponent* LUAComponent);
 	CLUAComponent* GetFirstLuaComponent() const;
+	virtual void RemoveLuaComponents();
 
 	virtual TRenderableObjectType GetClassType() const = 0;
 

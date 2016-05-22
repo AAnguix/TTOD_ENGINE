@@ -20,7 +20,7 @@ public:
 		EFloatConditionType m_Type;
 		float m_TriggerValue;
 		const std::string m_ParameterName;
-		EFloatCondition(const std::string &ParameterName, const float &TriggerValue, EFloatConditionType ConditionType);
+		EFloatCondition(const std::string &ParameterName, float TriggerValue, EFloatConditionType ConditionType);
 	};
 
 	struct EIntegerCondition
@@ -36,14 +36,14 @@ public:
 		EIntegerConditionType m_Type;
 		int m_TriggerValue;
 		const std::string m_ParameterName;
-		EIntegerCondition(const std::string &ParameterName, const int &TriggerValue, EIntegerConditionType ConditionType);
+		EIntegerCondition(const std::string &ParameterName, int TriggerValue, EIntegerConditionType ConditionType);
 	};
 
 	struct EBoolCondition
 	{
 		bool m_TriggerValue;
 		const std::string m_ParameterName;
-		EBoolCondition(const std::string &ParameterName, const bool &TriggerValue);
+		EBoolCondition(const std::string &ParameterName, bool TriggerValue);
 	};
 
 	struct ETriggerCondition
@@ -72,12 +72,12 @@ private:
 	void ClearTriggers();
 
 public:
-	CTransition(CState* NewState, const bool &HasExitTime, const float &ExitTime, const float &DelayIn, const float &DelayOut);
+	CTransition(CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut);
 	~CTransition();
 
-	void AddFloatCondition(const std::string &ParameterName, const float &TriggerValue, EFloatCondition::EFloatConditionType TriggerConditionType);
-	void AddIntegerCondition(const std::string &ParameterName, const int &TriggerValue, EIntegerCondition::EIntegerConditionType TriggerConditionType);
-	void AddBoolCondition(const std::string &ParameterName, const bool &TriggerValue);
+	void AddFloatCondition(const std::string &ParameterName, float TriggerValue, EFloatCondition::EFloatConditionType TriggerConditionType);
+	void AddIntegerCondition(const std::string &ParameterName, int TriggerValue, EIntegerCondition::EIntegerConditionType TriggerConditionType);
+	void AddBoolCondition(const std::string &ParameterName, bool TriggerValue);
 	void AddTriggerCondition(const std::string &ParameterName);
 
 	bool MeetsConditions();

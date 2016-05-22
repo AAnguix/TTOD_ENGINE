@@ -43,7 +43,7 @@ float CTTODMathUtils::GetAngleToFacePoint(const Vect3f &Forward, const Vect3f &O
 	return AngleBetweenVectors(l_VectorToDestinyPoint, Forward);
 }
 
-bool CTTODMathUtils::PointInsideCircle(const Vect3f &Point, const Vect3f &CircunferenceCenter, const float &Radius)
+bool CTTODMathUtils::PointInsideCircle(const Vect3f &Point, const Vect3f &CircunferenceCenter, float Radius)
 {
 	Vect3f l_Vector = Point - CircunferenceCenter;
 	float l_Distance = l_Vector.Length();

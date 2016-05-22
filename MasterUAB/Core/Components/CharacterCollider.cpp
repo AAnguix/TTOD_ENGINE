@@ -5,9 +5,11 @@
 #include "Animation\AnimatedInstanceModel.h"
 #include "RenderableObjects\RenderableObject.h"
 #include "Cinematics\Cinematic.h"
+#include "Materials\Material.h"
 
 CCharacterCollider::CCharacterCollider(const std::string &Name, CAnimatedInstanceModel *Owner)
 :CComponent(Name,Owner)
+,m_PhysxMaterial(Owner->GetAnimatedCoreModel()->GetMaterials()[0])
 {
 	
 }
@@ -43,11 +45,7 @@ CCharacterCollider* CCharacterCollider::AddCharacterCollider(const std::string &
 	if (!Owner->AddComponent(l_CharacterCollider))
 	{
 		CHECKED_DELETE(l_CharacterCollider);
+		return nullptr;
 	}
-	else
-	{
-		assert(Owner->GetClassType() == CRenderableObject::ANIMATED_INSTANCE);
-	}
-
 	return l_CharacterCollider;
 }

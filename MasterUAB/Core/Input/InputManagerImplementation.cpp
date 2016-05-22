@@ -42,11 +42,11 @@ CInputManagerImplementation::CInputManagerImplementation()
 	}
 	
 
-	// mouse input
+	// mouse input 
 	HRESULT l_HR;
 	DWORD l_CoopFlags = 0;
 
-	/*l_CoopFlags= DISCL_EXCLUSIVE | DISCL_FOREGROUND;*/
+	//l_CoopFlags = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND;
 
 	if (FAILED(l_HR = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_DI, NULL)))
 		return;

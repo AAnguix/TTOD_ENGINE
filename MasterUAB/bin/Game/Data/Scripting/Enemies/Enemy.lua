@@ -8,7 +8,7 @@ function CEnemyComponent:__init(CRenderableObject, ComponentType)
 	self.m_Armor = nil
 	self.m_Weapon = nil
 	
-	self.m_Speed = 0.1
+	self.m_Speed = 0.0
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	self.m_AttackDelay = 0.0
 	self.m_VisionRange = 0.0
@@ -20,18 +20,21 @@ function CEnemyComponent:__init(CRenderableObject, ComponentType)
 	self.m_ElapsedTime = 0.0
 	
 	self.m_Height = 1.4
+	self.m_Radius = 0.3
+	self.m_Density = 30
 end
 
 function CEnemyComponent:Initialize()
 	--Physyx
-	CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
-	--l_MaterialName = self.m_RObject:GetAnimatedCoreModel():GetMaterials()[0]:GetName()
-	l_MaterialName = "aaa"
-	g_PhysXManager:RegisterMaterial(l_MaterialName, 0.1, 0.1, 0.1)
-	m_Position = self.m_RObject:GetPosition()
-	l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-	g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, 0.3, 30.0, l_CControlerPos, l_MaterialName)
-	
+	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
+	if l_CharacterCollider ~= nil then 
+		local l_Material = l_CharacterCollider:GetPhysxMaterial()
+		local l_MaterialName = l_Material:GetName()
+		g_PhysXManager:RegisterMaterial(l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
+		m_Position = self.m_RObject:GetPosition()
+		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
+		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
+	end
 	--Animations
 	CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
 	
@@ -66,8 +69,14 @@ end
 function CEnemyComponent:GetArmor()
 	return self.m_Armor 
 end
+function CEnemyComponent:SetArmor(Armor)
+	self.m_Armor = Armor
+end
 function CEnemyComponent:GetWeapon()
 	return self.m_Weapon 
+end
+function CEnemyComponent:SetWeapon(Weapon)
+	self.m_Weapon = Weapon
 end
 function CEnemyComponent:GetRenderableObject()
 	return self.m_RObject
@@ -85,23 +94,23 @@ function CEnemyComponent:Attack()
 end
 -- function CEnemyComponent:GetElapsedTime()
 
-function CEnemyComponent:IsPlayerInsideVisionRange(PlayerPosition)
+-- function CEnemyComponent:IsPlayerInsideVisionRange(PlayerPosition)
 
-	local l_Distance = 0.0
-	local l_Position = self.m_RObject:GetPosition()
+	-- local l_Distance = 0.0
+	-- local l_Position = self.m_RObject:GetPosition()
 	
-	l_Distance = math.sqrt((l_Position.x - PlayerPosition.x)^2 + (l_Position.y - PlayerPosition.y)^2 + (l_Position.z - PlayerPosition.z)^2)
+	-- l_Distance = math.sqrt((l_Position.x - PlayerPosition.x)^2 + (l_Position.y - PlayerPosition.y)^2 + (l_Position.z - PlayerPosition.z)^2)
 	
-	-- local s = ""
-	-- s = l_Distance.." distance"
-	-- g_LogManager:Log(s)
+	-- -- local s = ""
+	-- -- s = l_Distance.." distance"
+	-- -- g_LogManager:Log(s)
 	
-	if l_Distance < self.m_VisionRange then
-		return true
-	end
+	-- if l_Distance < self.m_VisionRange then
+		-- return true
+	-- end
 	
-	return false
-end
+	-- return false
+-- end
 
 function CEnemyComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, ElapsedTime)
 	local l_Result = 0.0
@@ -137,8 +146,7 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 			self.m_Velocity = self.m_Velocity + (l_Vector*self:GetSpeed())
 			self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
 			
-			local l_Displacement = self.m_Velocity * ElapsedTime
-			self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, l_Displacement, ElapsedTime)
+			self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name,(self.m_Velocity * ElapsedTime), ElapsedTime)
 			
 			local l_Forward = self.m_RObject:GetForward()
 			l_Forward.y = 0.0

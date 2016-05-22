@@ -14,13 +14,6 @@
     <ClInclude Include="Animation\AnimatedCoreModel.h" />
     <ClInclude Include="Animation\AnimatedInstanceModel.h" />
     <ClInclude Include="Animation\AnimatedModelManager.h" />
-    <ClInclude Include="Animation\AnimatorControllerBoolParameter.h" />
-    <ClInclude Include="Animation\AnimatorControllerFloatParameter.h" />
-    <ClInclude Include="Animation\AnimatorControllerIntegerParameter.h" />
-    <ClInclude Include="Animation\AnimatorControllerParameter.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Animation\AnimatorControllerTriggerParameter.h" />
     <ClInclude Include="Animation\tick.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Camera\CameraController.h" />
@@ -118,10 +111,6 @@
     <ClCompile Include="Animation\AnimatedCoreModel.cpp" />
     <ClCompile Include="Animation\AnimatedInstanceModel.cpp" />
     <ClCompile Include="Animation\AnimatedModelManager.cpp" />
-    <ClCompile Include="Animation\AnimatorControllerBoolParameter.cpp" />
-    <ClCompile Include="Animation\AnimatorControllerFloatParameter.cpp" />
-    <ClCompile Include="Animation\AnimatorControllerIntegerParameter.cpp" />
-    <ClCompile Include="Animation\AnimatorControllerTriggerParameter.cpp" />
     <ClCompile Include="Animation\tick.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Camera\CameraController.cpp" />

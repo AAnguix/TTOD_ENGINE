@@ -59,6 +59,8 @@ public:
 	bool IsCycleAnimationActive(int Id) const;  
 	bool IsActionAnimationActive(int Id) const; 
 	TRenderableObjectType GetClassType() const{ return TRenderableObjectType::ANIMATED_INSTANCE; };
+
+	Mat44f GetBoneTransformationMatrix(const int BoneID) const;
 }; 
 
 #endif

@@ -1,7 +1,7 @@
-#include "Animation\AnimatorControllerIntegerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerIntegerParameter.h"
 
 
-CAnimatorControllerIntegerParameter::CAnimatorControllerIntegerParameter(const std::string &Name, const int &Value)
+CAnimatorControllerIntegerParameter::CAnimatorControllerIntegerParameter(const std::string &Name, int Value)
 :CAnimatorControllerParameter(Name)
 ,m_Value(Value)
 {
@@ -40,7 +40,7 @@ CAnimatorControllerIntegerParameter::~CAnimatorControllerIntegerParameter()
 //	
 //}
 
-void CAnimatorControllerIntegerParameter::UpdateParameter(const int &Value)
+void CAnimatorControllerIntegerParameter::UpdateParameter(int Value)
 {
 	m_Value = Value;
 }

@@ -343,7 +343,7 @@ void CParticleSystemInstance::WriteDataToXml(const std::string Filename)
 				if (l_Element.GetName() == l_TypeName)
 				{
 					l_Element.WriteIntProperty("num_frames", m_Type->m_NumFrames);
-					l_Element.WriteIntProperty("time_per_frame", m_Type->m_TimerPerFrame);
+					l_Element.WriteFloatProperty("time_per_frame", m_Type->m_TimerPerFrame);
 					l_Element.WriteIntProperty("loop_frames", m_Type->m_LoopFrames);
 					l_Element.WriteIntProperty("emit_absolute", m_Type->m_EmitAbsolute);
 

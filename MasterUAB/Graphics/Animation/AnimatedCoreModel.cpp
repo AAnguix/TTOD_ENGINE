@@ -26,7 +26,7 @@ bool CAnimatedCoreModel::LoadSkeleton(const std::string &Filename)
 	return m_CalCoreModel->loadCoreSkeleton(Filename);
 }
 
-bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, const bool &Loop, const float &Weight)
+bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, bool Loop, float Weight)
 {
 	//int r=m_CalCoreModel->loadCoreAnimation(Filename);
 	//return r;
@@ -155,4 +155,9 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 
 		
 	}
+}
+
+int CAnimatedCoreModel::GetBoneId(const std::string &BoneName)
+{
+	return m_CalCoreModel->getBoneId(BoneName); 
 }

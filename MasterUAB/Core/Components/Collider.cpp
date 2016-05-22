@@ -2,10 +2,13 @@
 #include "Components\ComponentManager.h"
 #include "Engine.h"
 #include "PhysXManager.h"
-#include "RenderableObjects\RenderableObject.h"
+#include "RenderableObjects\MeshInstance.h"
+#include "StaticMeshes\StaticMesh.h"
+#include "Materials\Material.h"
 
-CCollider::CCollider(const std::string &Name, CRenderableObject *Owner)
+CCollider::CCollider(const std::string &Name, CMeshInstance *Owner)
 :CComponent(Name,Owner)
+,m_PhysxMaterial(Owner->GetStaticMesh()->GetPhysxMaterial())
 {
 
 }
@@ -19,7 +22,8 @@ void CCollider::Update(float ElapsedTime)
 {
 	
 }
-	
+
+/*Update graphics transform from physix transform*/
 void CCollider::Render(CRenderManager &RenderManager)
 {
 	if (IsEnabled())
@@ -38,7 +42,7 @@ void CCollider::RenderDebug(CRenderManager &RenderManager)
 
 }
 
-CCollider* CCollider::AddCollider(const std::string &Name, CRenderableObject *Owner)
+CCollider* CCollider::AddCollider(const std::string &Name, CMeshInstance *Owner)
 {
 	CCollider* l_Collider = new CCollider(Name, Owner);
 
@@ -53,3 +57,10 @@ CCollider* CCollider::AddCollider(const std::string &Name, CRenderableObject *Ow
 
 	return l_Collider;
 }
+
+CMaterial* CCollider::GetPhysxMaterial() const
+{
+	return m_PhysxMaterial; 
+}
+
+

@@ -28,7 +28,7 @@ function CharacterController(ElapsedTime)
 			GetPlayer():GetAnimatorController():SetTrigger("Attack");	
 		end
 		if CInputManager.GetInputManager():IsActionActive("PLAYER_BLOCKS") then	
-			GetPlayer():GetAnimatorController():SetTrigger("Block");	
+			GetPlayer():GetAnimatorController():SetTrigger("Block")	
 		end
 	
 		if ((CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_FORWARD")) or 

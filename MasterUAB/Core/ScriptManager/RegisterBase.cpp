@@ -13,8 +13,11 @@
 #include "Math\Vector2.h"
 #include "Math\Vector3.h"
 #include "Math\Vector4.h"
+#include "Math\Color.h"
 #include "Utils\EmptyPointerClass.h"
 #include "Utils\TTODMathUtils.h"
+#include "Utils\TTODFileUtils.h"
+#include "Utils\TTODXMLWriter.h"
 #include <cmath>
 
 using namespace luabind;
@@ -26,12 +29,53 @@ void CScriptManager::RegisterBase()
 {
 	module(LUA_STATE)
 	[
+		class_<std::string>("string")
+		.def(constructor<>())
+		.def(constructor<const char *>())
+	];
+
+	module(LUA_STATE)
+	[
 		class_<CTTODMathUtils>("CTTODMathUtils")
 		.scope
 		[
 			def("GetAngleToFacePoint", &CTTODMathUtils::GetAngleToFacePoint)
-			, def("PointInsideCircle", &CTTODMathUtils::PointInsideCircle)
+			,def("PointInsideCircle", &CTTODMathUtils::PointInsideCircle)
 		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTTODFileUtils>("CTTODFileUtils")
+		.scope
+		[
+			def("SelectTextureFile", &CTTODFileUtils::SelectTextureFile)
+		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTTODXMLWriter>("CTTODXMLWriter")
+		.def(constructor<>())
+		.def("StartFile", &CTTODXMLWriter::StartFile)
+		.def("EndFile", &CTTODXMLWriter::EndFile)
+		.def("StartElement", &CTTODXMLWriter::StartElement)
+		.def("EndElement", &CTTODXMLWriter::EndElement)
+		.def("WriteStringProperty", &CTTODXMLWriter::WriteStringProperty)
+		.def("WriteBoolProperty", &CTTODXMLWriter::WriteBoolProperty)
+		.def("WriteIntProperty", &CTTODXMLWriter::WriteIntProperty)
+		.def("WriteFloatProperty", &CTTODXMLWriter::WriteFloatProperty)
+		.def("WriteVect2fProperty", &CTTODXMLWriter::WriteVect2fProperty)
+		.def("WriteVect3fProperty", &CTTODXMLWriter::WriteVect3fProperty)
+		.def("WriteVect4fProperty", &CTTODXMLWriter::WriteVect4fProperty)
+		/*.def("WriteProperty", (bool(CTTODXMLWriter::*)(const std::string&, const std::string&))&CTTODXMLWriter::WriteProperty)
+		.def("WriteProperty", (bool(CTTODXMLWriter::*)(const std::string&, const int&))&CTTODXMLWriter::WriteProperty)
+		.def("WriteProperty", (bool(CTTODXMLWriter::*)(const std::string&, const float&))&CTTODXMLWriter::WriteProperty)*/
+
+		/*.def("Log", (void(CLog::*)(int))&CLog::Log)
+		.def("Log", (void(CLog::*)(float))&CLog::Log)
+		.def("Log", (void(CLog::*)(const std::string&))&CLog::Log)
+		.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)*/
 	];
 
 	module(LUA_STATE) 
@@ -65,21 +109,36 @@ void CScriptManager::RegisterBase()
 	[
 		class_<CXMLTreeNode>("CXMLTreeNode")
 		.def(constructor<>())
+		.def("StartNewFile", &CXMLTreeNode::StartNewFile)
+		.def("StartElement", &CXMLTreeNode::StartElement)
+		.def("EndElement", &CXMLTreeNode::EndElement)
+		.def("EndNewFile", &CXMLTreeNode::EndNewFile)
 		.def("LoadFile", &CXMLTreeNode::LoadFile)
 		.def("GetBoolKeyword", &CXMLTreeNode::GetBoolKeyword)
+		.def("WriteBoolKeyword", &CXMLTreeNode::WriteBoolKeyword)
 		.def("GetBoolProperty", &CXMLTreeNode::GetBoolProperty)
+		.def("WriteBoolProperty", &CXMLTreeNode::WriteBoolProperty)
 		.def("GetFloatKeyword", &CXMLTreeNode::GetFloatKeyword)
 		.def("GetFloatProperty", &CXMLTreeNode::GetFloatProperty)
+		.def("WriteFloatKeyword", &CXMLTreeNode::WriteFloatKeyword)
+		.def("WriteFloatProperty", &CXMLTreeNode::WriteFloatProperty)
 		.def("GetIntKeyword", &CXMLTreeNode::GetIntKeyword)
 		.def("GetIntProperty", &CXMLTreeNode::GetIntProperty)
+		.def("WriteIntKeyword", &CXMLTreeNode::WriteIntKeyword)
+		.def("WriteIntProperty", &CXMLTreeNode::WriteIntProperty)
 		.def("GetName", &CXMLTreeNode::GetName)
 		.def("GetNumChildren", &CXMLTreeNode::GetNumChildren)
 		.def("GetPszISOProperty", &CXMLTreeNode::GetPszISOProperty)
 		.def("GetPszKeyword", &CXMLTreeNode::GetPszKeyword)
 		.def("GetPszProperty", &CXMLTreeNode::GetPszProperty)
+		.def("WritePszKeyword", &CXMLTreeNode::WritePszKeyword)
+		.def("WritePszProperty", &CXMLTreeNode::WritePszProperty)
 		.def("GetVect2fProperty", &CXMLTreeNode::GetVect2fProperty)
+		.def("WriteVect2fProperty", &CXMLTreeNode::WriteVect2fProperty)
 		.def("GetVect3fProperty", &CXMLTreeNode::GetVect3fProperty)
+		.def("WriteVect3fProperty", &CXMLTreeNode::WriteVect3fProperty)
 		.def("GetVect4fProperty", &CXMLTreeNode::GetVect4fProperty)
+		.def("WriteVect4fProperty", &CXMLTreeNode::WriteVect4fProperty)
 		.def("Exists", &CXMLTreeNode::Exists)
 		.def("[]", &CXMLTreeNode::operator[])
 		.def("GetChild", &CXMLTreeNode::operator())
@@ -91,6 +150,7 @@ void CScriptManager::RegisterBase()
 		.def(constructor<CXMLTreeNode>())
 		.def("GetName", &CNamed::GetName)
 		.def("SetName", &CNamed::SetName)
+		.def("GetNameLuaAddress", &CNamed::GetNameLuaAddress)
 	];
 
 	module(LUA_STATE)
@@ -121,7 +181,11 @@ void CScriptManager::RegisterBase()
 	module(LUA_STATE) 
 	[  
 		class_< Vect3f >("Vect3f")   
-		.def(constructor<float, float, float>()) 
+		.def(constructor<>())
+		.def(constructor<const Vect3f>())
+		.def(constructor<const float, const float, const float>()) 
+		.def(constructor<const float>())
+
 		.def_readwrite("x", &Vect3f::x) 
 		.def_readwrite("y", &Vect3f::y)  
 		.def_readwrite("z", &Vect3f::z) 
@@ -180,8 +244,14 @@ void CScriptManager::RegisterBase()
 	]; 
 
 	module(LUA_STATE) [  
-		class_< Vect4f >("Vect4f")   
-		.def(constructor<float, float, float, float>()) 
+		class_< Vect4f >("Vect4f") 
+		.def(constructor<>())
+		.def(constructor<const Vect4f>())
+		.def(constructor<const Vect3f>())
+		.def(constructor<const Vect3f, const float>())
+		.def(constructor<const float, const float, const float, const float>()) 
+		.def(constructor<const float>())
+
 		.def(const_self + const_self)   
 		.def(const_self - const_self)   
 		.def(const_self * const_self) 
@@ -191,6 +261,34 @@ void CScriptManager::RegisterBase()
 		.def_readwrite("z", &Vect4f::z)  
 		.def_readwrite("z", &Vect4f::w)  
 	]; 
+
+	module(LUA_STATE)
+	[
+		class_<CColor, Vect4f>("CColor")
+		.def(constructor<>())
+		.def(constructor<Vect4f>())
+		.def(constructor<float,float,float,float>())
+		.def(const_self + const_self)
+		.def(const_self - const_self)
+		.def(const_self * const_self)
+		.def(const_self * other<const float>())
+		.def_readwrite("x", &CColor::x)
+		.def_readwrite("y", &CColor::y)
+		.def_readwrite("z", &CColor::z)
+		.def_readwrite("z", &CColor::w)
+		.def("GetRed", &CColor::GetRed)
+		.def("SetRed", &CColor::SetRed)
+		.def("GetBlue", &CColor::GetBlue)
+		.def("SetBlue", &CColor::SetBlue)
+		.def("GetGreen", &CColor::GetGreen)
+		.def("SetGreen", &CColor::SetGreen)
+		.def("GetAlpha", &CColor::GetAlpha)
+		.def("SetAlpha", &CColor::SetAlpha)
+		.def("GetArgb", &CColor::GetArgb)
+		.def("SetArgb", &CColor::SetArgb)
+		.def("Clamp", &CColor::Clamp)
+		.def("Lerp", &CColor::Lerp)
+	];
 
 	/*module(LUA_STATE)
 	[  

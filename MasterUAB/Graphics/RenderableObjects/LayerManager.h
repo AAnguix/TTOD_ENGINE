@@ -31,6 +31,17 @@ public:
 	void Render(CRenderManager &RenderManager);  
 	void Render(CRenderManager &RenderManager, const std::string &LayerName);
 	
+	/*Removes component's from one specific layer*/
+	void RemoveLayerComponent(const std::string &LayerName, const std::string &ComponentName);
+	void RemoveLayerComponents(const std::string &LayerName);
+	
+	/*Removes component's from all layers*/
+	void RemoveComponent(const std::string &ComponentName);
+	void RemoveComponents();
+
+	void RemoveLayerLuaComponents(const std::string &LayerName);
+	void RemoveLuaComponents();
+
 	CAnimatedInstanceModel* GetPlayer() const{assert(m_Player != nullptr); return m_Player;};
 	void SetPlayer(CAnimatedInstanceModel* Player){ m_Player = Player; };
 };

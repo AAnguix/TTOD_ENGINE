@@ -7,6 +7,8 @@
 #include <vector>
 #include "Render\ContextManager.h"
 
+#define ENABLE_FRUSTUM 0
+
 class CRenderableObjectsManager;
 class CTexture;
 class CDebugRender;
@@ -40,6 +42,7 @@ public:
 
 	CCamera GetCurrentCamera() const {return m_CurrentCamera;};
 	CDebugRender* GetDebugRender() const {return m_DebugRender;};
+	CFrustum GetFrustum() const;
 
 private:
 	CContextManager *m_ContextManager;

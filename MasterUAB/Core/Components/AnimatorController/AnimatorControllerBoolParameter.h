@@ -2,7 +2,7 @@
 #define _ANIMATORCONTROLLERBOOLPARAMETER_H
 
 #include <string>
-#include "Animation\AnimatorControllerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerParameter.h"
 
 class CAnimatorControllerBoolParameter : CAnimatorControllerParameter
 {
@@ -13,9 +13,9 @@ private:
 	bool m_Value;
 
 public:
-	CAnimatorControllerBoolParameter(const std::string &Name, const bool &Value);
+	CAnimatorControllerBoolParameter(const std::string &Name, bool Value);
 	virtual ~CAnimatorControllerBoolParameter();
-	void UpdateParameter(const bool &Value);
+	void UpdateParameter(bool Value);
 };
 
 #endif

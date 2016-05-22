@@ -17,7 +17,10 @@ public:
 	//void Reload();
 	void Update(float ElapsedTime);
 	void Render(CRenderManager *RM);
-	
+	void RemoveRenderableObjectsLuaComponents();
+
+	void RemoveRenderableObjectsComponent(const std::string &ComponentName);
+	void RemoveRenderableObjectsComponents();
 
 	/*void Load(const std::string &FileName);*/
 	

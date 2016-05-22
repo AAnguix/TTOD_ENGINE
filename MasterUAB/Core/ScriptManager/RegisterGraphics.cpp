@@ -499,8 +499,17 @@ void CScriptManager::RegisterMaterials()
 		.def(constructor<CXMLTreeNode>())
 		.def("Apply", &CMaterial::Apply)
 		.def("GetRenderableObjectTechnique", &CMaterial::GetRenderableObjectTechnique)
-		//.def("GetParameters", &CMaterial::GetParameters)	
 		.def("GetParameters", &CMaterial::GetParameters, return_stl_iterator)
+		.def("GetTextures", &CMaterial::GetTextures, return_stl_iterator)
+		.def("ChangeTexture", &CMaterial::ChangeTexture)
+		.def("ApplyLuaPhysxProperties", &CMaterial::ApplyLuaPhysxProperties)
+		.def("GetThisLuaAddress", &CMaterial::GetThisLuaAddress)
+		.def("GetStaticFrictionLuaAddress", &CMaterial::GetStaticFrictionLuaAddress)
+		.def("GetDynamicFrictionLuaAddress", &CMaterial::GetDynamicFrictionLuaAddress)
+		.def("GetRestitutionLuaAddress", &CMaterial::GetRestitutionLuaAddress)
+		.def("GetStaticFriction", &CMaterial::GetStaticFriction)
+		.def("GetDynamicFriction", &CMaterial::GetDynamicFriction)
+		.def("GetRestitution", &CMaterial::GetRestitution)
 	];
 
 	module(LUA_STATE)
@@ -556,6 +565,7 @@ void CScriptManager::RegisterMaterials()
 		.def("GetValueAddress", &CTemplatedMaterialParameter<float>::GetValueAddress)
 		.def(constructor<CMaterial*, CXMLTreeNode, const float, CMaterialParameter::TMaterialType>())
 		.def("GetDescription", &CTemplatedMaterialParameter<float>::GetDescription)
+		.def("GetValue", &CTemplatedMaterialParameter<float>::GetValue)
 		//.def(constructor<CMaterial*,CXMLTreeNode,const float,CMaterialParameter::TMaterialType>())
 
 		//.def("get_resource", &CTemplatedMaterialParameter<CMaterialParameter>::GetResource) 
@@ -571,6 +581,7 @@ void CScriptManager::RegisterMaterials()
 		.def("GetValueAddress", &CTemplatedMaterialParameter<Vect2f>::GetValueAddress)
 		.def(constructor<CMaterial*, CXMLTreeNode, const Vect2f, CMaterialParameter::TMaterialType>())
 		.def("GetDescription", &CTemplatedMaterialParameter<Vect2f>::GetDescription)
+		.def("GetValue", &CTemplatedMaterialParameter<Vect2f>::GetValue)
 	];
 
 	module(LUA_STATE)
@@ -581,6 +592,7 @@ void CScriptManager::RegisterMaterials()
 		.def("GetValueAddress", &CTemplatedMaterialParameter<Vect3f>::GetValueAddress)
 		.def(constructor<CMaterial*, CXMLTreeNode, const Vect3f, CMaterialParameter::TMaterialType>())
 		.def("GetDescription", &CTemplatedMaterialParameter<Vect3f>::GetDescription)
+		.def("GetValue", &CTemplatedMaterialParameter<Vect3f>::GetValue)
 	];
 
 	module(LUA_STATE)
@@ -591,6 +603,7 @@ void CScriptManager::RegisterMaterials()
 		.def("GetValueAddress", &CTemplatedMaterialParameter<Vect4f>::GetValueAddress)
 		.def(constructor<CMaterial*, CXMLTreeNode, const Vect4f, CMaterialParameter::TMaterialType>())
 		.def("GetDescription", &CTemplatedMaterialParameter<Vect4f>::GetDescription)
+		.def("GetValue", &CTemplatedMaterialParameter<Vect4f>::GetValue)
 	];
 
 	/*module(LUA_STATE)
@@ -604,7 +617,7 @@ void CScriptManager::RegisterMaterials()
 		.def(constructor<>())
 		.def("Load", &CTexture::Load)
 		.def("Activate", &CTexture::Activate)
-		.def("reload", &CTexture::Reload)
+		.def("Reload", &CTexture::Reload)
 	];
 
 	module(LUA_STATE)
@@ -631,6 +644,8 @@ void CScriptManager::RegisterParticles()
 		class_<CParticleSystemType, CNamed>("CParticleSystemType")
 		.def(constructor<CXMLTreeNode>())
 		.def("GetMaterial", &CParticleSystemType::GetMaterial)
+		.def("GetLUAControlPointsSize", &CParticleSystemType::GetLUAControlPointsSize, return_stl_iterator)
+		.def("AddControlPointSize", &CParticleSystemType::AddControlPointSize)
 
 		.def("GetNumFramesLuaAddress", &CParticleSystemType::GetNumFramesLuaAddress)
 		.def("GetTimePerFrameLuaAddress", &CParticleSystemType::GetTimePerFrameLuaAddress)
@@ -656,18 +671,51 @@ void CScriptManager::RegisterParticles()
 		.def("GetStartingAcceleration2LuaAddress", &CParticleSystemType::GetStartingAcceleration2LuaAddress)
 		.def("GetColor1LuaAddress", &CParticleSystemType::GetColor1LuaAddress)
 		.def("GetColor2LuaAddress", &CParticleSystemType::GetColor2LuaAddress)
+
+		.def("GetThisLuaAddress", &CParticleSystemType::GetThisLuaAddress)
+		
+		.def_readonly("m_NumFrames", &CParticleSystemType::m_NumFrames)
+		.def_readonly("m_TimerPerFrame", &CParticleSystemType::m_TimerPerFrame)
+		.def_readonly("m_LoopFrames", &CParticleSystemType::m_LoopFrames)
+		.def_readonly("m_EmitAbsolute", &CParticleSystemType::m_EmitAbsolute)
+
+		.def_readonly("m_StartingDirectionAngle", &CParticleSystemType::m_StartingDirectionAngle)
+		.def_readonly("m_StartingAccelerationAngle", &CParticleSystemType::m_StartingAccelerationAngle)
+		.def_readonly("m_Size", &CParticleSystemType::m_Size)
+
+		.def_readonly("m_EmitRate", &CParticleSystemType::m_EmitRate)
+		.def_readonly("m_AwakeTime", &CParticleSystemType::m_AwakeTime)
+		.def_readonly("m_SleepTime", &CParticleSystemType::m_SleepTime)
+		.def_readonly("m_Life", &CParticleSystemType::m_Life)
+
+		.def_readonly("m_StartingAngle", &CParticleSystemType::m_StartingAngle)
+		.def_readonly("m_StartingAngularSpeed", &CParticleSystemType::m_StartingAngularSpeed)
+		.def_readonly("m_AngularAcceleration", &CParticleSystemType::m_AngularAcceleration)
+
+		.def_readonly("m_StartingSpeed1", &CParticleSystemType::m_StartingSpeed1)
+		.def_readonly("m_StartingSpeed2", &CParticleSystemType::m_StartingSpeed2)
+		.def_readonly("m_StartingAcceleration1", &CParticleSystemType::m_StartingAcceleration1)
+		.def_readonly("m_StartingAcceleration2", &CParticleSystemType::m_StartingAcceleration2)
+
+		.def_readonly("m_Color1", &CParticleSystemType::m_Color1)
+		.def_readonly("m_Color2", &CParticleSystemType::m_Color2)
 	];
 
 	module(LUA_STATE)
 	[
 		class_<CParticleSystemType::ControlPointColor>("ControlPointColor")
 		.def(constructor<CColor, CColor, Vect2f>())
+		.def("GetTimeLuaAddress", &CParticleSystemType::ControlPointColor::GetTimeLuaAddress)
+		.def("GetColor1LuaAddress", &CParticleSystemType::ControlPointColor::GetColor1LuaAddress)
+		.def("GetColor2LuaAddress", &CParticleSystemType::ControlPointColor::GetColor2LuaAddress)
 	];
 
 	module(LUA_STATE)
 	[
 		class_<CParticleSystemType::ControlPointSize>("ControlPointSize")
 		.def(constructor<Vect2f, Vect2f>())
+		.def("GetSizeLuaAddress", &CParticleSystemType::ControlPointSize::GetSizeLuaAddress)
+		.def("GetTimeLuaAddress", &CParticleSystemType::ControlPointSize::GetTimeLuaAddress)
 	];
 
 	module(LUA_STATE)
@@ -709,7 +757,7 @@ void CScriptManager::RegisterParticles()
 		class_< CParticleManager, CTemplatedMapManager<CParticleSystemType>>("CParticleManager")
 		.def("Load", &CParticleManager::Load)
 		.def("Reload", &CParticleManager::Reload)
-		//.def("GetLUAParticles", &CParticleManager::GetLUAParticles, return_stl_iterator)
+		.def("GetLUAParticles", &CParticleManager::GetLUAParticles, return_stl_iterator)
 	];
 
 }
@@ -746,6 +794,15 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("SetPlayer", &CLayerManager::SetPlayer)
 		.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
 		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)
+		.def("RemoveLayerComponent", &CLayerManager::RemoveLayerComponent)
+		.def("RemoveLayerComponents", &CLayerManager::RemoveLayerComponents)
+		.def("RemoveComponent", &CLayerManager::RemoveComponent)
+		.def("RemoveComponents", &CLayerManager::RemoveComponents)
+		
+		.def("RemoveLayerLuaComponents", &CLayerManager::RemoveLayerLuaComponents)
+		.def("RemoveLuaComponents", &CLayerManager::RemoveLuaComponents)
+		
+		
 	];
 
 	module(LUA_STATE)
@@ -782,7 +839,13 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("GetComponentManager", &CRenderableObject::GetComponentManager)
 		.def("GetAnimatorController", &CRenderableObject::GetAnimatorController)
 		.def("AddComponent", &CRenderableObject::AddComponent)
+		.def("RemoveComponent", &CRenderableObject::RemoveComponent)
+		.def("RemoveComponents", &CRenderableObject::RemoveComponents)
+		
 		.def("AddLuaComponent", &CRenderableObject::AddLuaComponent)
+		.def("GetFirstLuaComponent", &CRenderableObject::GetFirstLuaComponent)
+		
+		.def("RemoveLuaComponents", &CRenderableObject::RemoveLuaComponents)
 		.def("GetClassType", &CRenderableObject::GetClassType)
 		.enum_("TRenderableObjectType")
 		[
@@ -799,6 +862,7 @@ void CScriptManager::RegisterRenderableObjects()
 		.def(constructor<CXMLTreeNode>())
 		.def(constructor<const std::string, const std::string, const Vect3f , float, float, float>())
 		.def("Render", &CMeshInstance::Render)
+		.def("SetParent", &CMeshInstance::SetParent)
 	];
 
 	//GUIA TEMPLATED VECTOR
@@ -824,6 +888,9 @@ void CScriptManager::RegisterRenderableObjects()
 		class_< CRenderableObjectsManager, bases<CTemplatedVectorMapManager<CRenderableObject>, CNamed>>("CRenderableObjectsManager")
 		.def("Update", &CRenderableObjectsManager::Update)
 		.def("Render", &CRenderableObjectsManager::Render)
+		.def("RemoveRenderableObjectsLuaComponents", &CRenderableObjectsManager::RemoveRenderableObjectsLuaComponents)
+		.def("RemoveRenderableObjectsComponent", &CRenderableObjectsManager::RemoveRenderableObjectsComponent)
+		.def("RemoveRenderableObjectsComponents", &CRenderableObjectsManager::RemoveRenderableObjectsComponents)
 	];
 
 	//Static Meshes

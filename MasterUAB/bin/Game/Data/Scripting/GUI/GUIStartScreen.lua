@@ -56,14 +56,15 @@ function ShowLoadScreen()
 end
 
 function StartLevelOne()
-
-	g_LogManager:Log("Level is going to be loaded...")
+	
+	g_LogManager:Log("Level one is going to be loaded.")
 	g_GUIManager:Load("./Data/gui_in_game.xml")
 	
 	dofile("./Data/Scripting/LuaMainInGame.lua")
 	LoadGamePlayScripts() --LuaMainInGame.lua
 	g_Engine:LoadLevel("1")
 	g_CurrentLevel = 1
+	g_DamageCalculator:LoadXML("Data/damage_reduction_percentages.xml")
 	g_GameController:LoadXML("Data/Level1/game_entities.xml")
 	
 	g_LogManager:Log("Level one loaded...")
@@ -72,6 +73,7 @@ function StartLevelOne()
 
 	g_CameraControllerManager:SetCurrentCameraController("ThirdPersonCamera")
 	g_SceneRendererCommandManager:Reload()
+	g_LogManager:Log("Level one loaded.")
 end
 
 

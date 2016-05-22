@@ -60,5 +60,6 @@ function LoadGamePlayScripts()
 	dofile("./Data/Scripting/Enemies/BruteEnemy.lua")
 	dofile("./Data/Scripting/Enemies/BruteEnemyFSM.lua")
 	dofile("./Data/Scripting/Elements/Pedestal.lua")
+	g_LogManager:Log("Gameplayscripts loaded.")
 end
 

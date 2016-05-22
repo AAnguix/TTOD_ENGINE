@@ -2,7 +2,7 @@
 #define _ANIMATORCONTROLLERTRIGGERPARAMETER_H
 
 #include <string>
-#include "Animation\AnimatorControllerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerParameter.h"
 
 class CAnimatorControllerTriggerParameter : CAnimatorControllerParameter
 {
@@ -11,7 +11,7 @@ private:
 	bool m_TriggerEnter;
 
 public:
-	CAnimatorControllerTriggerParameter(const std::string &Name, const bool &Triggered);
+	CAnimatorControllerTriggerParameter(const std::string &Name, bool Triggered);
 	virtual ~CAnimatorControllerTriggerParameter();
 	
 	void TriggerEnter(){ m_TriggerEnter = true; };

@@ -48,10 +48,15 @@ public:
 	void Render(CRenderManager *RM) const;
 
 	CMaterial* GetPhysxMaterial();
+	
 	Vect3f GetBoundingBoxSize() const;
+	Vect3f GetBoundingBoxMax() const;
+	Vect3f GetBoundingBoxMin() const;
+
 	float GetBoundingSphereRadius() const;
 	float GetCapsuleHalfHeight() const;
 	float GetCapsuleRadius() const;
+	
 	std::vector<Vect3f> GetVertex() const{ return m_MeshVertex; };
 	std::vector<unsigned short> GetIndex() const{ return m_MeshIndex; };
 };

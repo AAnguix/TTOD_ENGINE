@@ -82,6 +82,43 @@ void CLayerManager::Destroy()
 	
 }*/
 
+void CLayerManager::RemoveLayerLuaComponents(const std::string &LayerName)
+{
+	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsLuaComponents();
+}
+void CLayerManager::RemoveLuaComponents()
+{
+	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+	{
+		m_ResourcesVector[i]->RemoveRenderableObjectsLuaComponents();
+	}
+}
+
+void CLayerManager::RemoveComponent(const std::string &ComponentName)
+{
+	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+	{
+		m_ResourcesVector[i]->RemoveRenderableObjectsComponent(ComponentName);
+	}
+}
+void CLayerManager::RemoveComponents()
+{
+	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+	{
+		m_ResourcesVector[i]->RemoveRenderableObjectsComponents();
+	}
+}
+
+void CLayerManager::RemoveLayerComponent(const std::string &LayerName, const std::string &ComponentName)
+{
+	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponent(ComponentName);
+}
+void CLayerManager::RemoveLayerComponents(const std::string &LayerName)
+{
+	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponents();
+}
+
+
 void CLayerManager::Load(const std::string &Filename)
 {
 	m_Filename=Filename;

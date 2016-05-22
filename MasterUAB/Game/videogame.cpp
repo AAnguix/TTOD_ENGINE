@@ -80,6 +80,11 @@ void ToggleFullscreen(HWND Window, WINDOWPLACEMENT &WindowPosition)
 //-----------------------------------------------------------------------------
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+
+	TwEventWin(hWnd, msg, wParam, lParam);
+	//if (TwEventWin(hWnd, msg, wParam, lParam)) // send event message to AntTweakBar
+//		return 0;
+
 	switch (msg)
 	{
 		case WM_SIZE:
@@ -104,9 +109,81 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			CEngine::GetSingleton().GetInputManager()->GetKeyBoard()->SetLastChar(wParam);
 			break;
 		}
+		case WM_SETFOCUS:
+			//hasFocus = true;
+			CEngine::GetSingleton().GetInputManager()->SetFocus(true);
+			break;
+		case  WM_KILLFOCUS:
+			//hasFocus = false;
+			CEngine::GetSingleton().GetInputManager()->SetFocus(false);
+			break;
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP:
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		{
+			bool WasDown = ((lParam & (1 << 30)) != 0);
+			bool IsDown = ((lParam & (1 << 31)) == 0);
+			bool Alt = ((lParam & (1 << 29)) != 0);
+
+			if (WasDown != IsDown)
+			{
+				if (IsDown)
+				{
+					bool consumed = false;
+					switch (wParam)
+					{
+					case VK_RETURN:
+						if (Alt)
+						{
+							WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
+							GetWindowPlacement(hWnd, &windowPosition);
+
+							ToggleFullscreen(hWnd, windowPosition);
+							consumed = true;
+						}
+						break;
+					case VK_F4:
+						if (Alt)
+						{
+							PostQuitMessage(0);
+							consumed = true;
+						}
+						break;
+					}
+					if (consumed)
+					{
+						break;
+					}
+				}
+			}
+			CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
+			/*if (!hasFocus || !CEngine::GetSingleton().GetInputManager()->KeyEventReceived(msg.wParam, msg.lParam))
+			{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+			}*/
+			break;
+		}
+		case WM_MOUSEMOVE:
+			//if (hasFocus)
+			{
+				int xPosAbsolute = GET_X_LPARAM(lParam);
+				int yPosAbsolute = GET_Y_LPARAM(lParam);
+
+				CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
+			}
+			/*else
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}*/
+			break;
+		/*default:
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);*/
 
 	}//end switch( msg )
-
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -160,19 +237,16 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 		{
 			if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
 			{
-				if (!CEngine::GetSingleton().GetDebugHelper()->Update(msg.hwnd, msg.message, msg.wParam, msg.lParam))
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+
+				/*if (!CEngine::GetSingleton().GetDebugHelper()->Update(msg.hwnd, msg.message, msg.wParam, msg.lParam))
 				{
 					bool WasDown = false, IsDown = false, Alt = false;
 
+					TwEventWin(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 					switch (msg.message)
 					{
-						/*NEW*/
-						/*case WM_SIZE:
-						{
-							INT nWidth = LOWORD(msg.lParam);
-							INT nHeight = HIWORD(msg.lParam);
-							s_Context.Resize(hWnd, nWidth, nHeight); 
-						}*/
 						case WM_SETFOCUS:
 							hasFocus = true;
 							CEngine::GetSingleton().GetInputManager()->SetFocus(true);
@@ -206,10 +280,6 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 											consumed = true;
 										}
 										break;
-									case VK_ESCAPE: /*Now, ESC opens a menu*/
-										/*PostQuitMessage(0);
-										consumed = true;
-										break;*/
 									case VK_F4:
 										if (Alt)
 										{
@@ -248,7 +318,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 							TranslateMessage(&msg);
 							DispatchMessage(&msg);
 					}
-				}
+				}*/
 			}
 			else
 			{

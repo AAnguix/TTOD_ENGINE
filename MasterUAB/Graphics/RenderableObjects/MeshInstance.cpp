@@ -9,10 +9,15 @@
 #include "Materials\Material.h"
 #include "Components\Collider.h"
 #include "Components\ComponentManager.h"
+#include "Animation\AnimatedInstanceModel.h"
+#include "RenderableObjects\LayerManager.h"
 
 /*Used to create a mesh instance when game is runing*/
 CMeshInstance::CMeshInstance(const std::string &Name, const std::string &CoreName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 :CRenderableObject(Name,Position,Yaw,Pitch,Roll)
+,m_StaticMesh(nullptr)
+,m_Parent(nullptr)
+,m_ParentBoneId(-1)
 {
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(CoreName);
 }
@@ -20,6 +25,9 @@ CMeshInstance::CMeshInstance(const std::string &Name, const std::string &CoreNam
 /*Used to create a mesh instance when game starts*/
 CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 :CRenderableObject(TreeNode)
+,m_StaticMesh(nullptr)
+,m_Parent(nullptr)
+,m_ParentBoneId(-1)
 {
 	std::string l_Name = TreeNode.GetPszProperty("name", "");
 	std::string l_Core = TreeNode.GetPszProperty("core_name","");
@@ -49,7 +57,11 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 				bool l_AbleToBeTrigger = true;
 
 				CCollider::AddCollider("Collider", this);
-				CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, 30.0f, 40.0f, 0.0f);
+				CMaterial* m_PhysxMaterial = m_StaticMesh->GetPhysxMaterial();
+				CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, m_PhysxMaterial->GetStaticFriction(), m_PhysxMaterial->GetDynamicFriction(), m_PhysxMaterial->GetRestitution());
+				
+				//m_StaticMesh->GetPhysxMaterial()->SetPhysxPropertiesAddresses();
+				
 
 				//Quatf l_Rotation(0.0f, 0.0f, 0.0f, 1.0f);
 				Quatf l_Rotation(m_Yaw, m_Pitch, m_Roll);
@@ -119,14 +131,36 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 
 	m_ComponentManager->Render(*RenderManager);
 
-	//m_Position=CEngine::GetSingleton().GetPhysXManager()->GetActorPosition(m_Name); /*TODO VER SI FUNCIONA*/
-	//Quatf q = Quatf(0.0f,0.0f,0.0f,1.0f);
+	bool l_IsOutsideFrustum = false;
 
-
-	/*Set matrices acording Position,Yaw,Pitch,Roll*/
-	if (m_Visible)
+	#if ENABLE_FRUSTUM
+	if (!RenderManager->GetFrustum().BoxVisible(m_StaticMesh->GetBoundingBoxMax(), m_StaticMesh->GetBoundingBoxMin()))
+		l_IsOutsideFrustum = true;
+	#endif
+	
+	if (m_Visible && !l_IsOutsideFrustum)
 	{
-		RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
+		if (m_Parent != nullptr && m_ParentBoneId != -1)
+		{
+			Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
+			RenderManager->GetContextManager()->SetWorldMatrix(GetTransform()*l_BoneTransform);
+		}
+		else
+		{
+			RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
+		}
 		m_StaticMesh->Render(RenderManager);
+	}
+}
+
+
+void CMeshInstance::SetParent(CAnimatedInstanceModel* Parent, const std::string &BoneName)
+{
+	m_Parent = Parent;
+	if (m_Parent != nullptr)
+	{
+		int l_ParentBoneId = m_Parent->GetAnimatedCoreModel()->GetBoneId(BoneName);
+		if (l_ParentBoneId != -1)
+			m_ParentBoneId = l_ParentBoneId;
 	}
 }

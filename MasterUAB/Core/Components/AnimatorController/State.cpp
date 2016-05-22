@@ -8,7 +8,7 @@
 #include "Transition.h"
 #include "Log.h"
 
-CState::CState(CAnimatorController* AnimatorController, const std::string &Name, const EAnimation &Animation, const float &Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
+CState::CState(CAnimatorController* AnimatorController, const std::string &Name, const EAnimation &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
 :m_AnimatorController(AnimatorController)
 ,m_Name(Name)
 ,m_Animation(Animation)
@@ -86,7 +86,7 @@ void CState::OnExit(CTransition* Transition)
 	}
 }
 
-CTransition* CState::AddTransition(const std::string &Name, CState* NewState, const bool &HasExitTime, const float &ExitTime, const float &DelayIn, const float &DelayOut)
+CTransition* CState::AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut)
 {
 	CTransition* l_Transition = new CTransition(NewState, HasExitTime, ExitTime, DelayIn, DelayOut);
 	m_Transitions.insert(std::pair<const std::string, CTransition*>(Name, l_Transition));

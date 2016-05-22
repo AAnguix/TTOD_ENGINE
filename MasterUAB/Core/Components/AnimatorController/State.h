@@ -4,10 +4,10 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "Animation\AnimatorControllerIntegerParameter.h"
-#include "Animation\AnimatorControllerFloatParameter.h"
-#include "Animation\AnimatorControllerBoolParameter.h"
-#include "Animation\AnimatorControllerTriggerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerIntegerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerFloatParameter.h"
+#include "Components\AnimatorController\AnimatorControllerBoolParameter.h"
+#include "Components\AnimatorController\AnimatorControllerTriggerParameter.h"
 #include "Components\AnimatorController\Animation.h"
 
 class CTransition;
@@ -29,9 +29,9 @@ private:
 	std::string m_OnExit;
 
 public:
-	CState(CAnimatorController*, const std::string &Name, const EAnimation &Animation, const float &Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
+	CState(CAnimatorController*, const std::string &Name, const EAnimation &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
 	virtual ~CState();
-	CTransition* AddTransition(const std::string &Name, CState* NewState, const bool &HasExitTime, const float &ExitTime, const float &DelayIn, const float &DelayOut);
+	CTransition* AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut);
 	void OnEnter(CTransition* Transition);
 	void OnUpdate(float ElapsedTime);
 	void OnExit(CTransition* Transition);

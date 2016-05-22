@@ -16,6 +16,30 @@ CRenderableObjectsManager::~CRenderableObjectsManager()
 
 }
 
+void CRenderableObjectsManager::RemoveRenderableObjectsLuaComponents()
+{
+	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+	{
+		m_ResourcesVector[i]->RemoveLuaComponents();
+	}
+}
+
+void CRenderableObjectsManager::RemoveRenderableObjectsComponent(const std::string &ComponentName)
+{
+	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+	{
+		m_ResourcesVector[i]->RemoveComponent(ComponentName);
+	}
+}
+
+void CRenderableObjectsManager::RemoveRenderableObjectsComponents()
+{
+	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+	{
+		m_ResourcesVector[i]->RemoveComponents();
+	}
+}
+
 //void CRenderableObjectsManager::Reload()
 //{
 //	Destroy();

@@ -1,6 +1,6 @@
 #include "AnimatorController.h"
-#include "Animation\AnimatorControllerTriggerParameter.h"
-#include "Animation\AnimatorControllerBoolParameter.h"
+#include "Components\AnimatorController\AnimatorControllerTriggerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerBoolParameter.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "Components\AnimatorController\Animation.h"
 
@@ -10,9 +10,11 @@ CAnimatorController* CAnimatorController::AddAnimatorController(const std::strin
 
 	if (!Owner->AddComponent(l_AnimatorController))
 	{
-		if (l_AnimatorController != NULL) 
-			delete(l_AnimatorController); 
-		l_AnimatorController = NULL;
+		if (l_AnimatorController != NULL)
+		{
+			delete(l_AnimatorController);
+			l_AnimatorController = NULL;
+		}
 	}
 
 	return l_AnimatorController;
@@ -84,7 +86,7 @@ void CAnimatorController::RenderDebug(CRenderManager &RenderManager)
 }
 
 
-CState* CAnimatorController::AddState(const std::string &Name, const std::string &Animation, const float &Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
+CState* CAnimatorController::AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
 {
 	std::map<const std::string, CState*>::iterator itMap;
 
@@ -125,7 +127,7 @@ bool CAnimatorController::SearchParameter(const std::string &Name)
 	return false;
 }
 
-bool CAnimatorController::AddInteger(const std::string &Name, const int &Value)
+bool CAnimatorController::AddInteger(const std::string &Name, int Value)
 {
 	if (!SearchParameter(Name))
 	{
@@ -137,7 +139,7 @@ bool CAnimatorController::AddInteger(const std::string &Name, const int &Value)
 	}
 	return false;
 }
-bool CAnimatorController::AddFloat(const std::string &Name, const float &Value)
+bool CAnimatorController::AddFloat(const std::string &Name, float Value)
 {
 	if (!SearchParameter(Name))
 	{
@@ -149,7 +151,7 @@ bool CAnimatorController::AddFloat(const std::string &Name, const float &Value)
 	}
 	return false;
 }
-bool CAnimatorController::AddBool(const std::string &Name, const bool &Value)
+bool CAnimatorController::AddBool(const std::string &Name, bool Value)
 {
 	if (!SearchParameter(Name))
 	{
@@ -161,7 +163,7 @@ bool CAnimatorController::AddBool(const std::string &Name, const bool &Value)
 	}
 	return false;
 }
-bool CAnimatorController::AddTrigger(const std::string &Name, const bool &Value)
+bool CAnimatorController::AddTrigger(const std::string &Name, bool Value)
 {
 	if (!SearchParameter(Name))
 	{
@@ -174,7 +176,7 @@ bool CAnimatorController::AddTrigger(const std::string &Name, const bool &Value)
 	return false;
 }
 
-void CAnimatorController::SetInteger(const std::string &Name, const int &Value)
+void CAnimatorController::SetInteger(const std::string &Name, int Value)
 {
 	std::map<const std::string, CAnimatorControllerParameter*>::iterator itMap;
 	itMap = m_Parameters.find(Name);
@@ -185,7 +187,7 @@ void CAnimatorController::SetInteger(const std::string &Name, const int &Value)
 		l_Param->UpdateParameter(Value);
 	}
 }
-void CAnimatorController::SetFloat(const std::string &Name, const float &Value)
+void CAnimatorController::SetFloat(const std::string &Name, float Value)
 {
 	std::map<const std::string, CAnimatorControllerParameter*>::iterator itMap;
 	itMap = m_Parameters.find(Name);
@@ -196,7 +198,7 @@ void CAnimatorController::SetFloat(const std::string &Name, const float &Value)
 		l_Param->UpdateParameter(Value);
 	}
 }
-void CAnimatorController::SetBool(const std::string &Name, const bool &Value)
+void CAnimatorController::SetBool(const std::string &Name, bool Value)
 {
 	std::map<const std::string, CAnimatorControllerParameter*>::iterator itMap;
 	itMap = m_Parameters.find(Name);

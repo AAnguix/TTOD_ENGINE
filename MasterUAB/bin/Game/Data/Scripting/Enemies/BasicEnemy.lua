@@ -4,12 +4,12 @@ function CBasicEnemyComponent:__init(CRenderableObject)
 	self.m_Health=100.0
 	self.m_Speed=1.0
 	self.m_AttackDelay=1.0
-	self.m_VisionRange=2.0
-	self.m_DelayToPatrol = 2.0
+	self.m_VisionRange=5.0
+	self.m_DelayToPatrol = 3.0
 	
-	self.m_AttackRange=0.3
-	self.m_Weapon = CWeapon(10,"knife")
-	self.m_Armor = CArmor(5,"basic")
+	self.m_AttackRange=0.65
+	-- self.m_Weapon = CWeapon(10,"knife")
+	-- self.m_Armor = CArmor(5,"basic")
 end
 
 function CBasicEnemyComponent:Attack()
@@ -22,13 +22,13 @@ function CBasicEnemyComponent:Initialize()
 	local l_AnimatorController = CEnemyComponent.GetRenderableObject(self):GetAnimatorController()
 	
 	local l_Idle = l_AnimatorController:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_BasicEnemy", "OnUpdate_Idle_BasicEnemy", "OnExit_Idle_BasicEnemy")
-	local l_MoveToAttack = l_AnimatorController:AddState("MoveToAttack_State", "walk", 1.0, "OnEnter_MoveToAttack_BasicEnemy", "OnUpdate_MoveToAttack_BasicEnemy", "OnExit_MoveToAttack_BasicEnemy")
+	local l_MoveToAttack = l_AnimatorController:AddState("MoveToAttack_State", "run", 1.0, "OnEnter_MoveToAttack_BasicEnemy", "OnUpdate_MoveToAttack_BasicEnemy", "OnExit_MoveToAttack_BasicEnemy")
 	local l_Attack = l_AnimatorController:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_BasicEnemy", "OnUpdate_Attack_BasicEnemy", "OnExit_Attack_BasicEnemy")
 	local l_Patrol = l_AnimatorController:AddState("Patrol_State", "walk", 1.0, "OnEnter_Patrol_BasicEnemy", "OnUpdate_Patrol_BasicEnemy", "OnExit_Patrol_BasicEnemy")
                                                    
 	l_AnimatorController:AddBool("IsPlayerInsideVisionRange", false)
 	l_AnimatorController:AddBool("DelayToPatrol", false)
-	l_AnimatorController:AddTrigger("AtackPlayer", false)
+	l_AnimatorController:AddTrigger("AttackPlayer", false)
 
 	local l_IdleToPatrol = l_Idle:AddTransition("IdleToPatrol", l_Patrol, false, 0.0, 0.1, 0.1)
 	l_IdleToPatrol:AddBoolCondition("DelayToPatrol", true)
@@ -41,12 +41,15 @@ function CBasicEnemyComponent:Initialize()
 	l_PatrolToMoveToAttack:AddBoolCondition("IsPlayerInsideVisionRange", true)
 	
 	local l_MoveToAttackToAttack = l_MoveToAttack:AddTransition("MoveToAttackToAttack", l_Attack, false, 0.0, 0.1, 0.1)
-	l_MoveToAttackToAttack:AddTriggerCondition("AtackPlayer")	
+	l_MoveToAttackToAttack:AddTriggerCondition("AttackPlayer")	
 	
-	--local l_MoveToAttackToIdle = l_MoveToAttack:AddTransition("MoveToAttackToIdle", l_Idle, false, 0.0, 0.1, 0.1)
-	--l_MoveToAttackToIdle:AddBoolCondition("IsPlayerInsideVisionRange", false)
+	local l_MoveToAttackToIdle = l_MoveToAttack:AddTransition("MoveToAttackToIdle", l_Idle, false, 0.0, 0.1, 0.1)
+	l_MoveToAttackToIdle:AddBoolCondition("IsPlayerInsideVisionRange", false)
+	
+	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false, 0.0, 0.1, 0.1)
+	l_IdleToAttack:AddTriggerCondition("AttackPlayer")	
 
-	--l_AttacktoIdle = l_Attack:AddTransition("AttacktoIdle", l_Idle, false, 0.0, 0.1, 0.1)
+	l_AttacktoIdle = l_Attack:AddTransition("AttacktoIdle", l_Idle, true, 0.0, 0.1, 0.1)
 	--l_AttacktoIdle:AddTriggerCondition("GoBackToIdle")
 end
 

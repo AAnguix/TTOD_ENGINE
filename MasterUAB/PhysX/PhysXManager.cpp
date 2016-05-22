@@ -69,6 +69,33 @@ physx::PxMaterial* CPhysXManager::GetMaterial(const std::string &MaterialName)
 	return nullptr;
 }
 
+void CPhysXManager::SetMaterialStaticFriction(const std::string &MaterialName, float StaticFriction)
+{
+	auto it = m_Materials.find(MaterialName);
+	if (it != m_Materials.end())
+	{
+		it->second->setStaticFriction(StaticFriction);
+	}
+}
+
+void CPhysXManager::SetMaterialDynamicFriction(const std::string &MaterialName, float DynamicFriction)
+{
+	auto it = m_Materials.find(MaterialName);
+	if (it != m_Materials.end())
+	{
+		it->second->setDynamicFriction(DynamicFriction);
+	}
+}
+
+void CPhysXManager::SetMaterialRestitution(const std::string &MaterialName, float Restitution)
+{
+	auto it = m_Materials.find(MaterialName);
+	if (it != m_Materials.end())
+	{
+		it->second->setRestitution(Restitution);
+	}
+}
+
 void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation, int Group)
 {
 	//L_PutGroupToShape(Shape, Group);
@@ -89,20 +116,20 @@ void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* 
 	Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, IsKinematic);
 
 	Body->userData = (void*)AddActor(ActorName, Position, Orientation, Body);
-	m_Scene->addActor(*Body);
+	m_Scene->addActor(*Body); 
 
 }
 
 size_t CPhysXManager::AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor)
 {
-#ifdef USE_PHYSX_DEBUG
-	CheckMapAndVectors();
-#endif
+	#if USE_PHYSX_DEBUG
+		CheckMapAndVectors();
+	#endif
 
 	size_t index = m_Actors.size();
 
 	Actor->userData = (void*)index;
-
+	
 	m_ActorIndexs[ActorName] = index;
 	m_ActorNames.push_back(ActorName);
 	m_ActorPositions.push_back(Position);
@@ -169,14 +196,14 @@ void CPhysXManager::CreateRigidStaticBox(const std::string &Name, const Vect3f &
 	if (l_Shape != nullptr)
 		l_Shape->release();
 }
-void CPhysXManager::CreateRigidStaticSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+void CPhysXManager::CreateRigidStaticSphere(const std::string &Name, float Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
 	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxSphereGeometry(Radius), Material, Position, Orientation, Group);
 
 	if (l_Shape != nullptr)
 		l_Shape->release();
 }
-void CPhysXManager::CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+void CPhysXManager::CreateRigidStaticCapsule(const std::string &Name, float Radius, float HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
 	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxCapsuleGeometry(Radius, HalfHeight), Material, Position, Orientation, Group);
 
@@ -249,14 +276,14 @@ void CPhysXManager::CreateRigidDynamicBox(const std::string &Name, const Vect3f 
 	if (l_Shape != nullptr)
 		l_Shape->release();
 }
-void CPhysXManager::CreateRigidDynamicSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
+void CPhysXManager::CreateRigidDynamicSphere(const std::string &Name, float Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
 {
 	physx::PxShape* l_Shape = CreateDinamicShape(Name, physx::PxSphereGeometry(Radius), Material, Position, Orientation, Group, Density, IsKinematic);
 
 	if (l_Shape != nullptr)
 		l_Shape->release();
 }
-void CPhysXManager::CreateRigidDynamicCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, physx::PxReal Density, bool IsKinematic)
+void CPhysXManager::CreateRigidDynamicCapsule(const std::string &Name, float Radius, float HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, physx::PxReal Density, bool IsKinematic)
 {
 	physx::PxShape* l_Shape = CreateDinamicShape(Name, physx::PxCapsuleGeometry(Radius, HalfHeight), Material, Position, Orientation, Group, Density, IsKinematic);
 
@@ -658,7 +685,7 @@ return false;
 }
 */
 
-void CPhysXManager::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName)
+void CPhysXManager::CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, const Vect3f &Position, const std::string &MaterialName)
 {
 
 }
@@ -826,7 +853,6 @@ void CPhysXManager::WriteCookingDataToFile(const std::string &FileName, void *Da
 
 	fclose(l_File);
 }
-
 void CPhysXManager::ReadCookingDataFromFile(const std::string &FileName, void **Data, unsigned int &DataSize)
 {
 	FILE *l_File;
@@ -839,6 +865,26 @@ void CPhysXManager::ReadCookingDataFromFile(const std::string &FileName, void **
 	//
 	//	physx::PxDefaultMemoryOutputStream l_Buffer;
 	//	fread(&l_Buffer, sizeof(), 1, l_File);
+}
+
+void CPhysXManager::ApplyForce(const std::string &ActorName, const Vect3f &Force)
+{
+	physx::PxVec3 l_Force = CastVec(Force);
+	auto it_Actors = m_ActorIndexs.find(ActorName);
+
+	if (it_Actors != m_ActorIndexs.end())
+	{
+		size_t l_Index = it_Actors->second;
+		physx::PxActor* l_PxActor = m_Actors[l_Index];
+
+		physx::PxRigidDynamic* l_DynamicActor = l_PxActor->is<physx::PxRigidDynamic>();
+
+		if (l_DynamicActor != nullptr)
+		{
+			l_DynamicActor->addForce(l_Force);
+		}
+
+	}
 }
 //
 //

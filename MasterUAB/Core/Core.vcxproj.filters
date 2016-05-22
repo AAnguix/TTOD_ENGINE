@@ -65,6 +65,18 @@
     <ClCompile Include="Components\AnimatorController\Transition.cpp">
       <Filter>Components\AnimatorController</Filter>
     </ClCompile>
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerBoolParameter.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerFloatParameter.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerIntegerParameter.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerTriggerParameter.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugHelper.h" />
@@ -123,6 +135,21 @@
       <Filter>Components\AnimatorController</Filter>
     </ClInclude>
     <ClInclude Include="Components\AnimatorController\Transition.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerBoolParameter.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerFloatParameter.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerIntegerParameter.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerParameter.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerTriggerParameter.h">
       <Filter>Components\AnimatorController</Filter>
     </ClInclude>
   </ItemGroup>

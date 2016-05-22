@@ -20,12 +20,17 @@ public:
 		Vect2f m_Time;
 		CColor m_Color1, m_Color2;
 		ControlPointColor(CColor Color1, CColor Color2, Vect2f Time) :m_Color1(Color1), m_Color2(Color2), m_Time(Time){};
+		CEmptyPointerClass* GetTimeLuaAddress() const;
+		CEmptyPointerClass* GetColor1LuaAddress() const;
+		CEmptyPointerClass* GetColor2LuaAddress() const;
 	};
 	struct ControlPointSize
 	{
 		Vect2f m_Time;
 		Vect2f m_Size;
 		ControlPointSize(Vect2f Size, Vect2f Time) : m_Size(Size), m_Time(Time){};
+		CEmptyPointerClass* GetTimeLuaAddress() const;
+		CEmptyPointerClass* GetSizeLuaAddress() const;
 	};
 
 	std::vector<ControlPointColor> m_ControlPointColor;
@@ -43,7 +48,7 @@ public:
 	Vect3f m_StartingSpeed1, m_StartingSpeed2;
 	Vect3f m_StartingAcceleration1, m_StartingAcceleration2;
 	CColor m_Color1, m_Color2;
-
+	
 	CParticleSystemType(CXMLTreeNode &TreeNode);
 	virtual ~CParticleSystemType();
 	UAB_GET_PROPERTY_POINTER(CMaterial, Material);
@@ -76,6 +81,11 @@ public:
 	virtual CEmptyPointerClass* GetStartingAcceleration2LuaAddress() const;
 	virtual CEmptyPointerClass* GetColor1LuaAddress() const;
 	virtual CEmptyPointerClass* GetColor2LuaAddress() const;
+
+	virtual CEmptyPointerClass* GetThisLuaAddress() const;
+
+	void AddControlPointSize(Vect2f Size, Vect2f Time);
+	std::vector<CParticleSystemType::ControlPointSize> & GetLUAControlPointsSize();
 	
 };
 

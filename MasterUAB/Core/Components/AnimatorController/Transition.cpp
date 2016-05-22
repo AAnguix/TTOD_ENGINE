@@ -2,7 +2,7 @@
 #include "State.h"
 #include "AnimatorController.h"
 
-CTransition::CTransition(CState* NewState, const bool &HasExitTime, const float &ExitTime, const float &DelayIn, const float &DelayOut)
+CTransition::CTransition(CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut)
 :m_NewState(NewState)
 ,m_HasExitTime(HasExitTime)
 ,m_ExitTime(ExitTime)
@@ -47,17 +47,17 @@ CTransition::~CTransition()
 	}
 }
 
-CTransition::EFloatCondition::EFloatCondition(const std::string &ParameterName, const float &TriggerValue, EFloatConditionType ConditionType)
+CTransition::EFloatCondition::EFloatCondition(const std::string &ParameterName, float TriggerValue, EFloatConditionType ConditionType)
 :m_ParameterName(ParameterName), m_TriggerValue(TriggerValue), m_Type(ConditionType)
 {
 }
 
-CTransition::EIntegerCondition::EIntegerCondition(const std::string &ParameterName, const int &TriggerValue, EIntegerConditionType ConditionType)
+CTransition::EIntegerCondition::EIntegerCondition(const std::string &ParameterName, int TriggerValue, EIntegerConditionType ConditionType)
 :m_ParameterName(ParameterName), m_TriggerValue(TriggerValue), m_Type(ConditionType)
 {
 }
 
-CTransition::EBoolCondition::EBoolCondition(const std::string &ParameterName, const bool &TriggerValue)
+CTransition::EBoolCondition::EBoolCondition(const std::string &ParameterName, bool TriggerValue)
 :m_ParameterName(ParameterName), m_TriggerValue(TriggerValue)
 {
 }
@@ -67,17 +67,17 @@ CTransition::ETriggerCondition::ETriggerCondition(const std::string &ParameterNa
 {
 }
 
-void CTransition::AddFloatCondition(const std::string &ParameterName, const float &TriggerValue, EFloatCondition::EFloatConditionType TriggerConditionType)
+void CTransition::AddFloatCondition(const std::string &ParameterName, float TriggerValue, EFloatCondition::EFloatConditionType TriggerConditionType)
 {
 	CTransition::EFloatCondition* l_FloatCondition = new CTransition::EFloatCondition(ParameterName, TriggerValue, TriggerConditionType);
 	m_FloatConditions.push_back(l_FloatCondition);
 }
-void CTransition::AddIntegerCondition(const std::string &ParameterName, const int &TriggerValue, EIntegerCondition::EIntegerConditionType TriggerConditionType)
+void CTransition::AddIntegerCondition(const std::string &ParameterName, int TriggerValue, EIntegerCondition::EIntegerConditionType TriggerConditionType)
 {
 	EIntegerCondition* l_IntegerCondition = new EIntegerCondition(ParameterName, TriggerValue, TriggerConditionType);
 	m_IntegerConditions.push_back(l_IntegerCondition);
 }
-void CTransition::AddBoolCondition(const std::string &ParameterName, const bool &TriggerValue)
+void CTransition::AddBoolCondition(const std::string &ParameterName, bool TriggerValue)
 {
 	EBoolCondition* l_BoolCondition = new EBoolCondition(ParameterName, TriggerValue);
 	m_BoolConditions.push_back(l_BoolCondition);

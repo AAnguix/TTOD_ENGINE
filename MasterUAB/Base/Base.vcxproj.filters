@@ -62,6 +62,12 @@
     <ClInclude Include="Utils\TTODMathUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\TTODFileUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\TTODXMLWriter.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Math">
@@ -91,6 +97,12 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\TTODMathUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\TTODFileUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\TTODXMLWriter.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>

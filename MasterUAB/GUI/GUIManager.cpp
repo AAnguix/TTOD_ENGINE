@@ -29,7 +29,7 @@ m_AnimationTimer(0.0f)
 	
 }
 
-void CGUIManager::Initialize(unsigned int ScreenWidth, unsigned int ScreenHeight)
+void CGUIManager::Initialize(float ScreenWidth, float ScreenHeight)
 {
 	m_ScreenHeight = ScreenHeight;
 	m_ScreenWidth = ScreenWidth;
@@ -75,7 +75,7 @@ CGUIManager::~CGUIManager()
 	m_Sprites.clear();
 }
 
-bool CGUIManager::IsMouseInside(unsigned int MouseX, unsigned int MouseY, unsigned int X, unsigned int Y, unsigned int Width, unsigned int Height)
+bool CGUIManager::IsMouseInside(float MouseX, float MouseY, float X, float Y, float Width, float Height)
 {
 	if ((MouseX >= X && MouseX <= (X + Width)) && (MouseY >= Y && MouseY <= (Y + Height)))
 		return true;
@@ -131,8 +131,8 @@ void CGUIManager::SortCommands()
 
 CGUIManager::SGUIPosition::SGUIPosition(float X, float Y, float Width, float Height, GUIAnchor Anchor, GUICoordType AnchorCoordsType, GUICoordType SizeCoordsType)
 {
-	unsigned int l_W = CEngine::GetSingleton().GetGUIManager()->GetScreenWidth();
-	unsigned int l_H = CEngine::GetSingleton().GetGUIManager()->GetScreenHeight();
+	float l_W = CEngine::GetSingleton().GetGUIManager()->GetScreenWidth();
+	float l_H = CEngine::GetSingleton().GetGUIManager()->GetScreenHeight();
 
 	switch (SizeCoordsType)
 	{
@@ -143,20 +143,20 @@ CGUIManager::SGUIPosition::SGUIPosition(float X, float Y, float Width, float Hei
 			height = Height;
 			break;
 		case GUICoordType::GUI_RELATIVE:
-			width = (int)(Width * l_W);
-			height = (int)(Height * l_H);
+			width = Width * l_W;
+			height = Height * l_H;
 			if (X < 0){ X = 1.0f + X; }
 			if (Y < 0){ Y = 1.0f + Y; }
 			break;
 			case GUICoordType::GUI_RELATIVE_WIDTH:
-			width = (int)(Width * l_W);
-			height = (int)(Height * l_W);
+			width = Width * l_W;
+			height = Height * l_W;
 			if (X < 0){ X = 1.0f + X; }
 			if (Y < 0){ Y = 1.0f + Y; }
 			break;
 		case GUICoordType::GUI_RELATIVE_HEIGHT:
-			width = (int)(Width * l_H);
-			height = (int)(Height * l_H);
+			width = Width * l_H;
+			height = Height * l_H;
 			if (X < 0){ X = 1.0f + X; }
 			if (Y < 0){ Y = 1.0f + Y; }
 			break;
@@ -191,15 +191,15 @@ CGUIManager::SGUIPosition::SGUIPosition(float X, float Y, float Width, float Hei
 
 	if ((int)Anchor & (int)GUIAnchor::LEFT)
 	{
-		x = (int)(X * unitPixelSizeX);
+		x = (X * unitPixelSizeX);
 	}
 	else if ((int)Anchor & (int)GUIAnchor::CENTER)
 	{
-		x = (int)((X * unitPixelSizeX) - (width*0.5f));
+		x = ((X * unitPixelSizeX) - (width*0.5f));
 	}
 	else if ((int)Anchor & (int)GUIAnchor::RIGHT)
 	{
-		x = (int)(X * unitPixelSizeX - width);
+		x = (X * unitPixelSizeX - width);
 	}
 	else { assert(false); }
 	if (x < 0)
@@ -207,15 +207,15 @@ CGUIManager::SGUIPosition::SGUIPosition(float X, float Y, float Width, float Hei
 
 	if ((int)Anchor & (int)GUIAnchor::TOP)
 	{
-		y = (int)(Y * unitPixelSizeY);
+		y = (Y * unitPixelSizeY);
 	}
-	else if ((int)Anchor & (int)GUIAnchor::MID)
+	else if (Anchor & (int)GUIAnchor::MID)
 	{
-		y = (int)((Y * unitPixelSizeY) - (height*0.5f));
+		y = ((Y * unitPixelSizeY) - (height*0.5f));
 	}
-	else if ((int)Anchor & (int)GUIAnchor::BOTTOM)
+	else if (Anchor & (int)GUIAnchor::BOTTOM)
 	{
-		y = (int)(Y * unitPixelSizeY - height);
+		y = (Y * unitPixelSizeY - height);
 	}
 	else { assert(false); }
 	if (y < 0)
@@ -501,8 +501,8 @@ void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, 
 	SSpriteInfo* l_Sprite = l_Image->sprite;
 
 	{
-		SGUICommand l_Command = { l_Sprite, Position.x, Position.y, Position.x + Position.width, Position.y + Position.height
-		, 0, 0, 1, 1,
+		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
+		, 0.0f, 0.0f, 1.0f, 1.0f,
 		CColor(1.0f, 1.0f, 1.0f, 1.0f) };
 		m_Commands.push_back(l_Command);
 	}
@@ -550,8 +550,8 @@ bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID
 	}
 
 	{
-		SGUICommand l_Command = { l_Sprite, Position.x, Position.y, Position.x + Position.width, Position.y + Position.height
-		, 0, 0, 1, 1,
+		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
+		,0.0f,0.0f,1.0f,1.0f,
 		CColor(1.0f,1.0f,1.0f,1.0f) };
 		m_Commands.push_back(l_Command);
 	}
@@ -621,7 +621,7 @@ CGUIManager::SSliderResult CGUIManager::DoSlider(const std::string& GuiID, const
 		{
 			SetHot(GuiID);
 		}
-		else if (IsMouseInside(m_MouseX, m_MouseY, l_RealHandleX, l_RealHandleY, int(l_RealHandleWidth), int(l_RealHandleHeight)))
+		else if (IsMouseInside(m_MouseX, m_MouseY, (float)l_RealHandleX, (float)l_RealHandleY, l_RealHandleWidth, l_RealHandleHeight))
 		{
 			SetHot(GuiID);
 		}

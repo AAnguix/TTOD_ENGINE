@@ -3,6 +3,7 @@
 
 #include <string>
 #include "XML\XMLTreeNode.h"
+class CEmptyPointerClass;
 
 class CNamed
 {
@@ -14,6 +15,8 @@ public:
 	CNamed(const std::string &Name);
 	virtual void SetName(const std::string &Name);
 	virtual const std::string &GetName();
+
+	virtual CEmptyPointerClass* GetNameLuaAddress() const;
 };
 
 #endif

@@ -141,6 +141,11 @@ void CRenderManager::Render(CContextManager* _Context/*, CMaterialManager* _Mate
 	m_CurrentRenderlistLength = 0;
 }
 
+CFrustum CRenderManager::GetFrustum() const
+{
+	return m_CullFrustum;
+}
+
 void CRenderManager::DrawScreenQuad(CEffectTechnique *EffectTechnique, CTexture *Texture, float x, float y, float Width, float Height, const CColor &Color)
 {
 	CEffectManager::m_SceneEffectParameters.m_BaseColor=Color;

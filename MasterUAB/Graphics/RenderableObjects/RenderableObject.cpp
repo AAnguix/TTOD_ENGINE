@@ -36,6 +36,16 @@ bool CRenderableObject::AddComponent(CComponent *Component)
 	return m_ComponentManager->AddComponent(Component);
 }
 
+void CRenderableObject::RemoveComponent(const std::string &ComponentName)
+{
+	m_ComponentManager->RemoveResource(ComponentName);
+}
+
+void CRenderableObject::RemoveComponents()
+{
+	m_ComponentManager->Destroy();
+}
+
 CAnimatorController* CRenderableObject::GetAnimatorController() const
 {
 	return (CAnimatorController*)m_ComponentManager->GetResource("AnimatorController");
@@ -52,4 +62,11 @@ CLUAComponent* CRenderableObject::GetFirstLuaComponent() const
 	CLUAComponent* l_FirstComponent = m_LuaComponents.size() > 0 ? m_LuaComponents[0]:nullptr;
 	return l_FirstComponent;
 }
+
+void CRenderableObject::RemoveLuaComponents()
+{
+	m_LuaComponents.clear();
+}
+
+
 	

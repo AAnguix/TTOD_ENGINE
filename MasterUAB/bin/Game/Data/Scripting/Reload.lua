@@ -36,12 +36,16 @@ function Reload()
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("RELOAD_LUA") then
-		CEngine.GetSingleton():GetDebugHelper():RemoveBar()
-
-		ReloadLog()
-		dofile(g_CurrentLuaMainFile)
-		LuaMain()
+		ReloadLua()
 	end
+end
+
+function ReloadLua()
+	CEngine.GetSingleton():GetDebugHelper():RemoveBar()
+	ReloadLog()
+	dofile(g_CurrentLuaMainFile)
+	LuaMain()
+	g_GameController:Reload()
 end
 
 function ReloadScene()

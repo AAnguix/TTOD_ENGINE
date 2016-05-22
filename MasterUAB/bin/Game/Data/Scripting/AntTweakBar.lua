@@ -47,32 +47,8 @@ function OpenRenderableObjectTechniques()
 	ClickOnElement("ROTechniques")
 end
 
-function OpenMaterials()
-	ClickOnElement("Materials")
-	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
-	local l_Materials=CEngine.GetSingleton():GetMaterialManager():GetLUAMaterials()
-	for l_Material in l_Materials do
-		l_DebugHelper:RegisterButton(l_Material:GetName(),"OpenMaterial('"..l_Material:GetName().."')")
-	end
-end
-
-function OpenMaterial(MaterialName)
-	ClickOnElement(MaterialName)
-	local l_Material = CEngine.GetSingleton():GetMaterialManager():GetResource(MaterialName)
-	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
-	local l_Parameters = l_Material:GetParameters()
-	for l_Param in l_Parameters do
-		if l_Param:GetMaterialType() == CMaterialParameter.float then
-			l_DebugHelper:RegisterFloatParameter(l_Param:GetName(),l_Param:GetValueLuaAddress(),l_Param:GetDescription())
-		elseif l_Param:GetMaterialType() == CMaterialParameter.vect2f then 
-			l_DebugHelper:RegisterVect2fParameter(l_Param:GetName(),l_Param:GetValueLuaAddress(),l_Param:GetDescription())
-		elseif l_Param:GetMaterialType() == CMaterialParameter.vect3f then 
-			l_DebugHelper:RegisterVect3fParameter(l_Param:GetName(),l_Param:GetValueLuaAddress(),l_Param:GetDescription())
-		elseif l_Param:GetMaterialType() == CMaterialParameter.vect4f then 
-			l_DebugHelper:RegisterVect4fParameter(l_Param:GetName(),l_Param:GetValueLuaAddress(),l_Param:GetDescription())
-		end
-	end
-end
+------------------------------ MATERIALS -------------------------------------------------------------------------
+dofile("./Data/Scripting/AntTweakBarMaterials.lua")
 
 function OpenAnimatedModels()
 	ClickOnElement("Animated Models")
@@ -181,6 +157,8 @@ function AddLightButton(Light)
 	l_DebugHelper:RegisterButton(Light:GetName(),"AddLightParameters('"..Light:GetName().."')")
 end
 
+------------------------------ PARTICLES -------------------------------------------------------------------------
+
 function OpenParticles()
 	ClickOnElement("Particles")
 	local l_ParticleManager=CEngine.GetSingleton():GetLayerManager():GetResource("particles")
@@ -198,12 +176,17 @@ function OpenParticle(ParticleName)
 	local l_ParticleSystem = CEngine.GetSingleton():GetLayerManager():GetResource("particles"):GetResource(ParticleName)
 	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
 	
+	local l_Type = l_ParticleSystem:GetType()
+	local l_Material = l_Type:GetMaterial()
+	l_DebugHelper:RegisterExtendedButton("Size C.P","OpenSizeControlPoints",l_Type:GetThisLuaAddress(),"partycle_system_type")
+	l_DebugHelper:RegisterExtendedButton("Color C.P","OpenColorControlPoints",l_Type:GetThisLuaAddress(),"partycle_system_type")
+	
+	l_DebugHelper:RegisterButton("Material ("..l_Material:GetName()..")","OpenMaterial('"..l_Material:GetName().."')")
+	
 	l_DebugHelper:RegisterVect3fParameter("EmissionBoxHalfSize",l_ParticleSystem:GetEmissionBoxHalfSizeLuaAddress(),"")
 	l_DebugHelper:RegisterFloatParameter("Yaw",l_ParticleSystem:GetYawLuaAddress(),"min=0.0 max=3.14 step=0.01")
 	l_DebugHelper:RegisterFloatParameter("Pitch",l_ParticleSystem:GetPitchLuaAddress(),"min=0.0 max=3.14 step=0.01")
 	l_DebugHelper:RegisterFloatParameter("Roll",l_ParticleSystem:GetRollLuaAddress(),"min=0.0 max=3.14 step=0.01")
-	
-	local l_Type = l_ParticleSystem:GetType()
 	
 	l_DebugHelper:RegisterInt32Parameter("Num.Frames",l_Type:GetNumFramesLuaAddress(),"min=0 max=100 step=1")
 	l_DebugHelper:RegisterFloatParameter("Time/frame",l_Type:GetTimePerFrameLuaAddress(),"min=0.0 max=5.0 step=0.01")
@@ -230,27 +213,123 @@ function OpenParticle(ParticleName)
 	l_DebugHelper:RegisterColorParameter("Color1",l_ParticleSystem:GetType():GetColor1LuaAddress(),"")
 	l_DebugHelper:RegisterColorParameter("Color2",l_ParticleSystem:GetType():GetColor2LuaAddress(),"")
 
-	l_DebugHelper:RegisterButton("Save","WriteParticleInfoToXml('"..l_Type:GetName().."')")
-	--l_DebugHelper:RegisterButton("Save","WriteParticleInfoToXml("l_Type")")
+	l_DebugHelper:RegisterButton("Export[XML]","WriteParticleInfoToXml('"..l_Type:GetName().."')")
+	
+end
+
+function OpenSizeControlPoints(ParticleSystemType)
+	ClickOnElement("Size Control Points")
+	local l_ControlPointsSize=ParticleSystemType:GetLUAControlPointsSize()
+	for l_ControlPointSize in l_ControlPointsSize do
+		-- g_DebugHelper:RegisterVect2fParameter("Size",l_ControlPointSize:GetSizeLuaAddress(),"")
+		-- g_DebugHelper:RegisterVect2fParameter("Time",l_ControlPointSize:GetTimeLuaAddress(),"")
+		l_DebugHelper:RegisterExtendedButton("Add C.P","AddControlPointSize",ParticleSystemType,"partycle_system_type")
+	end
+end
+
+function AddControlPointSize(ParticleSystemType)
+	ParticleSystemType:AddControlPointSize(Vect2f(0.0,0.0),Vect2f(0.0,0.0))
+	OpenSizeControlPoints(ParticleSystemType)
+end
+
+function OpenColorControlPoints(ParticleSystemType)
+	ClickOnElement("Color Control Points")
+	local l_ControlPointsColor = ParticleSystemType:GetLUAControlPointsColor()
+	for l_ControlPointColor in l_ControlPointsColor do
+		-- g_DebugHelper:RegisterVect2fParameter("Size",l_ControlPointSize:GetSizeLuaAddress(),"")
+		-- g_DebugHelper:RegisterVect2fParameter("Time",l_ControlPointSize:GetTimeLuaAddress(),"")
+		-- g_DebugHelper:RegisterExtendedButton("Add C.P","AddControlPointColor",ParticleSystemType,"partycle_system_type")
+	end
+end
+
+function AddControlPointColor(ParticleSystemType)
+	ParticleSystemType:AddControlPointColor(Vect2f(0.0,0.0),CColor(0.0,0.0,0.0,1.0),CColor(0.0,0.0,0.0,1.0))
+	OpenColorControlPoints(ParticleSystemType)
 end
 
 function WriteParticleInfoToXml(Type)
 	
-	--local Filename = "Data\Level"..g_CurrentLevel.."\particles_systems.xml"
-	local l_Type = g_ParticleSystemManager:GetResource(Type)
-	local Filename = "Data/Level1/particles_systems.xml"
-	local l_XMLTreeNode=CXMLTreeNode()
-	local l_Loaded=l_XMLTreeNode:LoadFile(Filename)
-	if l_Loaded then
-		for i=0, l_XMLTreeNode:GetNumChildren() do
-			local l_Element=l_XMLTreeNode:GetChild(i)
-			if l_Element:GetName() == "particle_system" and l_Element:GetPszProperty("name", "", false) == Type then
-				g_LogManager:Log("siiiiii")
-				l_Element:WriteIntProperty("num_frames", l_Type:GetNumFramesLuaAddress())
-				l_Element:WriteBoolProperty("loop_frames", l_Type:GetLoopLuaAddress())
-			end
-		end
-	else
-		print("File '"..Filename.."'not correctly loaded")
+	local Filename = "Data/Level"..g_CurrentLevel.."/particles_systems_WRITTING.xml"
+	--local Filename = "Data/Level1/particles_systems.xml"
+	
+	local l_Writer = CTTODXMLWriter()
+	l_Writer:StartFile(Filename)
+	l_Writer:StartElement("particle_systems", false)
+	local l_ParticleSystems=g_ParticleSystemManager:GetLUAParticles()
+	for l_ParticleSystem in l_ParticleSystems do
+		WriteParticleSystemInfo(l_Writer, l_ParticleSystem)
 	end
+	l_Writer:EndElement()
+	l_Writer:EndFile()
+	
+	-- local l_XMLTreeNode=CXMLTreeNode()
+	-- local l_Created = l_XMLTreeNode:StartNewFile(Filename)
+		-- if l_Created then
+			-- l_XMLTreeNode:StartElement("particle_systems")
+				-- local l_ParticleSystems=g_ParticleSystemManager:GetLUAParticles()
+				-- for l_ParticleSystem in l_ParticleSystems do
+					-- WriteParticleSystemInfo(l_XMLTreeNode, l_ParticleSystem)
+				-- end
+			-- l_XMLTreeNode:EndElement()
+		-- l_XMLTreeNode:EndNewFile()
+		-- else
+			-- print("File '"..Filename.."'not correctly loaded")
+		-- end
 end
+
+function WriteParticleSystemInfo(Writer, l_Type)
+	Writer:StartElement("particle_system", true)
+		Writer:WriteIntProperty("num_frames", l_Type.m_NumFrames)
+		Writer:WriteFloatProperty("time_per_frame", l_Type.m_TimerPerFrame)
+		Writer:WriteBoolProperty("loop_frames", l_Type.m_LoopFrames)
+		Writer:WriteBoolProperty("emit_absolute", l_Type.m_EmitAbsolute)
+			
+		Writer:WriteFloatProperty("starting_dir_angle", l_Type.m_StartingDirectionAngle)
+		Writer:WriteFloatProperty("starting_acc_angle", l_Type.m_StartingAccelerationAngle)
+		Writer:WriteVect2fProperty("size", l_Type.m_Size)
+			
+		Writer:WriteVect2fProperty("emit_rate", l_Type.m_EmitRate)
+		Writer:WriteVect2fProperty("awake_time", l_Type.m_AwakeTime)
+		Writer:WriteVect2fProperty("sleep_time", l_Type.m_SleepTime)
+		Writer:WriteVect2fProperty("life", l_Type.m_Life)
+			
+		Writer:WriteVect2fProperty("starting_angle", l_Type.m_StartingAngle)
+		Writer:WriteVect2fProperty("starting_ang_speed", l_Type.m_StartingAngularSpeed)
+		Writer:WriteVect2fProperty("angular_acc", l_Type.m_AngularAcceleration)
+		
+		Writer:WriteVect3fProperty("starting_speed_1", l_Type.m_StartingSpeed1)
+		Writer:WriteVect3fProperty("starting_speed_2", l_Type.m_StartingSpeed2)
+		Writer:WriteVect3fProperty("starting_acc_1", l_Type.m_StartingAcceleration1)
+		Writer:WriteVect3fProperty("starting_acc_2", l_Type.m_StartingAcceleration2)
+		
+		local l_Color1 = Vect4f(l_Type.m_Color1:GetArgb())
+		local l_Color2 = Vect4f(l_Type.m_Color2:GetArgb())
+		Writer:WriteVect4fProperty("color1", l_Color1)
+		Writer:WriteVect4fProperty("color2", l_Color2)
+	Writer:EndElement()	
+end
+
+-- function WriteParticleInfoToXml(Type)
+	
+	-- --local Filename = "Data\Level"..g_CurrentLevel.."\particles_systems.xml"
+	-- local l_Type = g_ParticleSystemManager:GetResource(Type)
+	-- local Filename = "Data/Level1/particles_systems.xml"
+	-- local l_XMLTreeNode=CXMLTreeNode()
+	-- local l_Loaded=l_XMLTreeNode:LoadFile(Filename)
+	-- if l_Loaded then
+	-- local l_Write = CXMLTreeNode()
+	-- local l_CanWrite = l_Write:StartNewFile(Filename)
+		-- g_LogManager:Log("Loaded")
+		-- for i=0, l_XMLTreeNode:GetNumChildren() do
+			-- g_LogManager:Log("child")
+			-- local l_Element=l_XMLTreeNode:GetChild(i)
+			-- if l_Element:GetName() == "particle_system" and l_Element:GetPszProperty("name", "", false) == Type then
+				-- g_LogManager:Log("child")
+				-- l_Element:WriteIntProperty("num_frames", l_Type.m_NumFrames)
+				-- --l_Element:WriteBoolProperty("loop_frames", l_Type:GetLoopLuaAddress())
+			-- end
+		-- end
+	-- else
+		-- print("File '"..Filename.."'not correctly loaded")
+	-- end
+-- end

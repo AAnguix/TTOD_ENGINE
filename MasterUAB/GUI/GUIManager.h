@@ -165,16 +165,16 @@ private:
 	
 	MV_POSITION4_COLOR_TEXTURE_VERTEX m_CurrentBufferData[s_MaxVerticesPerCall];
 
-	unsigned int m_ScreenWidth;
-	unsigned int m_ScreenHeight;
+	float m_ScreenWidth;
+	float m_ScreenHeight;
 
 	std::string m_Filename;
 	std::string m_ActiveItem;
 	std::string m_HotItem;
 	std::string m_SelectedItem;
 
-	unsigned int m_MouseX;
-	unsigned int m_MouseY;
+	float m_MouseX;
+	float m_MouseY;
 	bool m_InputUpToDate;
 
 	bool m_MouseWentPressed;
@@ -199,7 +199,7 @@ private:
 	SButtonInfo* GetButton(const std::string& ButtonID);
 	SImageInfo* GetImage(const std::string& ImageID);
 
-	bool IsMouseInside(unsigned int MouseX, unsigned int MouseY, unsigned int X, unsigned int Y, unsigned int Width, unsigned int Height);
+	bool IsMouseInside(float MouseX, float MouseY, float X, float Y, float Width, float Height);
 	void SortCommands();
 	void CheckInput();
 
@@ -216,10 +216,10 @@ public:
 	CGUIManager();
 	virtual ~CGUIManager();
 
-	unsigned int GetScreenWidth(){ return m_ScreenWidth; };
-	unsigned int GetScreenHeight(){ return m_ScreenHeight; };
+	float GetScreenWidth(){ return m_ScreenWidth; };
+	float GetScreenHeight(){ return m_ScreenHeight; };
 
-	void Initialize(unsigned int ScreenWidth, unsigned int ScreenHeight);
+	void Initialize(float ScreenWidth, float ScreenHeight);
 	void Load(const std::string &Filename);
 	void Reload();
 	void Render(CRenderManager* RenderManager);

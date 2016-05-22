@@ -2,7 +2,7 @@
 #define _ANIMATORCONTROLLERFLOATPARAMETER_H
 
 #include <string>
-#include "Animation\AnimatorControllerParameter.h"
+#include "Components\AnimatorController\AnimatorControllerParameter.h"
 
 class CAnimatorControllerFloatParameter : CAnimatorControllerParameter
 {
@@ -12,9 +12,9 @@ private:
 	float m_Value;
 
 public:
-	CAnimatorControllerFloatParameter(const std::string &Name, const float &Value);
+	CAnimatorControllerFloatParameter(const std::string &Name, float Value);
 	virtual ~CAnimatorControllerFloatParameter();
-	void UpdateParameter(const float &Value);
+	void UpdateParameter(float Value);
 };
 
 #endif

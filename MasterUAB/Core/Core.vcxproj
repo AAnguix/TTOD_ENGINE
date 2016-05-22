@@ -16,6 +16,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Components\AnimatorController\AnimatorController.cpp" />
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerBoolParameter.cpp" />
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerFloatParameter.cpp" />
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerIntegerParameter.cpp" />
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerTriggerParameter.cpp" />
     <ClCompile Include="Components\AnimatorController\State.cpp" />
     <ClCompile Include="Components\AnimatorController\Transition.cpp" />
     <ClCompile Include="Components\AudioSource.cpp" />
@@ -46,6 +50,11 @@
     </ClInclude>
     <ClInclude Include="Components\AnimatorController\Animation.h" />
     <ClInclude Include="Components\AnimatorController\AnimatorController.h" />
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerBoolParameter.h" />
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerFloatParameter.h" />
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerIntegerParameter.h" />
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerParameter.h" />
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerTriggerParameter.h" />
     <ClInclude Include="Components\AnimatorController\State.h" />
     <ClInclude Include="Components\AnimatorController\Transition.h" />
     <ClInclude Include="Components\AudioSource.h" />
