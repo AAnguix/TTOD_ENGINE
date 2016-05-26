@@ -30,6 +30,7 @@
 #include "Components\LuaComponent.h"
 #include "Components\AnimatorController\AnimatorController.h"
 #include "Components\AnimatorController\Transition.h"
+#include "Components\AudioSource.h"
 
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
@@ -241,7 +242,7 @@ void CScriptManager::RegisterCore()
 	module(LUA_STATE)
 	[
 		class_<CDebugHelperImplementation::ClientData>("ClientData")
-		.def(constructor<const std::string, CEmptyPointerClass*, const std::string>())
+		.def(constructor<std::string, CEmptyPointerClass*, std::string>())
 	];
 	module(LUA_STATE)
 	[
@@ -266,6 +267,9 @@ void CScriptManager::RegisterComponents()
 	[
 		class_<CLUAComponent, CLUAComponent_wrapper>("CLUAComponent")
 		.def(constructor<const std::string>())
+		.def("AddTime", &CLUAComponent::AddTime)
+		.def("GetTimer", &CLUAComponent::GetTimer)
+		.def("ResetTimer", &CLUAComponent::ResetTimer)
 		.def("GetType", &CLUAComponent::GetType)
 	];
 
@@ -331,13 +335,6 @@ void CScriptManager::RegisterComponents()
 			def("AddCharacterCollider", &CCharacterCollider::AddCharacterCollider)
 		]
 	];
-	
-	//void AddLUAComponent(CLUAComponent *LuaComponent);
-
-	/*module(LUA_STATE)
-	[
-	def("GetEntity", &GetEntity)
-	];*/
 
 	module(LUA_STATE)
 	[
@@ -382,6 +379,19 @@ void CScriptManager::RegisterComponents()
 		.scope
 		[
 			def("AddAnimatorController", &CAnimatorController::AddAnimatorController)
+		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CAudioSource>("CAudioSource")
+		.def(constructor<const std::string, CRenderableObject*>())
+		.def("RemoveSounds", &CAudioSource::RemoveSounds)
+		.def("PlayEvent", &CAudioSource::PlayEvent)
+		.def("AddSound", &CAudioSource::AddSound)
+		.scope
+		[
+			def("AddAudioSource", &CAudioSource::AddAudioSource)
 		]
 	];
 }

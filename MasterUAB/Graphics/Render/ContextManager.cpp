@@ -121,7 +121,7 @@ HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned i
 		return S_FALSE;
 	}
 
-	m_SwapChain->SetFullscreenState(false, nullptr); //FullScreen
+	m_SwapChain->SetFullscreenState(true, nullptr); //FullScreen
 
 	/*
 	#if _DEBUG

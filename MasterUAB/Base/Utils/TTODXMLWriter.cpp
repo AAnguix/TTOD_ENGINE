@@ -17,13 +17,15 @@ CTTODXMLWriter::CTTODXMLWriter()
 ,m_FirstElementWritten(false)
 ,m_LastWriteElementsCount(0)
 ,m_LastElementHasChilds(false)
+,m_LastElementHasProperties(false)
 {
 	
 }
 
 void CTTODXMLWriter::StartFile(const std::string &Filename)
 {
-	fopen_s(&m_File, Filename.c_str(), "w+t");
+	errno_t l_Error;
+	l_Error = fopen_s(&m_File, Filename.c_str(), "w+t");
 	fprintf(m_File, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
 }
 
@@ -37,6 +39,8 @@ bool CTTODXMLWriter::StartElement(const std::string &ElemName, bool HasPropertie
 	if (!m_FirstElementWritten)
 		fprintf(m_File, "%s", "\n");
 
+	int l_ChildTop = 0;
+
 	m_Elems.push(ElemName);
 	if (!m_Childs.empty())
 	{
@@ -45,12 +49,17 @@ bool CTTODXMLWriter::StartElement(const std::string &ElemName, bool HasPropertie
 		m_Childs.pop();
 
 		m_Childs.push(l_CurrentChilds + 1);
+		l_ChildTop = m_Childs.top();
 	}
 	m_Childs.push(0);
 	
-	if (m_LastWriteElementsCount == 1 && m_FirstElementWritten && m_LastElementHasChilds)
-		fprintf(m_File, ">\n");
-
+	//if (m_LastWriteElementsCount == 1 && m_FirstElementWritten && m_LastElementHasChilds)
+	//if (m_FirstElementWritten && m_LastElementHasChilds && m_LastElementHasProperties && m_LastWriteElementsCount == 1)
+	if (m_FirstElementWritten && m_LastElementHasChilds && m_LastElementHasProperties && l_ChildTop==1)
+	{
+		fprintf(m_File, ">");
+		fprintf(m_File, "\n");
+	}
 	m_LastWriteElementsCount = m_Elems.size();
 	
 	//if (m_Elems.size()==2 && m_Childs.size() == 2)
@@ -59,11 +68,14 @@ bool CTTODXMLWriter::StartElement(const std::string &ElemName, bool HasPropertie
 	WriteTabs();
 	if (HasProperties)
 	{
+		m_LastElementHasProperties = true;
 		fprintf(m_File, "<%s", ElemName.c_str());
 	}
 	else 
 	{
+		m_LastElementHasProperties = false;
 		fprintf(m_File, "<%s>", ElemName.c_str());
+		fprintf(m_File, "\n");
 	}
 	++m_CurrentTabs;
 

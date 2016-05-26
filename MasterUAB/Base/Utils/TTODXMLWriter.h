@@ -16,9 +16,11 @@ private:
 	std::stack<std::string> m_Elems;
 	int m_CurrentTabs;
 	bool m_FirstElementWritten;
+	
 	int m_LastWriteElementsCount;
 	bool m_LastElementHasChilds;
-	
+	bool m_LastElementHasProperties;
+
 	bool WriteTabs();
 
 public:

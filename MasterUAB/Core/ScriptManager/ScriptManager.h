@@ -16,6 +16,7 @@ class CScriptManager
 private:
 	lua_State *m_LS;
 	void RegisterGraphics();
+	void RegisterRender();
 	void RegisterAnimations();
 	void RegisterCamera();
 	void RegisterCinematics();

@@ -7,6 +7,8 @@ class CXMLTreeNode;
 
 class CSetLightConstantsSceneRendererCommand : public CSceneRendererCommand 
 { 
+	size_t m_MaxLights;
+
 	public:  
 		CSetLightConstantsSceneRendererCommand(CXMLTreeNode &TreeNode);  
 		void Execute(CRenderManager &RenderManager); 

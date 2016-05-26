@@ -61,17 +61,7 @@ using namespace luabind;
 
 void CScriptManager::RegisterGraphics()
 {
-	module(LUA_STATE)
-	[
-		class_<CRenderManager>("CRenderManager")
-		.def(constructor<CContextManager*>())
-		.def("SetCurrentCamera", &CRenderManager::SetCurrentCamera)
-		.def("SetDebugCamera", &CRenderManager::SetDebugCamera)
-		.def("AddRenderableObjectToRenderList", &CRenderManager::AddRenderableObjectToRenderList)
-		.def("Render", &CRenderManager::Render)
-		.def("GetContextManager", &CRenderManager::GetContextManager)
-	];
-
+	RegisterRender();
 	RegisterCamera();
 	RegisterEffects();
 	RegisterLights();
@@ -83,6 +73,42 @@ void CScriptManager::RegisterGraphics()
 	RegisterSceneRendererCommands();
 }
 
+void CScriptManager::RegisterRender()
+{
+	module(LUA_STATE)
+	[
+		class_<CRenderManager>("CRenderManager")
+		.def(constructor<CContextManager*>())
+		.def("SetCurrentCamera", &CRenderManager::SetCurrentCamera)
+		.def("SetDebugCamera", &CRenderManager::SetDebugCamera)
+		.def("AddRenderableObjectToRenderList", &CRenderManager::AddRenderableObjectToRenderList)
+		.def("Render", &CRenderManager::Render)
+		.def("GetContextManager", &CRenderManager::GetContextManager)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CContextManager>("CContextManager")
+		.def(constructor<>())
+
+		.def("Resize", &CContextManager::Resize)
+		.def("GetAspectRatio", &CContextManager::GetAspectRatio)
+		
+		.def("Draw", &CContextManager::Draw)
+		.def("DrawIndexed", &CContextManager::DrawIndexed)
+		
+		.def("GetDevice", &CContextManager::Resize)
+		.def("GetDeviceContext", &CContextManager::Resize)
+
+		.def("SetBaseColor", &CContextManager::SetBaseColor)
+		.def("SetWorldMatrix", &CContextManager::SetWorldMatrix)
+		.def("GetViewPort", &CContextManager::GetViewPort)
+	
+		.def("GetFrameBufferWidth", &CContextManager::GetFrameBufferWidth)
+		.def("GetFrameBufferHeight", &CContextManager::GetFrameBufferHeight)
+	];
+}
+
 void CScriptManager::RegisterAnimations()
 {
 	module(LUA_STATE)
@@ -91,6 +117,7 @@ void CScriptManager::RegisterAnimations()
 		.def(constructor<>())
 		.def("GetMaterials", &CAnimatedCoreModel::GetMaterials)
 		.def("GetCoreModel", &CAnimatedCoreModel::GetCoreModel)
+		.def("GetBoneId", &CAnimatedCoreModel::GetBoneId)
 		.def("Load", &CAnimatedCoreModel::Load)
 	];
 
@@ -537,6 +564,7 @@ void CScriptManager::RegisterMaterials()
 		.def("Load", &CMaterialManager::Load)
 		.def("Reload", &CMaterialManager::Reload)
 		.def("GetLUAMaterials", &CMaterialManager::GetLUAMaterials, return_stl_iterator)
+		.def("GetLUAFileNameMaterials", &CMaterialManager::GetLUAFileNameMaterials, return_stl_iterator)
 	];
 
 	module(LUA_STATE)
@@ -645,6 +673,12 @@ void CScriptManager::RegisterParticles()
 		.def(constructor<CXMLTreeNode>())
 		.def("GetMaterial", &CParticleSystemType::GetMaterial)
 		.def("GetLUAControlPointsSize", &CParticleSystemType::GetLUAControlPointsSize, return_stl_iterator)
+		.def("GetLUAControlPointsColor", &CParticleSystemType::GetLUAControlPointsColor, return_stl_iterator)
+		
+		.def("GetLUAControlPointsSizeSize", &CParticleSystemType::GetLUAControlPointsSizeSize)
+		.def("GetLUAControlPointsColorSize", &CParticleSystemType::GetLUAControlPointsColorSize)
+
+		//.def("size", &CTemplatedMapManager<CParticleSystemType>::TMapResource::size)
 		.def("AddControlPointSize", &CParticleSystemType::AddControlPointSize)
 
 		.def("GetNumFramesLuaAddress", &CParticleSystemType::GetNumFramesLuaAddress)
@@ -699,23 +733,37 @@ void CScriptManager::RegisterParticles()
 
 		.def_readonly("m_Color1", &CParticleSystemType::m_Color1)
 		.def_readonly("m_Color2", &CParticleSystemType::m_Color2)
+
+		.def("GetControlPointColorTimeLuaAddress", &CParticleSystemType::GetControlPointColorTimeLuaAddress)
+		.def("GetControlPointColorColor1LuaAddress", &CParticleSystemType::GetControlPointColorColor1LuaAddress)
+		.def("GetControlPointColorColor2LuaAddress", &CParticleSystemType::GetControlPointColorColor2LuaAddress)
+
+		.def("GetControlPointSizeTimeLuaAddress", &CParticleSystemType::GetControlPointSizeTimeLuaAddress)
+		.def("GetControlPointSizeSizeLuaAddress", &CParticleSystemType::GetControlPointSizeSizeLuaAddress)
 	];
 
 	module(LUA_STATE)
 	[
 		class_<CParticleSystemType::ControlPointColor>("ControlPointColor")
 		.def(constructor<CColor, CColor, Vect2f>())
-		.def("GetTimeLuaAddress", &CParticleSystemType::ControlPointColor::GetTimeLuaAddress)
+		.def_readonly("m_Color1", &CParticleSystemType::ControlPointColor::m_Color1)
+		.def_readonly("m_Color2", &CParticleSystemType::ControlPointColor::m_Color2)
+		.def_readonly("m_Time", &CParticleSystemType::ControlPointColor::m_Time)
+	/*	.def("GetTimeLuaAddress", &CParticleSystemType::ControlPointColor::GetTimeLuaAddress)
 		.def("GetColor1LuaAddress", &CParticleSystemType::ControlPointColor::GetColor1LuaAddress)
 		.def("GetColor2LuaAddress", &CParticleSystemType::ControlPointColor::GetColor2LuaAddress)
+		.def("GetThisLuaAddress", &CParticleSystemType::ControlPointColor::GetThisLuaAddress)*/
 	];
 
 	module(LUA_STATE)
 	[
 		class_<CParticleSystemType::ControlPointSize>("ControlPointSize")
 		.def(constructor<Vect2f, Vect2f>())
-		.def("GetSizeLuaAddress", &CParticleSystemType::ControlPointSize::GetSizeLuaAddress)
+		.def_readonly("m_Size", &CParticleSystemType::ControlPointSize::m_Size)
+		.def_readonly("m_Time", &CParticleSystemType::ControlPointSize::m_Time)
+		/*.def("GetSizeLuaAddress", &CParticleSystemType::ControlPointSize::GetSizeLuaAddress)
 		.def("GetTimeLuaAddress", &CParticleSystemType::ControlPointSize::GetTimeLuaAddress)
+		.def("GetThisLuaAddress", &CParticleSystemType::ControlPointSize::GetThisLuaAddress)*/
 	];
 
 	module(LUA_STATE)
@@ -758,6 +806,7 @@ void CScriptManager::RegisterParticles()
 		.def("Load", &CParticleManager::Load)
 		.def("Reload", &CParticleManager::Reload)
 		.def("GetLUAParticles", &CParticleManager::GetLUAParticles, return_stl_iterator)
+		.def("GetDefaultType", &CParticleManager::GetDefaultType)
 	];
 
 }

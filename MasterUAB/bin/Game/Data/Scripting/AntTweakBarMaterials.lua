@@ -51,20 +51,53 @@ end
 
 function WriteMaterialsInfoToXml()
 
-	local Filename = "Data/Level"..g_CurrentLevel.."/materials_WRITTING.xml"
+	local l_MaterialsFilename = "Data/Level"..g_CurrentLevel.."/materials.xml"
+	local l_EffectsMaterialsFilename = "Data/effects_materials.xml"
+	local l_GuiMaterialsFilename = "Data/gui_materials.xml"
+	
+	WriteMaterialsVectorToXml(l_MaterialsFilename)
+	WriteMaterialsVectorToXml(l_EffectsMaterialsFilename)
+	WriteMaterialsVectorToXml(l_GuiMaterialsFilename)
+	
+	
+	-- local l_Writer = CTTODXMLWriter()
+	-- l_Writer:StartFile(l_MaterialsFilename)
+		-- l_Writer:StartElement("materials", false)
+			-- --local l_Materials=CEngine.GetSingleton():GetMaterialManager():GetLUAMaterials()
+			-- local l_Materials=CEngine.GetSingleton():GetMaterialManager():GetLUAFileNameMaterials("")
+			
+			-- for l_Material in l_Materials do
+				-- l_Writer:StartElement("material", true)
+					-- l_Writer:WriteStringProperty("name", l_Material:GetName())
+					-- l_Writer:WriteStringProperty("renderable_object_technique", l_Material:GetRenderableObjectTechnique():GetName())
+					-- --g_LogManager:Log("Material escrito "..l_Material:GetName())
+					
+					-- WriteMaterialTextures(l_Writer, l_Material)
+					-- WriteMaterialParameters(l_Writer, l_Material)
+				-- l_Writer:EndElement()	
+			-- end
+		-- l_Writer:EndElement()	
+	-- l_Writer:EndFile()
+end
+
+function WriteMaterialsVectorToXml(Filename)
+	g_LogManager:Log("Grabando fichero "..Filename)
 	local l_Writer = CTTODXMLWriter()
 	l_Writer:StartFile(Filename)
-		local l_Materials=CEngine.GetSingleton():GetMaterialManager():GetLUAMaterials()
-		for l_Material in l_Materials do
-			l_Writer:StartElement("material", true)
-				l_Writer:WriteStringProperty("name", l_Material:GetName())
-				l_Writer:WriteStringProperty("renderable_object_technique", l_Material:GetRenderableObjectTechnique():GetName())
-				--g_LogManager:Log("Material escrito "..l_Material:GetName())
-				
-				WriteMaterialTextures(l_Writer, l_Material)
-				WriteMaterialParameters(l_Writer, l_Material)
-			l_Writer:EndElement()	
-		end
+		l_Writer:StartElement("materials", false)
+			local l_Materials=CEngine.GetSingleton():GetMaterialManager():GetLUAFileNameMaterials(Filename)
+			
+			for l_Material in l_Materials do
+				l_Writer:StartElement("material", true)
+					l_Writer:WriteStringProperty("name", l_Material:GetName())
+					l_Writer:WriteStringProperty("renderable_object_technique", l_Material:GetRenderableObjectTechnique():GetName())
+					--g_LogManager:Log("Material escrito "..l_Material:GetName())
+					
+					WriteMaterialTextures(l_Writer, l_Material)
+					WriteMaterialParameters(l_Writer, l_Material)
+				l_Writer:EndElement()	
+			end
+		l_Writer:EndElement()	
 	l_Writer:EndFile()
 end
 

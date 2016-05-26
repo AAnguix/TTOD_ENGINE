@@ -145,7 +145,7 @@ end
 
 function ReloadGUI()
 	g_GUIManager:Reload()
-	dofile(g_GuiFile) --Reload GUI___.lua
+	dofile(g_CurrentGuiFile) --Reload GUI___.lua
 	InitializeGUI()
 end
 

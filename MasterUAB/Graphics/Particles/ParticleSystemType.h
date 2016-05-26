@@ -20,17 +20,14 @@ public:
 		Vect2f m_Time;
 		CColor m_Color1, m_Color2;
 		ControlPointColor(CColor Color1, CColor Color2, Vect2f Time) :m_Color1(Color1), m_Color2(Color2), m_Time(Time){};
-		CEmptyPointerClass* GetTimeLuaAddress() const;
-		CEmptyPointerClass* GetColor1LuaAddress() const;
-		CEmptyPointerClass* GetColor2LuaAddress() const;
+		//CEmptyPointerClass* GetThisLuaAddress() const;
 	};
 	struct ControlPointSize
 	{
 		Vect2f m_Time;
 		Vect2f m_Size;
 		ControlPointSize(Vect2f Size, Vect2f Time) : m_Size(Size), m_Time(Time){};
-		CEmptyPointerClass* GetTimeLuaAddress() const;
-		CEmptyPointerClass* GetSizeLuaAddress() const;
+		//CEmptyPointerClass* GetThisLuaAddress() const;
 	};
 
 	std::vector<ControlPointColor> m_ControlPointColor;
@@ -85,7 +82,19 @@ public:
 	virtual CEmptyPointerClass* GetThisLuaAddress() const;
 
 	void AddControlPointSize(Vect2f Size, Vect2f Time);
-	std::vector<CParticleSystemType::ControlPointSize> & GetLUAControlPointsSize();
+	
+
+	CEmptyPointerClass* GetControlPointColorTimeLuaAddress(unsigned int index) const;
+	CEmptyPointerClass* GetControlPointColorColor1LuaAddress(unsigned int index) const;
+	CEmptyPointerClass* GetControlPointColorColor2LuaAddress(unsigned int index) const;
+
+	CEmptyPointerClass* GetControlPointSizeTimeLuaAddress(unsigned int index) const;
+	CEmptyPointerClass* GetControlPointSizeSizeLuaAddress(unsigned int index) const;
+
+	std::vector<CParticleSystemType::ControlPointSize>&  GetLUAControlPointsSize();
+	std::vector<CParticleSystemType::ControlPointColor>&  GetLUAControlPointsColor();
+	int  CParticleSystemType::GetLUAControlPointsSizeSize() const;
+	int  CParticleSystemType::GetLUAControlPointsColorSize() const;
 	
 };
 

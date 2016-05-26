@@ -111,7 +111,7 @@ void CApplication::Initialize(HWND Hwnd)
 
 	m_RenderManager.InitializeDebugRender();
 
-	//l_Engine.GetSoundManager()->SetPath("./Data/Audio/Soundbanks/");
+//	l_Engine.GetSoundManager()->SetPath("./Data/Audio/Soundbanks/");
 	//l_Engine.GetSoundManager()->Init();
 
 	CEngine::GetSingleton().GetSceneRendererCommandManager()->Load("./Data/scene_renderer_commands.xml");
@@ -147,8 +147,12 @@ void CApplication::Update(float ElapsedTime)
 		CEngine::GetSingleton().GetLayerManager()->Update(ElapsedTime);
 	}
 
-	//CCamera l_camera = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera();
-	//CEngine::GetSingleton().GetSoundManager()->Update(&l_camera);
+	CCamera l_camera = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera();
+
+	ISoundManager* l_SoundManager = CEngine::GetSingleton().GetSoundManager();
+	assert(l_SoundManager != nullptr);
+	if (l_SoundManager != nullptr)
+		l_SoundManager->Update(&l_camera);
 
 	//CEngine::GetSingleton().GetLogManager()->Log(boost::lexical_cast<string>(ElapsedTime));
 

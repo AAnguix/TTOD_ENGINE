@@ -3,28 +3,29 @@
 #include "Utils\3DElement.h"
 #include "XML\XMLTreeNode.h"
 #include "Camera.h"
+#include <assert.h>
 
 namespace AK
 {
-	#ifdef WIN32
-		void * AllocHook(size_t in_size)
-		{
-			return malloc(in_size);
-		}
-		void FreeHook(void * in_ptr)
-		{
-			free(in_ptr);
-		}
+#ifdef WIN32
+	void * AllocHook(size_t in_size)
+	{
+		return malloc(in_size);
+	}
+	void FreeHook(void * in_ptr)
+	{
+		free(in_ptr);
+	}
 
-		void * VirtualAllocHook(void * in_pMemAddress, size_t in_size, DWORD in_dwAllocationType, DWORD in_dwProtect)
-		{
-			return VirtualAlloc(in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect);
-		}
-		void VirtualFreeHook(void * in_pMemAddress, size_t in_size, DWORD in_dwFreeType)
-		{
-			VirtualFree(in_pMemAddress, in_size, in_dwFreeType);
-		}
-	#endif
+	void * VirtualAllocHook(void * in_pMemAddress, size_t in_size, DWORD in_dwAllocationType, DWORD in_dwProtect)
+	{
+		return VirtualAlloc(in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect);
+	}
+	void VirtualFreeHook(void * in_pMemAddress, size_t in_size, DWORD in_dwFreeType)
+	{
+		VirtualFree(in_pMemAddress, in_size, in_dwFreeType);
+	}
+#endif
 }
 
 ISoundManager* ISoundManager::CreateSoundManager()
@@ -34,7 +35,7 @@ ISoundManager* ISoundManager::CreateSoundManager()
 
 CSoundManager::CSoundManager() : m_SoundBanksFilename(""), m_SpeakersFilename(""), m_InitOk(false)
 {
-	
+
 }
 
 CSoundManager::~CSoundManager()
@@ -158,8 +159,8 @@ void CSoundManager::RegisterSpeaker(const C3DElement* Speaker)
 	float l_Yaw = Speaker->GetYaw();
 	float l_Pitch = Speaker->GetPitch();
 
-	//Vect3f l_Orientation(cos(l_Yaw)*cos(l_Pitch), sin(l_Pitch), sin(l_Yaw)*cos(l_Pitch));
-	Vect3f l_Orientation = Speaker->GetForward(); 
+	Vect3f l_Orientation(cos(l_Yaw)*cos(l_Pitch), sin(l_Pitch), sin(l_Yaw)*cos(l_Pitch));
+	//Vect3f l_Orientation = Speaker->GetForward(); TODO
 
 	AkSoundPosition l_SoundPosition = {};
 	l_SoundPosition.Position.X = l_Position.x;
@@ -200,7 +201,7 @@ void CSoundManager::Terminate()
 void CSoundManager::Clean()
 {
 	AK::SoundEngine::ClearBanks();
-	
+
 	std::unordered_map<std::string, AkGameObjectID>::iterator it;
 	for (it = m_NamedSpeakers.begin(); it != m_NamedSpeakers.end(); it++)
 	{
@@ -230,11 +231,13 @@ bool CSoundManager::Init()
 	AK::SoundEngine::GetDefaultPlatformInitSettings(l_PlatformInitSettings);
 
 	//Setting pool sizes for this game
+	//Memoria usada para todos los sonidos que se cargan en el juego
 	l_InitSettings.uDefaultPoolSize = 4 * 1024 * 1024;
 	l_InitSettings.uMaxNumPaths = 16;
 	l_InitSettings.uMaxNumTransitions = 128;
 
-	l_PlatformInitSettings.uLEngineDefaultPoolSize = 2 * 1024 * 1024;
+	//Memoria usada para todos los sonidos reproducidos simultaneamente
+	l_PlatformInitSettings.uLEngineDefaultPoolSize = 4 * 1024 * 1024;
 
 	AkMusicSettings l_MusicInit;
 	AK::MusicEngine::GetDefaultInitSettings(l_MusicInit);
@@ -246,7 +249,7 @@ bool CSoundManager::Init()
 		AK::SOUNDENGINE_DLL::Term();
 		return false;
 	}
-	else 
+	else
 	{
 		m_InitOk = true;
 	}
@@ -284,7 +287,7 @@ void CSoundManager::Update(const CCamera *Camera)
 		Vect3f l_Position = it->first->GetPosition();
 		float l_Yaw = it->first->GetYaw();
 		float l_Pitch = it->first->GetPitch();
-		
+
 		Vect3f l_Orientation(cos(l_Yaw)*cos(l_Pitch), sin(l_Pitch), sin(l_Yaw)*cos(l_Pitch));
 
 		AkSoundPosition l_SoundPosition = {};
@@ -330,29 +333,6 @@ void CSoundManager::SetListenerPosition(const CCamera *Camera)
 
 bool CSoundManager::LoadSoundBanksXML()
 {
-	/*CXMLTreeNode l_XML;
-
-	if (l_XML.LoadFile((m_Path+m_SoundBanksFilename).c_str()))
-	{
-		CXMLTreeNode l_Soundbanks = l_XML["soundbanks"];
-
-		if (l_Soundbanks.Exists())
-		{
-			for (int i = 0; i < l_Soundbanks.GetNumChildren(); ++i)
-			{
-				CXMLTreeNode l_Element = l_Soundbanks(i);
-
-				if (l_Element.GetName() == std::string("sound_bank"))
-				{
-					std::string l_Bank = l_Element.GetPszProperty("name", "");
-					LoadSoundBank(l_Bank);
-				}
-			}
-		}
-	}
-
-	return true;*/
-
 	CXMLTreeNode l_XML;
 
 	if (l_XML.LoadFile((m_Path + m_SoundBanksFilename).c_str()))
@@ -367,35 +347,31 @@ bool CSoundManager::LoadSoundBanksXML()
 
 				if (l_Element.GetName() == std::string("SoundBank"))
 				{
-					int l_SoundBankID = l_Element.GetIntProperty("Id", 0);
-					if (l_SoundBankID != 1355168291)
+
+					for (int j = 0; j < l_Element.GetNumChildren(); ++j)
 					{
+						CXMLTreeNode l_SoundBankElement = l_Element(j);
 
-						//std::string l_Bank = l_Element.GetPszProperty("name", "");
-						//LoadSoundBank(l_Bank);
-						for (int j = 0; j < l_Element.GetNumChildren(); ++j)
+						if (l_SoundBankElement.GetName() == std::string("Path"))
 						{
-							CXMLTreeNode l_SoundBankElement = l_Element(j);
-
-							if (l_SoundBankElement.GetName() == std::string("Path"))
+							std::string l_Path = l_SoundBankElement.GetPszKeyword("Path");
+							if (l_Path != "Init.bnk")
+								LoadSoundBank(l_Path);
+						}
+						if (l_SoundBankElement.GetName() == std::string("IncludedEvents"))
+						{
+							for (int k = 0; k < l_SoundBankElement.GetNumChildren(); ++k)
 							{
-
-								/*int l_TestNumChildren = l_SoundBankElement.GetNumChildren();
-								for (int k = 0; k < l_SoundBankElement.GetNumChildren(); ++k)
+								CXMLTreeNode l_SoundEvent = l_SoundBankElement(k);
+								if (l_SoundEvent.GetName() == std::string("Event"))
 								{
-								CXMLTreeNode l_SoundPathElement = l_SoundBankElement(k);
-
-								std::string l_Bank = l_SoundPathElement.GetName();
-								LoadSoundBank(l_Bank);
-
-								}*/
-								LoadSoundBank("SoundBank.bnk");
-
+									std::string l_SoundBankID = l_SoundEvent.GetPszProperty("Name", "");
+									m_SoundEvents.push_back(l_SoundBankID);
+								}
 							}
 						}
-
 					}
-				}//DE PRUEBA BORRAR LUEGO ES LO DEL ID
+				}
 			}
 		}
 	}
@@ -515,6 +491,21 @@ void CSoundManager::SetSwitch(const SoundSwitchValue &SwitchValue, const AkGameO
 }
 void CSoundManager::SetRTPCValue(const SoundRTPC &Rtpc, float Value, const AkGameObjectID& ID)
 {
-	AKRESULT l_Result = AK::SoundEngine::SetRTPCValue(Rtpc.rtpcName.c_str(), AkRtpcValue(Value), ID); 
-	assert (l_Result);
+	AKRESULT l_Result = AK::SoundEngine::SetRTPCValue(Rtpc.m_RtpcName.c_str(), AkRtpcValue(Value), ID);
+	assert(l_Result);
 }
+
+SoundEvent CSoundManager::GetSoundEvent(const std::string &SoundEventName)
+{
+	for (int i = 0; i < m_SoundEvents.size(); i++)
+	{
+		if (SoundEventName == m_SoundEvents[i])
+		{
+			return m_SoundEvents[i];
+		}
+	}
+	assert(false);
+	return SoundEvent("");
+}
+
+

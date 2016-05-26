@@ -53,7 +53,7 @@ function CPedestalComponent:IsPlayerInsideInteractionRange(PlayerPosition)
 end
 
 function CPedestalComponent:Update(ElapsedTime)
-	if self:IsPlayerInsideInteractionRange(GetPlayer():GetPosition()) then
+	if self:IsPlayerInsideInteractionRange(g_Player:GetPosition()) then
 		self:ShowGuiMessage()
 	end
 	if self.m_Activated == true then

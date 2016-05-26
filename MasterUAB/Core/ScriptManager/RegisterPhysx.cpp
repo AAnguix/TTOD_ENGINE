@@ -37,6 +37,20 @@ void CScriptManager::RegisterPhysics()
 		.def("SetMaterialStaticFriction", &CPhysXManager::SetMaterialStaticFriction)
 		.def("SetMaterialDynamicFriction", &CPhysXManager::SetMaterialDynamicFriction)
 		.def("SetMaterialRestitution", &CPhysXManager::SetMaterialRestitution)
+
+		.def("CreateRigidStaticBox", &CPhysXManager::CreateRigidStaticBox)
+		.def("CreateRigidStaticSphere", &CPhysXManager::CreateRigidStaticSphere)
+		.def("CreateRigidStaticCapsule", &CPhysXManager::CreateRigidStaticCapsule)
+		.def("CreateRigidStaticPlane", &CPhysXManager::CreateRigidStaticPlane)
+		.def("CreateRigidStaticConvexMesh", &CPhysXManager::CreateRigidStaticConvexMesh)
+		.def("CreateRigidStaticTriangleMesh", &CPhysXManager::CreateRigidStaticTriangleMesh)
+
+		.def("CreateRigidDynamicBox", &CPhysXManager::CreateRigidDynamicBox)
+		.def("CreateRigidDynamicSphere", &CPhysXManager::CreateRigidDynamicSphere)
+		.def("CreateRigidDynamicCapsule", &CPhysXManager::CreateRigidDynamicCapsule)
+		.def("CreateRigidDynamicConvexMesh", &CPhysXManager::CreateRigidDynamicConvexMesh)
+		
+
 		//.def("DisplacementCharacterController2", &CPhysXManager::DisplacementCharacterController2)
 	];
 	module(LUA_STATE) 

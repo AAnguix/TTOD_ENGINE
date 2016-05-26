@@ -126,7 +126,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Base;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\include;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Base;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\include;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\include;$(SolutionDir)\Core</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

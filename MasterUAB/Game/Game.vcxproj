@@ -69,7 +69,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)_d.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>AkSoundEngineDLL.lib;d3dcompiler.lib;DirectXTK.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXProfileSDKDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;libxml2.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXProfileSDKDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;libxml2.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\lib;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(WindowsSDK_LibraryPath_x86);$(SolutionDir)3rdParty\PhysX\Lib\vc12win32;$(WWISESDK)\Win32_vc120\$(Configuration)\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -89,8 +89,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\lib;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(SolutionDir)3rdParty\PhysX\Lib\vc12win32;$(WWISESDK)\Win32_vc120\$(Configuration)\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>AkSoundEngineDLL.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysXProfileSDK.lib;PhysXVisualDebuggerSDK.lib;PhysX3CharacterKinematic_x86.lib;PhysX3Cooking_x86.lib;libxml2.lib;d3d11.lib;d3dcompiler.lib;d3dx11.lib;d3dx9d.lib;dxerr.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\lib;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(WindowsSDK_LibraryPath_x86);$(SolutionDir)3rdParty\PhysX\Lib\vc12win32;$(WWISESDK)\Win32_vc120\$(Configuration)\lib;$(DXSDK_DIR)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysXProfileSDK.lib;PhysX3CharacterKinematic_x86.lib;PhysX3Cooking_x86.lib;dxerr.lib;libxml2.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;DxErr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

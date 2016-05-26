@@ -7,10 +7,11 @@
 #include <map>
 #include <vector>
 
-class CPhysXManagerImplementation:
+class CPhysXManagerImplementation :
 	public CPhysXManager,
 	public physx::PxSimulationEventCallback,
-	public physx::PxUserControllerHitReport
+	public physx::PxUserControllerHitReport,
+	public physx::PxControllerFilterCallback
 {
 
 public:
@@ -26,11 +27,13 @@ public:
 	void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count);
 
 	// PxUserContrrolerHitReport
-	void onShapeHit(const physx::PxControllerShapeHit& hit){};
-	void onControllerHit(const physx::PxControllersHit& hit){};
-	void onObstacleHit(const physx::PxControllerObstacleHit& hit){};
-	
-	void CreateCharacterController(const std::string &Name, float Height, float Radius, float Density, const Vect3f &Position, const std::string &MaterialName);
+	void onShapeHit(const physx::PxControllerShapeHit& hit);
+	void onControllerHit(const physx::PxControllersHit& hit);
+	void onObstacleHit(const physx::PxControllerObstacleHit& hit);
+
+	void CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName);
+
+	bool filter(const physx::PxController& a, const physx::PxController& b);
 };
 
 #endif

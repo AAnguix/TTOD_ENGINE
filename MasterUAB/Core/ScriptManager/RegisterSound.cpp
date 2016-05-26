@@ -21,6 +21,26 @@ void CScriptManager::RegisterSound()
 		class_<SoundEvent>("SoundEvent")
 		.def(constructor<const std::string>())
 	];
+	module(LUA_STATE)
+	[
+		class_<SoundRTPC>("SoundRTPC")
+		.def(constructor<const std::string>())
+	];
+	module(LUA_STATE)
+	[
+		class_<SoundSwitch>("SoundSwitch")
+		.def(constructor<const std::string>())
+	];
+	module(LUA_STATE)
+	[
+		class_<SoundSwitchValue>("SoundSwitchValue")
+		.def(constructor<const std::string>())
+	];
+	module(LUA_STATE)
+	[
+		class_<SoundStateValue>("SoundStateValue")
+		.def(constructor<const std::string>())
+	];
 
 	module(LUA_STATE)
 	[

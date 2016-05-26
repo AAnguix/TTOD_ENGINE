@@ -2,12 +2,12 @@ class 'CBasicEnemyComponent' (CEnemyComponent)
 function CBasicEnemyComponent:__init(CRenderableObject)
 	CEnemyComponent.__init(self, CRenderableObject, "basic")
 	self.m_Health=100.0
-	self.m_Speed=1.0
-	self.m_AttackDelay=1.0
+	self.m_Speed=1.2
+	self.m_AttackDelay=1.5
+	self.m_AttackRange=0.65
 	self.m_VisionRange=5.0
 	self.m_DelayToPatrol = 3.0
 	
-	self.m_AttackRange=0.65
 	-- self.m_Weapon = CWeapon(10,"knife")
 	-- self.m_Armor = CArmor(5,"basic")
 end
@@ -53,7 +53,7 @@ function CBasicEnemyComponent:Initialize()
 	--l_AttacktoIdle:AddTriggerCondition("GoBackToIdle")
 end
 
-function CBasicEnemyComponent:MoveToPlayerNearestPoint(PlayerPos)
+function CBasicEnemyComponent:MoveToPlayerNearestPoint(PlayerPos, ElapsedTime)
 	
 	local l_Enemy = self.m_RObject
 	local l_EnemyPos = l_Enemy:GetPosition()
@@ -63,24 +63,18 @@ function CBasicEnemyComponent:MoveToPlayerNearestPoint(PlayerPos)
 	
 	local l_Forward = l_Enemy:GetForward()
 	l_Forward.y = 0.0
-	-- PlayerPos.y = 0.0 --TODO
 	
-	-- local l_NewAngle = 0.0 
-	
-	-- local l_CurrentYaw = l_Enemy:GetYaw()
-	-- local l_Velocity = 0.0
-	-- local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, l_EnemyPos, PlayerPos)
-	-- local l_ComputedAngle = 0.0 --CEnemyComponent.CalculateNewAngle(self,l_Angle, l_CurrentYaw, l_Velocity, self.m_ElapsedTime)
-	-- l_Enemy:SetYaw(l_ComputedAngle)
+	local l_NewAngle = 0.0 
 	
 	self.m_Velocity.x = 0.0
 	self.m_Velocity.z = 0.0
 	self.m_Velocity = self.m_Velocity + (l_VectorToPlayer*self.m_Speed)
-	self.m_Velocity = self.m_Velocity + (g_Gravity*self.m_ElapsedTime)
-	
-	if self.m_ElapsedTime>0.0 then
-		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity * self.m_ElapsedTime), self.m_ElapsedTime)
+	self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
+	if ElapsedTime>0.0 then
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity * ElapsedTime), ElapsedTime)
+		self:LookAtPoint(PlayerPos,ElapsedTime)
 	else 
-		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity), self.m_ElapsedTime)
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity), ElapsedTime)
+		self:LookAtPoint(PlayerPos,0.0)
 	end 
 end

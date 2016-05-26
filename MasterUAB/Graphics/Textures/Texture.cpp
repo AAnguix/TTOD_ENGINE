@@ -61,15 +61,16 @@ bool CTexture::LoadFileNew()
 	ws.assign(m_Name.begin(), m_Name.end());
 
 	HRESULT l_Hresult = 1;
+	ID3D11DeviceContext *l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
 
 	if (l_Format == "dds")
 	{
-		l_Hresult = DirectX::CreateDDSTextureFromFile(l_Device, ws.c_str(), nullptr, &m_Texture, 0, &l_AlphaMode);
+		l_Hresult = DirectX::CreateDDSTextureFromFile(l_Device, ws.c_str(), nullptr, &m_Texture);
+		//l_Hresult = DirectX::CreateDDSTextureFromFile(l_Device, l_DeviceContext, ws.c_str(), nullptr, &m_Texture, 0, &l_AlphaMode);
 	}
 	else if (l_Format == "png")
 	{
-		ID3D11DeviceContext *l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
-		l_Hresult = DirectX::CreateWICTextureFromFile(l_Device, l_DeviceContext, ws.c_str(), nullptr, &m_Texture, 0);
+		l_Hresult = DirectX::CreateWICTextureFromFile(l_Device, l_DeviceContext, ws.c_str(), nullptr, &m_Texture);
 	}
 
 	if (l_Hresult == ERROR_FILE_NOT_FOUND)

@@ -5,6 +5,8 @@ class CParticleSystemType;
 class CXMLTreeNode;
 class CRenderableVertexs;
 class CEmptyPointerClass;
+class CAnimatedInstanceModel;
+
 #include "Render\RenderManager.h"
 #include "RenderableObjects\RenderableObject.h"
 
@@ -91,8 +93,6 @@ public:
 
 	void Render(CRenderManager* RenderManager);
 	void Update(float ElapsedTime);
-
-	void WriteDataToXml(const std::string Filename);
 
 private:
 	void* m_EmissionBoxHalfSizeAddress;

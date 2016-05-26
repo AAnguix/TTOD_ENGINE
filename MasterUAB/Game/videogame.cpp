@@ -195,7 +195,7 @@ void CheckMemoryLeaks()
 
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
-	CheckMemoryLeaks();
+	//CheckMemoryLeaks();
 
 	//Register the window class
 	WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, APPLICATION_NAME, NULL };

@@ -1,5 +1,7 @@
 #include "Textures\TextureManager.h"
 #include "Utils.h"
+#include "Engine.h"
+#include "Log.h"
 
 CTextureManager::CTextureManager(){}
 
@@ -32,11 +34,18 @@ CTexture * CTextureManager::GetTexture(const std::string &Filename)
 	else 
 	{
 		CTexture* l_Texture = new CTexture;
-		l_Texture->Load(Filename);
+		bool l_Loaded = l_Texture->Load(Filename);
 		
-		if(!AddResource(Filename, l_Texture))
-		{	//Falla al añadirse
-			CHECKED_DELETE(l_Texture);
+		if (l_Loaded)
+		{
+			if (!AddResource(Filename, l_Texture))
+			{	//Falla al añadirse
+				CHECKED_DELETE(l_Texture);
+			}
+		}
+		else
+		{
+			CEngine::GetSingleton().GetLogManager()->Log("Can't load texture " + Filename);
 		}
 		 
 		return l_Texture;

@@ -9,23 +9,27 @@ class C3DElement;
 struct SoundEvent
 {
 	std::string m_EventName;
-	SoundEvent(const std::string EventName) :m_EventName(EventName){};
+	SoundEvent(const std::string EventName):m_EventName(EventName){};
 };
 struct SoundSwitch
 {
 	std::string m_SwitchName;
+	SoundSwitch(const std::string SwitchName):m_SwitchName(SwitchName){};
 };
 struct SoundSwitchValue
 {
 	SoundSwitch m_SoundSwitch;
+	SoundSwitchValue(const std::string SoundSwitchValue):m_SoundSwitch(SoundSwitchValue){};
 };
 struct SoundRTPC
 {
-	std::string rtpcName;
+	std::string m_RtpcName;
+	SoundRTPC(const std::string RtpcName):m_RtpcName(RtpcName){};
 };
 struct SoundStateValue
 {
-	std::string valueName;
+	std::string m_ValueName;
+	SoundStateValue(const std::string StateValue):m_ValueName(StateValue){};
 };
 
 
@@ -33,7 +37,7 @@ class ISoundManager
 {
 
 protected:
-	ISoundManager(){}   
+	ISoundManager(){}
 
 public:
 	static ISoundManager* CreateSoundManager();
@@ -70,6 +74,8 @@ public:
 	virtual void SetRTPCValue(const SoundRTPC& Rtpc, float Value, const C3DElement* Speaker) = 0;
 
 	virtual void BroadcastState(const SoundStateValue &State) = 0;
+
+	virtual SoundEvent GetSoundEvent(const std::string &SoundEventName) = 0;
 };
 
 #endif

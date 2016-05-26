@@ -75,15 +75,16 @@ void CEngine::Init()
 
 void CEngine::LoadLevel(const std::string& Level)
 {
-	m_MaterialManager->Load("./Data/Level" + Level + "/materials.xml");
+ 	m_MaterialManager->Load("./Data/Level" + Level + "/materials.xml");
 	m_StaticMeshManager->Load("./Data/Level" + Level + "/static_meshes.xml");
 	m_ParticleSystemManager->Load("./Data/Level" + Level + "/particles_systems.xml");
 	m_AnimatedModelManager->Load("./Data/Level" + Level + "/animated_models.xml");
 	m_LayerManager->Load("./Data/Level" + Level + "/renderable_objects.xml");
 	m_LightManager->Load("./Data/Level" + Level + "/lights.xml");
 
-	//m_SoundManager->SetPath("./Data/Level" + Level + "/Audio/Soundbanks/");
-	//m_SoundManager->Load("SoundbanksInfo.xml", "./Data/Level" + Level + "/Audio/speakers.xml");
+	m_SoundManager->SetPath("./Data/Level" + Level + "/Audio/Soundbanks/");
+	m_SoundManager->Init();
+	m_SoundManager->Load("SoundbanksInfo.xml", "./Data/Level" + Level + "/Audio/speakers.xml");
 	
 	//m_SceneRendererCommandManager->Load("./Data/Level" + Level + "/scene_renderer_commands.xml");
 }

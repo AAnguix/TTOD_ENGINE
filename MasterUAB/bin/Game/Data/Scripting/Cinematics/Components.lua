@@ -1,23 +1,18 @@
-function InitializeRenderableObjectsScripts()
-	InitCharacterController()
-	--InitEnemys()
-end
+-- function InitializeRenderableObjectsScripts()
+	-- InitCharacterController()
+	-- InitEnemys()
+-- end
 
-function InitCharacterController()
-	local l_Character = GetPlayer()
-	AddScriptedComponent(l_Character, "ScriptedCharacterController", "FnOnCreatePlayer", "FnOnDestroyPlayer", "FnOnUpdatePlayer","","")
-end
+-- function FnOnCreatePlayer(RenderableObject, ElapsedTime)
 
-function FnOnCreatePlayer(RenderableObject, ElapsedTime)
+-- end
 
-end
+-- function FnOnDestroyPlayer(RenderableObject, ElapsedTime)
+-- end
 
-function FnOnDestroyPlayer(RenderableObject, ElapsedTime)
-end
-
-function FnOnUpdatePlayer(RenderableObject, ElapsedTime)
-	CharacterController(ElapsedTime)
-end
+-- function FnOnUpdatePlayer(RenderableObject, ElapsedTime)
+	-- CharacterController(ElapsedTime)
+-- end
 
 function InitEnemys()
 	-- local ROManager = CEngine.GetSingleton():GetLayerManager():GetResource("solid")

@@ -1,23 +1,23 @@
 #include "Components\AudioSource.h"
 #include "Engine.h"
 #include "RenderableObjects\RenderableObject.h"
+#include <assert.h>
 
-CAudioSource::CAudioSource(const std::string &Name, CRenderableObject *Owner, ESpeakerType SpeakerType)
-:CComponent(Name,Owner)
-,m_SpeakerType(SpeakerType)
+CAudioSource::CAudioSource(const std::string &Name, CRenderableObject *Owner)
+	:CComponent(Name, Owner)
 {
-	
-	
+
+
 }
 
 CAudioSource::~CAudioSource()
 {
-	
+
 }
 
-CAudioSource* CAudioSource::AddAudioSource(const std::string &Name, CRenderableObject *Owner, ESpeakerType SpeakerType)
+CAudioSource* CAudioSource::AddAudioSource(const std::string &Name, CRenderableObject *Owner)
 {
-	CAudioSource* l_AudioSource = new CAudioSource(Name, Owner, SpeakerType);
+	CAudioSource* l_AudioSource = new CAudioSource(Name, Owner);
 
 	if (!Owner->AddComponent(l_AudioSource))
 	{
@@ -28,15 +28,35 @@ CAudioSource* CAudioSource::AddAudioSource(const std::string &Name, CRenderableO
 }
 
 
-void CAudioSource::PlayEvent(const std::string &EventName)
+void CAudioSource::PlayEvent(const std::string &Key)
 {
+	bool l_Found = false;
 	if (IsEnabled())
 	{
-		if (m_SpeakerType == STATIC)
-			CEngine::GetSingleton().GetSoundManager()->PlayEvent(EventName,m_Owner->GetName());
-		else if (m_SpeakerType == DYNAMIC)
-			CEngine::GetSingleton().GetSoundManager()->PlayEvent(EventName,m_Owner);
-		else if (m_SpeakerType == BACKGROUND_MUSIC)
-			CEngine::GetSingleton().GetSoundManager()->PlayEvent(EventName);
+		for (unsigned int i = 0; i < m_Sounds.size(); ++i)
+		{
+			if (m_Sounds[i].first == Key)
+
+				//CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_Sounds[i].second, m_Owner);
+				CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_Sounds[i].second);
+			l_Found = true;
+		}
+		assert(l_Found);
 	}
+}
+
+bool CAudioSource::AddSound(const std::string &Key, const std::string &SoundEventName)
+{
+	SoundEvent l_SoundEvent = CEngine::GetSingleton().GetSoundManager()->GetSoundEvent(SoundEventName);
+	if (l_SoundEvent.m_EventName != "")
+	{
+		m_Sounds.push_back(std::make_pair(Key, l_SoundEvent));
+		return true;
+	}
+	return false;
+}
+
+void CAudioSource::RemoveSounds()
+{
+	m_Sounds.clear();
 }

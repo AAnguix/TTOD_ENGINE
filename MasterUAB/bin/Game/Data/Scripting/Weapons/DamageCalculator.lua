@@ -6,7 +6,7 @@ end
 
 function CDamageCalculator:CalculateDamage(ArmorName,WeaponName, Damage)
 	local l_DamageReductionPercentage = self:GetPercentage(ArmorName,WeaponName)
-	local l_Damage = Damage - (Damage*l_DamageReductionPercentage)
+	local l_Damage = Damage - ((Damage*l_DamageReductionPercentage)/100)
 	return l_Damage
 end
 
@@ -43,7 +43,7 @@ end
 
 function CDamageCalculator:GetPercentage(Armor,Weapon)
 	local l_Key = ""..Armor.."_"..Weapon
-	return self.m_DamageReductionPct[l_Key]
+	return self.m_DamageReductionPct[l_Key].m_Percentage
 end
 
 function CDamageCalculator:PairExists(Armor, Weapon)

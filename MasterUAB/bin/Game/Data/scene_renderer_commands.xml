@@ -112,13 +112,13 @@
 	
 	
 	<!-- ColorGrading -->
-	<!-- <set_pool_renderable_objects_technique pool="color_grading_pool_renderable_object_technique"/>
+	<set_pool_renderable_objects_technique pool="color_grading_pool_renderable_object_technique"/>
 	<capture_frame_buffer>
 		<capture_texture name="ColorGradingCapturedTexture" texture_width_as_frame_buffer="true"/>
 	</capture_frame_buffer>
 	<render_draw_quad material="ColorGradingMaterial">
 		<texture stage_id="0" file="ColorGradingCapturedTexture"/>
-	</render_draw_quad> -->
+	</render_draw_quad>
 	
 	
 	<!-- LightScattering -->
@@ -185,7 +185,7 @@
 	<disable_alpha_blend/>
 	
 	<!-- <clear render_target="false" depth_stencil="false"/> -->
-	<set_light_constants/>
+	<set_light_constants max_lights = "20" />
 	
 	<!-- <set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/> -->
 	<!-- <render_layer layer="skybox" active="true"/> -->
@@ -199,7 +199,7 @@
 	<!-- <render_debug_grid/> -->
 	<!--
 	-->
-	<render_debug_layer layer="solid" active="true"/>
+	<!-- <render_debug_layer layer="solid" active="true"/> -->
 	<!-- <render_debug_lights/> -->
 	
 	<present/>

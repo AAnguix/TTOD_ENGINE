@@ -77,19 +77,45 @@ CEmptyPointerClass* CParticleSystemType::GetColor1LuaAddress() const { return (C
 CEmptyPointerClass* CParticleSystemType::GetColor2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color2); }
 CEmptyPointerClass* CParticleSystemType::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }
 
-CEmptyPointerClass* CParticleSystemType::ControlPointSize::GetSizeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Size); }
-CEmptyPointerClass* CParticleSystemType::ControlPointSize::GetTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Time); }
+//CEmptyPointerClass* CParticleSystemType::ControlPointSize::GetSizeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Size); }
+//CEmptyPointerClass* CParticleSystemType::ControlPointSize::GetTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Time); }
+//CEmptyPointerClass* CParticleSystemType::ControlPointSize::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }
+//
+//CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Time); }
+//CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetColor1LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color1); }
+//CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetColor2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color2); }
+//CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }
 
-CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetTimeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Time); }
-CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetColor1LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color1); }
-CEmptyPointerClass* CParticleSystemType::ControlPointColor::GetColor2LuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Color2); }
+CEmptyPointerClass* CParticleSystemType::GetControlPointColorTimeLuaAddress(unsigned int Index) const { return (CEmptyPointerClass *)((void*)&m_ControlPointColor[Index].m_Time); }
+CEmptyPointerClass* CParticleSystemType::GetControlPointColorColor1LuaAddress(unsigned int Index) const { return (CEmptyPointerClass *)((void*)&m_ControlPointColor[Index].m_Color1); }
+CEmptyPointerClass* CParticleSystemType::GetControlPointColorColor2LuaAddress(unsigned int Index) const { return (CEmptyPointerClass *)((void*)&m_ControlPointColor[Index].m_Color2); }
+
+CEmptyPointerClass* CParticleSystemType::GetControlPointSizeTimeLuaAddress(unsigned int Index) const { return (CEmptyPointerClass *)((void*)&m_ControlPointSizes[Index].m_Time); }
+CEmptyPointerClass* CParticleSystemType::GetControlPointSizeSizeLuaAddress(unsigned int Index) const { return (CEmptyPointerClass *)((void*)&m_ControlPointSizes[Index].m_Size); }
+
 
 void CParticleSystemType::AddControlPointSize(Vect2f Size, Vect2f Time)
 {
 	m_ControlPointSizes.push_back(ControlPointSize(Size, Time));
 }
 
-std::vector<CParticleSystemType::ControlPointSize>& CParticleSystemType::GetLUAControlPointsSize()
+//
+std::vector<CParticleSystemType::ControlPointSize>&  CParticleSystemType::GetLUAControlPointsSize()
 {
 	return m_ControlPointSizes;
+}
+
+std::vector<CParticleSystemType::ControlPointColor>&  CParticleSystemType::GetLUAControlPointsColor()
+{
+	return m_ControlPointColor;
+}
+
+int  CParticleSystemType::GetLUAControlPointsSizeSize() const
+{
+	return m_ControlPointSizes.size();
+}
+
+int  CParticleSystemType::GetLUAControlPointsColorSize() const
+{
+	return m_ControlPointColor.size();
 }

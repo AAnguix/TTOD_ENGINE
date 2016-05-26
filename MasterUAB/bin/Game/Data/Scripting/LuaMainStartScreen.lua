@@ -2,6 +2,7 @@
 function LuaMain()
 	DefineLUAModules()
 	InitializeLuaMain()
+	g_LogManager:Log("LuaMainStartScreen executed.")
 end
 
 function DefineLUAModules()
@@ -25,7 +26,6 @@ function DefineLUAModules()
 		dofile("./Data/Scripting/Globals/GlobalsInGame.lua")
 		dofile("./Data/Scripting/Globals/AIGlobals.lua")
 		dofile("./Data/Scripting/GUI/GUIInGame.lua")
-		dofile("./Data/Scripting/CharacterController.lua")
 		--dofile("./Data/Scripting/AI.lua")
 		dofile("./Data/Scripting/Triggers/PhysXTrigger.lua")
 		dofile("./Data/Scripting/Cinematics/Components.lua")
@@ -34,7 +34,6 @@ function DefineLUAModules()
 		dofile("./Data/Scripting/Cinematics/CinematicsManager.lua")
 		
 		dofile("./Data/Scripting/LuaMainInGame.lua")
-		
 		StartLevelOne()
 end
 

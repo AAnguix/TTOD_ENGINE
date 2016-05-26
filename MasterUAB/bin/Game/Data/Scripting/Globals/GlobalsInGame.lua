@@ -14,12 +14,5 @@ g_CurrentGuiFile = "./Data/Scripting/GUI/GUIInGame.lua"
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainInGame.lua"
 
 g_ParticleSystemManager = g_Engine:GetParticleSystemManager()
-gSoundManager = g_Engine:GetSoundManager()
 
 g_IsGamePaused = false
-
-function GetPlayer()
-	player = CEngine.GetSingleton():GetLayerManager():GetPlayer()
-	return player
-end
-

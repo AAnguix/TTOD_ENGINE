@@ -53,7 +53,7 @@ CAnimatorController* CRenderableObject::GetAnimatorController() const
 
 bool CRenderableObject::AddLuaComponent(CLUAComponent* LUAComponent)
 {
-	m_LuaComponents.push_back(LUAComponent);
+	m_LuaComponents.push_back(LUAComponent); 
 	return true;
 }
 

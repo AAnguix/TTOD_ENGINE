@@ -182,7 +182,7 @@ CDebugHelperImplementation::ChangeTextureClientData::ChangeTextureClientData(con
 {
 }
 
-CDebugHelperImplementation::ClientData::ClientData(const std::string Function, CEmptyPointerClass* Object, const std::string &ObjectType)
+CDebugHelperImplementation::ClientData::ClientData(std::string Function, CEmptyPointerClass* Object, std::string ObjectType)
 :m_Function(Function), m_Object(Object), m_ObjectType(ObjectType)
 {
 }
@@ -227,13 +227,13 @@ void TW_CALL CDebugHelperImplementation::CallLuaExtendedFunction(void *ClientDat
 {
 	CDebugHelperImplementation::ClientData* l_ClientData = (CDebugHelperImplementation::ClientData*)ClientData;
 	
-	std::string l_ObjectType = l_ClientData->m_ObjectType;
+	std::string l_ObjectType = l_ClientData->m_ObjectType.c_str();
 
-	if (l_ObjectType == "partycle_system_type")
+	if (l_ObjectType == "partycle")
 	{
 		luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CParticleSystemType*)l_ClientData->m_Object);
 	}
-	else if (l_ObjectType == "material")
+	else if (l_ObjectType  == "material")
 	{
 		luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CMaterial*)l_ClientData->m_Object);
 	}

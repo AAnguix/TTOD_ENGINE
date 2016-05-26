@@ -8,7 +8,12 @@ CMaterialManager::CMaterialManager() : m_Filename("")
 
 CMaterialManager::~CMaterialManager()
 {
+	std::map<const std::string, std::vector<CMaterial*>>::iterator itMap;
 
+	for (itMap = m_MaterialsPerFileName.begin(); itMap != m_MaterialsPerFileName.end(); ++itMap)
+	{
+		itMap->second.clear();
+	}
 }
 
 void CMaterialManager::Load(const std::string &Filename)
@@ -20,6 +25,7 @@ void CMaterialManager::Load(const std::string &Filename)
 	if (l_XML.LoadFile(Filename.c_str()))
 	{
 		CXMLTreeNode l_Materials = l_XML["materials"];
+		std::vector<CMaterial*> l_FileMaterials;
 
 		if (l_Materials.Exists())
 		{
@@ -35,8 +41,14 @@ void CMaterialManager::Load(const std::string &Filename)
 					{
 						CHECKED_DELETE(l_Material);
 					}
+					else
+					{
+						l_FileMaterials.push_back(l_Material);
+					}
 				}
 			}
+
+			m_MaterialsPerFileName.insert(std::pair<std::string, std::vector<CMaterial*>>(Filename, l_FileMaterials));
 		} 
 		else {assert(false); }
 	}
@@ -57,4 +69,18 @@ const std::vector<CMaterial *> & CMaterialManager::GetLUAMaterials()
 		l_MaterialsVector.push_back(it->second);
 
 	return l_MaterialsVector;
+}
+
+const std::vector<CMaterial *> & CMaterialManager::GetLUAFileNameMaterials(const std::string &Filename)
+{
+	std::map<const std::string, std::vector<CMaterial*>>::iterator itMap;
+
+	itMap = m_MaterialsPerFileName.find(Filename);
+	if (itMap == m_MaterialsPerFileName.end())
+	{
+		itMap = m_MaterialsPerFileName.find("./"+Filename);
+		if (itMap == m_MaterialsPerFileName.end())
+			assert(false);
+	}
+	return itMap->second;
 }

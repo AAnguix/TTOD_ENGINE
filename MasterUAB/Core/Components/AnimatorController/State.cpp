@@ -52,6 +52,7 @@ void CState::OnEnter(CTransition* Transition)
 		{
 			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
 			assert(l_LuaComponent!=nullptr);
+			l_LuaComponent->ResetTimer();
 			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnEnter.c_str(), l_LuaComponent);
 		}
 	}
@@ -101,6 +102,7 @@ void CState::OnUpdate(float ElapsedTime)
 		{
 			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
 			assert(l_LuaComponent != nullptr);
+			l_LuaComponent->AddTime(ElapsedTime);
 			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnUpdate.c_str(), l_LuaComponent, ElapsedTime);
 		}
 	}

@@ -14,10 +14,14 @@
 #include "Math\Vector3.h"
 #include "Math\Vector4.h"
 #include "Math\Color.h"
+#include "Math\Matrix33.h"
+#include "Math\Matrix34.h"
+#include "Math\Matrix44.h"
 #include "Utils\EmptyPointerClass.h"
 #include "Utils\TTODMathUtils.h"
 #include "Utils\TTODFileUtils.h"
 #include "Utils\TTODXMLWriter.h"
+
 #include <cmath>
 
 using namespace luabind;
@@ -290,7 +294,7 @@ void CScriptManager::RegisterBase()
 		.def("Lerp", &CColor::Lerp)
 	];
 
-	/*module(LUA_STATE)
+	module(LUA_STATE)
 	[  
 		class_< Mat33f >("Mat33f")   
 		.def(constructor<>()) 
@@ -298,56 +302,222 @@ void CScriptManager::RegisterBase()
 		.def(constructor<const float,const float,const float,const float,const float,const float,const float,const float,const float>()) 
 		.def(constructor<const Vect3f,const Vect3f,const Vect3f>()) 
 		.def(constructor<const float,const float,const float>()) 
-		.def("reset_rotation", & Mat33f::ResetRotation)
-		.def("reset_scale", & Mat33f::ResetScale)
-		.def("set_identity", & Mat33f::SetIdentity)
-		.def("set_zero", & Mat33f::SetZero)
+		.def("reset_rotation", &Mat33f::ResetRotation)
+		.def("reset_scale", &Mat33f::ResetScale)
+		.def("set_identity", &Mat33f::SetIdentity)
+		.def("set_zero", &Mat33f::SetZero)
 		.def(const_self + const_self)   
 		.def(const_self - const_self)   
 		.def(const_self * const_self) 
 		.def(const_self * other<const float>())
 		.def(const_self / other<const float>()) 
 		.def(const_self * other<const Vect3f>())
-		.def(const_self ^ other<const Vect3f>())
 		.def(const_self == const_self)
-		.def("transform_vector", & Mat33f::TransformVector)
-		.def("get_transform_vector", & Mat33f::GetTransformVector)
-		.def("transform_array_vectors", & Mat33f::TransformArrayVectors)
-		.def("get_inverted", & Mat33f::GetInverted)
-		.def("get_inverted_rs", & Mat33f::GetInvertedRS)
-		.def("get_transposed", & Mat33f::GetTransposed)
-		.def("get_rotated_by_anglex", & Mat33f::GetRotedByAngleX)
-		.def("get_rotated_by_angley", & Mat33f::GetRotedByAngleY)
-		.def("get_rotated_by_anglez", & Mat33f::GetRotedByAngleZ)
-		.def("get_rotated_by_anglexz", & Mat33f::GetRotedByAnglesXZ)
-		.def("get_rotated_by_angleyxz", & Mat33f::GetRotedByAnglesYXZ)
-		.def("get_scaled", & Mat33f::GetScaled)
-		.def("align_yx", & Mat33f::AlignYX)
-		.def("align_yz", & Mat33f::AlignYZ)
-		.def("align_xz", & Mat33f::AlignXZ)
+		.def("transform_vector", &Mat33f::TransformVector)
+		.def("get_transform_vector", &Mat33f::GetTransformVector)
+		.def("transform_array_vectors", &Mat33f::TransformArrayVectors)
+		.def("get_inverted", &Mat33f::GetInverted)
+		.def("get_inverted_rs", &Mat33f::GetInvertedRS)
+		.def("get_transposed", &Mat33f::GetTransposed)
+		.def("get_rotated_by_anglex", &Mat33f::GetRotedByAngleX)
+		.def("get_rotated_by_angley", &Mat33f::GetRotedByAngleY)
+		.def("get_rotated_by_anglez", &Mat33f::GetRotedByAngleZ)
+		.def("get_rotated_by_anglexz", &Mat33f::GetRotedByAnglesXZ)
+		.def("get_rotated_by_angleyxz", &Mat33f::GetRotedByAnglesYXZ)
+		.def("get_scaled", &Mat33f::GetScaled)
+		.def("align_yx", &Mat33f::AlignYX)
+		.def("align_yz", &Mat33f::AlignYZ)
+		.def("align_xz", &Mat33f::AlignXZ)
 		.def("determinant", & Mat33f::Determinant)
-		.def("is_orthogonal_epsilon", & Mat33f::IsOrthogonalEpsilon)
-		.def("is_orthonormal_epsilon", & Mat33f::IsOrthonormalEpsilon)
-	];*/
+		.def("is_orthogonal_epsilon", &Mat33f::IsOrthogonalEpsilon)
+		.def("is_orthonormal_epsilon", &Mat33f::IsOrthonormalEpsilon)
+	];
 
-	/*module(LUA_STATE)
+	module(LUA_STATE)
 	[  
 		class_< Mat34f >("Mat34f")   
 		.def(constructor<>()) 
-	];*/
+		.def(constructor<const Mat34f>())
+		.def(constructor<const Mat33f>())
+		.def(constructor<const Mat33f, const Vect3f>())
+		.def(constructor<const Vect3f, const Vect3f, const Vect3f, const Vect3f>())
+		.def(constructor<const float, const float, const float>())
+		.def("ResetTranslation", &Mat34f::ResetTranslation)
+		.def("ResetRotation", &Mat34f::ResetRotation)
+		.def("ResetScale", &Mat34f::ResetScale)
+		.def("ResetRotationScale", &Mat34f::ResetRotationScale)
+		.def("SetIdentity", &Mat34f::SetIdentity)
+		.def("SetZero", &Mat34f::SetZero)
 
-	/*
-	module(LUA_STATE) [  
+		.def("SetFromAngleX", &Mat34f::SetFromAngleX)
+		.def("SetFromAngleY", &Mat34f::SetFromAngleY)
+		.def("SetFromAngleZ", &Mat34f::SetFromAngleZ)
+		.def("SetFromAnglesXZ", &Mat34f::SetFromAnglesXZ)
+		.def("SetFromAnglesYXZ", &Mat34f::SetFromAnglesYXZ)
+		/*.def("SetFromPos", &Mat34f::SetFromPos)
+		.def("SetFromPos", &Mat34f::SetFromPos)*/
+		.def("SetFromScale", &Mat34f::SetFromScale)
+		
+		.def("SetFromLookAt", (Mat34f&(Mat34f::*)(const Vect3f&, const Vect3f&, const Vect3f&))&Mat34f::SetFromLookAt)
+	
+		.def(const_self + const_self)
+		.def(const_self - const_self)
+		.def(const_self * const_self)
+		.def(const_self * other<const float>())
+		.def(const_self / other<const float>())
+		.def(const_self * other<const Vect3f>())
+		.def(const_self ^ other<const Vect3f>())
+		.def(const_self == const_self)
+		.def(const_self == const_self)
+	];
+
+	module(LUA_STATE) 
+	[  
 		class_< Mat44f >("Mat44f")   
 		.def(constructor<>()) 
 		.def(constructor<Mat44f>())
 		.def(constructor<Mat33f>()) 
 		.def(constructor<Mat34f>()) 
-		.def(constructor<const float,const float,const float,const float,const float,const float,const float,const float,const float,const float,const float,const float>()) 
 		.def(constructor<const Vect3f,const Vect3f,const Vect3f,const Vect3f>()) 
 		.def(constructor<const float,const float,const float>()) 
+		.def("ResetTranslation", &Mat44f::ResetTranslation)
+		.def("ResetRotation", &Mat44f::ResetRotation)
+		.def("ResetScale", &Mat44f::ResetScale)
+		.def("ResetRotationScale", &Mat44f::ResetRotationScale)
+		.def("SetIdentity", &Mat44f::SetIdentity)
+		.def("SetZero", &Mat44f::SetZero)
 	
-	];*/
+		.def("SetFromBasis", (Mat44f&(Mat44f::*)(const Vect3f&, const Vect3f&, const Vect3f&, const Vect3f&))&Mat44f::SetFromBasis)
+		.def("SetFromBasis", (Mat44f&(Mat44f::*)(const Vect3f&, const Vect3f&, const Vect3f&))&Mat44f::SetFromBasis)
+		
+		.def("SetFromAngleX", &Mat44f::SetFromAngleX)
+		.def("SetFromAngleY", &Mat44f::SetFromAngleY)
+		.def("SetFromAngleZ", &Mat44f::SetFromAngleZ)
+		.def("SetFromAnglesXZ", &Mat44f::SetFromAnglesXZ)
+		.def("SetFromAnglesYXZ", &Mat44f::SetFromAnglesYXZ)
+	
+		.def("SetFromPos", (Mat44f&(Mat44f::*)(const float, const float, const float))&Mat44f::SetFromPos)
+		.def("SetFromPos", (Mat44f&(Mat44f::*)(const Vect3f&))&Mat44f::SetFromPos)
+
+		.def("SetFromScale", &Mat44f::SetFromScale)
+		.def("SetFromLookAt", (Mat44f&(Mat44f::*)(const Vect3f&, const Vect3f&, const Vect3f&))&Mat44f::SetFromLookAt)
+		.def("SetFromLookAt", (Mat44f&(Mat44f::*)(const Vect3f&, const Vect3f&))&Mat44f::SetFromLookAt)
+		.def("SetFromPerspective", &Mat44f::SetFromPerspective)
+		
+		.def("SetFromPosAndAnglesYXZ", &Mat44f::SetFromPosAndAnglesYXZ)
+		.def("SetFromQuatPos", &Mat44f::SetFromQuatPos)
+		.def("SetFromOrtho", &Mat44f::SetFromOrtho)
+
+		.def("SetRotByAngleX", &Mat44f::SetRotByAngleX)
+		.def("SetRotByAngleY", &Mat44f::SetRotByAngleY)
+		.def("SetRotByAngleZ", &Mat44f::SetRotByAngleZ)
+		.def("SetRotByAnglesXZ", &Mat44f::SetRotByAnglesXZ)
+		.def("SetRotByAnglesYXZ", &Mat44f::SetRotByAnglesYXZ)
+		.def("SetRotByQuat", &Mat44f::SetRotByQuat)
+
+		.def("SetPos", (Mat44f&(Mat44f::*)(const Vect3f&))&Mat44f::SetPos)
+		.def("SetPos", (Mat44f&(Mat44f::*)(const float,const float,const float))&Mat44f::SetPos)
+
+		//.def("SetScale", (Mat44f&(Mat44f::*)(const Mat33f&))&Mat44f::SetScale)
+		//.def("SetScale", (Mat44f&(Mat44f::*)(const Mat44f&))&Mat44f::SetScale)
+		.def("SetScale", (Mat44f&(Mat44f::*)(const Vect3f&))&Mat44f::SetScale)
+		.def("SetScale", (Mat44f&(Mat44f::*)(const float,const float,const float))&Mat44f::SetScale)
+		
+		.def("GetRow", &Mat44f::GetRow)
+		.def("GetColum", &Mat44f::GetColum)
+
+		.def("GetVectorBasis", &Mat44f::GetVectorBasis)
+		.def("GetVectorBasisLength", &Mat44f::GetVectorBasisLength)
+		.def("GetPosBasis", &Mat44f::GetPosBasis)
+		.def("GetBasis", &Mat44f::GetBasis)
+		/*.def("GetSubMatrix33", (Mat33f(Mat44f::*))&Mat44f::GetSubMatrix33)*/
+
+		.def("Get33RotationNormalized", &Mat44f::Get33RotationNormalized)
+		.def("Get33RotationScaled", &Mat44f::Get33RotationScaled)
+		.def("Get33Scale", &Mat44f::Get33Scale)
+		.def("GetTranslationVector", &Mat44f::GetTranslationVector)
+
+		.def("Get44RotationNormalized", &Mat44f::Get44RotationNormalized)
+		.def("Get44RotationScaled", &Mat44f::Get44RotationScaled)
+		.def("Get44Scale", &Mat44f::Get44Scale)
+		.def("Get44Translation", &Mat44f::Get44Translation)
+
+		.def("GetPos", &Mat44f::GetPos)
+
+		.def("GetScale", &Mat44f::GetScale)
+		.def("GetScaleX", &Mat44f::GetScaleX)
+		.def("GetScaleY", &Mat44f::GetScaleY)
+		.def("GetScaleZ", &Mat44f::GetScaleZ)
+
+		// Angulos de Euler
+		.def("GetAnglesYXZ", &Mat44f::GetAnglesYXZ)
+		.def("GetAngleX", &Mat44f::GetAngleX)
+		.def("GetAngleY", &Mat44f::GetAngleY)
+		.def("GetAngleZ", &Mat44f::GetAngleZ)
+
+		// Angulos de Euler con criterio de Pitch-Roll-Yaw
+		// (Orden XZY, teniendo los ángulos Y,Z el sentido contrario de rotación)
+		.def("GetRoll", &Mat44f::GetRoll)
+		.def("GetPitch", &Mat44f::GetPitch)
+		.def("GetYaw", &Mat44f::GetYaw)
+		.def("GetPitchRollYaw", &Mat44f::GetPitchRollYaw)
+		
+		.def("SetFromPitchRollYaw", &Mat44f::SetFromPitchRollYaw)
+		.def("SetPitchRollYaw", &Mat44f::SetPitchRollYaw)
+
+		// Operadores de aritmética de matrices
+		.def(const_self + const_self)
+		.def(const_self - const_self)
+		.def(const_self * const_self)
+		.def(const_self * other<const float>())
+		.def(const_self / other<const float>())
+		.def(const_self * other<const Vect3f>())
+		.def(const_self ^ other<const Vect3f>())
+		.def(const_self * other<const Vect4f>())
+		.def(const_self == const_self)
+
+		.def("IsEqualEpsilon", &Mat44f::IsEqualEpsilon)
+		.def("IsNotEqualEpsilon", &Mat44f::IsNotEqualEpsilon)
+
+		.def("TransformVector", &Mat44f::TransformVector)
+		.def("TransformPoint", &Mat44f::TransformPoint)
+		.def("GetTransformVector", &Mat44f::GetTransformVector)
+		.def("GetTransformPoint", &Mat44f::GetTransformPoint)
+		.def("TransformArrayVectors", &Mat44f::TransformArrayVectors)
+		.def("TransformArrayPoints", &Mat44f::TransformArrayPoints)
+
+		.def("GetInverted", &Mat44f::GetInverted)
+		.def("GetInvertedTRS", &Mat44f::GetInvertedTRS)
+		.def("GetInvertedTR", &Mat44f::GetInvertedTR)
+		.def("GetTransposed", &Mat44f::GetTransposed)
+		.def("GetRotedByAngleX", &Mat44f::GetRotedByAngleX)
+		.def("GetRotedByAngleY", &Mat44f::GetRotedByAngleY)
+		.def("GetRotedByAngleZ", &Mat44f::GetRotedByAngleZ)
+		.def("GetRotedByAnglesXZ", &Mat44f::GetRotedByAnglesXZ)
+		.def("GetRotedByAnglesYXZ", &Mat44f::GetRotedByAnglesYXZ)
+		.def("GetTranslated", &Mat44f::GetTranslated)
+		.def("GetScaled", &Mat44f::GetScaled)
+	
+		.def("Invert", &Mat44f::Invert)
+		.def("InvertTRS", &Mat44f::InvertTRS)
+		.def("InvertTR", &Mat44f::InvertTR)
+		.def("Transpose", &Mat44f::Transpose)
+		.def("RotByAngleX", &Mat44f::RotByAngleX)
+		.def("RotByAngleY", &Mat44f::RotByAngleY)
+		.def("RotByAngleZ", &Mat44f::RotByAngleZ)
+		.def("RotByAnglesXZ", &Mat44f::RotByAnglesXZ)
+		.def("RotByAnglesYXZ", &Mat44f::RotByAnglesYXZ)
+		.def("Translate", &Mat44f::Translate)
+		.def("Scale", &Mat44f::Scale)
+
+		.def("AlignYX", &Mat44f::AlignYX)
+		.def("AlignYZ", &Mat44f::AlignYZ)
+		.def("AlignXZ", &Mat44f::AlignXZ)
+
+		.def("Determinant", &Mat44f::Determinant)
+		.def("IsOrthogonalEpsilon", &Mat44f::IsOrthogonalEpsilon)
+		.def("IsOrthonormalEpsilon", &Mat44f::IsOrthonormalEpsilon)
+	];
 
 	module(LUA_STATE) 
 	[

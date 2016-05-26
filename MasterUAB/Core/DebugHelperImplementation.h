@@ -19,7 +19,7 @@ public:
 		std::string m_Function;
 		CEmptyPointerClass* m_Object;
 		std::string m_ObjectType;
-		ClientData(const std::string Function, CEmptyPointerClass* Object, const std::string &ObjectType);
+		ClientData(std::string Function, CEmptyPointerClass* Object, std::string ObjectType);
 	};
 	struct ChangeTextureClientData
 	{

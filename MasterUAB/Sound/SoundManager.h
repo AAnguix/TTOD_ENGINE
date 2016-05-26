@@ -22,6 +22,7 @@ class CSoundManager : public ISoundManager
 {
 
 private:
+	std::vector<std::string> m_SoundEvents;
 	AkGameObjectID m_LastGameObjectID; //Only > 0
 	std::vector<AkGameObjectID> m_FreeObjectIDs;
 
@@ -49,7 +50,7 @@ private:
 public:
 	CSoundManager();
 	virtual ~CSoundManager();
-	
+
 	bool Init();
 	void Update(const CCamera *Camera);
 	bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename);
@@ -75,6 +76,8 @@ public:
 	void SetRTPCValue(const SoundRTPC& Rtpc, float Value, const C3DElement* Speaker);
 
 	void BroadcastState(const SoundStateValue &State);
+
+	SoundEvent GetSoundEvent(const std::string &SoundEventName);
 };
 
 #endif

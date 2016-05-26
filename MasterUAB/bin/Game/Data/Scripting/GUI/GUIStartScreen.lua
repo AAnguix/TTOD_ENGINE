@@ -59,7 +59,6 @@ function StartLevelOne()
 	
 	g_LogManager:Log("Level one is going to be loaded.")
 	g_GUIManager:Load("./Data/gui_in_game.xml")
-	
 	dofile("./Data/Scripting/LuaMainInGame.lua")
 	LoadGamePlayScripts() --LuaMainInGame.lua
 	g_Engine:LoadLevel("1")
@@ -73,6 +72,10 @@ function StartLevelOne()
 
 	g_CameraControllerManager:SetCurrentCameraController("ThirdPersonCamera")
 	g_SceneRendererCommandManager:Reload()
+	
+	local l_SoundEvent = SoundEvent("Play_WolfBlood")
+	g_SoundManager:PlayEvent(l_SoundEvent)
+	
 	g_LogManager:Log("Level one loaded.")
 end
 

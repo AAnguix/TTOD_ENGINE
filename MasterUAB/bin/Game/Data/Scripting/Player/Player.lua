@@ -15,9 +15,11 @@ dofile("./Data/Scripting/Player/Slot.lua")
 dofile("./Data/Scripting/Player/Inventory.lua")
 
 class 'CPlayerComponent' (CLUAComponent)
-function CPlayerComponent:__init()
+function CPlayerComponent:__init(CRObject)
 	CLUAComponent.__init(self,"player")
-	self.m_Health=500.0
+	self.m_RObject = CRObject
+	self.m_MaxHealth=500.0
+	self.m_Health=self.m_MaxHealth
 	self.m_Speed=1.0
 	self.m_AttackDelay = 1.0
 	self.m_CharacterControllerHeight = 1.4
@@ -26,33 +28,42 @@ function CPlayerComponent:__init()
 	self.m_CurrentArmor = nil
 	self.m_CurrentWeapon = nil
 	self.m_Inventory = CInventory()
+	
+	self.m_Locked = false
+	
+	--Components
+	self.m_Animator = nil 
+	self.m_AudioSource = nil
 end
 
-function CPlayerComponent:Initialize(CAnimatedInstance)
-
---Physyx
-	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", CAnimatedInstance)
+function CPlayerComponent:Initialize()
+	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
 		g_PhysXManager:RegisterMaterial(l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
-		m_Position = CAnimatedInstance:GetPosition()
+		m_Position = self.m_RObject:GetPosition()
 		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(CAnimatedInstance:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName)
+		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName)
 	end
 	
+	local l_AudioSource = CAudioSource.AddAudioSource("PlayerAudioSource", self.m_RObject)
+	if l_AudioSource ~= nil then  
+		self.m_AudioSource = l_AudioSource
+		self.m_AudioSource:AddSound("SonidoDePrueba","Play_Hit")
+	end
 	--Animations
-	CAnimatorController.AddAnimatorController("AnimatorController", CAnimatedInstance)
+	self.m_Animator = CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
 
-	local l_Idle = CAnimatedInstance:GetAnimatorController():AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
-	local l_Walk = CAnimatedInstance:GetAnimatorController():AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
-	local l_Attack = CAnimatedInstance:GetAnimatorController():AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
-	local l_Block = CAnimatedInstance:GetAnimatorController():AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
+	local l_Idle = self.m_RObject:GetAnimatorController():AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
+	local l_Walk = self.m_RObject:GetAnimatorController():AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
+	local l_Attack = self.m_RObject:GetAnimatorController():AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
+	local l_Block = self.m_RObject:GetAnimatorController():AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
 
 	--GetAnimatorController()->AddBool("Run", false);
-	CAnimatedInstance:GetAnimatorController():AddBool("Walk", false)
-	CAnimatedInstance:GetAnimatorController():AddTrigger("Attack", false)
-	CAnimatedInstance:GetAnimatorController():AddTrigger("Block", false)
+	self.m_RObject:GetAnimatorController():AddBool("Walk", false)
+	self.m_RObject:GetAnimatorController():AddTrigger("Attack", false)
+	self.m_RObject:GetAnimatorController():AddTrigger("Block", false)
 
 	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.0, 0.1, 0.2)
 	l_IdleToWalk:AddBoolCondition("Walk", true)
@@ -82,16 +93,27 @@ function CPlayerComponent:InitializePlayerStats()
 	-- self.m_Inventory:AddItem(l_HealthPotion,5)
 end 
 
+dofile("./Data/Scripting/PlayerController.lua")
+
 function CPlayerComponent:Update(ElapsedTime)
 	self.m_Inventory:Update(ElapsedTime)
+	self:PlayerController(ElapsedTime)
 end
 
-function CPlayerComponent:GetHealth()
-	return self.m_Health
+function CPlayerComponent:Lock()
+	self.m_Locked = true
 end
-function CPlayerComponent:GetSpeed()
-	return self.m_Speed
+function CPlayerComponent:Unlock()
+	self.m_Locked = false
 end
+function CPlayerComponent:IsLocked()
+	return self.m_Locked
+end
+
+function CPlayerComponent:GetHealth() return self.m_Health end
+function CPlayerComponent:GetMaxHealth() return self.m_MaxHealth end
+function CPlayerComponent:GetSpeed() return self.m_Speed end
+function CPlayerComponent:GetReference() return self end
 
 function CPlayerComponent:AddWeapon(CArmorComponent)
 	table.insert(self.m_Armors, CArmorComponent)
@@ -105,29 +127,19 @@ function CPlayerComponent:AddWeapon(CWeaponComponent)
 		self.m_CurrentWeapon = CWeaponComponent
 	end
 end
-function CPlayerComponent:ChangeArmor(Index)
-	self.m_CurrentArmor = m_Armors[Index]
-end
-function CPlayerComponent:ChangeWeapon(Index)
-	self.m_CurrentWeapon = m_Weapons[Index]
-end
-function CPlayerComponent:GetArmor(Index)
-	return m_Armors[Index]
-end
-function CPlayerComponent:GetWeapon(Index)
-	return m_Weapons[Index]
-end
+function CPlayerComponent:ChangeArmor(Index) self.m_CurrentArmor = m_Armors[Index] end
+function CPlayerComponent:ChangeWeapon(Index) self.m_CurrentWeapon = m_Weapons[Index] end
+function CPlayerComponent:GetArmor(Index) return m_Armors[Index] end
+function CPlayerComponent:GetWeapon(Index) return m_Weapons[Index] end
 
 function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
-	self.m_Health = self.m_Health - Damage
-end
-
-function CPlayerComponent:GetType()
-	return self:GetSpeed()
-end
-
-function CPlayerComponent:GetReference()
-	return self
+	self.m_AudioSource:PlayEvent("SonidoDePrueba")
+	--local l_Armor = self.m_CurrentArmor:GetType()
+	local l_Armor = "heroic"
+	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyDamage)
+	if self.m_Health >= 0.0 then
+		self.m_Health = self.m_Health - l_DamageCalculated
+	end
 end
 
 --loadstring(string_s)()

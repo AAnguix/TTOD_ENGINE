@@ -14,12 +14,14 @@ g_IsMenuActive = false
 g_IsAudioSubmenuActive = false
 
 g_MinMusicVolume = 0.0
-g_MaxMusicVolume = 1.0
+g_MaxMusicVolume = 100.0
 g_CurrentMusicVolume = SSliderResult()
+g_CurrentMusicVolume.temp = 100.0
 
 g_MinFxVolume = 0.0
-g_MaxFxVolume = 1.0
+g_MaxFxVolume = 100.0
 g_CurrentFxVolume = SSliderResult()
+g_CurrentFxVolume.temp = 100.0
 
 MUSIC_SLIDER_WIDTH = 0.35
 MUSIC_SLIDER_HEIGHT = 0.075
@@ -29,10 +31,10 @@ function UpdateGUI(ElapsedTime)
 	
 	--local l_HealthBarPos = SGUIPosition(50,50,512,128)
 	local l_HealthBarPos = SGUIPosition(0.83,0.05,0.3,0.075,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, 100.0, g_PlayerComponent:GetHealth())
+	g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, g_PlayerComponent:GetMaxHealth(), g_PlayerComponent:GetHealth()) 
 	
-	local l_Pos = SGUIPosition(0.1,0.1,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("textoDePrueba","felix_font",l_Pos,"","Game is paused!")
+	-- local l_Pos = SGUIPosition(0.1,0.1,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	-- g_GUIManager:DoText("textoDePrueba","felix_font",l_Pos,"","Game is paused!")
 	--void DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text);
 	
 	UpdateMenu()
@@ -50,7 +52,9 @@ function UpdateMenu()
 	
 	local l_MenuButtonPosition = SGUIPosition(0.95,0.85,0.05,0.05,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	local l_Pressed = g_GUIManager:DoButton("menu_button_0","menu_button",l_MenuButtonPosition)
-	if l_Pressed then CheckMenu() end
+	if l_Pressed then 
+		CheckMenu() 
+	end
 	
 	if CInputManager.GetInputManager():IsActionActive("ESC_PRESSED") then
 		CheckMenu()
@@ -79,7 +83,11 @@ end
 function AudioSubMenu()
 	local l_ModifyMusicVolumeSliderPosition = SGUIPosition(MUSIC_SLIDER_XOFFSET,0.5,MUSIC_SLIDER_WIDTH,MUSIC_SLIDER_HEIGHT,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	local l_ModifyFxVolumeSliderPosition = SGUIPosition(MUSIC_SLIDER_XOFFSET,0.3,MUSIC_SLIDER_WIDTH,MUSIC_SLIDER_HEIGHT,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	
 	g_CurrentMusicVolume = g_GUIManager:DoSlider("modify_music_volume_slider_0","modify_music_volume_slider",l_ModifyMusicVolumeSliderPosition,g_MinMusicVolume,g_MaxMusicVolume,g_CurrentMusicVolume.temp)
 	g_CurrentFxVolume = g_GUIManager:DoSlider("modify_fx_volume_slider_0","modify_fx_volume_slider",l_ModifyFxVolumeSliderPosition,g_MinFxVolume,g_MaxFxVolume,g_CurrentFxVolume.temp)
+	
+	local l_fxRtpc = SoundRTPC("Hit_Volume")
+	local l_MusicRtpc = SoundRTPC("WolfBlood_Volume")
+	g_SoundManager:SetRTPCValue(l_fxRtpc,g_CurrentFxVolume.temp)
+	g_SoundManager:SetRTPCValue(l_MusicRtpc,g_CurrentMusicVolume.temp)
 end

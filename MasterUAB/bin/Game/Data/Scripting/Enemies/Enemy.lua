@@ -17,15 +17,19 @@ function CEnemyComponent:__init(CRenderableObject, ComponentType)
 	self.m_DelayToPatrol = 2.0
 	self.m_WayPoints = {}
 	self.m_CurrentWayPoint = 1
-	self.m_ElapsedTime = 0.0
 	
+	--Character collider
 	self.m_Height = 1.4
 	self.m_Radius = 0.3
 	self.m_Density = 30
+	
+	--Components
+	self.m_Animator = nil 
+	self.m_AudioSource = nil
 end
 
 function CEnemyComponent:Initialize()
-	--Physyx
+
 	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
@@ -35,8 +39,8 @@ function CEnemyComponent:Initialize()
 		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
 		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
 	end
-	--Animations
-	CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
+	
+	self.m_Animator = CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
 	
 	g_LogManager:Log("Enemy "..self.m_RObject:GetName().." created...")
 end
@@ -44,43 +48,20 @@ end
 function CEnemyComponent:Update(ElapsedTime)
 end
 
-function CEnemyComponent:ResetTime()
-	self.m_ElapsedTime=0.0
-end
+function CEnemyComponent:GetAnimator() return self.m_Animator end
+function CEnemyComponent:GetAudioSource() return self.m_AudioSource end
 
-function CEnemyComponent:AddTime(ElapsedTime)
-	self.m_ElapsedTime = self.m_ElapsedTime+ElapsedTime
-end
-function CEnemyComponent:IsDead()
-	return self.m_Dead
-end
-function CEnemyComponent:GetHealth()
-	return self.m_Health
-end
-function CEnemyComponent:GetSpeed()
-	return self.m_Speed
-end
-function CEnemyComponent:GetVisionRange()
-	return self.m_VisionRange
-end
-function CEnemyComponent:GetAttackDelay()
-	return self.m_AttackDelay
-end
-function CEnemyComponent:GetArmor()
-	return self.m_Armor 
-end
-function CEnemyComponent:SetArmor(Armor)
-	self.m_Armor = Armor
-end
-function CEnemyComponent:GetWeapon()
-	return self.m_Weapon 
-end
-function CEnemyComponent:SetWeapon(Weapon)
-	self.m_Weapon = Weapon
-end
-function CEnemyComponent:GetRenderableObject()
-	return self.m_RObject
-end
+function CEnemyComponent:IsDead() return self.m_Dead end
+function CEnemyComponent:GetHealth() return self.m_Health end
+function CEnemyComponent:GetSpeed()	return self.m_Speed end
+function CEnemyComponent:GetVisionRange() return self.m_VisionRange end
+function CEnemyComponent:GetAttackDelay() return self.m_AttackDelay end
+function CEnemyComponent:GetArmor()	return self.m_Armor end
+function CEnemyComponent:SetArmor(Armor) self.m_Armor = Armor end
+function CEnemyComponent:GetWeapon() return self.m_Weapon end
+function CEnemyComponent:SetWeapon(Weapon) self.m_Weapon = Weapon end
+function CEnemyComponent:GetRenderableObject() return self.m_RObject end
+
 function CEnemyComponent:AddWaypoint(WayPoint)
 	table.insert(self.m_WayPoints,WayPoint)
 end
@@ -88,29 +69,6 @@ end
 function CEnemyComponent:TakeDamage(PlayerWeapon, PlayerDamage)
 	self.m_Health = self.m_Health - Damage
 end
-
-function CEnemyComponent:Attack()
-
-end
--- function CEnemyComponent:GetElapsedTime()
-
--- function CEnemyComponent:IsPlayerInsideVisionRange(PlayerPosition)
-
-	-- local l_Distance = 0.0
-	-- local l_Position = self.m_RObject:GetPosition()
-	
-	-- l_Distance = math.sqrt((l_Position.x - PlayerPosition.x)^2 + (l_Position.y - PlayerPosition.y)^2 + (l_Position.z - PlayerPosition.z)^2)
-	
-	-- -- local s = ""
-	-- -- s = l_Distance.." distance"
-	-- -- g_LogManager:Log(s)
-	
-	-- if l_Distance < self.m_VisionRange then
-		-- return true
-	-- end
-	
-	-- return false
--- end
 
 function CEnemyComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, ElapsedTime)
 	local l_Result = 0.0
@@ -128,6 +86,17 @@ function CEnemyComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, ElapsedT
 	return l_Result
 end
 
+function CEnemyComponent:LookAtPoint(Point, ElapsedTime)
+	local l_Forward = self.m_RObject:GetForward()
+	l_Forward.y = 0.0
+	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_RObject:GetPosition(), Point)	
+	-- -k*T    si el ángulo es negativo. K es la velocidad
+	--  si -k*T < angulo, aplicas el angulo, y no la formula, para que no se pase de rotación
+	local l_CurrentYaw = self.m_RObject:GetYaw()
+	local l_Velocity = self.m_RotationVelocity
+	self.m_RObject:SetYaw(self:CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+end
+
 function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 	m_Position = self.m_RObject:GetPosition()
 	local l_Name = self.m_RObject:GetName()
@@ -142,24 +111,10 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 		
 		if CTTODMathUtils.PointInsideCircle(l_Destiny, m_Position, 0.2) == false then
 			l_Vector:Normalize(1)
-			--local l_VS = l_Vector*self:GetSpeed()
 			self.m_Velocity = self.m_Velocity + (l_Vector*self:GetSpeed())
 			self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
-			
-			self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name,(self.m_Velocity * ElapsedTime), ElapsedTime)
-			
-			local l_Forward = self.m_RObject:GetForward()
-			l_Forward.y = 0.0
-			l_Destiny.y = 0.0
-			local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_RObject:GetPosition(), l_Destiny)
-
-			-- -k*T    si el ángulo es negativo. K es la velocidad
-			--  si -k*T < angulo, aplicas el angulo, y no la formula, para que no se pase de rotación
-			
-			local l_CurrentYaw = self.m_RObject:GetYaw()
-			local l_Velocity = self.m_RotationVelocity
-			self.m_RObject:SetYaw(self:CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
-		
+			self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name,(self.m_Velocity * ElapsedTime * self.m_Speed), ElapsedTime)
+			self:LookAtPoint(l_Destiny, ElapsedTime)
 		else
 			self.m_CurrentWayPoint = self.m_CurrentWayPoint+1
 		end
@@ -170,3 +125,5 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 	--else g_LogManager:Log(self.m_RObject:GetName().." doesn't have waypoints")
 	end
 end
+
+
