@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Vertex\VertexTypes.h"
 #include "Log.h"
+#include "RenderableObjects\RenderableObjectTechniqueManager.h"
 
 void CEffectVertexShader::Destroy()
 {
@@ -31,11 +32,13 @@ CEffectVertexShader::CEffectVertexShader(const CXMLTreeNode &TreeNode)
 {
 	m_ShaderModel = TreeNode.GetPszProperty("shader_model","vs_4_0");
 	m_EntryPoint = TreeNode.GetPszProperty("entry_point","VS");
-	m_VertexType = TreeNode.GetPszProperty("vertex_type","MV_POSITION_NORMAL_TEXTURE_VERTEX");			
+	m_VertexType = TreeNode.GetPszProperty("vertex_type", "");
 }
 
 bool CEffectVertexShader::Load()
 {  
+	assert(m_VertexType != "");
+	
 	CreateShaderMacro();
 
 	ID3DBlob *l_VSBlob=NULL;  
@@ -43,6 +46,7 @@ bool CEffectVertexShader::Load()
 	if(!l_Loaded) 
 	{
 		CEngine::GetSingleton().GetLogManager()->Log("Unable to load vertex shader "+m_Filename);
+		assert(false);
 		return false;  
 	}
 	CRenderManager *l_RenderManager=CEngine::GetSingleton().GetRenderManager();
@@ -51,7 +55,8 @@ bool CEffectVertexShader::Load()
 	
 	if( FAILED(l_HR) )  
 	{   
-		l_VSBlob->Release();   
+		l_VSBlob->Release(); 
+		assert(false);
 		return false;  
 	}  
  
@@ -89,9 +94,11 @@ bool CEffectVertexShader::Load()
 	//else if (m_VertexType == "MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX")
 		//l_Loaded = MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
 
-	else   
-		CEngine::GetSingleton().GetLogManager()->Log("Vertex type "+m_VertexType+" not recognized on CEffectVertexShader::Load");
-		//Info("Vertex type '%s' not recognized on CEffectVertexShader::Load", m_VertexType.c_str());*/
+	else
+	{
+		CEngine::GetSingleton().GetLogManager()->Log("Vertex type " + m_VertexType + " not recognized on CEffectVertexShader::Load");
+		assert(false);
+	}//Info("Vertex type '%s' not recognized on CEffectVertexShader::Load", m_VertexType.c_str());*/
 	
 	l_VSBlob->Release();  
 	if(!l_Loaded)   

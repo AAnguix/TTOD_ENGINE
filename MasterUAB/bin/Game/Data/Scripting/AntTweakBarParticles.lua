@@ -54,7 +54,6 @@ function OpenParticle(ParticleName)
 
 	l_DebugHelper:RegisterButton("SizeCP","OpenSizeCP('"..l_Type:GetName().."')")
 	l_DebugHelper:RegisterButton("ColorCP","OpenColorCP('"..l_Type:GetName().."')")
-	-- l_DebugHelper:RegisterExtendedButton("ColorCP","OpenColorCP",l_Type:GetThisLuaAddress(),"partycle")
 	
 	l_DebugHelper:RegisterButton("Export[XML]","WriteParticleInfoToXml('"..l_Type:GetName().."')")
 	

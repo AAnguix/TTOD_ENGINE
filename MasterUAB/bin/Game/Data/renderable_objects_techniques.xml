@@ -9,6 +9,7 @@
 		<renderable_object_technique name="environment_renderable_object_technique" technique="environment_technique"/>
 		<default_technique vertex_type="MV_PARTICLE_VERTEX" technique="particles_technique"/>
 		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="GUI_technique"/>
+		<renderable_object_technique name="lava_renderable_object_technique" technique="lava_technique"/>
 	</pool_renderable_object_technique>	
 	
 	<pool_renderable_object_technique name="generate_g_buffer">

@@ -40,7 +40,9 @@ float GetSpotAttenuation( float Angle, float FallOffAngle, float3 LightDirection
 
 float GetAttenuation( float Distance, float AttenuationStartRange, float AttenuationEndRange)
 {
-	return float(1 - saturate((Distance-AttenuationStartRange)/(AttenuationEndRange-AttenuationStartRange)));
+	float l_Value = (Distance-AttenuationStartRange)/(AttenuationEndRange-AttenuationStartRange);
+	//TODO return float(1 - saturate(l_Value));
+	return float(1-saturate(l_Value));
 }
 
 float4 GetLightsSummation( float3 Ambient,  float3 Diffuse, float3 Specular, float Alpha)
@@ -72,8 +74,10 @@ void GetSingleIluminatedPixelColor(int IdLight, float4 DiffuseTexture, float Spe
 			float l_SpecularContrib = GetOmniSpecularContrib(Nn,m_CameraPosition,WorldPos,lightDirection,SpecularPower) * SpecularFactor;
 			
 			DiffuseLight=(l_DiffuseContrib * m_LightColor[IdLight].xyz * DiffuseTexture.xyz * m_LightIntensityArray[IdLight] * l_Attenuation);
-			
 			SpecularLight=(l_SpecularContrib * m_LightColor[IdLight].xyz * m_LightIntensityArray[IdLight] * l_Attenuation); 
+			//DiffuseLight=float3(l_Attenuation,0.0,0.0);
+			
+			//En debug y release, la formula de la atenuacion no da el mismo valor
 		}
 		else if(m_LightTypeArray[IdLight]==1.0f) //DIRECTIONAL
 		{

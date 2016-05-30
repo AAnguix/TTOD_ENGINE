@@ -69,7 +69,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)_d.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>DirectXTK.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXProfileSDKDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;libxml2.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Base_d.lib;Core_d.lib;Graphics_d.lib;GUI_d.lib;PhysX_d.lib;Sound_d.lib;DirectXTK_d.lib;AntTweakBar.lib;Lua_d.lib;luabind_d.lib;iconv.lib;libxml2.lib;cal3d_d.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXProfileSDKDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\lib;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(WindowsSDK_LibraryPath_x86);$(SolutionDir)3rdParty\PhysX\Lib\vc12win32;$(WWISESDK)\Win32_vc120\$(Configuration)\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -90,21 +90,23 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\lib;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(WindowsSDK_LibraryPath_x86);$(SolutionDir)3rdParty\PhysX\Lib\vc12win32;$(WWISESDK)\Win32_vc120\$(Configuration)\lib;$(DXSDK_DIR)\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DirectXTK.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysXProfileSDK.lib;PhysX3CharacterKinematic_x86.lib;PhysX3Cooking_x86.lib;dxerr.lib;libxml2.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;DxErr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Base.lib;Core.lib;Graphics.lib;GUI.lib;PhysX.lib;Sound.lib;DirectXTK.lib;AntTweakBarRelease.lib;Lua.lib;luabind.lib;iconv.lib;libxml2.lib;cal3d.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysXProfileSDK.lib;PhysX3CharacterKinematic_x86.lib;PhysX3Cooking_x86.lib;dxerr.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;DxErr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{77b0c728-54bb-429b-925a-3f8cb72784f9}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <ProjectReference Include="..\Graphics\Graphics.vcxproj">
       <Project>{31f7443f-b43c-4d38-931c-fac7c771ef91}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GUI\GUI.vcxproj">
       <Project>{143d2636-2e2a-469a-97f5-878efc7a2a26}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Network\Network.vcxproj">
-      <Project>{a0bd2c2b-5c98-4a93-ad7d-987e20e45abc}</Project>
     </ProjectReference>
     <ProjectReference Include="..\PhysX\PhysX.vcxproj">
       <Project>{f2c44bbf-5192-4d26-9498-7236f01a3480}</Project>

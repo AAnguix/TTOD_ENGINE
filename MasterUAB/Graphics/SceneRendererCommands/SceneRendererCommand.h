@@ -17,6 +17,7 @@ class CSceneRendererCommand : public CActive, public CNamed
 		CSceneRendererCommand(CXMLTreeNode &TreeNode); 
 		virtual ~CSceneRendererCommand();  
 		virtual void Execute(CRenderManager &RenderManager) = 0; 
+		CEmptyPointerClass* GetThisLuaAddress() const;
 }; 
 
 #endif

@@ -48,6 +48,8 @@ public:
 
 	virtual TRenderableObjectType GetClassType() const = 0;
 
+	virtual CEmptyPointerClass* GetThisLuaAddress() const;
+
 };
 
 #endif

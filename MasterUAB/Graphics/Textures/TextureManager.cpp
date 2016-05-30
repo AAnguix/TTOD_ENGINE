@@ -7,26 +7,22 @@ CTextureManager::CTextureManager(){}
 
 CTextureManager::~CTextureManager(){}
 
-CTexture * CTextureManager::GetTexture(const std::string &Filename)
+CTexture * CTextureManager::GetTexture(const std::string &Filename, bool GuiTexture)
 {
 	bool l_WrongFormat = false;
 
-	if (Filename.substr(Filename.find_last_of(".") + 1) == "jpg") 
-	{
+	std::string l_Extension = Filename.substr(Filename.find_last_of(".") + 1);
+	if (l_Extension == ".jpg" || l_Extension == ".tga")
 		l_WrongFormat = true;
-	}
-
-	//assert(!l_WrongFormat);
 
 	if (l_WrongFormat)
 	{
+		assert(false);
 		return nullptr;
 	}
 
 	std::map<std::string, CTexture*>::iterator itMap;
-
 	itMap=m_Resources.find(Filename);
-
 	if(itMap != m_Resources.end())
 	{
 		return itMap->second;
@@ -34,8 +30,7 @@ CTexture * CTextureManager::GetTexture(const std::string &Filename)
 	else 
 	{
 		CTexture* l_Texture = new CTexture;
-		bool l_Loaded = l_Texture->Load(Filename);
-		
+		bool l_Loaded = l_Texture->Load(Filename, GuiTexture);
 		if (l_Loaded)
 		{
 			if (!AddResource(Filename, l_Texture))
@@ -47,7 +42,6 @@ CTexture * CTextureManager::GetTexture(const std::string &Filename)
 		{
 			CEngine::GetSingleton().GetLogManager()->Log("Can't load texture " + Filename);
 		}
-		 
 		return l_Texture;
 	}
 }

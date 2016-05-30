@@ -9,12 +9,13 @@
 #include "RenderableObjects\RenderableObjectTechnique.h"
 #include <cmath>
 
-CStaticMesh::CStaticMesh()
-	: m_NumVertexs(0)
-	, m_NumFaces(0)
-	, m_RVs(NULL)
-	, m_Materials(NULL)
-	, CNamed("")
+CStaticMesh::CStaticMesh(const std::string &Name)
+:m_NumVertexs(0)
+//,m_NumFaces(0)
+,m_RVs(NULL)
+,m_Materials(NULL)
+,CNamed(Name)
+,m_Filename("")
 {
 
 }
@@ -42,7 +43,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 	FILE *l_File = NULL;
 	fopen_s(&l_File, (l_BinaryFile.c_str()), "rb");
 
-	m_Name = FileName;
+	m_Filename = FileName;
 
 	unsigned short l_DefaultHeader = 0xfe55;
 	unsigned short l_DefaultFooter = 0x55fe;
@@ -311,7 +312,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 				m_RVs.push_back(l_RV);
 
-				m_NumFaces += (m_NumIndexs - 2);
+				//m_NumFaces += (m_NumIndexs - 2);
 
 			} // > 0 vertex
 
@@ -325,7 +326,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 		if (l_Footer != l_DefaultFooter)
 		{
-			m_NumFaces = 0;
+			//m_NumFaces = 0;
 			m_NumVertexs = 0;
 
 			for (size_t i = 0; i<m_RVs.size(); ++i)
@@ -347,7 +348,7 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 bool CStaticMesh::Reload()
 {
-	return Load(m_Name);
+	return Load(m_Filename);
 }
 
 void CStaticMesh::Render(CRenderManager *RM) const
@@ -389,6 +390,11 @@ Vect3f CStaticMesh::GetBoundingBoxMin() const
 	return Vect3f(m_BoundingBox.x_min, m_BoundingBox.y_min, m_BoundingBox.z_min);
 }
 
+Vect3f CStaticMesh::GetBoundingSphereCenter() const
+{
+	return Vect3f(m_BoundingSphere.x_center, m_BoundingSphere.y_center, m_BoundingSphere.z_center);
+}
+
 float CStaticMesh::GetBoundingSphereRadius() const
 {
 	return m_BoundingSphere.radius;
@@ -405,3 +411,5 @@ float CStaticMesh::GetCapsuleRadius() const
 	float l_Result = (abs(m_BoundingBox.x_max - m_BoundingBox.x_min)) / 2;
 	return l_Result;
 }
+
+CEmptyPointerClass* CStaticMesh::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }

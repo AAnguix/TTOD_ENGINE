@@ -22,6 +22,9 @@
 		<texture filename="Data\GUI\Fonts\Felix_0.png"/>
 		<texture filename="Data\GUI\Fonts\Felix_1.png"/>
 </material>
+<material name="calibri_font_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+		<texture filename="Data\GUI\Fonts\calibri_0.png"/>
+</material>
 	<material name="pedestal_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\pedestal_button.png"/>
 </material>

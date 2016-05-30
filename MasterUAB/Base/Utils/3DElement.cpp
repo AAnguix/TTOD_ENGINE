@@ -1,4 +1,5 @@
 #include "3DElement.h"
+#include "EmptyPointerClass.h"
 
 /*
 Vect3f  m_Position, m_PrevPos;  
@@ -189,3 +190,8 @@ void C3DElement::SetVisible(bool Visible)
 {
 	m_Visible=Visible;
 }
+
+CEmptyPointerClass* C3DElement::GetYawLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Yaw); }
+CEmptyPointerClass* C3DElement::GetPitchLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Pitch); }
+CEmptyPointerClass* C3DElement::GetRollLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Roll); }
+CEmptyPointerClass* C3DElement::GetPositionLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Position); }

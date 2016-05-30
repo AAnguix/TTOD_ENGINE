@@ -2,6 +2,8 @@ function InitializeGUI()
 	g_GUIManager:AddHealthBar("player_health_bar","player_health_bar_base","player_health_bar_top","player_health_bar_background")
 	
 	g_GUIManager:AddFont("felix_font", "Data\\GUI\\Fonts\\Felix.fnt")
+	g_GUIManager:AddFont("calibri_font", "Data\\GUI\\Fonts\\calibri.fnt")
+	
 	
 	g_GUIManager:AddButton("menu_button","menu_button_normal","menu_button_highlight","menu_button_pressed")
 		g_GUIManager:AddButton("pause_button","pause_button_normal","pause_button_highlight","pause_button_pressed")
@@ -27,17 +29,44 @@ MUSIC_SLIDER_WIDTH = 0.35
 MUSIC_SLIDER_HEIGHT = 0.075
 MUSIC_SLIDER_XOFFSET = 0.5
 
+GRAPHICS_STATS_X_DISPLACEMENT = 0.97
+GRAPHICS_STATS_Y_DISPLACEMENT = 0.08
+GRAPHICS_STATS_Y_OFFSET = 0.025
+
 function UpdateGUI(ElapsedTime)
 	
 	--local l_HealthBarPos = SGUIPosition(50,50,512,128)
 	local l_HealthBarPos = SGUIPosition(0.83,0.05,0.3,0.075,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, g_PlayerComponent:GetMaxHealth(), g_PlayerComponent:GetHealth()) 
 	
+	ShowGraphicsStats()
 	-- local l_Pos = SGUIPosition(0.1,0.1,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	-- g_GUIManager:DoText("textoDePrueba","felix_font",l_Pos,"","Game is paused!")
 	--void DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text);
 	
 	UpdateMenu()
+end
+
+function ShowGraphicsStats()
+	
+	local l_FPSPos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("FramesPerSecond","calibri_font",l_FPSPos,"","Fps:"..g_GraphicsStats:GetFps())
+	
+	local l_MillisecondsPerFrameTextPos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+GRAPHICS_STATS_Y_OFFSET,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("MillisecondsPerFrameText","calibri_font",l_MillisecondsPerFrameTextPos,"","Millisecs/frame")
+	
+	local l_MillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*2),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("MillisecondsPerFrame","calibri_font",l_MillisecondsPerFramePos,"","Frame "..Round(g_GraphicsStats:GetMilliSecondsPerFrame(),2))
+	
+	local l_MinMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*3),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("MinMillisecondsPerFrame","calibri_font",l_MinMillisecondsPerFramePos,"","Min "..Round(g_GraphicsStats:GetMinMillisecondsPerFrame(),2))
+	
+	local l_AvgMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*4),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("AvgMillisecondsPerFrame","calibri_font",l_AvgMillisecondsPerFramePos,"","Avg "..Round(g_GraphicsStats:GetAvgMillisecondsPerFrame(),2))
+	
+	local l_MaxMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*5),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("MaxMillisecondsPerFrame","calibri_font",l_MaxMillisecondsPerFramePos,"","Max "..Round(g_GraphicsStats:GetMaxMillisecondsPerFrame(),2))
+	
 end
 
 function CheckMenu()

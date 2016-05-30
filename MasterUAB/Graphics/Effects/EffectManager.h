@@ -16,7 +16,6 @@ private:
 	CTemplatedMapManager<CEffectPixelShader> m_PixelShaders;
 	CTemplatedMapManager<CEffectGeometryShader> m_GeometryShaders;
 	std::string m_Filename; 
-
 	//void Destroy();
 
 public:  
@@ -35,6 +34,8 @@ public:
 	CEffectPixelShader * GetPixelShader(const std::string &PixelShader);
 	CEffectGeometryShader * GetGeometryShader(const std::string &GeometryShader);
 	void SetSceneConstants();  
+
+	void SetLightsConstantsDefaultValues(unsigned int MaxLights = MAX_LIGHTS_BY_SHADER);
 	void SetLightConstants(unsigned int IdLight, CLight *Light);  
 	void SetLightsConstants(unsigned int MaxLights=MAX_LIGHTS_BY_SHADER);
 

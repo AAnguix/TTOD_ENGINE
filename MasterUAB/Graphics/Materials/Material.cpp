@@ -30,8 +30,9 @@ CMaterial::CMaterial(CXMLTreeNode &TreeNode)
 		if (l_Element.GetName() == std::string("texture"))
 		{
 			std::string l_Filename = l_Element.GetPszProperty("filename", "");
+			bool l_GuiTexture = l_Element.GetBoolProperty("gui_texture", false);
 			
-			CTexture *l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(l_Filename);
+			CTexture *l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(l_Filename, l_GuiTexture);
 			if (l_Texture!=nullptr)
 				m_Textures.push_back(l_Texture);
 		}
@@ -146,7 +147,8 @@ void * CMaterial::GetNextParameterAddress(unsigned int NumBytes)
 
 void CMaterial::ChangeTexture(const std::string Texture, size_t Index)
 { 
-	m_Textures[Index] = CEngine::GetSingleton().GetTextureManager()->GetTexture(Texture);
+	bool l_UsedInGui = m_Textures[Index]->UsedInGui();
+	m_Textures[Index] = CEngine::GetSingleton().GetTextureManager()->GetTexture(Texture, l_UsedInGui);
 }
 
 CEmptyPointerClass* CMaterial::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }

@@ -112,13 +112,13 @@
 	
 	
 	<!-- ColorGrading -->
-	<set_pool_renderable_objects_technique pool="color_grading_pool_renderable_object_technique"/>
+	<!-- <set_pool_renderable_objects_technique pool="color_grading_pool_renderable_object_technique"/>
 	<capture_frame_buffer>
 		<capture_texture name="ColorGradingCapturedTexture" texture_width_as_frame_buffer="true"/>
 	</capture_frame_buffer>
 	<render_draw_quad material="ColorGradingMaterial">
 		<texture stage_id="0" file="ColorGradingCapturedTexture"/>
-	</render_draw_quad>
+	</render_draw_quad> -->
 	
 	
 	<!-- LightScattering -->
@@ -176,24 +176,26 @@
 	<!-- <render_debug_layer layer="solid" active="true"/> -->
 	
 	<!-- <set_matrices/> -->
+	<!-- <clear render_target="false" depth_stencil="false"/> -->
+	<!-- <set_light_constants/> -->
+	
+	<!-- Lava -->
+	<!-- <set_depth_stencil_state enable_z_test="true" write_z_buffer="true"/> -->
+	<set_pool_renderable_objects_technique pool="forward_shading"/>
+	<!-- <render_layer layer="alpha_blend_objects" active="true"/> -->
 	
 	<!-- Particles -->
-	<set_pool_renderable_objects_technique pool="forward_shading"/>
+	<render_debug_layer layer="solid" active="true"/>
 	<enable_alpha_blend/>
 	<set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/>
 	<render_layer layer="particles" active="true"/>
 	<disable_alpha_blend/>
 	
-	<!-- <clear render_target="false" depth_stencil="false"/> -->
-	<set_light_constants max_lights = "20" />
-	
 	<!-- <set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/> -->
 	<!-- <render_layer layer="skybox" active="true"/> -->
 	
-	<set_depth_stencil_state enable_z_test="false" write_z_buffer="false"/>
-	<set_pool_renderable_objects_technique pool="forward_shading"/>
 	<render_debug_gui/>
-	<enable_alpha_blend/>
+	<enable_alpbha_blend/>
 	<render_gui/>
 	<disable_alpha_blend/>
 	<!-- <render_debug_grid/> -->

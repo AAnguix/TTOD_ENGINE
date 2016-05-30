@@ -68,5 +68,5 @@ void CRenderableObject::RemoveLuaComponents()
 	m_LuaComponents.clear();
 }
 
-
+CEmptyPointerClass* CRenderableObject::GetThisLuaAddress() const { return (CEmptyPointerClass *)(this); }
 	

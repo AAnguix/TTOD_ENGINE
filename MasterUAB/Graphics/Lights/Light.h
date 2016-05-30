@@ -5,7 +5,6 @@
 #include "Utils\3DElement.h"
 #include "Math\Color.h"
 #include "Math\MathTypes.h"
-#include "Utils\Utils.h"
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "Utils\EmptyPointerClass.h"
 
@@ -31,8 +30,8 @@ protected:
 	Mat44f m_ViewShadowMap, m_ProjectionShadowMap;
 	
 	Vect3f m_Position;
-	CColor     m_Color;
-	TLightType    m_Type; 
+	CColor m_Color;
+	TLightType m_Type; 
 	
 	bool m_Active;
 	float m_Intensity;
@@ -45,7 +44,6 @@ public:
 	CLight();   
 	virtual ~CLight();  
 	
-	UAB_GET_SET_PROPERTY_REFERENCE(Vect3f, Position);  
 	UAB_GET_SET_PROPERTY_REFERENCE(CColor, Color);  
 	UAB_GET_SET_STANDARD_PROPERTY(float, StartRangeAttenuation);  
 	UAB_GET_SET_STANDARD_PROPERTY(float, EndRangeAttenuation);
@@ -68,13 +66,11 @@ public:
 	void SetActive(bool Active){m_Active=Active;};
 	void SwichActive(){m_Active=!m_Active;};
 
-	//CEmptyPointerClass * GetIntensityAddress() const;
-	UAB_GET_VAR_ADDRESS(Intensity);
-	UAB_GET_VAR_ADDRESS(Position);
-	UAB_GET_VAR_ADDRESS(Color);
-	UAB_GET_VAR_ADDRESS(Active);
-	UAB_GET_VAR_ADDRESS(StartRangeAttenuation);
-	UAB_GET_VAR_ADDRESS(EndRangeAttenuation);
+	CEmptyPointerClass* GetIntensityLuaAddress() const;
+	CEmptyPointerClass* GetColorLuaAddress() const;
+	CEmptyPointerClass* GetActiveLuaAddress() const;
+	CEmptyPointerClass* GetStartRangeAttenuationLuaAddress() const;
+	CEmptyPointerClass* GetEndRangeAttenuationLuaAddress() const;
 
 	virtual void SetShadowMap(CRenderManager &RenderManager) = 0;
 }; 

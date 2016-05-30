@@ -1,22 +1,56 @@
 #include "FileUtils.h"
 #include <sstream>
 #include <fstream>
+#include <assert.h>
 
-bool CFileUtils::CookedMeshFileExists(const std::string &Name, const unsigned int &CurrentLevel)
+bool CFileUtils::FolderExists(const char* FolderName)
 {
-	std::string l_CookedMeshFileName = GetCookedMeshFileName(Name, CurrentLevel);
-	/*int l_Return = PathFileExistsA(l_CookedMeshFileName.c_str());
+	DWORD l_Attributes = GetFileAttributesA(FolderName);
+	if (l_Attributes == INVALID_FILE_ATTRIBUTES)
+	{
+		return false;
+	}
+	return true;
+}
 
-	return (l_Return == 1);*/
-	
-	std::ifstream infile(l_CookedMeshFileName.c_str());
+bool CFileUtils::CreateFolder(const char* FolderName)
+{
+	return (CreateDirectory(FolderName, NULL)!=0);
+}
+
+void CFileUtils::CheckPhysxFolders(const std::string& Level)
+{
+	bool l_Success = true;
+	std::stringstream l_Cooked;
+	l_Cooked << "Data\\Level" + Level + "\\cooked\\";
+	if (!FolderExists(l_Cooked.str().c_str()))
+		l_Success = CreateFolder(l_Cooked.str().c_str());
+	assert(l_Success != false);
+
+	std::stringstream l_Triangle;
+	l_Triangle << "Data\\Level" + Level + "\\cooked\\triangle";
+	if (!FolderExists(l_Triangle.str().c_str()))
+		CreateFolder(l_Triangle.str().c_str());
+	assert(l_Success != false);
+
+	std::stringstream l_Convex;
+	l_Convex << "Data\\Level" + Level + "\\cooked\\convex";
+	if (!FolderExists(l_Convex.str().c_str()))
+		CreateFolder(l_Convex.str().c_str());
+	assert(l_Success != false);
+}
+
+bool CFileUtils::FileExists(const std::string &Filename)
+{
+	std::ifstream infile(Filename.c_str());
 	bool l_Return = infile.good();
 	return l_Return;
 }
 
-bool CFileUtils::MeshFileModified(const std::string &Name, const unsigned int &CurrentLevel)
+bool CFileUtils::MeshFileModified(bool TriangleMesh, const std::string &Name, const unsigned int &CurrentLevel)
 {
-	std::string l_CookedMeshFileName = GetCookedMeshFileName(Name, CurrentLevel);
+	std::string l_CookedMeshFileName;
+	CookedMeshExists(TriangleMesh, Name, CurrentLevel,l_CookedMeshFileName);
 	std::string l_MeshFileName = GetMeshFileName(Name, CurrentLevel);
 
 	SYSTEMTIME l_MeshTime = GetFileCreationDate(l_MeshFileName);
@@ -32,11 +66,25 @@ bool CFileUtils::MeshFileModified(const std::string &Name, const unsigned int &C
 	return false;
 }
 
-std::string CFileUtils::GetCookedMeshFileName(const std::string &Name, unsigned int CurrentLevel)
+bool CFileUtils::CookedMeshExists(bool TriangleMesh, const std::string &Name, unsigned int CurrentLevel, std::string &_CookedMeshFileName)
 {
+	
 	std::stringstream l_StringStream;
-	l_StringStream << "Data\\Level" << CurrentLevel << "\\cooked\\" << Name;
-	return l_StringStream.str();
+	l_StringStream << "Data\\Level" << CurrentLevel << "\\cooked\\";
+	bool b = FolderExists("Data\\Level1\\cooked\\");
+
+	if (TriangleMesh)
+		l_StringStream << "triangle";
+	else
+		l_StringStream << "convex";
+	l_StringStream << "\\" + Name;
+
+	_CookedMeshFileName = l_StringStream.str();
+
+	if (!FileExists(_CookedMeshFileName))
+		return false; /*Cooked mesh doesn't exists*/
+		
+	return true;
 }
 
 std::string CFileUtils::GetMeshFileName(const std::string &Name, unsigned int CurrentLevel)
@@ -45,6 +93,7 @@ std::string CFileUtils::GetMeshFileName(const std::string &Name, unsigned int Cu
 
 	std::stringstream l_StringStream;
 	l_StringStream << "Data\\Level" << CurrentLevel << "\\meshes\\" << Name << ".mesh";
+
 	return l_StringStream.str();
 }
 

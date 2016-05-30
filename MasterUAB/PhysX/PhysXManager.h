@@ -26,8 +26,10 @@ namespace physx
 	class PxRigidActor;
 	class PxRigidBody;
 	class PxGeometry;
+
 	class PxConvexMesh;
 	class PxTriangleMesh;
+	class PxDefaultMemoryInputData;
 
 	class PxDefaultMemoryOutputStream;
 
@@ -73,17 +75,23 @@ protected:
 	std::vector<physx::PxActor*> m_Actors;
 	std::map<std::string, physx::PxController*> m_CharacterControllers;
 
-	void SaveActorData(size_t Index, const std::string ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor *Actor);
-	size_t GetActorIndex(const std::string& ActorName) const;
-	void CheckMapAndVectors();
-	physx::PxActor* IsRigidDynamic(const std::string& ActorName);
+	std::map<std::string, physx::PxConvexMesh*> m_ConvexMeshes;
+	std::map<std::string, physx::PxTriangleMesh*> m_TriangleMeshes;
+	
+	physx::PxConvexMesh* GetConvexMesh(const std::string &ConvexMeshName, physx::PxDefaultMemoryInputData MemoryInputData);
+	physx::PxTriangleMesh* GetTriangleMesh(const std::string &TriangleMeshName, physx::PxDefaultMemoryInputData MemoryInputData);
 
-	physx::PxConvexMesh*  CreateConvexMesh(const std::string &FileName, std::vector<Vect3f> Vertices);
-	physx::PxTriangleMesh*  CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices);
+	physx::PxConvexMesh*  CreateConvexMesh(const std::string &CoreName, std::vector<Vect3f> Vertices);
+	physx::PxTriangleMesh*  CreateTriangleMesh(const std::string &CoreName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices);
 
 	void WriteCookingDataToFile(const std::string &FileName, void *Data, unsigned int DataSize);
 	void ReadCookingDataFromFile(const std::string &FileName, void **Data, unsigned int &DataSize);
 	/*physx::PxDefaultMemoryOutputStream ReadCookingDataFromFile(const std::string &FileName);*/
+
+	void SaveActorData(size_t Index, const std::string ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor *Actor);
+	size_t GetActorIndex(const std::string& ActorName) const;
+	void CheckMapAndVectors();
+	physx::PxActor* IsRigidDynamic(const std::string& ActorName);
 
 public:
 	struct SRaycastData
@@ -119,18 +127,18 @@ public:
 	void CreateRigidStaticSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 	void CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 	void CreateRigidStaticPlane(const std::string &Name, const Vect3f &Normal, float Distance, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	void CreateRigidStaticTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
 
 	/*Dynamic*/
 	void CreateRigidDynamicBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
 	void CreateRigidDynamicSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
 	void CreateRigidDynamicCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-	void CreateRigidDynamicConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
+	void CreateRigidDynamicConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
 	/*Triangle meshes can't be dynamic*/
 	/*Triangle,heightField cant be trigger*/
 	/*Plane,triangle,height must be kinematic*/
-	void CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density);
+	void CreateRigidKinematicTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density);
 
 
 	physx::PxShape* CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group);

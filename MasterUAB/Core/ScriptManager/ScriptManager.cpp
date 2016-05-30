@@ -137,42 +137,6 @@ void CScriptManager::RegisterLUAFunctions()
 	RegisterPhysics();
 }
 
-void CScriptManager::RegisterSceneRendererCommands()
-{
-	module(LUA_STATE) 
-	[  
-		class_<CTemplatedVectorMapManager<CSceneRendererCommand>>("CTemplatedVectorMapManager")   
-		.def("GetResource", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResource) 
-		.def("GetResourceById", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResourceById) 
-		.def("AddResource", &CTemplatedVectorMapManager<CSceneRendererCommand>::AddResource) 
-		.def("RemoveResource", &CTemplatedVectorMapManager<CSceneRendererCommand>::RemoveResource) 
-		.def("GetResourcesMap", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResourcesMap) 
-		.def("GetResourcesVector", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResourcesVector) 
-	]; 
-
-	module(LUA_STATE) 
-	[ 
-		class_< CSceneRendererCommandManager, CTemplatedVectorMapManager<CSceneRendererCommand>>("CSceneRendererCommandManager")   
-		.def("Reload", &CSceneRendererCommandManager::Reload) 
-		.def("Load", &CSceneRendererCommandManager::Load) 
-		.def("Execute", &CSceneRendererCommandManager::Execute) 
-	];
-
-	module(LUA_STATE) 
-	[
-		class_<CActive>("CActive")
-		.def(constructor<CXMLTreeNode>())
-		.def("SetActive", &CActive::SetActive)
-		.def("GetActive", &CActive::GetActive)
-	];
-
-	module(LUA_STATE) 
-	[
-		class_<CSceneRendererCommand,bases<CActive,CNamed>>("CSceneRendererCommand")
-		.def("execute", &CSceneRendererCommand::Execute)
-	];
-}
-
 void CScriptManager::Load(const std::string &XMLFile)
 {
 

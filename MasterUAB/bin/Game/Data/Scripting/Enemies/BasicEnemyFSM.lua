@@ -2,17 +2,17 @@ function OnEnter_Idle_BasicEnemy(Enemy)
 	-- g_LogManager:Log(Enemy.m_RObject:GetName().." enters idle")	
 end
 function OnUpdate_Idle_BasicEnemy(Enemy, ElapsedTime)
-	if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), Enemy.m_RObject:GetPosition(), Enemy.m_VisionRange) and Enemy:GetTimer() > Enemy:GetAttackDelay()  then
-		if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), Enemy.m_RObject:GetPosition(), Enemy.m_AttackRange) then
-			Enemy:GetAnimator():SetTrigger("AttackPlayer")
-		else
-			Enemy:GetAnimator():SetBool("IsPlayerInsideVisionRange", true) 
-		end	
-	end
+	-- if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), Enemy.m_RObject:GetPosition(), Enemy.m_VisionRange) and Enemy:GetTimer() > Enemy:GetAttackDelay()  then 
+		-- if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), Enemy.m_RObject:GetPosition(), Enemy.m_AttackRange) then
+			-- Enemy:GetAnimator():SetTrigger("AttackPlayer")
+		-- else
+			-- Enemy:GetAnimator():SetBool("IsPlayerInsideVisionRange", true) 
+		-- end	
+	-- end
 	
-	if Enemy:GetTimer() > Enemy.m_DelayToPatrol then
-		Enemy:GetAnimator():SetBool("DelayToPatrol", true)
-	end
+	-- if Enemy:GetTimer() > Enemy.m_DelayToPatrol then
+		-- Enemy:GetAnimator():SetBool("DelayToPatrol", true)
+	-- end
 end
 function OnExit_Idle_BasicEnemy(Enemy)
 	-- g_LogManager:Log(Enemy.m_RObject:GetName().." exits idle")

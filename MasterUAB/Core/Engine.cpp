@@ -19,6 +19,8 @@
 #include "Input\InputManagerImplementation.h"
 #include "GUIManager.h"
 #include "ISoundManager.h"
+#include "FileUtils.h" 
+#include "Render\GraphicsStats.h"
 
 CEngine::CEngine()
 : m_RenderManager(NULL)
@@ -43,10 +45,12 @@ CEngine::CEngine()
 	m_InputManager = new CInputManagerImplementation;
 	m_GUIManager = new CGUIManager;
 	m_SoundManager = ISoundManager::CreateSoundManager();
+	m_GraphicsStats = new CGraphicsStats;
 }
 
 CEngine::~CEngine()
 {
+	{CHECKED_DELETE(m_GraphicsStats); }
 	{ CHECKED_DELETE(m_SoundManager); }
 	{CHECKED_DELETE(m_GUIManager);}
 	{CHECKED_DELETE(m_InputManager); }
@@ -75,6 +79,7 @@ void CEngine::Init()
 
 void CEngine::LoadLevel(const std::string& Level)
 {
+	CFileUtils::CheckPhysxFolders(Level);
  	m_MaterialManager->Load("./Data/Level" + Level + "/materials.xml");
 	m_StaticMeshManager->Load("./Data/Level" + Level + "/static_meshes.xml");
 	m_ParticleSystemManager->Load("./Data/Level" + Level + "/particles_systems.xml");
@@ -89,20 +94,11 @@ void CEngine::LoadLevel(const std::string& Level)
 	//m_SceneRendererCommandManager->Load("./Data/Level" + Level + "/scene_renderer_commands.xml");
 }
 
-CEffectManager* CEngine::GetEffectManager() const
-{
-	return m_EffectManager;
-}
+CEffectManager* CEngine::GetEffectManager() const {	return m_EffectManager; }
 
-CMaterialManager* CEngine::GetMaterialManager() const
-{
-	return m_MaterialManager;
-}
+CMaterialManager* CEngine::GetMaterialManager() const {	return m_MaterialManager; }
 	
-CTextureManager* CEngine::GetTextureManager() const
-{
-	return m_TextureManager;
-}
+CTextureManager* CEngine::GetTextureManager() const { return m_TextureManager; }
 
 /*
 CRenderableObjectsManager* CEngine::GetRenderableObjectsManager() const
@@ -110,85 +106,39 @@ CRenderableObjectsManager* CEngine::GetRenderableObjectsManager() const
 	return m_RenderableObjectsManager;
 }*/
 
-CStaticMeshManager* CEngine::GetStaticMeshManager() const
-{
-	return m_StaticMeshManager;
-}
+CStaticMeshManager* CEngine::GetStaticMeshManager() const {	return m_StaticMeshManager; }
 
-CScriptManager* CEngine::GetScriptManager() const
-{
-	return m_ScriptManager;
-}
+CScriptManager* CEngine::GetScriptManager() const { return m_ScriptManager; }
 
-CAnimatedModelManager* CEngine::GetAnimatedModelManager() const
-{
-	return m_AnimatedModelManager;
-}
+CAnimatedModelManager* CEngine::GetAnimatedModelManager() const { return m_AnimatedModelManager; }
 
-CLightManager* CEngine::GetLightManager() const
-{
-	return m_LightManager;
-}
+CLightManager* CEngine::GetLightManager() const { return m_LightManager; }
 
-CCameraControllerManager* CEngine::GetCameraControllerManager() const
-{
-	return m_CameraControllerManager;
-}
+CCameraControllerManager* CEngine::GetCameraControllerManager() const { return m_CameraControllerManager; }
 
-CLog* CEngine::GetLogManager() const
-{
-	return m_Log;
-}
+CLog* CEngine::GetLogManager() const { return m_Log; }
 
-CPhysXManager* CEngine::GetPhysXManager() const
-{
-	return m_PhysXManager;
-}
+CPhysXManager* CEngine::GetPhysXManager() const { return m_PhysXManager; }
 
-CLayerManager* CEngine::GetLayerManager() const
-{
-	return m_LayerManager;
-}
+CLayerManager* CEngine::GetLayerManager() const { return m_LayerManager; }
 
-CRenderableObjectTechniqueManager* CEngine::GetRenderableObjectTechniqueManager() const
-{
-	return m_RenderableObjectTechniqueManager;
-}
+CRenderableObjectTechniqueManager* CEngine::GetRenderableObjectTechniqueManager() const { return m_RenderableObjectTechniqueManager; }
 
-CSceneRendererCommandManager* CEngine::GetSceneRendererCommandManager() const
-{
-	return m_SceneRendererCommandManager;
-}
+CSceneRendererCommandManager* CEngine::GetSceneRendererCommandManager() const { return m_SceneRendererCommandManager; }
 
-CDebugHelperImplementation* CEngine::GetDebugHelper() const
-{
-	return m_DebugHelper;
-}
+CDebugHelperImplementation* CEngine::GetDebugHelper() const { return m_DebugHelper;}
 
-CParticleManager* CEngine::GetParticleSystemManager() const
-{
-	return m_ParticleSystemManager;
-}
+CParticleManager* CEngine::GetParticleSystemManager() const { return m_ParticleSystemManager;}
 
-CInputManagerImplementation* CEngine::GetInputManager() const
-{
-	return m_InputManager;
-}
+CInputManagerImplementation* CEngine::GetInputManager() const { return m_InputManager;}
 
-CGUIManager* CEngine::GetGUIManager() const
-{
-	return m_GUIManager;
-}
+CGUIManager* CEngine::GetGUIManager() const{ return m_GUIManager;}
 
-ISoundManager* CEngine::GetSoundManager() const
-{
-	return m_SoundManager;
-}
+ISoundManager* CEngine::GetSoundManager() const { return m_SoundManager;}
 
-CRenderManager* CEngine::GetRenderManager() const
-{
-	return m_RenderManager;
-}
+CRenderManager* CEngine::GetRenderManager() const { return m_RenderManager; }
+
+CGraphicsStats* CEngine::GetGraphicsStats() const { return m_GraphicsStats; }
 
 void CEngine::TerminateApplication()
 {

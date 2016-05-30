@@ -129,6 +129,8 @@ void CApplication::SwitchCamera()
 
 void CApplication::Update(float ElapsedTime)
 {	
+	m_RenderManager.GetContextManager()->SetTimes(ElapsedTime);
+
 	CCameraControllerManager* l_CCManager = CEngine::GetSingleton().GetCameraControllerManager();
 
 	std::stringstream l_Ss;

@@ -26,8 +26,7 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 
 				if (l_Element.GetName() == std::string("static_mesh"))
 				{
-					CStaticMesh *l_StaticMesh=new CStaticMesh();
-					l_StaticMesh->SetName(l_Element.GetPszProperty("name"));
+					CStaticMesh *l_StaticMesh = new CStaticMesh(l_Element.GetPszProperty("name"));
 
 					if(!AddResource(l_StaticMesh->GetName(), l_StaticMesh))
 					{

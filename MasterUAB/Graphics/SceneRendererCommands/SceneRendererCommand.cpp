@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Materials\MaterialManager.h"
 
+
 CSceneRendererCommand::CSceneRendererCommand(CXMLTreeNode &TreeNode) : CNamed(TreeNode.GetName()),CActive(TreeNode),m_Material(0)
 {
 	std::string l_MaterialName = TreeNode.GetPszProperty("material","");
@@ -18,6 +19,7 @@ void CSceneRendererCommandExecute(CRenderManager &RenderManager)
 
 }
 	
+CEmptyPointerClass* CSceneRendererCommand::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }
 
 
 

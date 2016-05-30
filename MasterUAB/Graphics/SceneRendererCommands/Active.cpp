@@ -21,4 +21,9 @@ void CActive::SetActive(bool Value)
 	m_Active=Value;
 }
 
+CEmptyPointerClass* CActive::GetActiveLuaAddress() const 
+{ 
+	return (CEmptyPointerClass *)((void*)&m_Active); 
+}
+
 

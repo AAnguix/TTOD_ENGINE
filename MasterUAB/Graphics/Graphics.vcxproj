@@ -70,6 +70,7 @@
     <ClInclude Include="Render\ContextManager.h" />
     <ClInclude Include="Render\DebugRender.h" />
     <ClInclude Include="Render\Frustum.h" />
+    <ClInclude Include="Render\GraphicsStats.h" />
     <ClInclude Include="Render\RenderManager.h" />
     <ClInclude Include="SceneRendererCommands\Active.h" />
     <ClInclude Include="SceneRendererCommands\ApplyFiltersSceneRendererCommand.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="Render\ContextManager.cpp" />
     <ClCompile Include="Render\DebugRender.cpp" />
     <ClCompile Include="Render\Frustum.cpp" />
+    <ClCompile Include="Render\GraphicsStats.cpp" />
     <ClCompile Include="Render\RenderManager.cpp" />
     <ClCompile Include="SceneRendererCommands\Active.cpp" />
     <ClCompile Include="SceneRendererCommands\ApplyFiltersSceneRendererCommand.cpp" />
@@ -196,6 +198,14 @@
     <ClCompile Include="Textures\DynamicTexture.cpp" />
     <ClCompile Include="Textures\Texture.cpp" />
     <ClCompile Include="Textures\TextureManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\3rdParty\cal3d-0.11rc2\src\cal3d\cal3d.vcxproj">
+      <Project>{d780f1cb-43bc-f2f2-cc86-ba3416cbf389}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\3rdParty\DirectXTK\DirectXTK_Desktop_2013.vcxproj">
+      <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{31F7443F-B43C-4D38-931C-FAC7C771EF91}</ProjectGuid>

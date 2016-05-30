@@ -31,9 +31,9 @@ function OpenMaterial(MaterialName)
 	local l_Textures = l_Material:GetTextures()
 	local l_Index = 0
 	for l_Texture in l_Textures do
-		g_DebugHelper:RegisterStringParameter("Texture",l_Texture:GetNameLuaAddress(),"")
+		g_DebugHelper:RegisterStringParameter(l_Index..". Texture",l_Texture:GetNameLuaAddress(),"")
 		--l_DebugHelper:RegisterButtonV2("Reload ","ReloadTexture",l_Texture:GetNameLuaAddress())
-		g_DebugHelper:RegisterChangeTextureButton("Reload texture ","ChangeTexture",l_Material,l_Texture:GetNameLuaAddress(),l_Index)
+		g_DebugHelper:RegisterChangeTextureButton(l_Index..". Reload t. ","ChangeTexture",l_Material,l_Texture:GetNameLuaAddress(),l_Index)
 		l_Index = l_Index+1
 	end
 end

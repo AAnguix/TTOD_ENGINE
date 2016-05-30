@@ -1,16 +1,20 @@
 #include "Lights\SpotLight.h"
 #include "Textures\DynamicTexture.h"
 
-CSpotLight::CSpotLight() : m_Angle(0),m_FallOff(0),CDirectionalLight()
+CSpotLight::CSpotLight() 
+:m_Angle(0.0f)
+,m_FallOff(0.0f)
+,CDirectionalLight()
 {
-	SetType(SPOT);
+	m_Type = SPOT;
 }
 
-CSpotLight::CSpotLight(CXMLTreeNode &TreeNode) : CDirectionalLight(TreeNode)
+CSpotLight::CSpotLight(CXMLTreeNode &TreeNode) 
+:CDirectionalLight(TreeNode)
+,m_FallOff(TreeNode.GetFloatProperty("fall_off", 0.0f))
+,m_Angle(TreeNode.GetFloatProperty("angle", 0.0f))
 {
-	SetType(SPOT);
-	SetFallOff(TreeNode.GetFloatProperty("fall_off",0.0f));
-	SetAngle(TreeNode.GetFloatProperty("angle",0.0f));
+	m_Type = SPOT;
 }
 
 void CSpotLight::Render(CRenderManager *RenderManager)

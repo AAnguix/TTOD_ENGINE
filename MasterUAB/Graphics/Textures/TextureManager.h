@@ -9,7 +9,7 @@ class CTextureManager : public CTemplatedMapManager<CTexture>
 public:
 	CTextureManager();
 	virtual ~CTextureManager();
-	CTexture * GetTexture(const std::string &Filename);  
+	CTexture * GetTexture(const std::string &Filename, bool GuiTexture);
 	void Reload();
 };
 

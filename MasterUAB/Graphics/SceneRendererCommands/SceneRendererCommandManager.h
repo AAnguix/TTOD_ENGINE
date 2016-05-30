@@ -15,6 +15,7 @@ class CSceneRendererCommandManager : public CTemplatedVectorMapManager<CSceneRen
 		bool Load(const std::string &Filename);  
 		bool Reload();  
 		void Execute(CRenderManager &RenderManager); 
+		const std::vector<CSceneRendererCommand *> & GetLUASceneRendererCommands();
 };  
 
 #endif

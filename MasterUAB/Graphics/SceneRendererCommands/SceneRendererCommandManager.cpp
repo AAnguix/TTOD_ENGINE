@@ -260,8 +260,13 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 
 			return true;
 		}
+		else
+		{
+			assert(false);
+			return false;
+		}
 	}
-
+	assert(false);
 	return false;
 }  
 
@@ -279,3 +284,8 @@ void CSceneRendererCommandManager::Execute(CRenderManager &RenderManager)
 			m_ResourcesVector[i]->Execute(RenderManager);
 	}
 }   
+
+const std::vector<CSceneRendererCommand *> & CSceneRendererCommandManager::GetLUASceneRendererCommands()
+{
+	return m_ResourcesVector;
+}

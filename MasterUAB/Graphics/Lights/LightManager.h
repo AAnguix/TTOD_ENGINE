@@ -8,7 +8,7 @@ class CLightManager : public CTemplatedVectorMapManager<CLight>
 {  
 
 protected:  
-	std::string    m_FileName;
+	std::string m_FileName;
 	Vect4f m_AmbientLight;
 	Vect4f m_FogParameters;
 	Vect4f m_FogColor;

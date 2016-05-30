@@ -23,13 +23,14 @@ CTexture::~CTexture()
 	Unload();
 }
 
-bool CTexture::Load(const std::string &Filename) 
+bool CTexture::Load(const std::string &Filename, bool GuiTexture)
 {  
 	m_Name=Filename;
-	return LoadFileNew();
+	m_GuiTexture = GuiTexture;
+	return LoadFile();
 } 
 
-bool CTexture::LoadFile()
+bool CTexture::LoadFileOld()
 {
 	
 	/*ID3D11Device *l_Device=CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDevice();  
@@ -49,13 +50,12 @@ bool CTexture::LoadFile()
 	return true;
 }
 
-bool CTexture::LoadFileNew()
+bool CTexture::LoadFile()
 {
 	ID3D11Device *l_Device = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDevice();
-	
 	std::string l_Format = m_Name.substr(m_Name.find_last_of(".") + 1);
 
-	DirectX::DDS_ALPHA_MODE l_AlphaMode;
+	
 	
 	std::wstring ws;
 	ws.assign(m_Name.begin(), m_Name.end());
@@ -65,13 +65,19 @@ bool CTexture::LoadFileNew()
 
 	if (l_Format == "dds")
 	{
+		//if (!m_GuiTexture)
 		l_Hresult = DirectX::CreateDDSTextureFromFile(l_Device, ws.c_str(), nullptr, &m_Texture);
+		
+		//DirectX::DDS_ALPHA_MODE l_AlphaMode;
+		//l_Hresult = DirectX::CreateDDSTextureFromFileEx(l_Device, ws.c_str(), nullptr, D3D11_USAGE_DEFAULT, 0, 0, 0, 0.0f, nullptr, &m_Texture, &l_AlphaMode);
+		
 		//l_Hresult = DirectX::CreateDDSTextureFromFile(l_Device, l_DeviceContext, ws.c_str(), nullptr, &m_Texture, 0, &l_AlphaMode);
 	}
 	else if (l_Format == "png")
 	{
 		l_Hresult = DirectX::CreateWICTextureFromFile(l_Device, l_DeviceContext, ws.c_str(), nullptr, &m_Texture);
 	}
+	else assert(false);
 
 	if (l_Hresult == ERROR_FILE_NOT_FOUND)
 	{
@@ -85,13 +91,33 @@ bool CTexture::LoadFileNew()
 
 	D3D11_SAMPLER_DESC l_SampDesc;
 	ZeroMemory(&l_SampDesc, sizeof(l_SampDesc));
-	l_SampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	l_SampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	l_SampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	l_SampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	l_SampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	l_SampDesc.MinLOD = 0;
-	l_SampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	if (!m_GuiTexture)
+	{
+		l_SampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		l_SampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		l_SampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		l_SampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		l_SampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		l_SampDesc.MinLOD = 0;
+		l_SampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	}
+	else
+	{
+		l_SampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		l_SampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		l_SampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		l_SampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+		l_SampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		l_SampDesc.MinLOD = 0;
+		l_SampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		
+		//1 No genere Bitmaping.
+		//2. Cargarlo al tamaño real.
+		//3. Que no haga filtro de puntos, lineal o isotropico.
+		//4. Que haga clamp.
+	}
 
 	l_Hresult = l_Device->CreateSamplerState(&l_SampDesc, &m_SamplerState);
 	
@@ -114,7 +140,7 @@ void CTexture::Activate(unsigned int StageId)
 bool CTexture::Reload() 
 {  
 	Unload();
-	return LoadFileNew();
+	return LoadFile();
 } 
 
 

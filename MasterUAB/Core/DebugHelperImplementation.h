@@ -77,9 +77,9 @@ public:
 private:
 	void RegisterParameter(TwType ParameterType,const std::string &ParameterName, CEmptyPointerClass *Data, const std::string &Description);
 	void RegisterVariable(SDebugVariable Variable,TwType BarType,const char* Params);
-	std::vector<std::string> m_LuaParameters;
-	std::vector<ClientData> m_LuaExtendedParameters;
-	std::vector<ChangeTextureClientData> m_LuaChangeTextureParameters;
+	std::vector<std::string*> m_LuaParameters;
+	std::vector<ClientData*> m_LuaExtendedParameters;
+	std::vector<ChangeTextureClientData*> m_LuaChangeTextureParameters;
 	std::string m_CurrentBarName;
 };
 

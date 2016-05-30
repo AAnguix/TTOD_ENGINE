@@ -3,6 +3,7 @@
 
 #include "XML\XMLTreeNode.h"
 #include "Math\Matrix44.h"
+class CEmptyPointerClass;
 
 class C3DElement
 {
@@ -49,6 +50,11 @@ public:
 
 	bool GetVisible() const;
 	virtual void SetVisible(bool Visible);
+
+	CEmptyPointerClass* GetYawLuaAddress() const;
+	CEmptyPointerClass* GetPitchLuaAddress() const;
+	CEmptyPointerClass* GetRollLuaAddress() const;
+	CEmptyPointerClass* GetPositionLuaAddress() const;
 };
 
 #endif

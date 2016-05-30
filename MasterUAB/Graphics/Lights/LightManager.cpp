@@ -4,7 +4,10 @@
 #include "Lights\OmniLight.h"
 #include "Utils\Utils.h"
 
-CLightManager::CLightManager() : m_AmbientLight(0.0f,0.0f,0.0f,1.0f)
+CLightManager::CLightManager() 
+:m_AmbientLight(Vect4f(0.1f,0.1f,0.1f,1.0f))
+,m_FogParameters(v4fZERO)
+,m_FogColor(v4fZERO)
 {
 }
 

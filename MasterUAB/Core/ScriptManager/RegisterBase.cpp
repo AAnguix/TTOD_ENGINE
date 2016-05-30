@@ -107,6 +107,10 @@ void CScriptManager::RegisterBase()
 		.def("GetRight", &C3DElement::GetRight)
 		.def("GetUp", &C3DElement::GetUp)
 		.def("SetYawPitchRoll", &C3DElement::SetYawPitchRoll)
+		.def("GetYawLuaAddress", &C3DElement::GetYawLuaAddress)
+		.def("GetPitchLuaAddress", &C3DElement::GetPitchLuaAddress)
+		.def("GetRollLuaAddress", &C3DElement::GetRollLuaAddress)
+		.def("GetPositionLuaAddress", &C3DElement::GetPositionLuaAddress)
 	];
 	
 	module(LUA_STATE)

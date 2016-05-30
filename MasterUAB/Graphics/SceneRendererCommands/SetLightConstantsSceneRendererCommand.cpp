@@ -5,6 +5,7 @@
 CSetLightConstantsSceneRendererCommand::CSetLightConstantsSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode) 
 {
 	m_MaxLights = TreeNode.GetIntProperty("max_lights",4);
+	assert(m_MaxLights < 5);
 }
 
 void CSetLightConstantsSceneRendererCommand::Execute(CRenderManager &RenderManager) 

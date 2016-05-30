@@ -40,27 +40,27 @@ float4 PS(PS_INPUT IN) : SV_Target
 	float3 l_WorldNormal = normalize(Texture2Normal(l_NormalMap.xyz));
 	float l_ShadowMapContrib = GetShadowMapContrib(0,l_WorldPos,T6Texture,S6Sampler);
 	
-	/*(m_LightTypeArray[0]==0)
-	{
-	//OMNI
-		if(IN.UV.x<0.3)
-			return float4(1,0,0, 1);
-		clip(-1);
-	}
-	else if(m_LightTypeArray[0]==1)
-	{
-		//DIRECTIONAL
-		if(IN.UV.x>0.3 && IN.UV.x<0.6)
-			return float4(1,1,0, 1);
-		clip(-1);
-	}
-	else if(m_LightTypeArray[0]==2)
-	{
-		//SPOT
-		if(IN.UV.x>0.6)
-			return float4(1,0,1, 1);
-		clip(-1);
-	}*/
+	// if(m_LightTypeArray[0]==0)
+	// {
+		// //OMNI
+		// if(IN.UV.x<0.3)
+			// return float4(1,0,0, 1);
+		// clip(-1);
+	// }
+	// else if(m_LightTypeArray[0]==1)
+	// {
+		// //DIRECTIONAL
+		// if(IN.UV.x>0.3 && IN.UV.x<0.6)
+			// return float4(1,1,0, 1);
+		// clip(-1);
+	// }
+	// else if(m_LightTypeArray[0]==2)
+	// {
+		// //SPOT
+		// if(IN.UV.x>0.6)
+			// return float4(1,0,1, 1);
+		// clip(-1);
+	// }
 	
 	float3 l_DiffuseLight;
 	float3 l_SpecularLight;

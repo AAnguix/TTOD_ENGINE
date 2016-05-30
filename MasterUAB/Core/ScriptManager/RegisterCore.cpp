@@ -35,6 +35,7 @@
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
 #include "ISoundManager.h"
+#include "Render\GraphicsStats.h"
 //#include "AStar.h"
 
 using namespace luabind;
@@ -100,6 +101,7 @@ void CScriptManager::RegisterCore()
 		.def("GetPhysXManager", &CEngine::GetPhysXManager)
 		.def("GetGUIManager", &CEngine::GetGUIManager)
 		.def("GetSoundManager", &CEngine::GetSoundManager)
+		.def("GetGraphicsStats", &CEngine::GetGraphicsStats)
 		.def("LoadLevel", &CEngine::LoadLevel)
 	];
 

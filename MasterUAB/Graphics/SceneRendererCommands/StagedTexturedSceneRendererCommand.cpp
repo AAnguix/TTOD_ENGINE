@@ -16,10 +16,11 @@ CStagedTexturedSceneRendererCommand::CStagedTexturedSceneRendererCommand(CXMLTre
 			int l_StageID = l_Node.GetIntProperty("stage_id");
 			std::string l_File = l_Node.GetPszProperty("file");
 			bool l_Load = l_Node.GetBoolProperty("load_file",true);
+			bool l_GuiTexture = l_Node.GetBoolProperty("gui_texture", false);
 			
 			CTexture* l_Texture = NULL;
 			if(l_Load)
-				l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(l_File);
+				l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(l_File,l_GuiTexture);
 			else
 				l_Texture = CEngine::GetSingleton().GetTextureManager()->GetResource(l_File);
 

@@ -14,7 +14,8 @@
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 
 #pragma comment(lib,"d3d11.lib")
-
+#include <random>
+#include <cmath>
 
 CContextManager::CContextManager()
 	: m_D3DDevice(nullptr)
@@ -121,7 +122,7 @@ HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned i
 		return S_FALSE;
 	}
 
-	m_SwapChain->SetFullscreenState(true, nullptr); //FullScreen
+	m_SwapChain->SetFullscreenState(false, nullptr); //FullScreen
 
 	/*
 	#if _DEBUG
@@ -552,7 +553,7 @@ void CContextManager::BeginRender(CColor backgroundColor)
 void CContextManager::EndRender()
 {
 	//First parameter: 0 = VSync not enabled.
-	//First parameter: 0 = VSync enabled.
+	//First parameter: 1 = VSync enabled.
 	m_SwapChain->Present(1, 0);
 }
 
@@ -580,12 +581,6 @@ void CContextManager::Present()
 
 void CContextManager::SetMatrices(const CCamera& Camera)
 {
-	/*CCamera &l_Camera=(CCamera &)Camera;
-	l_Camera.SetPosition(Vect3f(0.0f, 3.0f, 0.0f));
-	l_Camera.SetLookAt(Vect3f(1.0f, 3.0f, 0.0f));
-	l_Camera.SetUp(Vect3f(0.0f, 1.0f, 0.0f));
-	l_Camera.SetMatrixs();*/
-
 	CEffectManager::m_SceneEffectParameters.m_View = Camera.GetView(); 
 	CEffectManager::m_SceneEffectParameters.m_Projection = Camera.GetProjection();
 
@@ -596,14 +591,18 @@ void CContextManager::SetMatrices(const CCamera& Camera)
 	CEffectManager::m_SceneEffectParameters.m_CameraPosition=Camera.GetPosition();
 
 	CEffectManager::m_SceneEffectParameters.m_CameraProjectionInfo=Vect4f(Camera.GetZNear(),Camera.GetZFar(),Camera.GetFOV(),Camera.GetAspectRatio());
+}
 
-	/*m_Viewport.Width = (FLOAT)m_Width;
-	m_Viewport.Height = (FLOAT)m_Height;
-	m_Viewport.MinDepth = 0.0f;
-	m_Viewport.MaxDepth = 1.0f;
-	m_Viewport.TopLeftX = 0;
-	m_Viewport.TopLeftY = 0;
-	m_DeviceContext->RSSetViewports(1, &m_Viewport);*/
+void CContextManager::SetTimes(float ElapsedTime)
+{
+	float l_TimeSinceRun = CEffectManager::m_SceneEffectParameters.m_Times.y;
+	l_TimeSinceRun += ElapsedTime;
+	
+	std::random_device l_RandomDevice;
+	std::mt19937 gen(l_RandomDevice());
+	std::uniform_real_distribution<> l_UniformRealDistribution(0.0, 1.0);
+
+	CEffectManager::m_SceneEffectParameters.m_Times = Vect4f(ElapsedTime, l_TimeSinceRun, (float)l_UniformRealDistribution(gen), 0.0f);
 }
 
 D3D11_VIEWPORT CContextManager::GetViewPort()

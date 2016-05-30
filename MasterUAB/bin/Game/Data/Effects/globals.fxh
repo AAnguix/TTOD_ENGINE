@@ -13,7 +13,7 @@ cbuffer SceneConstantBuffer : register( b0 )
 	float4 m_CameraUpVector;
 	float4 m_BaseColor;
 	float4 m_CameraProjectionInfo; //Near,Far,FOV,Aspect Ratio
-	//float m_Time
+	float4 m_Times; //Elapsedtime, Time since Videogame run
 }
 
 cbuffer LightsConstantBuffer : register (b1)

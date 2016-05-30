@@ -36,12 +36,18 @@ bool CEffectPixelShader::Load()
 	if(!l_Loaded)  
 	{
 		CEngine::GetSingleton().GetLogManager()->Log("Unable to load pixel shader "+m_Filename);
+		assert(false);
 		return false;  
 	}
 	CRenderManager *l_RenderManager=CEngine::GetSingleton().GetRenderManager();  
 	ID3D11Device *l_Device=l_RenderManager->GetContextManager()->GetDevice();
 	HRESULT l_HR=l_Device->CreatePixelShader(l_PSBlob->GetBufferPointer(), l_PSBlob->GetBufferSize(), NULL, &m_PixelShader);
+	if (FAILED(l_HR))
+	{
+		assert(false);
+	}
 	l_PSBlob->Release();  
+
 	return CreateConstantBuffer();
 }
 

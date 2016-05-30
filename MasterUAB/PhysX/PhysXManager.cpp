@@ -196,7 +196,7 @@ void CPhysXManager::CreateRigidStaticPlane(const std::string &Name, const Vect3f
 	l_GroundPlane->userData = (void*)AddActor(Name, Position, Orientation, l_GroundPlane);
 	m_Scene->addActor(*l_GroundPlane);
 }
-void CPhysXManager::CreateRigidStaticConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+void CPhysXManager::CreateRigidStaticConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
 	/*physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Vertices);
 
@@ -210,7 +210,7 @@ void CPhysXManager::CreateRigidStaticConvexMesh(const std::string &Name, std::ve
 	//if (l_Shape != nullptr)
 	//l_Shape->release();
 
-	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Name, Vertices);
+	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(CoreName, Vertices);
 	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxConvexMeshGeometry(l_ConvexMesh), Material, Position, Orientation, Group);
 
 	if (l_Shape != nullptr)
@@ -218,7 +218,7 @@ void CPhysXManager::CreateRigidStaticConvexMesh(const std::string &Name, std::ve
 
 }
 
-void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
 {
 	//physx::PxTriangleMesh* l_TriangleMesh= CreateTriangleMesh(Vertices);
 
@@ -234,7 +234,7 @@ void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, std::
 	//if (l_Shape != nullptr)
 	//	l_Shape->release();
 
-	physx::PxTriangleMesh* l_TriangleMesh = CreateTriangleMesh(Name, Vertices, Indices);
+	physx::PxTriangleMesh* l_TriangleMesh = CreateTriangleMesh(CoreName, Vertices, Indices);
 	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxTriangleMeshGeometry(l_TriangleMesh), Material, Position, Orientation, Group);
 
 	if (l_Shape != nullptr)
@@ -267,9 +267,9 @@ void CPhysXManager::CreateRigidDynamicCapsule(const std::string &Name, const flo
 	if (l_Shape != nullptr)
 		l_Shape->release();
 }
-void CPhysXManager::CreateRigidDynamicConvexMesh(const std::string &Name, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
+void CPhysXManager::CreateRigidDynamicConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
 {
-	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Name, Vertices);
+	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(CoreName, Vertices);
 
 	physx::PxMaterial* l_Material = GetMaterial(Material);
 
@@ -287,9 +287,9 @@ void CPhysXManager::CreateRigidDynamicConvexMesh(const std::string &Name, std::v
 		ChangeGravityState(Name, true);
 }
 
-void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density)
+void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density)
 {
-	physx::PxTriangleMesh* l_ConvexMesh = CreateTriangleMesh(Name, Vertices, Indices);
+	physx::PxTriangleMesh* l_ConvexMesh = CreateTriangleMesh(CoreName, Vertices, Indices);
 
 	physx::PxMaterial* l_Material = GetMaterial(Material);
 
@@ -304,31 +304,49 @@ void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, st
 
 
 /*Meshes that need to be cooked*/
-physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &FileName, std::vector<Vect3f> Vertices)
+physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &CoreName, std::vector<Vect3f> Vertices)
 {
-#if USE_PHYSX_DEBUG
-	CheckMapAndVectors();
-#endif
+	#if USE_PHYSX_DEBUG
+		CheckMapAndVectors();
+	#endif
 
-	physx::PxConvexMeshDesc l_ConvexDesc;
-	l_ConvexDesc.points.count = Vertices.size();
-	l_ConvexDesc.points.stride = sizeof(Vect3f);
-	l_ConvexDesc.points.data = &Vertices[0];
-	l_ConvexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+	std::string l_CookedMeshFilename;
+	bool l_CookedMeshExists = CFileUtils::CookedMeshExists(false, CoreName, 1, l_CookedMeshFilename);
+	physx::PxConvexMesh* l_ConvexMesh = nullptr;
 
-	physx::PxDefaultMemoryOutputStream l_Buffer;
-	physx::PxConvexMeshCookingResult::Enum l_Result;
-	bool success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
-
-	if (!success)
+	if ((l_CookedMeshExists && CFileUtils::MeshFileModified(false, CoreName, 1)) || (!l_CookedMeshExists))
 	{
-		l_ConvexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eINFLATE_CONVEX;
-		success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
-		assert(success);
-	}
+		physx::PxConvexMeshDesc l_ConvexDesc;
+		l_ConvexDesc.points.count = Vertices.size();
+		l_ConvexDesc.points.stride = sizeof(Vect3f);
+		l_ConvexDesc.points.data = &Vertices[0];
+		l_ConvexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
 
-	physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
-	physx::PxConvexMesh* l_ConvexMesh = m_PhysX->createConvexMesh(l_Input);
+		physx::PxDefaultMemoryOutputStream l_Buffer;
+		physx::PxConvexMeshCookingResult::Enum l_Result;
+		bool success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
+		if (!success)
+		{
+			l_ConvexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eINFLATE_CONVEX;
+			success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
+			assert(success);
+		}
+
+		WriteCookingDataToFile(l_CookedMeshFilename, (void *)l_Buffer.getData(), l_Buffer.getSize());
+
+		physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
+		l_ConvexMesh = GetConvexMesh(CoreName, l_Input);
+	}
+	else
+	{
+		unsigned int l_DataSize;
+		void *l_Data;
+		ReadCookingDataFromFile(l_CookedMeshFilename, &l_Data, l_DataSize);
+
+		physx::PxDefaultMemoryInputData l_Input((physx::PxU8*)l_Data, l_DataSize);
+		l_ConvexMesh = GetConvexMesh(CoreName, l_Input);
+		free(l_Data);
+	}
 
 	return l_ConvexMesh;
 }
@@ -397,12 +415,11 @@ physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &FileNam
 //	return l_TriangleMesh;
 //}
 
-physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &FileName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices)
+physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &CoreName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices)
 {
-#if USE_PHYSX_DEBUG
-	CheckMapAndVectors();
-#endif
-
+	#if USE_PHYSX_DEBUG
+		CheckMapAndVectors();
+	#endif
 
 	/*Faster cooking*/
 	//physx::PxTolerancesScale l_Scale;
@@ -415,13 +432,12 @@ physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &Fil
 	//l_Params.meshCookingHint = physx::PxMeshCookingHint::eCOOKING_PERFORMANCE;
 	//m_Cooking->setParams(l_Params);
 
-	bool l_CookedMeshFileExists = CFileUtils::CookedMeshFileExists(FileName, 1);
-	std::string l_CookedMeshFileName = CFileUtils::GetCookedMeshFileName(FileName, 1);
-
+	std::string l_CookedMeshFileName;
+	bool l_CookedMeshExists = CFileUtils::CookedMeshExists(true, CoreName, 1, l_CookedMeshFileName);
 	physx::PxTriangleMesh* l_TriangleMesh = nullptr;
 
 	/*Mesh never has been cooked or has been cooked but not need to be updated*/
-	if ((l_CookedMeshFileExists && CFileUtils::MeshFileModified(FileName, 1)) || (!l_CookedMeshFileExists))
+	if ((l_CookedMeshExists && CFileUtils::MeshFileModified(true, CoreName, 1)) || (!l_CookedMeshExists))
 	{
 		/*
 		physx::PxTolerancesScale l_Scale;
@@ -456,7 +472,7 @@ physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &Fil
 		WriteCookingDataToFile(l_CookedMeshFileName, (void *)l_Buffer.getData(), l_Buffer.getSize());
 
 		physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
-		l_TriangleMesh = m_PhysX->createTriangleMesh(l_Input);
+		l_TriangleMesh = GetTriangleMesh(CoreName,l_Input);
 	}
 	else
 	{
@@ -465,7 +481,7 @@ physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &Fil
 		ReadCookingDataFromFile(l_CookedMeshFileName, &l_Data, l_DataSize);
 
 		physx::PxDefaultMemoryInputData l_Input((physx::PxU8 *)l_Data, l_DataSize);
-		l_TriangleMesh = m_PhysX->createTriangleMesh(l_Input);
+		l_TriangleMesh = GetTriangleMesh(CoreName, l_Input);
 		free(l_Data);
 	}
 
@@ -815,16 +831,14 @@ bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterM
 
 	physx::PxRaycastBuffer l_ReturnBuffer;
 	bool status = m_Scene->raycast
-		(
-		CastVec(Origin),
-		CastVec(l_Direction),
-		l_Lenght,
-		l_ReturnBuffer,
-		physx::PxHitFlags(physx::PxHitFlag::eDEFAULT),
-		physx::PxQueryFilterData(
-		filterData,
-		physx::PxQueryFlag::eDYNAMIC | physx::PxQueryFlag::eSTATIC)
-		);
+	(
+	CastVec(Origin), CastVec(l_Direction), l_Lenght,
+	l_ReturnBuffer,
+	physx::PxHitFlags(physx::PxHitFlag::eDEFAULT),
+	physx::PxQueryFilterData(
+	filterData,
+	physx::PxQueryFlag::eDYNAMIC | physx::PxQueryFlag::eSTATIC)
+	);
 
 	Result_->m_Position = CastVec(l_ReturnBuffer.block.position);
 	Result_->m_Normal = CastVec(l_ReturnBuffer.block.normal);
@@ -993,5 +1007,38 @@ void CPhysXManager::SetMaterialRestitution(const std::string &MaterialName, floa
 	if (it != m_Materials.end())
 	{
 		it->second->setRestitution(Restitution);
+	}
+}
+
+physx::PxTriangleMesh* CPhysXManager::GetTriangleMesh(const std::string &TriangleMeshName, physx::PxDefaultMemoryInputData MemoryInputData)
+{
+	std::map<std::string, physx::PxTriangleMesh*>::iterator itMap;
+	itMap = m_TriangleMeshes.find(TriangleMeshName);
+	if (itMap != m_TriangleMeshes.end())
+	{
+		return itMap->second;
+	}
+	else
+	{
+		physx::PxTriangleMesh* l_TriangleMesh = m_PhysX->createTriangleMesh(MemoryInputData);
+		m_TriangleMeshes.insert(std::pair<std::string, physx::PxTriangleMesh*>(TriangleMeshName, l_TriangleMesh));
+		return l_TriangleMesh;
+	}
+}
+
+
+physx::PxConvexMesh* CPhysXManager::GetConvexMesh(const std::string &ConvexMeshName, physx::PxDefaultMemoryInputData MemoryInputData)
+{
+	std::map<std::string, physx::PxConvexMesh*>::iterator itMap;
+	itMap = m_ConvexMeshes.find(ConvexMeshName);
+	if (itMap != m_ConvexMeshes.end())
+	{
+		return itMap->second;
+	}
+	else
+	{
+		physx::PxConvexMesh* l_ConvexMesh = m_PhysX->createConvexMesh(MemoryInputData);
+		m_ConvexMeshes.insert(std::pair<std::string, physx::PxConvexMesh*>(ConvexMeshName, l_ConvexMesh));
+		return l_ConvexMesh;
 	}
 }

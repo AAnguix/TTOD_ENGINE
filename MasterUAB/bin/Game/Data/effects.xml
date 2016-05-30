@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <effects>
+	<!--Lava-->
+	<vertex_shader name="lava_vs" file="./Data/Effects/Lava.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>
+	<pixel_shader name="lava_ps" file="./Data/Effects/Lava.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="lava_technique" vertex_shader="lava_vs" pixel_shader="lava_ps"/>
 
 	<!--Light Scattering-->
 	<vertex_shader name="light_scattering_vs" file="./Data/Effects/LightScattering.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>

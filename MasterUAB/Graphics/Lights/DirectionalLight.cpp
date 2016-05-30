@@ -2,17 +2,20 @@
 #include "Render\RenderManager.h"
 #include "Textures\DynamicTexture.h"
 
-CDirectionalLight::CDirectionalLight():CLight()
-, m_Direction(v3fZERO)
+CDirectionalLight::CDirectionalLight()
+:CLight()
+,m_Direction(v3fZERO)
+,m_OrthoShadowMapSize(v2fZERO)
 {
-	SetType(DIRECTIONAL);
+	m_Type = DIRECTIONAL;
 }
 
-CDirectionalLight::CDirectionalLight(CXMLTreeNode &TreeNode):CLight(TreeNode)
+CDirectionalLight::CDirectionalLight(CXMLTreeNode &TreeNode)
+:CLight(TreeNode)
+,m_Direction(TreeNode.GetVect3fProperty("dir", v3fZERO))
+,m_OrthoShadowMapSize(TreeNode.GetVect2fProperty("ortho_shadow_map_size", v2fZERO))
 {
-	SetType(DIRECTIONAL);
-	SetDirection(TreeNode.GetVect3fProperty("dir",v3fZERO));
-	m_OrthoShadowMapSize = TreeNode.GetVect2fProperty("ortho_shadow_map_size",v2fZERO);
+	m_Type = DIRECTIONAL;
 }
 
 void CDirectionalLight::Render(CRenderManager *RM)

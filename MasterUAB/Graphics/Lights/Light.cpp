@@ -24,10 +24,10 @@ CLight::TLightType CLight::GetLightTypeByName(const std::string &StrLightType)
 }
 
 CLight::CLight(CXMLTreeNode &TreeNode) 
-: CNamed(TreeNode)
-, C3DElement(TreeNode)
-,m_ShadowMap(0)
-,m_ShadowMaskTexture(0)
+:CNamed(TreeNode)
+,C3DElement(TreeNode)
+,m_ShadowMap(nullptr)
+,m_ShadowMaskTexture(nullptr)
 ,m_ViewShadowMap(m44fZERO)
 ,m_ProjectionShadowMap(m44fZERO)
 ,m_Active(TreeNode.GetBoolProperty("active", true))
@@ -42,7 +42,7 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 	{
 		std::string l_ShadowTextureMask = TreeNode.GetPszProperty("shadow_texture_mask","");
 		if(l_ShadowTextureMask!="")
-			m_ShadowMaskTexture = CEngine::GetSingleton().GetTextureManager()->GetTexture(l_ShadowTextureMask);
+			m_ShadowMaskTexture = CEngine::GetSingleton().GetTextureManager()->GetTexture(l_ShadowTextureMask,false);
 		
 		int l_ShadowMapWidth = TreeNode.GetIntProperty("shadow_map_width",0);
 		int l_ShadowMapHeight = TreeNode.GetIntProperty("shadow_map_height",0);		
@@ -69,13 +69,13 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 CLight::CLight() 
 : CNamed("")
 ,m_GenerateShadowMap(false)
-,m_ShadowMap(0)
-,m_ShadowMaskTexture(0)
-,m_Color(NULL)
+,m_ShadowMap(nullptr)
+,m_ShadowMaskTexture(nullptr)
+,m_Color(v4fZERO)
 ,m_Position(v3fZERO)
-,m_Intensity(0)
-,m_StartRangeAttenuation(0)
-,m_EndRangeAttenuation(0)
+,m_Intensity(0.0f)
+,m_StartRangeAttenuation(0.0f)
+,m_EndRangeAttenuation(0.0f)
 ,m_Active(true)
 {	
 }
@@ -91,8 +91,8 @@ void CLight::Render(CRenderManager *RM)
 	
 }
 
-/*
-CEmptyPointerClass * CLight::GetIntensityAddress() const
-{
-	return (CEmptyPointerClass *)&m_Intensity;
-}*/
+CEmptyPointerClass* CLight::GetIntensityLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_Intensity); }
+CEmptyPointerClass* CLight::GetColorLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_Color); }
+CEmptyPointerClass* CLight::GetActiveLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_Active); }
+CEmptyPointerClass* CLight::GetStartRangeAttenuationLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_StartRangeAttenuation); }
+CEmptyPointerClass* CLight::GetEndRangeAttenuationLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_EndRangeAttenuation); }

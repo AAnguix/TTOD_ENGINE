@@ -6,6 +6,9 @@
 		<sprite name="Felix_0.png" x="0" y="0" w="256" h="256" />
 		<sprite name="Felix_1.png" x="0" y="0" w="256" h="256" />
 	</gui_spritemap>
+	<gui_spritemap name="calibri_font" width="256" height="256" material="calibri_font_material">
+		<sprite name="calibri_0.png" x="0" y="0" w="256" h="256" />
+	</gui_spritemap>
 	<gui_spritemap name="menu_button" width="512" height="512" material="in_game_menu_button_material">
 		<sprite name="menu_button_normal" x="0" y="0" w="512" h="512" />
 		<sprite name="menu_button_highlight" x="0" y="0" w="512" h="512" />

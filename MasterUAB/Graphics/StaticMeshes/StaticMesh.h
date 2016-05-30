@@ -29,6 +29,7 @@ class CStaticMesh : public CNamed
 {
 
 protected:
+	std::string m_Filename;
 	AxisAlignedBoundingBox m_BoundingBox;
 	AxisAlignedBoundingSphere m_BoundingSphere;
 
@@ -40,8 +41,8 @@ protected:
 	std::vector<unsigned short> m_MeshIndex;
 
 public:
-	unsigned int  m_NumFaces;
-	CStaticMesh();
+	//unsigned int  m_NumFaces;
+	CStaticMesh(const std::string &Name);
 	~CStaticMesh();
 	bool Load(const std::string &FileName);
 	bool Reload();
@@ -53,12 +54,16 @@ public:
 	Vect3f GetBoundingBoxMax() const;
 	Vect3f GetBoundingBoxMin() const;
 
+	Vect3f GetBoundingSphereCenter() const;
 	float GetBoundingSphereRadius() const;
+	
 	float GetCapsuleHalfHeight() const;
 	float GetCapsuleRadius() const;
 	
 	std::vector<Vect3f> GetVertex() const{ return m_MeshVertex; };
 	std::vector<unsigned short> GetIndex() const{ return m_MeshIndex; };
+
+	CEmptyPointerClass* GetThisLuaAddress() const;
 };
 
 #endif 

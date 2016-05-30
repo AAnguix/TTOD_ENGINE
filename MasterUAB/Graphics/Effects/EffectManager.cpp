@@ -134,9 +134,36 @@ void CEffectManager::SetSceneConstants()
 	*/
 }
 
+void CEffectManager::SetLightsConstantsDefaultValues(unsigned int MaxLights)
+{
+	for (size_t i = 0; i < MaxLights; ++i)
+	{
+		m_LightEffectParameters.m_LightEnabled[i] = 0.0f;
+		m_LightEffectParameters.m_LightType[i] = 0.0f;
+		m_LightEffectParameters.m_LightPosition[i] = v4fZERO;
+
+		m_LightEffectParameters.m_LightDirection[i] = v4fZERO;
+		m_LightEffectParameters.m_LightAngle[i] = 0.0f;
+		m_LightEffectParameters.m_LightFallOffAngle[i] = 0.0f;
+
+		m_LightEffectParameters.m_LightAttenuationStartRange[i] = 0.0f;
+		m_LightEffectParameters.m_LightAttenuationEndRange[i] = 0.0f;
+
+		m_LightEffectParameters.m_LightIntensity[i] = 0.0f;
+		m_LightEffectParameters.m_LightColor[i] = v4fZERO;
+
+		m_LightEffectParameters.m_UseShadowMap[i] = false;
+		m_LightEffectParameters.m_UseShadowMask[i] = false;
+		m_LightEffectParameters.m_LightView[i] = m44fZERO; //m44fIDENTITY
+		m_LightEffectParameters.m_LightProjection[i] = m44fZERO;
+	}
+}
+
 void CEffectManager::SetLightConstants(unsigned int IdLight, CLight *Light)
 {
-	if(Light!=NULL)
+	assert(Light != nullptr);
+
+	if(Light!=nullptr)
 	{	
 		m_LightEffectParameters.m_LightEnabled[IdLight]=1.0f;
 		if(!Light->GetActive())
@@ -180,32 +207,11 @@ void CEffectManager::SetLightConstants(unsigned int IdLight, CLight *Light)
 
 void CEffectManager::SetLightsConstants(unsigned int MaxLights)
 {
+	SetLightsConstantsDefaultValues(MaxLights);
 	CLightManager *l_LightManager = CEngine::GetSingleton().GetLightManager();
 	m_LightEffectParameters.m_LightAmbient= l_LightManager->GetAmbientLight();
 	m_LightEffectParameters.m_FogColor = l_LightManager->GetFogColor();
 	m_LightEffectParameters.m_FogParameters = l_LightManager->GetFogParameters();
-
-	for(size_t i=0;i<MaxLights;++i)
-	{
-		m_LightEffectParameters.m_LightEnabled[i]=0.0f;
-		m_LightEffectParameters.m_LightType[i]=0.0f;
-		m_LightEffectParameters.m_LightPosition[i]=v4fZERO;
-		m_LightEffectParameters.m_LightDirection[i]=v4fZERO;
-
-		m_LightEffectParameters.m_LightAngle[i]=0;
-		m_LightEffectParameters.m_LightFallOffAngle[i]=0.0f;
-
-		m_LightEffectParameters.m_LightAttenuationStartRange[i]=0.0f;
-		m_LightEffectParameters.m_LightAttenuationEndRange[i]=0;
-
-		m_LightEffectParameters.m_LightIntensity[i]=0.0f;
-		m_LightEffectParameters.m_LightColor[i]=v4fZERO;
-
-		m_LightEffectParameters.m_UseShadowMap[i]=false;
-		m_LightEffectParameters.m_UseShadowMask[i]=false;
-		m_LightEffectParameters.m_LightView[i]=m44fZERO; //m44fIDENTITY
-		m_LightEffectParameters.m_LightProjection[i]=m44fZERO;
-	}
 
 	size_t l_Size=l_LightManager->GetResourcesVector().size();
 	
@@ -225,7 +231,7 @@ void CEffectManager::SetLightsConstants(unsigned int MaxLights)
 		itMap->second->GetPixelShader()->SetConstantBuffer(1,&m_LightEffectParameters);
 		itMap->second->GetVertexShader()->SetConstantBuffer(1,&m_LightEffectParameters);
 
-		CEffectGeometryShader* l_GShader = itMap->second->GetGeometryShader();
+		//CEffectGeometryShader* l_GShader = itMap->second->GetGeometryShader();
 		/*if (l_GShader!=nullptr)
 			l_GShader->SetConstantBuffer(1, &m_LightEffectParameters);*/
 	}

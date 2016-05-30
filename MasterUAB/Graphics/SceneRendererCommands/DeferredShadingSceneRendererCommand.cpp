@@ -41,6 +41,8 @@ void CDeferredShadingSceneRendererCommand::Execute(CRenderManager &RenderManager
 
 	ActivateTextures();
 
+	//CEngine::GetSingleton().GetEffectManager()->SetLightsConstantsDefaultValues();
+
 	/*Diffuse + Specular*/
 	for(size_t i=0;i<l_Size;++i)
 	{

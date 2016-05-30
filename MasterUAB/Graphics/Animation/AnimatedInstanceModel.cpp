@@ -168,10 +168,12 @@ Mat44f CAnimatedInstanceModel::GetBoneTransformationMatrix(const int BoneID) con
 	CalVector l_Translation = l_Bone->getTranslationAbsolute();
 		
 	l_BoneTransformation.SetIdentity();
-	l_BoneTransformation.SetRotByQuat(Quatf(l_Rotation.x, l_Rotation.y, l_Rotation.z, l_Rotation.w));
+	l_BoneTransformation.SetRotByQuat((const Quatf &)l_Rotation);
 	l_BoneTransformation.SetPos(Vect3f(l_Translation.x, l_Translation.y, l_Translation.z));
 	return l_BoneTransformation;
 }
+
+bool m_Update = true;
 
 void CAnimatedInstanceModel::Update(float ElapsedTime)
 {
@@ -179,8 +181,10 @@ void CAnimatedInstanceModel::Update(float ElapsedTime)
 	{
 		m_ComponentManager->Update(ElapsedTime);
 	}
-
-	m_CalModel->update(ElapsedTime);
+	if (m_Update)
+		m_CalModel->update(ElapsedTime);
+	else
+		m_CalModel->update(0.0f);
 }
 
 void CAnimatedInstanceModel::ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget, bool AutoLock)

@@ -53,6 +53,7 @@ class CParticleManager;
 class CInputManagerImplementation;
 class CGUIManager;
 class ISoundManager;
+class CGraphicsStats;
 
 class CEngine : public CSingleton<CEngine>
 {
@@ -79,6 +80,7 @@ private:
 	CInputManagerImplementation* m_InputManager;
 	CGUIManager* m_GUIManager;
 	ISoundManager* m_SoundManager;
+	CGraphicsStats* m_GraphicsStats;
 	CEngine();
 
 public:
@@ -109,6 +111,7 @@ public:
 	CInputManagerImplementation* GetInputManager() const;
 	CGUIManager* GetGUIManager() const;
 	ISoundManager* GetSoundManager() const;
+	CGraphicsStats* GetGraphicsStats() const;
 	void SetRenderManager(CRenderManager *RenderManager) {m_RenderManager=RenderManager;}
 };
 

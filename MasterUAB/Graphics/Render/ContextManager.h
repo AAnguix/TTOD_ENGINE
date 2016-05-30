@@ -76,6 +76,7 @@ public:
 	void Clear(bool RenderTarget, bool DepthStencil);
 	void Present();
 	void SetMatrices(const CCamera& Camera);
+	void SetTimes(float ElapsedTime);
 	D3D11_VIEWPORT GetViewPort();
 	void SetDefaultViewPort();
 	

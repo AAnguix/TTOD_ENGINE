@@ -1,15 +1,16 @@
 #include "Lights\OmniLight.h"
 
 COmniLight::COmniLight() 
-: CLight()
+:CLight()
 {
-	SetType(OMNI);
+	m_Type = OMNI;
 }
 
-COmniLight::COmniLight(CXMLTreeNode &TreeNode) : CLight(TreeNode)
+COmniLight::COmniLight(CXMLTreeNode &TreeNode) 
+:CLight(TreeNode)
 {
-	SetType(OMNI);
-	SetGenerateShadowMap(false);
+	m_Type = OMNI;
+	m_GenerateShadowMap=false;
 }
 
 void COmniLight::Render(CRenderManager *RenderManager)

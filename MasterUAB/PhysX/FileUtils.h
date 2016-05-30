@@ -12,15 +12,15 @@ private:
 	static _int64 Delta(const SYSTEMTIME st1, const SYSTEMTIME st2);
 	static SYSTEMTIME GetFileCreationDate(const std::string &FileName);
 
+	static bool FolderExists(const char* FolderName);
+	static bool CreateFolder(const char* FolderName);
+
+	static bool FileExists(const std::string &Filename);
+
 public:
-	/*Returns the full path of the cooked mesh*/
-	static std::string GetCookedMeshFileName(const std::string &Name, unsigned int CurrentLevel);
-
-	/*Checks if the mesh had been cooked yet*/
-	static bool CookedMeshFileExists(const std::string &Name, const unsigned int &CurrentLevel);
-
-	/*Checks if the .mesh file has been updated*/
-	static bool MeshFileModified(const std::string &Name, const unsigned int &CurrentLevel);
+	static void CheckPhysxFolders(const std::string &Level);
+	static bool CookedMeshExists(bool TriangleMesh, const std::string &Name, unsigned int CurrentLevel, std::string &_CookedMeshFileName);
+	static bool MeshFileModified(bool TriangleMesh, const std::string &Name, const unsigned int &CurrentLevel);
 
 };
 

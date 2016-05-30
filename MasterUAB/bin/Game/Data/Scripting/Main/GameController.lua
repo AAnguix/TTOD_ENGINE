@@ -92,16 +92,16 @@ function CGameController:LoadWeapon(TreeNode, EnemyComponent)
 	if l_WeaponRObject ~= nil then
 		
 		local l_Parent = EnemyComponent.m_RObject
-		local l_BoneName = TreeNode:GetPszProperty("owner_bone_name", "", false)
+		local l_BoneName = TreeNode:GetPszProperty("parent_bone", "", false)
 		local l_WeaponType = TreeNode:GetPszProperty("type", "", false)
-		local l_Damage = TreeNode:GetFloatProperty("damage", "", false)
+		local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)
 													--ComponentType, ParentRObject, MeshRObject, Damage, WeaponType)
-		local l_WeaponComponent  = CWeaponComponent("weapon",l_Parent, l_BoneName, l_WeaponRObject, l_Damage, l_WeaponType)
+		local l_WeaponComponent = CWeaponComponent("weapon",l_Parent, l_BoneName, l_WeaponRObject, l_Damage, l_WeaponType)
 		l_WeaponRObject:AddLuaComponent(l_WeaponComponent)
 		EnemyComponent:SetWeapon(l_ArmorComponent)
 		-- l_WeaponComponent:Initialize(l_BoneName)
-		
 		table.insert(self.m_Entities,l_WeaponComponent)
+		g_LogManager:Log("Weapon created")
 	end
 end
 
@@ -110,9 +110,9 @@ function CGameController:LoadArmor(TreeNode, EnemyComponent)
 	if l_ArmorRObject ~= nil then
 	
 		local l_Parent = EnemyComponent.m_RObject
-		local l_BoneName = TreeNode:GetPszProperty("owner_bone_name", "", false)
+		local l_BoneName = TreeNode:GetPszProperty("parent_bone", "", false)
 		local l_ArmorType = TreeNode:GetPszProperty("type", "", false)
-		local l_Damage = TreeNode:GetFloatProperty("resistance", "", false)
+		local l_Damage = TreeNode:GetFloatProperty("resistance", 0.0, false)
 	
 		local l_ArmorComponent  = CArmorComponent("armor",l_Parent, l_BoneName, l_ArmorRObject, l_Damage, l_ArmorType)
 		l_ArmorRObject:AddLuaComponent(l_ArmorComponent)

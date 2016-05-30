@@ -8,6 +8,7 @@
 
 // TODO: Activar AntTeakBar
 #include <AntTweakBar.h>
+#include "Render\GraphicsStats.h"
 
 #include "Math\Matrix44.h"
 #include "Math\Vector4.h"
@@ -26,12 +27,6 @@
 #include "Render\RenderManager.h"
 #include "Render\ContextManager.h"
 
-//#include "Materials\MaterialManager.h"
-//#include "Textures\TextureManager.h"
-
-//#include "Lights\LightManager.h"
-
-//#include "Effects\EffectManager.h"
 
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
@@ -219,6 +214,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 	{
 		//Create and initialize application
 		CApplication l_Application(&s_Context);
+		CGraphicsStats l_CGraphicsStats();
 		l_Application.Initialize(hWnd);
 		l_Application.SwitchCamera();
 		
@@ -228,10 +224,17 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 		ZeroMemory(&msg, sizeof(msg));
 
 		// Añadir en el while la condición de salida del programa de la aplicación
-		DWORD m_PreviousTime = timeGetTime();
-		long int before = GetTickCount();
+		//DWORD m_PreviousTime = timeGetTime();
+		//long int before = GetTickCount();
 
 		bool hasFocus = true;
+
+		__int64 cntsPerSec = 0;
+		QueryPerformanceFrequency((LARGE_INTEGER*)&cntsPerSec);
+		float secsPerCnt = 1.0f / (float)cntsPerSec;
+
+		__int64 prevTimeStamp = 0;
+		QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
 		while (msg.message != WM_QUIT)
 		{
@@ -239,99 +242,25 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
-				/*if (!CEngine::GetSingleton().GetDebugHelper()->Update(msg.hwnd, msg.message, msg.wParam, msg.lParam))
-				{
-					bool WasDown = false, IsDown = false, Alt = false;
-
-					TwEventWin(msg.hwnd, msg.message, msg.wParam, msg.lParam);
-					switch (msg.message)
-					{
-						case WM_SETFOCUS:
-							hasFocus = true;
-							CEngine::GetSingleton().GetInputManager()->SetFocus(true);
-							break;
-						case  WM_KILLFOCUS:
-							hasFocus = false;
-							CEngine::GetSingleton().GetInputManager()->SetFocus(false);
-							break;
-						case WM_SYSKEYDOWN:
-						case WM_SYSKEYUP:
-						case WM_KEYDOWN:
-						case WM_KEYUP:
-							WasDown = ((msg.lParam & (1 << 30)) != 0);
-							IsDown = ((msg.lParam & (1 << 31)) == 0);
-							Alt = ((msg.lParam & (1 << 29)) != 0);
-
-							if (WasDown != IsDown)
-							{
-								if (IsDown)
-								{
-									bool consumed = false;
-									switch (msg.wParam)
-									{
-									case VK_RETURN:
-										if (Alt)
-										{
-											WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
-											GetWindowPlacement(msg.hwnd, &windowPosition);
-
-											ToggleFullscreen(msg.hwnd, windowPosition);
-											consumed = true;
-										}
-										break;
-									case VK_F4:
-										if (Alt)
-										{
-											PostQuitMessage(0);
-											consumed = true;
-										}
-										break;
-									}
-									if (consumed)
-									{
-										break;
-									}
-								}
-							}
-							if (!hasFocus || !CEngine::GetSingleton().GetInputManager()->KeyEventReceived(msg.wParam, msg.lParam))
-							{
-								TranslateMessage(&msg);
-								DispatchMessage(&msg);
-							}
-							break;
-						case WM_MOUSEMOVE:
-							if (hasFocus)
-							{
-								int xPosAbsolute = GET_X_LPARAM(msg.lParam);
-								int yPosAbsolute = GET_Y_LPARAM(msg.lParam);
-
-								CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
-							}
-							else
-							{
-								TranslateMessage(&msg);
-								DispatchMessage(&msg);
-							}
-							break;
-						default:
-							TranslateMessage(&msg);
-							DispatchMessage(&msg);
-					}
-				}*/
 			}
 			else
 			{
+				__int64 currTimeStamp = 0;
+				QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
+				float l_ElapsedTime = (currTimeStamp - prevTimeStamp)*secsPerCnt;
+
 				CEngine::GetSingleton().GetInputManager()->BeginFrame();
+					/*DWORD l_CurrentTime = timeGetTime();
+					float m_ElapsedTime = (float)(l_CurrentTime - m_PreviousTime)*0.001f;
+					m_PreviousTime = l_CurrentTime;*/
 
-				DWORD l_CurrentTime = timeGetTime();
-				float m_ElapsedTime = (float)(l_CurrentTime - m_PreviousTime)*0.001f;
-				m_PreviousTime = l_CurrentTime;
-
-				l_Application.Update(m_ElapsedTime);
-				l_Application.Render();
+					CEngine::GetSingleton().GetGraphicsStats()->Update(l_ElapsedTime);
+					l_Application.Update(l_ElapsedTime);
+					l_Application.Render();
 
 				CEngine::GetSingleton().GetInputManager()->EndFrame();
+
+				prevTimeStamp = currTimeStamp;
 			}
 		}
 
@@ -344,6 +273,3 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 
 	return 0;
 }
-
-
-

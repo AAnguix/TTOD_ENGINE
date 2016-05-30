@@ -253,6 +253,9 @@
     <ClInclude Include="StaticMeshes\StaticMesh.h">
       <Filter>StaticMeshes</Filter>
     </ClInclude>
+    <ClInclude Include="Render\GraphicsStats.h">
+      <Filter>Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -491,6 +494,9 @@
     </ClCompile>
     <ClCompile Include="StaticMeshes\StaticMesh.cpp">
       <Filter>StaticMeshes</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GraphicsStats.cpp">
+      <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

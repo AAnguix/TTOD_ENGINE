@@ -10,11 +10,7 @@ class CInputManager
 {
 public:
 
-	//Le pasas string para ver si el comando, que esta mapeado con XML, está activo.
-	bool IsActionActive(const std::string& action) const 
-	{ 
-		return m_ActiveActions.count(action) > 0;
-	}
+	bool IsActionActive(const std::string& action) const { return m_ActiveActions.count(action) > 0;}
 	
 	float GetAxis(const std::string& axis) const { std::unordered_map<std::string, float>::const_iterator it = m_ActiveAxis.find(axis); if (it == m_ActiveAxis.end()) return 0; else return it->second; }
 

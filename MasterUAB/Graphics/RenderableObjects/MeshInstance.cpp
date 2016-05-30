@@ -11,6 +11,8 @@
 #include "Components\ComponentManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "RenderableObjects\LayerManager.h"
+#include "Animation\AnimatedModelManager.h"
+#include "Render\DebugRender.h"
 
 /*Used to create a mesh instance when game is runing*/
 CMeshInstance::CMeshInstance(const std::string &Name, const std::string &CoreName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
@@ -29,14 +31,26 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 ,m_Parent(nullptr)
 ,m_ParentBoneId(-1)
 {
-	std::string l_Name = TreeNode.GetPszProperty("name", "");
 	std::string l_Core = TreeNode.GetPszProperty("core_name","");
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(l_Core);
-	std::string l_ActorType = TreeNode.GetPszProperty("actor_type","");
-	std::string l_Geometry = TreeNode.GetPszProperty("geometry","");
 	
 	if(m_StaticMesh!=nullptr)
 	{
+		std::string l_Name = TreeNode.GetPszProperty("name", "");
+		std::string l_ActorType = TreeNode.GetPszProperty("actor_type", "");
+		std::string l_Geometry = TreeNode.GetPszProperty("geometry", "");
+
+		std::string l_ParentName = TreeNode.GetPszProperty("parent_name", "");
+		std::string l_ParentLayer = TreeNode.GetPszProperty("parent_layer", "");
+		std::string l_ParentBoneName = TreeNode.GetPszProperty("parent_bone", "");
+		
+		if (l_ParentName != "" && l_ParentLayer != "" && l_ParentBoneName != "")
+		{
+			m_Parent = (CAnimatedInstanceModel*)CEngine::GetSingleton().GetLayerManager()->GetResource(l_ParentLayer)->GetResource(l_ParentName);
+			assert(m_Parent != nullptr);
+			m_ParentBoneId = ((CAnimatedInstanceModel*)m_Parent)->GetAnimatedCoreModel()->GetBoneId(l_ParentBoneName);
+		}
+
 		CMaterial* l_PhysicsMat = m_StaticMesh->GetPhysxMaterial();
 		std::string l_MaterialName = "";
 		if(l_PhysicsMat!=nullptr)
@@ -95,17 +109,17 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 				else if (l_Geometry == "convex")
 				{
 					if (l_ActorType == "static")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticConvexMesh(l_Name, m_StaticMesh->GetVertex(), l_MaterialName, m_Position, l_Rotation, l_Group);
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticConvexMesh(l_Name, m_StaticMesh->GetName(), m_StaticMesh->GetVertex(), l_MaterialName, m_Position, l_Rotation, l_Group);
 					else if (l_ActorType == "kinematic" || l_ActorType == "dynamic")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicConvexMesh(l_Name, m_StaticMesh->GetVertex(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density, l_IsKinematic);
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicConvexMesh(l_Name, m_StaticMesh->GetName(), m_StaticMesh->GetVertex(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density, l_IsKinematic);
 				}
 				else if (l_Geometry == "triangle")
 				{
 					l_AbleToBeTrigger = false;
 					if (l_ActorType == "static")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticTriangleMesh(l_Name, m_StaticMesh->GetVertex(), m_StaticMesh->GetIndex(), l_MaterialName, m_Position, l_Rotation, l_Group);
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticTriangleMesh(l_Name, m_StaticMesh->GetName(), m_StaticMesh->GetVertex(), m_StaticMesh->GetIndex(), l_MaterialName, m_Position, l_Rotation, l_Group);
 					else if (l_ActorType == "kinematic")
-						CEngine::GetSingleton().GetPhysXManager()->CreateRigidKinematicTriangleMesh(l_Name, m_StaticMesh->GetVertex(), m_StaticMesh->GetIndex(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density);
+						CEngine::GetSingleton().GetPhysXManager()->CreateRigidKinematicTriangleMesh(l_Name, m_StaticMesh->GetName(), m_StaticMesh->GetVertex(), m_StaticMesh->GetIndex(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density);
 				}
 				else assert(false);
 
@@ -134,7 +148,8 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 	bool l_IsOutsideFrustum = false;
 
 	#if ENABLE_FRUSTUM
-	if (!RenderManager->GetFrustum().BoxVisible(m_StaticMesh->GetBoundingBoxMax(), m_StaticMesh->GetBoundingBoxMin()))
+	//if (!RenderManager->GetFrustum().BoxVisible(m_StaticMesh->GetBoundingBoxMax(), m_StaticMesh->GetBoundingBoxMin()))
+	if (!RenderManager->GetFrustum().SphereVisible(m_StaticMesh->GetBoundingSphereCenter(), m_StaticMesh->GetBoundingSphereRadius()))
 		l_IsOutsideFrustum = true;
 	#endif
 	
@@ -143,7 +158,15 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 		if (m_Parent != nullptr && m_ParentBoneId != -1)
 		{
 			Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
-			RenderManager->GetContextManager()->SetWorldMatrix(GetTransform()*l_BoneTransform);
+			Mat44f l_ParentTransform = m_Parent->GetTransform();
+			CContextManager* l_ContextManager = RenderManager->GetContextManager();
+			
+			l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
+			l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
+			//m_StaticMesh->Render(RenderManager);
+			
+			
+			l_ContextManager->SetWorldMatrix(GetTransform()*l_BoneTransform*l_ParentTransform);
 		}
 		else
 		{

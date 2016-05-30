@@ -284,9 +284,11 @@ public:
 		CEffectGeometryShader *l_EffectGeometryShader = EffectTechnique->GetGeometryShader();
 		ID3D11Buffer *l_ConstantBufferVS=l_EffectVertexShader->GetConstantBuffer(0);
 		
-		if(l_EffectPixelShader==NULL || l_EffectVertexShader==NULL || l_ConstantBufferVS==NULL)
-		return false;
-
+		if (l_EffectPixelShader == NULL || l_EffectVertexShader == NULL || l_ConstantBufferVS == NULL)
+		{
+			assert(false);
+			return false;
+		}
 		ID3D11DeviceContext *l_DeviceContext=RenderManager->GetContextManager()->GetDeviceContext();
 		UINT stride=sizeof(T);
 		UINT offset=0;

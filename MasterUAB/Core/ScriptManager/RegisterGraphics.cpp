@@ -48,6 +48,7 @@
 #include "Animation\AnimatedModelManager.h"
 #include "testclass.h"
 #include "Log.h"
+#include "Render\GraphicsStats.h"
 
 #include "DebugHelperImplementation.h"
 
@@ -106,6 +107,17 @@ void CScriptManager::RegisterRender()
 	
 		.def("GetFrameBufferWidth", &CContextManager::GetFrameBufferWidth)
 		.def("GetFrameBufferHeight", &CContextManager::GetFrameBufferHeight)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CGraphicsStats>("CGraphicsStats")
+		.def(constructor<>())
+		.def("GetFps", &CGraphicsStats::GetFps)
+		.def("GetMilliSecondsPerFrame", &CGraphicsStats::GetMilliSecondsPerFrame)
+		.def("GetMinMillisecondsPerFrame", &CGraphicsStats::GetMinMillisecondsPerFrame)
+		.def("GetMaxMillisecondsPerFrame", &CGraphicsStats::GetMaxMillisecondsPerFrame)
+		.def("GetAvgMillisecondsPerFrame", &CGraphicsStats::GetAvgMillisecondsPerFrame)
 	];
 }
 
@@ -420,29 +432,26 @@ void CScriptManager::RegisterLights()
 			value("directional", 1),
 			value("spot", 2)
 		]
-		.def("get_intensity", &CLight::GetIntensity)
-			.def("set_intensity", &CLight::SetIntensity)
-			.def("get_position", &CLight::GetPosition)
-			.def("set_position", &CLight::SetPosition)
-			.def("get_color", &CLight::GetColor)
-			.def("set_color", &CLight::SetColor)
-			.def("get_start_range_attenuation", &CLight::GetStartRangeAttenuation)
-			.def("set_start_range_attenuation", &CLight::SetStartRangeAttenuation)
-			.def("get_end_range_attenuation", &CLight::GetEndRangeAttenuation)
-			.def("set_end_range_attenuation", &CLight::SetEndRangeAttenuation)
-			.def("get_type", &CLight::GetType)
-			.def("set_type", &CLight::SetType)
-			.def("render", &CLight::Render)
-			.def("GetActiveAddress", &CLight::GetActiveAddress)
-			.def("GetIntensityAddress", &CLight::GetIntensityAddress)
-			.def("GetPositionAddress", &CLight::GetPositionAddress)
-			.def("GetColorAddress", &CLight::GetColorAddress)
-			.def("GetStartRangeAttenuationAddress", &CLight::GetStartRangeAttenuationAddress)
-			.def("GetEndRangeAttenuationAddress", &CLight::GetEndRangeAttenuationAddress)
-			.scope
-			[
-				def("get_light_type_by_name", &CLight::GetLightTypeByName)
-			]
+		.def("GetIntensity", &CLight::GetIntensity)
+		.def("SetIntensity", &CLight::SetIntensity)
+		.def("GetColor", &CLight::GetColor)
+		.def("SetColor", &CLight::SetColor)
+		.def("GetStartRangeAttenuation", &CLight::GetStartRangeAttenuation)
+		.def("SetStartRangeAttenuation", &CLight::SetStartRangeAttenuation)
+		.def("GetEndRangeAttenuation", &CLight::GetEndRangeAttenuation)
+		.def("SetEndRangeAttenuation", &CLight::SetEndRangeAttenuation)
+		.def("GetType", &CLight::GetType)
+		.def("SetType", &CLight::SetType)
+		.def("Render", &CLight::Render)
+		.def("GetActiveLuaAddress", &CLight::GetActiveLuaAddress)
+		.def("GetIntensityLuaAddress", &CLight::GetIntensityLuaAddress)
+		.def("GetColorLuaAddress", &CLight::GetColorLuaAddress)
+		.def("GetStartRangeAttenuationLuaAddress", &CLight::GetStartRangeAttenuationLuaAddress)
+		.def("GetEndRangeAttenuationLuaAddress", &CLight::GetEndRangeAttenuationLuaAddress)
+		.scope
+		[
+			def("GetLightTypeByName", &CLight::GetLightTypeByName)
+		]
 	];
 
 	module(LUA_STATE)
@@ -450,9 +459,9 @@ void CScriptManager::RegisterLights()
 		class_<CDirectionalLight, CLight>("CDirectionalLight")
 		.def(constructor<>())
 		.def(constructor<CXMLTreeNode>())
-		.def("get_direction", &CDirectionalLight::GetDirection)
-		.def("set_direction", &CDirectionalLight::SetDirection)
-		.def("render", &CDirectionalLight::Render)
+		.def("GetDirection", &CDirectionalLight::GetDirection)
+		.def("SetDirection", &CDirectionalLight::SetDirection)
+		.def("Render", &CDirectionalLight::Render)
 		.def("GetDirectionAddress", &CDirectionalLight::GetDirectionAddress)
 	];
 
@@ -469,9 +478,9 @@ void CScriptManager::RegisterLights()
 		class_<CSpotLight, CDirectionalLight>("CSpotLight")
 		.def(constructor<>())
 		.def(constructor<CXMLTreeNode>())
-		.def("get_angle", &CSpotLight::GetAngle)
-		.def("get_falloff", &CSpotLight::GetFallOff)
-		.def("render", &CSpotLight::Render)
+		.def("GetAngle", &CSpotLight::GetAngle)
+		.def("GetFallOff", &CSpotLight::GetFallOff)
+		.def("Render", &CSpotLight::Render)
 		.def("GetAngleAddress", &CSpotLight::GetAngleAddress)
 		.def("GetFallOffAddress", &CSpotLight::GetFallOffAddress)
 	];
@@ -894,6 +903,7 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("AddLuaComponent", &CRenderableObject::AddLuaComponent)
 		.def("GetFirstLuaComponent", &CRenderableObject::GetFirstLuaComponent)
 		
+		.def("GetThisLuaAddress", &CRenderableObject::GetThisLuaAddress)
 		.def("RemoveLuaComponents", &CRenderableObject::RemoveLuaComponents)
 		.def("GetClassType", &CRenderableObject::GetClassType)
 		.enum_("TRenderableObjectType")
@@ -946,10 +956,18 @@ void CScriptManager::RegisterRenderableObjects()
 	module(LUA_STATE)
 	[
 		class_<CStaticMesh, CNamed>("CStaticMesh")
-		.def(constructor<>())
+		.def(constructor<const std::string>())
 		.def("Load", &CStaticMesh::Load)
 		.def("Reload", &CStaticMesh::Reload)
 		.def("Render", &CStaticMesh::Render)
+		.def("GetThisLuaAddress", &CStaticMesh::GetThisLuaAddress)
+		.def("GetBoundingBoxMin", &CStaticMesh::GetBoundingBoxMin)
+		.def("GetBoundingBoxMax", &CStaticMesh::GetBoundingBoxMax)
+		.def("GetBoundingBoxSize", &CStaticMesh::GetBoundingBoxSize)
+		.def("GetBoundingSphereCenter", &CStaticMesh::GetBoundingSphereCenter)
+		.def("GetBoundingSphereRadius", &CStaticMesh::GetBoundingSphereRadius)
+		.def("GetCapsuleHalfHeight", &CStaticMesh::GetCapsuleHalfHeight)
+		.def("GetCapsuleRadius", &CStaticMesh::GetCapsuleRadius)
 	];
 
 	module(LUA_STATE)
@@ -965,5 +983,44 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("Load", &CStaticMeshManager::Load)
 		.def("Reload", &CStaticMeshManager::Reload)
 		.def("GetLUAStaticMeshes", &CStaticMeshManager::GetLUAStaticMeshes, return_stl_iterator)
+	];
+}
+
+void CScriptManager::RegisterSceneRendererCommands()
+{
+	module(LUA_STATE)
+	[
+		class_<CTemplatedVectorMapManager<CSceneRendererCommand>>("CTemplatedVectorMapManager")
+		.def("GetResource", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResource)
+		.def("GetResourceById", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResourceById)
+		.def("AddResource", &CTemplatedVectorMapManager<CSceneRendererCommand>::AddResource)
+		.def("RemoveResource", &CTemplatedVectorMapManager<CSceneRendererCommand>::RemoveResource)
+		.def("GetResourcesMap", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResourcesMap)
+		.def("GetResourcesVector", &CTemplatedVectorMapManager<CSceneRendererCommand>::GetResourcesVector)
+	];
+
+	module(LUA_STATE)
+	[
+		class_< CSceneRendererCommandManager, CTemplatedVectorMapManager<CSceneRendererCommand>>("CSceneRendererCommandManager")
+		.def("Reload", &CSceneRendererCommandManager::Reload)
+		.def("Load", &CSceneRendererCommandManager::Load)
+		.def("Execute", &CSceneRendererCommandManager::Execute)
+		.def("GetLUASceneRendererCommands", &CSceneRendererCommandManager::GetLUASceneRendererCommands, return_stl_iterator)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CActive>("CActive")
+		.def(constructor<CXMLTreeNode>())
+		.def("SetActive", &CActive::SetActive)
+		.def("GetActive", &CActive::GetActive)
+		.def("GetActiveLuaAddress", &CActive::GetActiveLuaAddress)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CSceneRendererCommand, bases<CActive, CNamed>>("CSceneRendererCommand")
+		.def("execute", &CSceneRendererCommand::Execute)
+		.def("GetThisLuaAddress", &CSceneRendererCommand::GetThisLuaAddress)
 	];
 }
