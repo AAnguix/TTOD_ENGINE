@@ -39,14 +39,15 @@ struct PS_INPUT
 PS_INPUT VS( VS_INPUT IN )
 {
 	float l_Random = m_Times.z;
-	float l_Smooth = 8.0;
+	float l_Smooth = 2.0;
 	PS_INPUT l_Output = (PS_INPUT)0;
 	l_Output.Pos = mul( float4(IN.Pos.xyz,1.0), m_World ); 
 	l_Output.WorldPos=l_Output.Pos.xyz;
 	l_Output.Pos = mul( l_Output.Pos, m_View );
 	l_Output.Pos = mul( l_Output.Pos, m_Projection );
 	
-	if(m_MoveVertices)
+	//Arturo's way
+	/*if(m_MoveVertices)
 	{
 		float2 l_UV = IN.UV;
 		float l_Factor = (l_UV.x*l_UV.y) /2;
@@ -54,7 +55,11 @@ PS_INPUT VS( VS_INPUT IN )
 		float l_Value = sin((l_UV.x)*m_Times.y) + cos((l_UV.y)*m_Times.y);
 		float l_Displacement = (l_Value/m_Smooth);
 		l_Output.Pos.y += l_Displacement;
-	}
+	}*/
+	//end Arturo's way
+	float l_WaveSize=0.05;
+	float l_Displacement=sin(IN.UV.x*m_Times.y)*l_WaveSize+cos(IN.UV.y*m_Times.y)*l_WaveSize;
+	l_Output.Pos.y += l_Displacement;
 	
 	// EQ1 l_Output.Pos.y += ( (sin(m_Times.y)/4)*l.x) + ( (cos(m_Times.y)/4)*/l.y );
 	// EQ2 l_Output.Pos.y += ( (sin(m_Times.y)/4)*(0.1/l.x)) + ( (cos(m_Times.y)/4)*(0.1/l.y ));
@@ -114,6 +119,16 @@ float4 PS( PS_INPUT IN) : SV_Target
 	m_SpecularFactor = m_SpecularFactor*(1-l_Spec);
 	
 	float3 l_PixelColor = GetIluminatedPixelColor(l_Diffuse,m_SpecularFactor,m_Gloss,IN.WorldPos,Nn, m_LightAmbient, MAX_LIGHTS_BY_SHADER);
+	float l_Min=0.85;
+	float l_Offset=0.9;
+	float l_Max=1.3;
+	float l_Pct=min(l_Min+l_Offset+sin(m_Times.y*2.0), l_Max);
+	float l_Threshold=0.1;
+	float l_BW=(l_PixelColor.x+l_PixelColor.y+l_PixelColor.z)*0.33;
+	if(l_BW<l_Threshold)
+		l_PixelColor.xyz*=l_Pct;
+	//l_PixelColor.xyz=float3(0,0,0);
+	//return float4(IN.UV.y, 0.0, 0.0, 1.0);
 	return float4(l_PixelColor,l_Diffuse.a);
 }
 

@@ -10,7 +10,7 @@ CMouseInput::~CMouseInput()
 
 }
 
-void CMouseInput::Update(float X, float Y, bool LeftWentPressed, bool LeftWentReleased)
+void CMouseInput::Update(long X, long Y, bool LeftWentPressed, bool LeftWentReleased)
 { 
 	m_X = X; 
 	m_Y = Y; 

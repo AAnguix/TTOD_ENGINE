@@ -19,9 +19,8 @@ public:
 	{
 		RS_WIREFRAME,
 		RS_SOLID,
-		RS_CULL_FRONT, //No renderiza las caras frontales, según la posición de la cámara.
-		RS_CULL_BACK, //... traseras
-
+		RS_CULL_FRONT, 
+		RS_CULL_BACK,
 		RS_COUNT
 	};
 
@@ -88,7 +87,11 @@ public:
 
 	void SetAlphaBlendState(ID3D11BlendState* AlphaBlendState);
 	void EnableAlphaBlendState();
+	void EnableAdditiveAlphaBlendState();
 	void DisableAlphaBlendState();
+
+	void SetRasterizerState(ERasterizedState RasterizerState);
+	void SetDepthStencilState(EDepthStencilState DepthStencilState);
 
 	IDXGISwapChain* GetSwapChain(){return m_SwapChain;};
 
@@ -99,7 +102,7 @@ private:
 
 	void InitRasterizerStates();
 	void InitDepthStencilStates();
-	bool InitBlendState();
+	void InitBlendingStates();
 
 	ID3D11Device*			m_D3DDevice;
 	ID3D11DeviceContext*	m_DeviceContext;
@@ -119,6 +122,7 @@ private:
 	ID3D11DepthStencilState * m_DepthStencilStates[DSS_COUNT];
 	ID3D11BlendState* m_BlendStates[BLEND_COUNT];
 	ID3D11BlendState* m_AlphaBlendState;
+	ID3D11BlendState* m_AdditiveAlphaBlendState;
 	D3D11_VIEWPORT m_Viewport;
 };
 

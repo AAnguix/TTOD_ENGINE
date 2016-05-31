@@ -200,9 +200,6 @@
     <ClCompile Include="Textures\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3rdParty\cal3d-0.11rc2\src\cal3d\cal3d.vcxproj">
-      <Project>{d780f1cb-43bc-f2f2-cc86-ba3416cbf389}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\3rdParty\DirectXTK\DirectXTK_Desktop_2013.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>

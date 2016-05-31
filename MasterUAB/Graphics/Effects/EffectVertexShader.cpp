@@ -60,6 +60,8 @@ bool CEffectVertexShader::Load()
 		return false;  
 	}  
  
+	l_Loaded = false;
+
 	if(m_VertexType=="MV_POSITION_NORMAL_TEXTURE_VERTEX")  
 		l_Loaded=MV_POSITION_NORMAL_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
 
@@ -77,7 +79,6 @@ bool CEffectVertexShader::Load()
 
 	else if(m_VertexType=="MV_POSITION_COLOR_TEXTURE_VERTEX")  
 		l_Loaded=MV_POSITION_COLOR_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-	
 
 	else if(m_VertexType=="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX")  
 		l_Loaded=MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
@@ -90,20 +91,21 @@ bool CEffectVertexShader::Load()
 	
 	else if (m_VertexType == "MV_PARTICLE_VERTEX")
 		l_Loaded = MV_PARTICLE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
-
-	//else if (m_VertexType == "MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX")
-		//l_Loaded = MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
-
 	else
 	{
 		CEngine::GetSingleton().GetLogManager()->Log("Vertex type " + m_VertexType + " not recognized on CEffectVertexShader::Load");
 		assert(false);
-	}//Info("Vertex type '%s' not recognized on CEffectVertexShader::Load", m_VertexType.c_str());*/
+	}
+	//else if (m_VertexType == "MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX")
+		//l_Loaded = MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
 	
 	l_VSBlob->Release();  
-	if(!l_Loaded)   
-		return false;  
-	
+	if (!l_Loaded)
+	{
+		CEngine::GetSingleton().GetLogManager()->Log("Can't create input layout for vertex type" + m_VertexType + ". " + m_Filename);
+		assert(false);
+		return false;
+	}
 	return CreateConstantBuffer(); 
 } 
 

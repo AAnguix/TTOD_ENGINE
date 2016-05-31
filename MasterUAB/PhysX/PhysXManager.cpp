@@ -890,10 +890,12 @@ void CPhysXManager::WriteCookingDataToFile(const std::string &FileName, void *Da
 	FILE *l_File;
 	errno_t l_Error;
 	l_Error = fopen_s(&l_File, FileName.c_str(), "wb");
-
-	fwrite(&DataSize, sizeof(unsigned int), 1, l_File);
-	fwrite(Data, sizeof(unsigned char), DataSize, l_File);
-
+	assert(l_Error == 0);
+	if (l_Error == 0)
+	{
+		fwrite(&DataSize, sizeof(unsigned int), 1, l_File);
+		fwrite(Data, sizeof(unsigned char), DataSize, l_File);
+	}
 	fclose(l_File);
 }
 
@@ -902,17 +904,16 @@ void CPhysXManager::ReadCookingDataFromFile(const std::string &FileName, void **
 	FILE *l_File;
 	errno_t l_Error;
 	l_Error = fopen_s(&l_File, FileName.c_str(), "rb");
-	fread(&DataSize, sizeof(unsigned int), 1, l_File);
-	*Data = malloc(DataSize);
-	fread(*Data, sizeof(unsigned char), DataSize, l_File);
+	assert(l_Error == 0);
+	if (l_Error == 0)
+	{		
+		fread(&DataSize, sizeof(unsigned int), 1, l_File);
+		*Data = malloc(DataSize);
+		fread(*Data, sizeof(unsigned char), DataSize, l_File);
+	}
 	fclose(l_File);
-	//
-	//	physx::PxDefaultMemoryOutputStream l_Buffer;
-	//	fread(&l_Buffer, sizeof(), 1, l_File);
 }
-//
-//
-//physx::PxRigidBody::addForce()
+
 
 void CPhysXManager::ApplyForce(const std::string &ActorName, const Vect3f &Force)
 {

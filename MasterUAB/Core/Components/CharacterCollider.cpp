@@ -11,17 +11,14 @@ CCharacterCollider::CCharacterCollider(const std::string &Name, CAnimatedInstanc
 :CComponent(Name,Owner)
 ,m_PhysxMaterial(Owner->GetAnimatedCoreModel()->GetMaterials()[0])
 {
-	
 }
 
 CCharacterCollider::~CCharacterCollider()
 {
-	
 }
 
 void CCharacterCollider::Update(float ElapsedTime)
 {
-	
 }
 	
 void CCharacterCollider::Render(CRenderManager &RenderManager)
@@ -35,7 +32,6 @@ void CCharacterCollider::Render(CRenderManager &RenderManager)
 
 void CCharacterCollider::RenderDebug(CRenderManager &RenderManager)
 {
-
 }
 
 CCharacterCollider* CCharacterCollider::AddCharacterCollider(const std::string &Name, CAnimatedInstanceModel *Owner)

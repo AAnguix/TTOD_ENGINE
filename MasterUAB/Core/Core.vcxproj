@@ -26,7 +26,12 @@
     <ClCompile Include="Components\CharacterCollider.cpp" />
     <ClCompile Include="Components\ComponentManager.cpp" />
     <ClCompile Include="Components\Collider.cpp" />
-    <ClCompile Include="Components\Script.cpp" />
+    <ClCompile Include="Components\LuaComponent.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Components\Script.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="DebugHelperImplementation.cpp" />
@@ -63,7 +68,9 @@
     <ClInclude Include="Components\ComponentManager.h" />
     <ClInclude Include="Components\Collider.h" />
     <ClInclude Include="Components\LuaComponent.h" />
-    <ClInclude Include="Components\Script.h" />
+    <ClInclude Include="Components\Script.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Engine.h" />
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="DebugHelperImplementation.h" />
@@ -78,9 +85,6 @@
   <ItemGroup>
     <ProjectReference Include="..\3rdParty\AntTweakBar\AntTweakBar.vcxproj">
       <Project>{b99e1fa1-c30a-45f2-9d57-9e9c21b2df42}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\3rdParty\cal3d-0.11rc2\src\cal3d\cal3d.vcxproj">
-      <Project>{d780f1cb-43bc-f2f2-cc86-ba3416cbf389}</Project>
     </ProjectReference>
     <ProjectReference Include="..\3rdParty\luabind\luabind.vcxproj">
       <Project>{09b805a4-13db-4a24-8e3a-386dad319399}</Project>

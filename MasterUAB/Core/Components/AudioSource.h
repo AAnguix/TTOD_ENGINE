@@ -7,9 +7,7 @@
 
 class CAudioSource : public CComponent
 {
-
 private:
-	std::vector<SoundEvent> m_SoundEvents;
 	std::vector<std::pair<std::string, SoundEvent>> m_Sounds;
 
 public:
@@ -20,8 +18,7 @@ public:
 
 	bool AddSound(const std::string &Key, const std::string &SoundEventName);
 	void PlayEvent(const std::string &Key);
-	//void PlayEvent(unsigned int Index);
-	void RemoveSounds(); //hacer la limpieza del vector un clear del imsmo y listo
+	void RemoveSounds(); 
 };
 
 #endif

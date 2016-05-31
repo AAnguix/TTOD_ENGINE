@@ -10,17 +10,14 @@ CCollider::CCollider(const std::string &Name, CMeshInstance *Owner)
 :CComponent(Name,Owner)
 ,m_PhysxMaterial(Owner->GetStaticMesh()->GetPhysxMaterial())
 {
-
 }
 
 CCollider::~CCollider()
 {
-	
 }
 
 void CCollider::Update(float ElapsedTime)
 {
-	
 }
 
 /*Update graphics transform from physix transform*/
@@ -31,15 +28,12 @@ void CCollider::Render(CRenderManager &RenderManager)
 		CPhysXManager::SActorData l_Data = CEngine::GetSingleton().GetPhysXManager()->GetActorPositionAndOrientation(m_Owner->GetName());
 		m_Owner->SetPosition(l_Data.m_Position);
 		Vect3f l_V = l_Data.m_Orientation.GetRadians();
-		m_Owner->SetYaw(l_V.x);
-		m_Owner->SetPitch(l_V.y);
-		m_Owner->SetRoll(l_V.z);
+		m_Owner->SetYawPitchRoll(l_V.x, l_V.y, l_V.z);
 	}
 }
 
 void CCollider::RenderDebug(CRenderManager &RenderManager)
 {
-
 }
 
 CCollider* CCollider::AddCollider(const std::string &Name, CMeshInstance *Owner)

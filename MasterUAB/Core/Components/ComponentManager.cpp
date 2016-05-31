@@ -2,12 +2,10 @@
 
 CComponentManager::CComponentManager()
 {
-
 }
 
 CComponentManager::~CComponentManager()
 {
-
 }
 
 void CComponentManager::Update(float ElapsedTime)
@@ -38,9 +36,9 @@ bool CComponentManager::AddComponent(CComponent *Component)
 {
 	if(!AddResource(Component->GetName(),Component))
 	{
+		assert(false);
 		return false;
 	} 
-	
 	return true;
 }
 

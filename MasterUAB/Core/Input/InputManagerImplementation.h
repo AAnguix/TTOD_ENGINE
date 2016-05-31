@@ -1,6 +1,8 @@
 #ifndef _INPUTMANAGERIMPLEMENTATION_H
 #define _INPUTMANAGERIMPLEMENTATION_H
 
+#define DIRECTINPUT_VERSION 0x0800
+
 #include <dinput.h>
 #include <vector>
 #include "Utils\Utils.h"

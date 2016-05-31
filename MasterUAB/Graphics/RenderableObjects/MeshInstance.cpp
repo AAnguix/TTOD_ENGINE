@@ -149,7 +149,7 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 
 	#if ENABLE_FRUSTUM
 	//if (!RenderManager->GetFrustum().BoxVisible(m_StaticMesh->GetBoundingBoxMax(), m_StaticMesh->GetBoundingBoxMin()))
-	if (!RenderManager->GetFrustum().SphereVisible(m_StaticMesh->GetBoundingSphereCenter(), m_StaticMesh->GetBoundingSphereRadius()))
+	if (!RenderManager->GetFrustum().SphereVisible(GetTransform()*m_StaticMesh->GetBoundingSphereCenter(), m_StaticMesh->GetBoundingSphereRadius()))
 		l_IsOutsideFrustum = true;
 	#endif
 	

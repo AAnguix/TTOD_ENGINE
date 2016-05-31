@@ -143,7 +143,7 @@
 	</apply_filters>
 	
 	<enable_additive_alpha_blend/>
-	LightScatteringMaterial 
+	 
 	<render_draw_quad material="LightScatteringMaterial"> 							
 		<texture stage_id="0" file="LightScatteringTextureSkyboxBlurred"/>
 	</render_draw_quad> -->

@@ -27,6 +27,7 @@
 	
 	<pool_renderable_object_technique name="deferred_shading">
 		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="deferred_drawquad_technique"/>
+		<renderable_object_technique name="deferred_shading_omnilight_sphere_renderable_object_technique" technique="ds_omnilight_sphere_technique"/>
 	</pool_renderable_object_technique>
 	
 	<pool_renderable_object_technique name="generate_shadow_map">

@@ -2,6 +2,7 @@
 #define _LUACOMPONENT_H
 
 #include <string>
+#include "Components\Component.h"
 
 class CLUAComponent
 {

@@ -26,6 +26,7 @@ void CTTODXMLWriter::StartFile(const std::string &Filename)
 {
 	errno_t l_Error;
 	l_Error = fopen_s(&m_File, Filename.c_str(), "w+t");
+	assert(l_Error == 0);
 	fprintf(m_File, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
 }
 

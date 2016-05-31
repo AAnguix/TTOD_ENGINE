@@ -4,15 +4,12 @@
 #include <assert.h>
 
 CAudioSource::CAudioSource(const std::string &Name, CRenderableObject *Owner)
-	:CComponent(Name, Owner)
+:CComponent(Name, Owner)
 {
-
-
 }
 
 CAudioSource::~CAudioSource()
 {
-
 }
 
 CAudioSource* CAudioSource::AddAudioSource(const std::string &Name, CRenderableObject *Owner)
@@ -27,7 +24,6 @@ CAudioSource* CAudioSource::AddAudioSource(const std::string &Name, CRenderableO
 	return l_AudioSource;
 }
 
-
 void CAudioSource::PlayEvent(const std::string &Key)
 {
 	bool l_Found = false;
@@ -36,10 +32,11 @@ void CAudioSource::PlayEvent(const std::string &Key)
 		for (unsigned int i = 0; i < m_Sounds.size(); ++i)
 		{
 			if (m_Sounds[i].first == Key)
-
-				//CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_Sounds[i].second, m_Owner);
+			{
 				CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_Sounds[i].second);
-			l_Found = true;
+				l_Found = true;
+				i = m_Sounds.size();
+			}
 		}
 		assert(l_Found);
 	}
