@@ -27,6 +27,11 @@ CDeferredShadingSceneRendererCommand:: CDeferredShadingSceneRendererCommand(CXML
 	m_RenderableObjectTechnique=CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("MV_POSITION4_COLOR_TEXTURE_VERTEX");
 
 	m_Sphere = CEngine::GetSingleton().GetStaticMeshManager()->GetResource("deferred_shading_sphere");
+	/*if (m_Sphere == nullptr)
+	{
+		CEngine::GetSingleton().GetLogManager()->Log("Can't find sphere to optimize deferred shading");
+		assert(false);
+	}*/
 } 
 
 CDeferredShadingSceneRendererCommand::~CDeferredShadingSceneRendererCommand()
@@ -94,27 +99,30 @@ void CDeferredShadingSceneRendererCommand::ExecuteDeferredShadingUsingLightVolum
 
 			if (!l_Lights[i]->GetType() == CLight::OMNI) //
 			{
-				//RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_SOLID);
+				RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_SOLID);
 				RenderManager.DrawScreenQuad(m_RenderableObjectTechnique->GetEffectTechnique(), NULL, 0, 0, 1.0f, 1.0f, CColor(v4fZERO));
 			}
 			else 
 			{
+				RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_CULL_FRONT);
 				float l_LightRadius = l_Lights[i]->GetEndRangeAttenuation();
 				Mat44f l_Scale;
 				l_Scale.SetFromScale(l_LightRadius, l_LightRadius, l_LightRadius);
 
 				Mat44f l_LightTransform = l_Lights[i]->GetTransform();
 				
+				//Desactivar ztest y zwrite.
+
 				RenderManager.GetContextManager()->SetWorldMatrix(l_Scale*l_LightTransform);
 				if (IsCameraInsideLight(RenderManager,(COmniLight*)l_Lights[i]))
 				{
-					RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_CULL_BACK);
-					RenderManager.GetContextManager()->SetDepthStencilState(CContextManager::DSS_DEPTH_ON);
+					//RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_CULL_BACK);
+					//RenderManager.GetContextManager()->SetDepthStencilState(CContextManager::DSS_DEPTH_ON);
 				}
 				else
 				{
-					RenderManager.GetContextManager()->SetDepthStencilState(CContextManager::DSS_OFF);
-					RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_CULL_FRONT);
+					//RenderManager.GetContextManager()->SetDepthStencilState(CContextManager::DSS_OFF);
+					//RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_CULL_FRONT);
 				}
 
 				m_Sphere->Render(&RenderManager);

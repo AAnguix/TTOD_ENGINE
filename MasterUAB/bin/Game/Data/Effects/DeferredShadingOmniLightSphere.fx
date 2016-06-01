@@ -35,12 +35,13 @@ PS_INPUT VS(VS_INPUT IN)
 
 float4 PS(PS_INPUT IN) : SV_Target
 {
-	float2 l_ScreenPos = IN.ScreenPos.xy/IN.ScreenPos.w;
+	float2 l_ScreenPos = IN.ScreenPos.xy/float2(IN.ScreenPos.w,-IN.ScreenPos.w);
 	//x=-1.left, x=1.right, y=1.top, y=-1.bottom
 	float l_Width = m_Times.z;
 	float l_Height = m_Times.w;
 	
-	float2 l_Value = (l_ScreenPos.x/l_Width,l_ScreenPos.y/l_Height);
+	float2 l_Value = l_ScreenPos * 0.5 + float2(0.5,0.5); //(l_ScreenPos.x/l_Width,l_ScreenPos.y/l_Height);
+	//return float4(l_Value, 0.0, 1.0);
 
 	float4 l_DiffuseMap = T0Texture.Sample(S0Sampler, l_Value);
 	float4 l_NormalMap = T1Texture.Sample(S1Sampler, l_Value);
