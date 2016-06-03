@@ -10,9 +10,15 @@ const float PITCH_SPEED = 60.0f;
 const float ROLL_SPEED = 60.0f;
 const float SPEED = 5.0f;
 const float FAST_SPEED = 10.0f;
-const float ZOOM = 3.0f;
+
+const float ZOOM = 2.0f;
 const float ZOOM_SPEED = 2.0f;
+const float MAX_ZOOM = 5.0f;
+const float MIN_ZOOM = 1.0f;
+
 const float LOOK_AT_PITCH = 1.6f;
+const float MAX_PITCH = 2.5f;
+const float MIN_PITCH = -0.1f;
 
 const float PI = 3.14159f;
 const float Y_STRAFE = 1.6f;
@@ -39,8 +45,12 @@ CThirdPersonCameraController::CThirdPersonCameraController(CXMLTreeNode &TreeNod
 ,m_Speed(TreeNode.GetFloatProperty("speed", SPEED))
 ,m_FastSpeed(TreeNode.GetFloatProperty("fast_speed", FAST_SPEED))
 ,m_Zoom(TreeNode.GetFloatProperty("zoom", ZOOM))
+,m_MaxZoom(TreeNode.GetFloatProperty("max_zoom", MAX_ZOOM))
+,m_MinZoom(TreeNode.GetFloatProperty("min_zoom", MIN_ZOOM))
 ,m_ZoomSpeed(TreeNode.GetFloatProperty("zoom_speed", ZOOM_SPEED))
 ,m_LookAtPitch(TreeNode.GetFloatProperty("look_at_pitch", LOOK_AT_PITCH))
+,m_MaxLookAtPitch(TreeNode.GetFloatProperty("max_look_at_pitch", MAX_PITCH))
+,m_MinLookAtPitch(TreeNode.GetFloatProperty("min_look_at_pitch", MIN_PITCH))
 {
 	
 }
@@ -162,26 +172,26 @@ Vect3f CThirdPersonCameraController::GetDirection() const
 void CThirdPersonCameraController::AddZoom(float Zoom)
 {
 	m_Zoom += Zoom;
-	if (m_Zoom > 5.0f)
+	if (m_Zoom > m_MaxZoom)
 	{
-		m_Zoom = 5.0f;
+		m_Zoom = m_MaxZoom;
 	}
-	else if (m_Zoom < 1.0f)
+	else if (m_Zoom < m_MinZoom)
 	{
-		m_Zoom = 1.0f;
+		m_Zoom = m_MinZoom;
 	}
 }
 
 void CThirdPersonCameraController::AddLookAtPitch(float Pitch)
 {
 	m_LookAtPitch += Pitch;
-	if (m_LookAtPitch > 2.5f)
+	if (m_LookAtPitch > m_MaxLookAtPitch)
 	{
-		m_LookAtPitch = 2.5f;
+		m_LookAtPitch = m_MaxLookAtPitch;
 	}
-	else if (m_LookAtPitch < -0.1f)
+	else if (m_LookAtPitch < m_MinLookAtPitch)
 	{
-		m_LookAtPitch = -0.1f;
+		m_LookAtPitch = m_MinLookAtPitch;
 	}
 }
 

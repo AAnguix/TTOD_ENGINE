@@ -14,9 +14,6 @@ public:
 	CCharacterCollider(const std::string &Name, CAnimatedInstanceModel *Owner);
 	virtual ~CCharacterCollider();
 	virtual void Update(float ElapsedTime);
-	virtual void Render(CRenderManager &RenderManager);
-	virtual void RenderDebug(CRenderManager &RenderManager);
-	static CCharacterCollider * AddCharacterCollider(const std::string &Name, CAnimatedInstanceModel *Owner);
 	
 	CMaterial* GetPhysxMaterial() const { return m_PhysxMaterial; };
 };

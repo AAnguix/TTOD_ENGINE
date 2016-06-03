@@ -8,7 +8,6 @@
 #include "XML\XMLTreeNode.h"
 #include "Materials\Material.h"
 #include "Components\Collider.h"
-#include "Components\ComponentManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "RenderableObjects\LayerManager.h"
 #include "Animation\AnimatedModelManager.h"
@@ -20,6 +19,7 @@ CMeshInstance::CMeshInstance(const std::string &Name, const std::string &CoreNam
 ,m_StaticMesh(nullptr)
 ,m_Parent(nullptr)
 ,m_ParentBoneId(-1)
+,m_Collider(nullptr)
 {
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(CoreName);
 }
@@ -30,6 +30,7 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 ,m_StaticMesh(nullptr)
 ,m_Parent(nullptr)
 ,m_ParentBoneId(-1)
+,m_Collider(nullptr)
 {
 	std::string l_Core = TreeNode.GetPszProperty("core_name","");
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(l_Core);
@@ -70,7 +71,7 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 
 				bool l_AbleToBeTrigger = true;
 
-				CCollider::AddCollider("Collider", this);
+				CEngine::GetSingleton().GetPhysXManager()->AddColliderComponent(m_Name+"_Collider", this);
 				CMaterial* m_PhysxMaterial = m_StaticMesh->GetPhysxMaterial();
 				CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, m_PhysxMaterial->GetStaticFriction(), m_PhysxMaterial->GetDynamicFriction(), m_PhysxMaterial->GetRestitution());
 				
@@ -143,8 +144,6 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 	if (m_StaticMesh == NULL)
 		return;
 
-	m_ComponentManager->Render(*RenderManager);
-
 	bool l_IsOutsideFrustum = false;
 
 	#if ENABLE_FRUSTUM
@@ -179,11 +178,22 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 
 void CMeshInstance::SetParent(CAnimatedInstanceModel* Parent, const std::string &BoneName)
 {
-	m_Parent = Parent;
-	if (m_Parent != nullptr)
+	assert(Parent != nullptr);
+	if (Parent != nullptr)
 	{
+		m_Parent = Parent;
 		int l_ParentBoneId = m_Parent->GetAnimatedCoreModel()->GetBoneId(BoneName);
 		if (l_ParentBoneId != -1)
 			m_ParentBoneId = l_ParentBoneId;
 	}
+}
+
+CCollider* CMeshInstance::GetCollider() const
+{
+	return m_Collider;
+}
+
+void CMeshInstance::SetCollider(CCollider* CCollider)
+{
+	m_Collider = CCollider;
 }

@@ -1,15 +1,7 @@
 #include "3DElement.h"
 #include "EmptyPointerClass.h"
+#include "XML\XMLTreeNode.h"
 
-/*
-Vect3f  m_Position, m_PrevPos;  
-float  m_Yaw, m_Pitch, m_Roll;  
-bool  m_TranslationUpdate, m_RotationUpdate, m_ScaleUpdate;  
-Mat44f  m_TransformMatrix, m_RotationMatrix, m_TranslationMatrix, m_ScaleMatrix;  
-Vect3f  m_Scale; 
-
-bool m_Visible;
-*/
 C3DElement::C3DElement(): 
 m_Position(v3fZERO),
 m_PrevPos(v3fZERO),
@@ -195,3 +187,4 @@ CEmptyPointerClass* C3DElement::GetYawLuaAddress() const { return (CEmptyPointer
 CEmptyPointerClass* C3DElement::GetPitchLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Pitch); }
 CEmptyPointerClass* C3DElement::GetRollLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Roll); }
 CEmptyPointerClass* C3DElement::GetPositionLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Position); }
+CEmptyPointerClass* C3DElement::GetScaleLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Scale); }

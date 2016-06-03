@@ -8,9 +8,9 @@ function CGameController:__init()
 end
 
 function CGameController:Update(ElapsedTime)
-	for i=1, (#self.m_Entities) do
-		self.m_Entities[i]:Update(ElapsedTime)
-	end
+	-- for i=1, (#self.m_Entities) do
+		-- self.m_Entities[i]:Update(ElapsedTime)
+	-- end
 end
 
 function CGameController:LoadXML(Filename)
@@ -44,8 +44,8 @@ function CGameController:Reload()
 	for i=1, (#self.m_Entities) do
 		self.m_Entities[i] = nil
 	end
-	g_LayerManager:RemoveLuaComponents()
-	g_LayerManager:RemoveComponent("AnimatorController") --removes this component from all layers
+	--g_LayerManager:RemoveLuaComponents()
+	--g_LayerManager:RemoveComponent("AnimatorController") --removes this component from all layers
 	self:LoadXML(self.m_Filename)
 end
 
@@ -65,7 +65,10 @@ function CGameController:LoadEnemy(XMLTreeNode)
 			l_EnemyComponent  = CBruteEnemyComponent(l_RObject)
 		end
 		
-		l_RObject:AddLuaComponent(l_EnemyComponent)
+		
+		local l_ComponentName = l_RObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_EnemyComponent)
+		
 		l_EnemyComponent:Initialize()
 		CGameController:LoadEnemyChilds(l_EnemyComponent,XMLTreeNode)
 		table.insert(self.m_Entities,l_EnemyComponent)
@@ -97,11 +100,11 @@ function CGameController:LoadWeapon(TreeNode, EnemyComponent)
 		local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)
 													--ComponentType, ParentRObject, MeshRObject, Damage, WeaponType)
 		local l_WeaponComponent = CWeaponComponent("weapon",l_Parent, l_BoneName, l_WeaponRObject, l_Damage, l_WeaponType)
-		l_WeaponRObject:AddLuaComponent(l_WeaponComponent)
+		--table.insert(self.m_Entities,l_WeaponComponent)
+		local l_ComponentName = l_WeaponRObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_WeaponRObject,l_WeaponComponent)
 		EnemyComponent:SetWeapon(l_ArmorComponent)
-		-- l_WeaponComponent:Initialize(l_BoneName)
-		table.insert(self.m_Entities,l_WeaponComponent)
-		g_LogManager:Log("Weapon created")
+	
 	end
 end
 
@@ -130,7 +133,8 @@ function CGameController:LoadPlayer(XMLTreeNode)
 	g_Player = l_RObject --Tells Lua ...
 	
 	local l_PlayerComponent=CPlayerComponent(l_RObject)
-	l_RObject:AddLuaComponent(l_PlayerComponent)
+	local l_ComponentName = l_RObject:GetName().."_Script"
+	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_PlayerComponent)
 	
 	l_PlayerComponent:Initialize()
 	g_PlayerComponent = l_PlayerComponent

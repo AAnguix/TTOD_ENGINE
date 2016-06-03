@@ -2,8 +2,9 @@
 #include "Render\RenderManager.h"
 #include "Engine.h"
 #include "Vertex\VertexTypes.h"
-#include "Log.h"
+#include "Log\Log.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
+#include "XML\XMLTreeNode.h"
 
 void CEffectVertexShader::Destroy()
 {

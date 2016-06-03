@@ -21,8 +21,6 @@ private:
 	bool SearchParameter(const std::string &Name);
 	
 public:
-	static CAnimatorController * AddAnimatorController(const std::string &Name, CRenderableObject *Owner);
-
 	CAnimatorController(const std::string &Name, CRenderableObject* Owner);
 	virtual ~CAnimatorController();
 	void Update(float ElapsedTime);

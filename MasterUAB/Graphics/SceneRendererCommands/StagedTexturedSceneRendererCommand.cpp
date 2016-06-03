@@ -4,6 +4,7 @@
 #include "Textures\TextureManager.h"
 #include "Render\RenderManager.h"
 #include "CaptureFrameBufferTexture.h"
+#include "XML\XMLTreeNode.h"
 
 CStagedTexturedSceneRendererCommand::CStagedTexturedSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode)
 {

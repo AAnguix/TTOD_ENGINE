@@ -11,10 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AStar.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Components\AnimatorController\AnimatorController.cpp" />
     <ClCompile Include="Components\AnimatorController\AnimatorControllerBoolParameter.cpp" />
     <ClCompile Include="Components\AnimatorController\AnimatorControllerFloatParameter.cpp" />
@@ -24,35 +20,25 @@
     <ClCompile Include="Components\AnimatorController\Transition.cpp" />
     <ClCompile Include="Components\AudioSource.cpp" />
     <ClCompile Include="Components\CharacterCollider.cpp" />
-    <ClCompile Include="Components\ComponentManager.cpp" />
     <ClCompile Include="Components\Collider.cpp" />
-    <ClCompile Include="Components\LuaComponent.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Components\Script.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="Components\Script.cpp" />
+    <ClCompile Include="DebugHelper\DebugHelper.cpp" />
+    <ClCompile Include="DebugHelper\DebugHelperImplementation.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="DebugHelper.cpp" />
-    <ClCompile Include="DebugHelperImplementation.cpp" />
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="Input\InputManagerImplementation.cpp" />
     <ClCompile Include="Input\KeyBoardInput.cpp" />
     <ClCompile Include="Input\MouseInput.cpp" />
-    <ClCompile Include="Log.cpp" />
-    <ClCompile Include="ScriptManager\RegisterBase.cpp" />
-    <ClCompile Include="ScriptManager\RegisterCore.cpp" />
-    <ClCompile Include="ScriptManager\RegisterGraphics.cpp" />
-    <ClCompile Include="ScriptManager\RegisterGUI.cpp" />
-    <ClCompile Include="ScriptManager\RegisterPhysx.cpp" />
-    <ClCompile Include="ScriptManager\RegisterSound.cpp" />
-    <ClCompile Include="ScriptManager\ScriptManager.cpp" />
+    <ClCompile Include="Log\Log.cpp" />
+    <ClCompile Include="LuabindManager\LuabindManager.cpp" />
+    <ClCompile Include="LuabindManager\RegisterBase.cpp" />
+    <ClCompile Include="LuabindManager\RegisterCore.cpp" />
+    <ClCompile Include="LuabindManager\RegisterGraphics.cpp" />
+    <ClCompile Include="LuabindManager\RegisterGUI.cpp" />
+    <ClCompile Include="LuabindManager\RegisterPhysx.cpp" />
+    <ClCompile Include="LuabindManager\RegisterSound.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AStar.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Components\AnimatorController\Animation.h" />
     <ClInclude Include="Components\AnimatorController\AnimatorController.h" />
     <ClInclude Include="Components\AnimatorController\AnimatorControllerBoolParameter.h" />
@@ -65,22 +51,18 @@
     <ClInclude Include="Components\AudioSource.h" />
     <ClInclude Include="Components\CharacterCollider.h" />
     <ClInclude Include="Components\Component.h" />
-    <ClInclude Include="Components\ComponentManager.h" />
     <ClInclude Include="Components\Collider.h" />
     <ClInclude Include="Components\LuaComponent.h" />
-    <ClInclude Include="Components\Script.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="Components\Script.h" />
+    <ClInclude Include="DebugHelper\DebugHelper.h" />
+    <ClInclude Include="DebugHelper\DebugHelperImplementation.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="DebugHelper.h" />
-    <ClInclude Include="DebugHelperImplementation.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Input\InputManagerImplementation.h" />
     <ClInclude Include="Input\KeyBoardInput.h" />
     <ClInclude Include="Input\MouseInput.h" />
-    <ClInclude Include="Log.h" />
-    <ClInclude Include="ScriptManager\ScriptManager.h" />
-    <ClInclude Include="ScriptManager\testclass.h" />
+    <ClInclude Include="Log\Log.h" />
+    <ClInclude Include="LuabindManager\LuabindManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\3rdParty\AntTweakBar\AntTweakBar.vcxproj">

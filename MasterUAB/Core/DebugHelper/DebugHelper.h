@@ -1,12 +1,8 @@
 #ifndef _DEBUGHELPER_H
 #define _DEBUGHELPER_H
 
-#include <string>
 #include <vector>
-
-#include "Utils\Utils.h"
 #include "HelperTypes.h"
-#include "Math\Color.h"
 
 class CDebugHelper
 {
@@ -65,11 +61,8 @@ public:
 	};
 
 public:
-
 	virtual void Render() {};
-
 	virtual void Log(const std::string& text) const {};
-
 	virtual void RegisterBar(const SDebugBar& bar) {};
 	virtual void RemoveBar(){};
 

@@ -41,7 +41,7 @@ end
 
 function Update(ElapsedTime)
 	if CApplication.IsGamePaused() == false then
-		g_GameController:Update(ElapsedTime)
+		-- g_GameController:Update(ElapsedTime)
 		Reload(ElapsedTime)
 		CameraController(ElapsedTime)
 		UpdateCinematics(ElapsedTime)

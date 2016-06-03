@@ -1,13 +1,10 @@
 #ifndef _DEBUGHELPERIMPLEMENTATION_H
 #define _DEBUGHELPERIMPLEMENTATION_H
 
+#include "DebugHelper\DebugHelper.h"
 #include <Windows.h>
-
 #include <unordered_map>
-
 #include <AntTweakBar.h>
-#include "DebugHelper.h"
-
 class CEmptyPointerClass;
 class CMaterial;
 

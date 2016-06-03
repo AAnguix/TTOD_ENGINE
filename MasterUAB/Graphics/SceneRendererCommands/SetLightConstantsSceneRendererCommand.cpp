@@ -1,6 +1,7 @@
 #include "SetLightConstantsSceneRendererCommand.h"
 #include "Engine.h"
 #include "Effects\EffectManager.h"
+#include "XML\XMLTreeNode.h"
 
 CSetLightConstantsSceneRendererCommand::CSetLightConstantsSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode) 
 {

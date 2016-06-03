@@ -2,20 +2,20 @@
 #define _AUDIOSOURCE_H
 
 #include "Components\Component.h"
-#include "ISoundManager.h"
 #include <vector>
+struct SoundEvent;
 
 class CAudioSource : public CComponent
 {
 private:
 	std::vector<std::pair<std::string, SoundEvent>> m_Sounds;
+	std::vector<SoundEvent> m_SoundsToPlay;
 
 public:
-	static CAudioSource* AddAudioSource(const std::string &Name, CRenderableObject *Owner);
-
 	CAudioSource(const std::string &Name, CRenderableObject *Owner);
 	virtual ~CAudioSource();
 
+	void Update(float ElapsedTime);
 	bool AddSound(const std::string &Key, const std::string &SoundEventName);
 	void PlayEvent(const std::string &Key);
 	void RemoveSounds(); 

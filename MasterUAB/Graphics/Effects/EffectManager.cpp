@@ -6,6 +6,7 @@
 #include "Lights\OmniLight.h"
 #include "Lights\Light.h"
 #include "Textures\DynamicTexture.h"
+#include "XML\XMLTreeNode.h"
 
 CSceneEffectParameters CEffectManager::m_SceneEffectParameters;
 CLightEffectParameters CEffectManager::m_LightEffectParameters;

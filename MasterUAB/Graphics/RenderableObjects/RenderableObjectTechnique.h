@@ -2,7 +2,7 @@
 #define _RENDERABLEOBJECTTECHNIQUE_H
 
 #include "Utils\Named.h"
-#include "Effects\EffectTechnique.h"
+class CEffectTechnique;
 
 class CRenderableObjectTechnique : public CNamed 
 { 
@@ -13,7 +13,7 @@ private:
 public:  
 	CRenderableObjectTechnique(const std::string &Name, CEffectTechnique *EffectTechnique);  
 	void SetEffectTechnique(CEffectTechnique *EffectTechnique); 
-	CEffectTechnique * GetEffectTechnique() const; 
+	CEffectTechnique* GetEffectTechnique() const; 
 };
 
 #endif

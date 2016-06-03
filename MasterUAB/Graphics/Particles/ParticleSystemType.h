@@ -1,12 +1,15 @@
 #ifndef _PARTICLESYSTEMTYPE_H
 #define _PARTICLESYSTEMTYPE_H
 
-class CXMLTreeNode;
+
 #include "Math\Vector2.h"
 #include "Math\Color.h"
 #include "Utils\Named.h"
-#include "Materials\Material.h"
+#include <vector>
+
+class CXMLTreeNode;
 class CEmptyPointerClass;
+class CMaterial;
 
 class CParticleSystemType : public CNamed
 {
@@ -48,7 +51,7 @@ public:
 	
 	CParticleSystemType(CXMLTreeNode &TreeNode);
 	virtual ~CParticleSystemType();
-	UAB_GET_PROPERTY_POINTER(CMaterial, Material);
+	CMaterial* GetMaterial() const{ return m_Material; }
 
 //private:
 	//void* m_NumFramesAdress;

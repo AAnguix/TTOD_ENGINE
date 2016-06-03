@@ -1,5 +1,8 @@
 #include "SceneRendererCommandManager.h"
-#include "Engine.h"
+#include "XML\XMLTreeNode.h"
+#include <sstream>
+
+/*Commands*/
 #include "DrawQuadRendererCommand.h"
 #include "ClearSceneRendererCommand.h"
 #include "SetMatricesSceneRendererCommand.h"
@@ -7,46 +10,30 @@
 #include "RenderLayerSceneRendererCommand.h"
 #include "RenderDebugLayerSceneRendererCommand.h"
 #include "CaptureFrameBufferSceneRendererCommand.h"
-
 #include "SetRenderTargetSceneRendererCommand.h"
 #include "UnsetRenderTargetSceneRendererCommand.h"
-
 #include "SetPoolRenderableObjectsTechniqueSceneRendererCommand.h"
-
 #include "DeferredShadingSceneRendererCommand.h"
-
 #include "EnableAlphaBlendSceneRendererCommand.h"
 #include "DisableAlphaBlendSceneRendererCommand.h"
 #include "EnableAdditiveAlphaBlendSceneRendererCommand.h"
-
 #include "SetLightConstantsSceneRendererCommand.h"
-
 #include "PresentSceneRendererCommand.h"
-
 #include "RenderGUISceneRendererCommand.h"
 #include "RenderDebugGUISceneRendererCommand.h"
-
 #include "RenderDebugLightsSceneRendererCommand.h"
 #include "RenderDebugGridSceneRendererCommand.h"
-
 #include "RenderDebugShadowMapsSceneRendererCommand.h"
 #include "GenerateShadowMapsSceneRendererCommand.h"
-
 #include "ApplyFiltersSceneRendererCommand.h"
-
 #include "Utils.h"
-
-#include <sstream>
 
 CSceneRendererCommandManager::CSceneRendererCommandManager()
 {
-
-
 }
 
 CSceneRendererCommandManager::~CSceneRendererCommandManager()
 {
-
 }
 
 bool CSceneRendererCommandManager::Load(const std::string &Filename)
@@ -255,7 +242,6 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 						CHECKED_DELETE(l_ApplyFilters);
 					}
 				}
-
 			}
 
 			return true;

@@ -2,12 +2,9 @@
 //#include <d3dx11tex.h>
 #include "Engine.h"
 #include "Render\RenderManager.h"
-#include "Render\ContextManager.h"
-
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
-#include <wrl.h>
-#include "Log.h"
+#include "Log\Log.h"
 
 CTexture::CTexture() : CNamed("")
 ,m_SamplerState(NULL)

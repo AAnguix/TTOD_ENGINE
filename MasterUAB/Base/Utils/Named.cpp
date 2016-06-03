@@ -1,5 +1,6 @@
 #include "Named.h"
 #include "Utils\EmptyPointerClass.h"
+#include "XML\XMLTreeNode.h"
 
 CNamed::CNamed(const CXMLTreeNode &TreeNode)
 :m_Name(TreeNode.GetPszProperty("name", ""))

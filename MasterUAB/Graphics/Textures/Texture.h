@@ -9,8 +9,8 @@ class CTexture : public CNamed
 {
 
 protected:
-	ID3D11ShaderResourceView *m_Texture;
-	ID3D11SamplerState *m_SamplerState;
+	ID3D11ShaderResourceView* m_Texture;
+	ID3D11SamplerState* m_SamplerState;
 	
 	int m_Width;
 	int m_Height;

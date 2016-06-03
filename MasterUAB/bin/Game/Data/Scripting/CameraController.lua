@@ -1,3 +1,5 @@
+g_CameraXAxisRotationSpeed=-0.3
+
 -- Checks player input for the camera
 -- g_CameraControllersNames = {}
 -- g_CurrentCameraIndex = 0

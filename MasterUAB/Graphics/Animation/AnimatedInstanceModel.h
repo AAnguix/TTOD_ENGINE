@@ -5,14 +5,15 @@ class CXMLTreeNode;
 class CRenderManager;
 class CMaterial;
 class CRenderableVertexs;
-
-#include "Animation\AnimatedCoreModel.h"
+class CCharacterCollider;
+class CAnimatedCoreModel;
+class CalCoreModel;
+class CalHardwareModel;
+class CalModel;
+class CAnimatorController;
 
 #include <vector>
-#include "cal3d\hardwaremodel.h"
-#include "cal3d\model.h"
 #include "RenderableObjects\RenderableObject.h"
-#include "Components\AnimatorController\AnimatorController.h"
 
 #define CCONTROLLER_HEIGHT 1.4f
 
@@ -21,17 +22,17 @@ class CAnimatedInstanceModel : public CRenderableObject
 	friend class CAnimatorController;
 
 private:  
-	CalModel *m_CalModel;
-	CalHardwareModel  *m_CalHardwareModel;
+	CalModel* m_CalModel;
+	CalHardwareModel* m_CalHardwareModel;
 	std::vector<CMaterial *> m_Materials; 
-	CRenderableVertexs  *m_RenderableVertexs;
+	CRenderableVertexs* m_RenderableVertexs;
 	
 	int m_NumVertices;
 	int m_NumFaces;  
 	bool LoadVertexBuffer();
 	void LoadMaterials();
 
-	unsigned int m_lastTick; //new
+	unsigned int m_lastTick; 
 	float m_fpsDuration;
 	int m_fpsFrames;
 	int m_fps;
@@ -41,7 +42,8 @@ private:
 	int m_currentAnimationId;
 
 protected:
-	CAnimatedCoreModel  *m_AnimatedCoreModel;
+	CAnimatedCoreModel* m_AnimatedCoreModel;
+	CCharacterCollider* m_CharacterCollider;
 
 public:  
 	CAnimatedInstanceModel(CXMLTreeNode &TreeNode);  
@@ -61,6 +63,9 @@ public:
 	TRenderableObjectType GetClassType() const{ return TRenderableObjectType::ANIMATED_INSTANCE; };
 
 	Mat44f GetBoneTransformationMatrix(const int BoneID) const;
+
+	virtual CCharacterCollider* GetCharacterCollider() const;
+	virtual void SetCharacterCollider(CCharacterCollider* CharacterCollider);
 }; 
 
 #endif

@@ -1,5 +1,5 @@
 #include "RenderDebugGUISceneRendererCommand.h"
-#include "DebugHelper.h"
+#include "DebugHelper\DebugHelper.h"
 
 CRenderDebugGUISceneRendererCommand::CRenderDebugGUISceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode)
 {

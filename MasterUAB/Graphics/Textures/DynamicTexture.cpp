@@ -1,6 +1,7 @@
 #include "DynamicTexture.h"
 #include "Engine.h"
 #include "Render\RenderManager.h"
+#include "XML\XMLTreeNode.h"
 
 CDynamicTexture::CDynamicTexture(const std::string &Name, int Width, int Height, bool CreateDepthStencilBuffer, TFormatType FormatType) : m_RenderTargetTexture(0) , m_RenderTargetView(0), m_DepthStencilBuffer(0), m_DepthStencilView(0)   
 {

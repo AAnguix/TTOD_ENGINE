@@ -1,7 +1,8 @@
 #include "Effects\EffectPixelShader.h"
 #include "Render\RenderManager.h"
 #include "Engine.h"
-#include "Log.h"
+#include "Log\Log.h"
+#include "XML\XMLTreeNode.h"
 
 void CEffectPixelShader::Destroy()
 {

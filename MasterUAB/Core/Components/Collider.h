@@ -14,9 +14,6 @@ public:
 	CCollider(const std::string &Name, CMeshInstance *Owner);
 	virtual ~CCollider();
 	virtual void Update(float ElapsedTime);
-	virtual void Render(CRenderManager &RenderManager);
-	virtual void RenderDebug(CRenderManager &RenderManager);
-	static CCollider * AddCollider(const std::string &Name, CMeshInstance *Owner);
 
 	CMaterial* GetPhysxMaterial() const;
 };

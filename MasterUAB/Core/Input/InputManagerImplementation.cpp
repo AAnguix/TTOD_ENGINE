@@ -1,9 +1,9 @@
 #include <Windows.h>
 #include <Xinput.h>
-
 #include "Input\InputManagerImplementation.h"
-
 #include "XML\XMLTreeNode.h"
+#include "Input\MouseInput.h"
+#include "Input\KeyBoardInput.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dinput8.lib")
@@ -96,10 +96,10 @@ CInputManagerImplementation::~CInputManagerImplementation()
 	if (m_Mouse != NULL)
 		m_Mouse->Unacquire();
 
-	CHECKED_RELEASE(m_Mouse);
-	CHECKED_RELEASE(m_DI);
-	CHECKED_DELETE(m_MouseInput);
-	CHECKED_DELETE(m_KeyBoardInput);
+	if (m_Mouse) { m_Mouse->Release(); m_Mouse = 0; }
+	if (m_DI) { m_DI->Release(); m_DI = 0; }
+	if (m_MouseInput) { delete m_MouseInput; m_MouseInput = 0; }
+	if (m_KeyBoardInput) { delete m_KeyBoardInput; m_KeyBoardInput = 0; }
 }
 
 CMouseInput* CInputManagerImplementation::GetMouse() const

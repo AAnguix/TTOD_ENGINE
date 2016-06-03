@@ -1,5 +1,6 @@
 #include "StaticMeshes\StaticMeshManager.h"
 #include "Utils\Utils.h"
+#include "XML\XMLTreeNode.h"
 
 CStaticMeshManager::CStaticMeshManager()
 : m_FileName("")

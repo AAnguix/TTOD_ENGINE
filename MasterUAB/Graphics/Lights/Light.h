@@ -1,19 +1,19 @@
 #ifndef _LIGHT_H
 #define _LIGHT_H
 
-#include "Utils\Named.h"
 #include "Utils\3DElement.h"
+#include "Utils\Named.h"
 #include "Math\Color.h"
-#include "Math\MathTypes.h"
-#include "RenderableObjects\RenderableObjectsManager.h"
-#include "Utils\EmptyPointerClass.h"
+#include "Utils\Utils.h"
+#include <vector>
 
+class CRenderableObjectsManager;
 class CRenderManager;
 class CDynamicTexture;
+class CTexture;
 
 class CLight : public C3DElement, public CNamed 
 {  
-
 public:   
 	enum TLightType    
 	{    

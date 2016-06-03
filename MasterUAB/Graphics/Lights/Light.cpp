@@ -1,9 +1,10 @@
 #include "Lights\Light.h"
-#include "Render\RenderManager.h"
 #include "Engine.h"
 #include "Textures\TextureManager.h"
 #include "Textures\DynamicTexture.h"
 #include "RenderableObjects\LayerManager.h"
+#include "XML\XMLTreeNode.h"
+#include "RenderableObjects\RenderableObjectsManager.h"
 
 CLight::TLightType CLight::GetLightTypeByName(const std::string &StrLightType)
 {

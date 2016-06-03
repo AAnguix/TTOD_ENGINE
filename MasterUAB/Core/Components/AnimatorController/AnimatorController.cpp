@@ -3,22 +3,7 @@
 #include "Components\AnimatorController\AnimatorControllerBoolParameter.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "Components\AnimatorController\Animation.h"
-
-CAnimatorController* CAnimatorController::AddAnimatorController(const std::string &Name, CRenderableObject *Owner)
-{
-	CAnimatorController* l_AnimatorController = new CAnimatorController(Name, Owner);
-
-	if (!Owner->AddComponent(l_AnimatorController))
-	{
-		if (l_AnimatorController != NULL)
-		{
-			delete(l_AnimatorController);
-			l_AnimatorController = NULL;
-		}
-	}
-
-	return l_AnimatorController;
-}
+#include "Animation\AnimatedCoreModel.h"
 
 CAnimatorController::CAnimatorController(const std::string &Name, CRenderableObject* Owner)
 :CComponent(Name,Owner)

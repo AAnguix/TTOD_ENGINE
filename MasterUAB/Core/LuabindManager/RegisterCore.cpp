@@ -1,4 +1,4 @@
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 
 #include <luabind/luabind.hpp>
 
@@ -7,10 +7,11 @@
 
 #include "Application.h"
 #include "Engine.h"
-#include "Log.h"
+#include "Log\Log.h"
 #include "Input\InputManagerImplementation.h"
-#include "DebugHelperImplementation.h"
+#include "DebugHelper\DebugHelperImplementation.h"
 
+/*Graphics*/
 #include "Render\RenderManager.h"
 #include "Materials\MaterialManager.h"
 #include "Textures\TextureManager.h"
@@ -20,10 +21,11 @@
 #include "Lights\LightManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
 #include "Animation\AnimatedModelManager.h"
+#include "Animation\AnimatorControllerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "PhysXManager.h"
 
-#include "Components\ComponentManager.h"
+/*Core*/
 #include "Components\Script.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
@@ -31,6 +33,7 @@
 #include "Components\AnimatorController\AnimatorController.h"
 #include "Components\AnimatorController\Transition.h"
 #include "Components\AudioSource.h"
+#include "ScriptManager.h"
 
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
@@ -40,7 +43,7 @@
 
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
+#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
 //CLUAComponent* f(CLUAComponent *Pointer) { return Pointer; }
@@ -50,7 +53,7 @@ using namespace luabind;
 //	return CEngine::GetSingleton().GetLayerManager()->GetResource(Layer)->GetResource(Object);
 //}
 
-void CScriptManager::RegisterCore()
+void CLuabindManager::RegisterCore()
 {
 	RegisterComponents();
 
@@ -86,22 +89,27 @@ void CScriptManager::RegisterCore()
 		.def("GetMaterialManager", &CEngine::GetMaterialManager)
 		.def("GetAnimatedModelManager", &CEngine::GetAnimatedModelManager)
 		.def("GetStaticMeshManager", &CEngine::GetStaticMeshManager)
-		.def("GetLayerManager", &CEngine::GetLayerManager)
+		
 		.def("GetLightManager", &CEngine::GetLightManager)
 		.def("GetSceneRendererCommandManager", &CEngine::GetSceneRendererCommandManager)
-		.def("GetCameraControllerManager", &CEngine::GetCameraControllerManager)
+		
 		.def("GetParticleSystemManager", &CEngine::GetParticleSystemManager)
 		.def("GetInputManager", &CEngine::GetInputManager)
 
-		.def("GetTextureManager", &CEngine::GetTextureManager)
-		.def("GetRenderManager", &CEngine::GetRenderManager)
-		.def("GetScriptManager", &CEngine::GetScriptManager)
-		.def("GetLogManager", &CEngine::GetLogManager)
-		.def("GetDebugHelper", &CEngine::GetDebugHelper)
 		.def("GetPhysXManager", &CEngine::GetPhysXManager)
 		.def("GetGUIManager", &CEngine::GetGUIManager)
 		.def("GetSoundManager", &CEngine::GetSoundManager)
+		.def("GetCameraControllerManager", &CEngine::GetCameraControllerManager)
+		.def("GetAnimatorControllerManager", &CEngine::GetAnimatorControllerManager)
+		.def("GetScriptManager", &CEngine::GetScriptManager)
+		.def("GetLayerManager", &CEngine::GetLayerManager)
+
 		.def("GetGraphicsStats", &CEngine::GetGraphicsStats)
+		.def("GetTextureManager", &CEngine::GetTextureManager)
+		.def("GetRenderManager", &CEngine::GetRenderManager)
+		.def("GetLuabindManager", &CEngine::GetLuabindManager)
+		.def("GetLogManager", &CEngine::GetLogManager)
+		.def("GetDebugHelper", &CEngine::GetDebugHelper)
 		.def("LoadLevel", &CEngine::LoadLevel)
 	];
 
@@ -129,12 +137,20 @@ void CScriptManager::RegisterCore()
 
 	module(LUA_STATE) 
 	[  
-		class_<CScriptManager>("CScriptManager")   
+		class_<CLuabindManager>("CLuabindManager")   
 		.def(constructor<>())
-		.def("run_code", & CScriptManager::RunCode)   
-		.def("run_file", & CScriptManager::RunFile)   
-		.def("load", & CScriptManager::Load) 
+		.def("RunCode", &CLuabindManager::RunCode)
+		.def("RunFile", &CLuabindManager::RunFile)
+		.def("Load", &CLuabindManager::Load)
 	];  
+
+	module(LUA_STATE)
+	[
+		class_<CScriptManager>("CScriptManager")
+		.def(constructor<>())
+		.def("AddComponent", &CScriptManager::AddComponent)
+		.def("RemoveComponents", &CScriptManager::RemoveComponents)
+	];
 
 	module(LUA_STATE) 
 	[
@@ -257,22 +273,29 @@ struct CLUAComponent_wrapper : CLUAComponent, luabind::wrap_base
 {
 public:
 	CLUAComponent_wrapper(const std::string Type) :CLUAComponent(Type){}
+	virtual void Update(float ElapsedTime){	call<void>("Update", ElapsedTime); }
+	static void default_Update(CLUAComponent* ptr, float ElapsedTime)
+	{
+		return ptr->CLUAComponent::Update(ElapsedTime);
+	}
 	/*std::string GetType() const
 	{
 		return call_member<std::string>(this, "GetType");
 	}*/
 };
 
-void CScriptManager::RegisterComponents()
+void CLuabindManager::RegisterComponents()
 {
 	module(LUA_STATE)
 	[
 		class_<CLUAComponent, CLUAComponent_wrapper>("CLUAComponent")
 		.def(constructor<const std::string>())
+		.def("Update", &CLUAComponent::Update, &CLUAComponent_wrapper::default_Update)
 		.def("AddTime", &CLUAComponent::AddTime)
 		.def("GetTimer", &CLUAComponent::GetTimer)
 		.def("ResetTimer", &CLUAComponent::ResetTimer)
 		.def("GetType", &CLUAComponent::GetType)
+		.def("Update", &CLUAComponent::Update)
 	];
 
 	module(LUA_STATE)
@@ -286,7 +309,7 @@ void CScriptManager::RegisterComponents()
 		.def("GetResourcesVector", &CTemplatedVectorMapManager<CComponent>::GetResourcesVector)
 	];
 
-	module(LUA_STATE)
+	/*module(LUA_STATE)
 	[
 		class_< CComponentManager, CTemplatedVectorMapManager<CComponent>>("CComponentManager")
 		.def(constructor<>())
@@ -294,12 +317,12 @@ void CScriptManager::RegisterComponents()
 		.def("Render", &CComponentManager::Render)
 		.def("RenderDebug", &CComponentManager::RenderDebug)
 		.def("AddComponent", &CComponentManager::AddComponent)
-	];
+	];*/
 
 	module(LUA_STATE)
 	[
 		class_<CComponent, CNamed>("CComponent")
-		.def(constructor<const std::string&, CRenderableObject*>())
+		//.def(constructor<const std::string&, CRenderableObject*>())
 		.def("Update", &CComponent::Update)
 		.def("Render", &CComponent::Render)
 		.def("RenderDebug", &CComponent::RenderDebug)
@@ -309,11 +332,9 @@ void CScriptManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CScript, CComponent>("CScript")
-		.def(constructor<const std::string&, CRenderableObject*, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&>())
-		.scope
-		[
-			def("AddScript", &CScript::AddScript)
-		]
+		.def(constructor<const std::string&, CRenderableObject*,CLUAComponent*>())
+		.def("GetLuaComponent", &CScript::GetLuaComponent)
+		.def("Update", &CScript::Update)
 	];
 
 	module(LUA_STATE)
@@ -321,10 +342,6 @@ void CScriptManager::RegisterComponents()
 		class_<CCollider, CComponent>("CCollider")
 		.def(constructor<const std::string&, CMeshInstance*>())
 		.def("GetPhysxMaterial", &CCollider::GetPhysxMaterial)
-		.scope
-		[
-			def("AddCollider", &CCollider::AddCollider)
-		]
 	];
 
 	module(LUA_STATE)
@@ -332,10 +349,6 @@ void CScriptManager::RegisterComponents()
 		class_<CCharacterCollider, CComponent>("CCharacterCollider")
 		.def(constructor<const std::string&, CAnimatedInstanceModel*>())
 		.def("GetPhysxMaterial",&CCharacterCollider::GetPhysxMaterial)
-		.scope
-		[
-			def("AddCharacterCollider", &CCharacterCollider::AddCharacterCollider)
-		]
 	];
 
 	module(LUA_STATE)
@@ -378,10 +391,6 @@ void CScriptManager::RegisterComponents()
 		.def("SetFloat", &CAnimatorController::SetFloat)
 		.def("SetBool", &CAnimatorController::SetBool)
 		.def("SetTrigger", &CAnimatorController::SetTrigger)
-		.scope
-		[
-			def("AddAnimatorController", &CAnimatorController::AddAnimatorController)
-		]
 	];
 
 	module(LUA_STATE)
@@ -391,9 +400,5 @@ void CScriptManager::RegisterComponents()
 		.def("RemoveSounds", &CAudioSource::RemoveSounds)
 		.def("PlayEvent", &CAudioSource::PlayEvent)
 		.def("AddSound", &CAudioSource::AddSound)
-		.scope
-		[
-			def("AddAudioSource", &CAudioSource::AddAudioSource)
-		]
 	];
 }

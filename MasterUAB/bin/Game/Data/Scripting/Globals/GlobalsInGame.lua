@@ -4,7 +4,7 @@
 -- g_PlayerFastSpeed=3.0
 -- g_PlayerStrafeSpeed=0.4
 -- g_PlayerStrafeFastSpeed=0.8
-g_CameraXAxisRotationSpeed=0.3
+
 g_Gravity = Vect3f(0.0,-10.0,0.0)
 g_WindMildEnter = false
 

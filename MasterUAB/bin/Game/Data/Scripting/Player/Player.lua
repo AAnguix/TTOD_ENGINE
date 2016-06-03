@@ -31,13 +31,16 @@ function CPlayerComponent:__init(CRObject)
 	
 	self.m_Locked = false
 	
+	self.m_RotationVelocity = 3.0
+	
 	--Components
 	self.m_Animator = nil 
 	self.m_AudioSource = nil
 end
 
 function CPlayerComponent:Initialize()
-	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
+	local l_CColliderName = self.m_RObject:GetName().."_CharacterCollider"
+	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, self.m_RObject)
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
@@ -47,23 +50,25 @@ function CPlayerComponent:Initialize()
 		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName)
 	end
 	
-	local l_AudioSource = CAudioSource.AddAudioSource("PlayerAudioSource", self.m_RObject)
+	local l_AudioSourceName = self.m_RObject:GetName().."_AudioSource"
+	local l_AudioSource = g_SoundManager:AddComponent(l_AudioSourceName, self.m_RObject)
 	if l_AudioSource ~= nil then  
 		self.m_AudioSource = l_AudioSource
 		self.m_AudioSource:AddSound("SonidoDePrueba","Play_Hit")
 	end
+
 	--Animations
-	self.m_Animator = CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
-
-	local l_Idle = self.m_RObject:GetAnimatorController():AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
-	local l_Walk = self.m_RObject:GetAnimatorController():AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
-	local l_Attack = self.m_RObject:GetAnimatorController():AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
-	local l_Block = self.m_RObject:GetAnimatorController():AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
-
+	local l_ACName = self.m_RObject:GetName().."_AnimatorController"
+	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_RObject)
+	
+	local l_Idle = self.m_Animator:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
+	local l_Walk = self.m_Animator:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
+	local l_Attack = self.m_Animator:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
+	local l_Block = self.m_Animator:AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
 	--GetAnimatorController()->AddBool("Run", false);
-	self.m_RObject:GetAnimatorController():AddBool("Walk", false)
-	self.m_RObject:GetAnimatorController():AddTrigger("Attack", false)
-	self.m_RObject:GetAnimatorController():AddTrigger("Block", false)
+	self.m_Animator:AddBool("Walk", false)
+	self.m_Animator:AddTrigger("Attack", false)
+	self.m_Animator:AddTrigger("Block", false)
 
 	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.0, 0.1, 0.2)
 	l_IdleToWalk:AddBoolCondition("Walk", true)

@@ -22,6 +22,13 @@ class CSoundManager : public ISoundManager
 {
 
 private:
+	std::vector<CAudioSource*> m_Components;
+	void UpdateComponents(float ElapsedTime);
+public:
+	CAudioSource* AddComponent(const std::string &Name, CRenderableObject *Owner);
+	void RemoveComponents();
+
+private:
 	std::vector<std::string> m_SoundEvents;
 	AkGameObjectID m_LastGameObjectID; //Only > 0
 	std::vector<AkGameObjectID> m_FreeObjectIDs;
@@ -34,7 +41,6 @@ private:
 	std::string m_SpeakersFilename;
 	bool m_InitOk;
 
-private:
 	AkGameObjectID GenerateObjectID();
 	bool LoadSoundBanksXML();
 	bool LoadSpeakersXML();
@@ -52,7 +58,7 @@ public:
 	virtual ~CSoundManager();
 
 	bool Init();
-	void Update(const CCamera *Camera);
+	void Update(const CCamera *Camera, float ElapsedTime);
 	bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename);
 	bool Reload();
 

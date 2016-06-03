@@ -1,4 +1,4 @@
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 
 #include <luabind/luabind.hpp>
 
@@ -9,12 +9,15 @@
 #include "Engine.h"
 #include "PhysXManager.h"
 
+#include "Components\Collider.h"
+#include "Components\CharacterCollider.h"
+
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
+#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
-void CScriptManager::RegisterPhysics()
+void CLuabindManager::RegisterPhysics()
 {
 	module(LUA_STATE) 
 	[
@@ -49,7 +52,13 @@ void CScriptManager::RegisterPhysics()
 		.def("CreateRigidDynamicSphere", &CPhysXManager::CreateRigidDynamicSphere)
 		.def("CreateRigidDynamicCapsule", &CPhysXManager::CreateRigidDynamicCapsule)
 		.def("CreateRigidDynamicConvexMesh", &CPhysXManager::CreateRigidDynamicConvexMesh)
+
+		.def("AddColliderComponent", &CPhysXManager::AddColliderComponent)
+		.def("AddCharacterColliderComponent", &CPhysXManager::AddCharacterColliderComponent)
 		
+		//.def("AddComponent", (CCollider*(CPhysXManager::*)(const std::string&, CMeshInstance*))&CPhysXManager::AddComponent)
+		//.def("AddComponent", (CCharacterCollider*(CPhysXManager::*)(const std::string&, CAnimatedInstanceModel*))&CPhysXManager::AddComponent)
+		.def("RemoveComponents", &CPhysXManager::RemoveComponents)
 
 		//.def("DisplacementCharacterController2", &CPhysXManager::DisplacementCharacterController2)
 	];

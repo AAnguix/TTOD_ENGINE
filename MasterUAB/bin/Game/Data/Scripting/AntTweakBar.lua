@@ -100,10 +100,11 @@ end
 
 function OpenRenderableObject(RenderableObject)
 	ClickOnElement(RenderableObject:GetName())
-	g_DebugHelper:RegisterFloatParameter("Yaw", RenderableObject:GetYawLuaAddress(),"min=-3.14 max=3.14 step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Pitch", RenderableObject:GetPitchLuaAddress(),"min=-3.14 max=3.14 step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Roll", RenderableObject:GetRollLuaAddress(),"min=-3.14 max=3.14 step=0.01")
+	g_DebugHelper:RegisterFloatParameter("Yaw", RenderableObject:GetYawLuaAddress(),"step=0.01") --min=-3.14 max=3.14 step=0.01
+	g_DebugHelper:RegisterFloatParameter("Pitch", RenderableObject:GetPitchLuaAddress(),"step=0.01")
+	g_DebugHelper:RegisterFloatParameter("Roll", RenderableObject:GetRollLuaAddress(),"step=0.01")
 	g_DebugHelper:RegisterVect3fParameter("Position", RenderableObject:GetPositionLuaAddress(),"")
+	g_DebugHelper:RegisterVect3fParameter("Scale", RenderableObject:GetScaleLuaAddress(),"")
 end
 
 ------------------------------ LIGHTS -------------------------------------------------------------------------

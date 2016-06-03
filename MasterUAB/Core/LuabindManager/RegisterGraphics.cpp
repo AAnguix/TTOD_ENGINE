@@ -1,66 +1,68 @@
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 
 #include <luabind/luabind.hpp>
 
 #include <luabind/operator.hpp>
 #include <luabind/iterator_policy.hpp>
 
-#include "Engine.h"
+/*Base*/
+#include "XML\XMLTreeNode.h"
 #include "Utils\TemplatedVectorMapManager.h"
 #include "Utils\TemplatedMapManager.h"
 #include "Utils\EmptyPointerClass.h"
 
-#include "Materials\MaterialManager.h"
-#include "Materials\TemplatedMaterialParameter.h"
-#include "Effects\EffectManager.h"
-#include "Textures\TextureManager.h"
+/*Core*/
+#include "Engine.h"
+#include "Log\Log.h"
+#include "Components\AnimatorController\AnimatorController.h"
+#include "Components\CharacterCollider.h"
+#include "Components\Collider.h"
+#include "Components\Script.h"
+#include "Components\AudioSource.h"
+#include "DebugHelper\DebugHelperImplementation.h"
+#include "Input\InputManagerImplementation.h"
 
-#include "Particles\ParticleManager.h"
-#include "Particles\ParticleSystemInstance.h"
-
-#include "RenderableObjects\LayerManager.h"
-#include "RenderableObjects\RenderableObjectTechniqueManager.h"
-#include "StaticMeshes\StaticMeshManager.h"
-#include "RenderableObjects\MeshInstance.h"
-
-#include "SceneRendererCommands\SceneRendererCommandManager.h"
-
+/*Graphics*/
 #include "Render\RenderManager.h"
+#include "Render\GraphicsStats.h"
+#include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "Camera\Camera.h"
 #include "Camera\CameraControllerManager.h"
 #include "Camera\FixedCameraController.h"
 #include "Camera\ThirdPersonCameraController.h"
 #include "Camera\FPSCameraController.h"
 #include "Camera\SphericalCameraController.h"
-
+#include "RenderableObjects\LayerManager.h"
+#include "RenderableObjects\RenderableObjectTechniqueManager.h"
+#include "RenderableObjects\MeshInstance.h"
+#include "StaticMeshes\StaticMeshManager.h"
 #include "Lights\LightManager.h"
 #include "Lights\OmniLight.h"
 #include "Lights\SpotLight.h"
 #include "Effects\EffectTechnique.h"
-
 #include "Cinematics\CameraKey.h"
 #include "Cinematics\CinematicPlayer.h"
 #include "Cinematics\CameraKeyController.h"
 #include "Cinematics\Cinematic.h"
-
 #include "Animation\AnimatedCoreModel.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "Animation\AnimatedModelManager.h"
-#include "testclass.h"
-#include "Log.h"
-#include "Render\GraphicsStats.h"
-
-#include "DebugHelperImplementation.h"
-
-#include "Input\InputManagerImplementation.h"
-#include "Components\ComponentManager.h"
+#include "Materials\MaterialManager.h"
+#include "Materials\TemplatedMaterialParameter.h"
+#include "Effects\EffectManager.h"
+#include "Textures\TextureManager.h"
+#include "Animation\AnimatorControllerManager.h"
+#include "Particles\ParticleManager.h"
+#include "Particles\ParticleSystemInstance.h"
+#include "cal3d\model.h"
+#include "cal3d\coremodel.h"
 
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
+#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
-void CScriptManager::RegisterGraphics()
+void CLuabindManager::RegisterGraphics()
 {
 	RegisterRender();
 	RegisterCamera();
@@ -74,7 +76,7 @@ void CScriptManager::RegisterGraphics()
 	RegisterSceneRendererCommands();
 }
 
-void CScriptManager::RegisterRender()
+void CLuabindManager::RegisterRender()
 {
 	module(LUA_STATE)
 	[
@@ -121,8 +123,16 @@ void CScriptManager::RegisterRender()
 	];
 }
 
-void CScriptManager::RegisterAnimations()
+void CLuabindManager::RegisterAnimations()
 {
+	module(LUA_STATE)
+	[
+		class_<CAnimatorControllerManager>("CAnimatorControllerManager")
+		.def(constructor<>())
+		.def("AddComponent", &CAnimatorControllerManager::AddComponent)
+		.def("RemoveComponents", &CAnimatorControllerManager::RemoveComponents)
+	];
+
 	module(LUA_STATE)
 	[
 		class_<CAnimatedCoreModel, CNamed>("CAnimatedCoreModel")
@@ -148,6 +158,7 @@ void CScriptManager::RegisterAnimations()
 		.def("ClearCycle", &CAnimatedInstanceModel::ClearCycle)
 		.def("IsCycleAnimationActive", &CAnimatedInstanceModel::IsCycleAnimationActive)
 		.def("IsActionAnimationActive", &CAnimatedInstanceModel::IsActionAnimationActive)
+		.def("GetCharacterCollider", &CAnimatedInstanceModel::GetCharacterCollider)
 	];
 
 	module(LUA_STATE)
@@ -166,7 +177,7 @@ void CScriptManager::RegisterAnimations()
 	];
 }
 
-void CScriptManager::RegisterCamera()
+void CLuabindManager::RegisterCamera()
 {
 	module(LUA_STATE)
 	[
@@ -292,7 +303,7 @@ void CScriptManager::RegisterCamera()
 	];
 }
 
-void CScriptManager::RegisterCinematics()
+void CLuabindManager::RegisterCinematics()
 {
 	//Cinematics
 	module(LUA_STATE)
@@ -366,7 +377,7 @@ void CScriptManager::RegisterCinematics()
 	];
 }
 
-void CScriptManager::RegisterEffects()
+void CLuabindManager::RegisterEffects()
 {
 	module(LUA_STATE)
 	[
@@ -421,7 +432,7 @@ void CScriptManager::RegisterEffects()
 	];
 }
 
-void CScriptManager::RegisterLights()
+void CLuabindManager::RegisterLights()
 {
 	module(LUA_STATE)
 	[
@@ -527,7 +538,7 @@ void CScriptManager::RegisterLights()
 //	return l_Materials;
 //}
 
-void CScriptManager::RegisterMaterials()
+void CLuabindManager::RegisterMaterials()
 {
 	module(LUA_STATE)
 	[
@@ -674,7 +685,7 @@ void CScriptManager::RegisterMaterials()
 	//REGISTER_LUA_FUNCTION("GetHardCodeMaterials", &GetHardCodeMaterials);
 }
 
-void CScriptManager::RegisterParticles()
+void CLuabindManager::RegisterParticles()
 {
 	module(LUA_STATE)
 	[
@@ -820,7 +831,7 @@ void CScriptManager::RegisterParticles()
 
 }
 
-void CScriptManager::RegisterRenderableObjects()
+void CLuabindManager::RegisterRenderableObjects()
 {
 	module(LUA_STATE)
 	[
@@ -852,13 +863,14 @@ void CScriptManager::RegisterRenderableObjects()
 		.def("SetPlayer", &CLayerManager::SetPlayer)
 		.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
 		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)
-		.def("RemoveLayerComponent", &CLayerManager::RemoveLayerComponent)
+		
+	/*	.def("RemoveLayerComponent", &CLayerManager::RemoveLayerComponent)
 		.def("RemoveLayerComponents", &CLayerManager::RemoveLayerComponents)
 		.def("RemoveComponent", &CLayerManager::RemoveComponent)
 		.def("RemoveComponents", &CLayerManager::RemoveComponents)
 		
 		.def("RemoveLayerLuaComponents", &CLayerManager::RemoveLayerLuaComponents)
-		.def("RemoveLuaComponents", &CLayerManager::RemoveLuaComponents)
+		.def("RemoveLuaComponents", &CLayerManager::RemoveLuaComponents)*/
 		
 		
 	];
@@ -894,17 +906,20 @@ void CScriptManager::RegisterRenderableObjects()
 		//.def(constructor<>())
 		.def("Update", &CRenderableObject::Update)
 		.def("Render", &CRenderableObject::Render)
-		.def("GetComponentManager", &CRenderableObject::GetComponentManager)
+		.def("GetAnimatorController", &CRenderableObject::GetAnimatorController)
+		.def("GetScript", &CRenderableObject::GetScript)
+		.def("GetAudioSource", &CRenderableObject::GetAudioSource)
+		.def("SetAnimatorController", &CRenderableObject::SetAnimatorController)
+		.def("SetAudioSource", &CRenderableObject::SetAudioSource)
+		.def("SetScript", &CRenderableObject::SetScript)
+		/*.def("GetComponentManager", &CRenderableObject::GetComponentManager)
 		.def("GetAnimatorController", &CRenderableObject::GetAnimatorController)
 		.def("AddComponent", &CRenderableObject::AddComponent)
 		.def("RemoveComponent", &CRenderableObject::RemoveComponent)
-		.def("RemoveComponents", &CRenderableObject::RemoveComponents)
-		
-		.def("AddLuaComponent", &CRenderableObject::AddLuaComponent)
-		.def("GetFirstLuaComponent", &CRenderableObject::GetFirstLuaComponent)
+		.def("RemoveComponents", &CRenderableObject::RemoveComponents)*/
 		
 		.def("GetThisLuaAddress", &CRenderableObject::GetThisLuaAddress)
-		.def("RemoveLuaComponents", &CRenderableObject::RemoveLuaComponents)
+		
 		.def("GetClassType", &CRenderableObject::GetClassType)
 		.enum_("TRenderableObjectType")
 		[
@@ -922,6 +937,7 @@ void CScriptManager::RegisterRenderableObjects()
 		.def(constructor<const std::string, const std::string, const Vect3f , float, float, float>())
 		.def("Render", &CMeshInstance::Render)
 		.def("SetParent", &CMeshInstance::SetParent)
+		.def("GetCollider", &CMeshInstance::GetCollider)
 	];
 
 	//GUIA TEMPLATED VECTOR
@@ -947,9 +963,9 @@ void CScriptManager::RegisterRenderableObjects()
 		class_< CRenderableObjectsManager, bases<CTemplatedVectorMapManager<CRenderableObject>, CNamed>>("CRenderableObjectsManager")
 		.def("Update", &CRenderableObjectsManager::Update)
 		.def("Render", &CRenderableObjectsManager::Render)
-		.def("RemoveRenderableObjectsLuaComponents", &CRenderableObjectsManager::RemoveRenderableObjectsLuaComponents)
+		/*.def("RemoveRenderableObjectsLuaComponents", &CRenderableObjectsManager::RemoveRenderableObjectsLuaComponents)
 		.def("RemoveRenderableObjectsComponent", &CRenderableObjectsManager::RemoveRenderableObjectsComponent)
-		.def("RemoveRenderableObjectsComponents", &CRenderableObjectsManager::RemoveRenderableObjectsComponents)
+		.def("RemoveRenderableObjectsComponents", &CRenderableObjectsManager::RemoveRenderableObjectsComponents)*/
 	];
 
 	//Static Meshes
@@ -986,7 +1002,7 @@ void CScriptManager::RegisterRenderableObjects()
 	];
 }
 
-void CScriptManager::RegisterSceneRendererCommands()
+void CLuabindManager::RegisterSceneRendererCommands()
 {
 	module(LUA_STATE)
 	[

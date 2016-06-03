@@ -1,7 +1,7 @@
 #include "Textures\TextureManager.h"
 #include "Utils.h"
 #include "Engine.h"
-#include "Log.h"
+#include "Log\Log.h"
 
 CTextureManager::CTextureManager(){}
 

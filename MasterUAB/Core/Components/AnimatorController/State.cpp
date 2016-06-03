@@ -2,11 +2,13 @@
 #include "Components\AnimatorController\AnimatorController.h"
 #include <luabind/luabind.hpp>
 #include "Engine.h"
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 #include "Animation\AnimatedInstanceModel.h"
-//#include "RenderableObjects\RenderableObject.h"
+#include "Components\LuaComponent.h"
+#include "Components\Script.h"
 #include "Transition.h"
-#include "Log.h"
+#include "Log\Log.h"
+
 
 CState::CState(CAnimatorController* AnimatorController, const std::string &Name, const EAnimation &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
 :m_AnimatorController(AnimatorController)
@@ -50,10 +52,14 @@ void CState::OnEnter(CTransition* Transition)
 	{
 		if (!m_OnEnter.empty())
 		{
-			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
-			assert(l_LuaComponent!=nullptr);
-			l_LuaComponent->ResetTimer();
-			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnEnter.c_str(), l_LuaComponent);
+			CScript* l_Script = m_AnimatorController->GetOwner()->GetScript();
+			if (l_Script != nullptr)
+			{
+				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
+				assert(l_LuaComponent != nullptr);
+				l_LuaComponent->ResetTimer();
+				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnEnter.c_str(), l_LuaComponent);
+			}
 		}
 	}
 	catch (const luabind::error &e)
@@ -74,9 +80,13 @@ void CState::OnExit(CTransition* Transition)
 	{
 		if (!m_OnExit.empty())
 		{
-			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
-			assert(l_LuaComponent != nullptr);
-			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnExit.c_str(), l_LuaComponent); //(CAnimatedInstanceModel*)m_AnimatorController->GetOwner()
+			CScript* l_Script = m_AnimatorController->GetOwner()->GetScript();
+			if (l_Script != nullptr)
+			{
+				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
+				assert(l_LuaComponent != nullptr);
+				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnExit.c_str(), l_LuaComponent);
+			}
 		}
 	}
 	catch (const luabind::error &e)
@@ -100,10 +110,14 @@ void CState::OnUpdate(float ElapsedTime)
 	{
 		if (!m_OnUpdate.empty())
 		{
-			CLUAComponent* l_LuaComponent = m_AnimatorController->GetOwner()->GetFirstLuaComponent();
-			assert(l_LuaComponent != nullptr);
-			l_LuaComponent->AddTime(ElapsedTime);
-			luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), m_OnUpdate.c_str(), l_LuaComponent, ElapsedTime);
+			CScript* l_Script = m_AnimatorController->GetOwner()->GetScript();
+			if (l_Script != nullptr)
+			{
+				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
+				assert(l_LuaComponent != nullptr);
+				l_LuaComponent->AddTime(ElapsedTime);
+				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnUpdate.c_str(), l_LuaComponent, ElapsedTime);
+			}
 		}
 	}
 	catch (const luabind::error &e)

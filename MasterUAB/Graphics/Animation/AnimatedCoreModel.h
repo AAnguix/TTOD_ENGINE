@@ -3,17 +3,18 @@
 
 #include "Utils\Named.h"
 #include <vector>
-class CMaterial;
-#include "cal3d\coremodel.h"
+#include "Math\Vector3.h"
 #include "Components\AnimatorController\Animation.h"
+class CMaterial;
+class CalCoreModel;
 
 class CAnimatedCoreModel : public CNamed 
 { 
 
 private:  
-	CalCoreModel   *m_CalCoreModel;  
+	CalCoreModel *m_CalCoreModel;  
 	std::vector<CMaterial *> m_Materials;  
-	std::string   m_Path;
+	std::string m_Path;
 	std::vector<EAnimation> m_Animations;
 	Vect3f m_BSPosition;  
 	Vect3f m_BSRadius; 
@@ -27,7 +28,7 @@ public:
 	virtual ~CAnimatedCoreModel();  
 	CalCoreModel *GetCoreModel();  
 	EAnimation GetAnimation(const std::string &Name);
-	const std::vector<CMaterial *> & GetMaterials() const {return m_Materials;}  
+	const std::vector<CMaterial*> & GetMaterials() const {return m_Materials;}  
 	void Load(const std::string &Path);
 	int GetBoneId(const std::string &BoneName);
 }; 

@@ -1,19 +1,11 @@
 #include "LayerManager.h"
-//#include "Player\Player.h"
-//#include "Enemies\BasicEnemy.h"
-//#include "Enemies\RangedEnemy.h"
-//#include "Enemies\BruteEnemy.h"
 #include "RenderableObjects\MeshInstance.h"
+#include "Animation\AnimatedModelManager.h"
 #include "Animation\AnimatedInstanceModel.h"
-
+#include "XML\XMLTreeNode.h"
 #include "Cinematics\Cinematic.h"
 #include "Particles\ParticleSystemInstance.h"
-#include "Animation\AnimatedModelManager.h"
-
-#include <luabind/luabind.hpp>
 #include "Engine.h"
-#include "ScriptManager\ScriptManager.h"
-#include "Utils\EmptyPointerClass.h"
 
 CRenderableObjectsManager* CLayerManager::GetLayer(CXMLTreeNode &Node)
 {
@@ -27,7 +19,7 @@ CRenderableObjectsManager* CLayerManager::AddLayer(CXMLTreeNode &TreeNode)
 	std::string l_LayerName=TreeNode.GetPszProperty("name","");
 	if(!AddResource(l_LayerName, l_ROManager))
 	{
-		CHECKED_DELETE(l_ROManager);
+		if (l_ROManager != NULL) delete(l_ROManager); l_ROManager = NULL;
 	}
 	else 
 	{
@@ -81,42 +73,42 @@ void CLayerManager::Destroy()
 {
 	
 }*/
-
-void CLayerManager::RemoveLayerLuaComponents(const std::string &LayerName)
-{
-	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsLuaComponents();
-}
-void CLayerManager::RemoveLuaComponents()
-{
-	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
-	{
-		m_ResourcesVector[i]->RemoveRenderableObjectsLuaComponents();
-	}
-}
-
-void CLayerManager::RemoveComponent(const std::string &ComponentName)
-{
-	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
-	{
-		m_ResourcesVector[i]->RemoveRenderableObjectsComponent(ComponentName);
-	}
-}
-void CLayerManager::RemoveComponents()
-{
-	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
-	{
-		m_ResourcesVector[i]->RemoveRenderableObjectsComponents();
-	}
-}
-
-void CLayerManager::RemoveLayerComponent(const std::string &LayerName, const std::string &ComponentName)
-{
-	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponent(ComponentName);
-}
-void CLayerManager::RemoveLayerComponents(const std::string &LayerName)
-{
-	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponents();
-}
+//
+//void CLayerManager::RemoveLayerLuaComponents(const std::string &LayerName)
+//{
+//	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsLuaComponents();
+//}
+//void CLayerManager::RemoveLuaComponents()
+//{
+//	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+//	{
+//		m_ResourcesVector[i]->RemoveRenderableObjectsLuaComponents();
+//	}
+//}
+//
+//void CLayerManager::RemoveComponent(const std::string &ComponentName)
+//{
+//	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+//	{
+//		m_ResourcesVector[i]->RemoveRenderableObjectsComponent(ComponentName);
+//	}
+//}
+//void CLayerManager::RemoveComponents()
+//{
+//	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
+//	{
+//		m_ResourcesVector[i]->RemoveRenderableObjectsComponents();
+//	}
+//}
+//
+//void CLayerManager::RemoveLayerComponent(const std::string &LayerName, const std::string &ComponentName)
+//{
+//	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponent(ComponentName);
+//}
+//void CLayerManager::RemoveLayerComponents(const std::string &LayerName)
+//{
+//	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponents();
+//}
 
 
 void CLayerManager::Load(const std::string &Filename)
@@ -152,7 +144,7 @@ void CLayerManager::Load(const std::string &Filename)
 
 					if(!l_Layer->AddResource(l_MeshInstance->GetName(), l_MeshInstance))
 					{
-						CHECKED_DELETE(l_MeshInstance);
+						if (l_MeshInstance != NULL) delete(l_MeshInstance); l_MeshInstance = NULL;
 					}
 					
 				}
@@ -169,7 +161,7 @@ void CLayerManager::Load(const std::string &Filename)
 
 					if(!l_Layer->AddResource(l_AnimatedInstance->GetName(), l_AnimatedInstance))
 					{
-						CHECKED_DELETE(l_AnimatedInstance);
+						if (l_AnimatedInstance != NULL) delete(l_AnimatedInstance); l_AnimatedInstance = NULL;
 					}
 					else if (l_Element.GetBoolProperty("player"))
 					{
@@ -190,7 +182,7 @@ void CLayerManager::Load(const std::string &Filename)
 
 					if(!l_Layer->AddResource(l_Cinematic->GetName(),l_Cinematic))
 					{
-						CHECKED_DELETE(l_Cinematic);
+						if (l_Cinematic != NULL) delete(l_Cinematic); l_Cinematic = NULL;
 					}
 				}
 				else if (l_Element.GetName() == std::string("particle_emiter"))
@@ -206,7 +198,7 @@ void CLayerManager::Load(const std::string &Filename)
 
 					if (!l_Layer->AddResource(l_ParticleSystemInstance->GetName(), l_ParticleSystemInstance))
 					{
-						CHECKED_DELETE(l_ParticleSystemInstance);
+						if (l_ParticleSystemInstance != NULL) delete(l_ParticleSystemInstance); l_ParticleSystemInstance = NULL;
 					}
 				}
 			}
@@ -254,7 +246,7 @@ bool CLayerManager::AddElementToLayer(const std::string &Layer, CRenderableObjec
 
 	if (!l_Layer->AddResource(RenderableObject->GetName(), RenderableObject))
 	{
-		CHECKED_DELETE(RenderableObject);
+		if (RenderableObject != NULL) delete(RenderableObject); RenderableObject = NULL;
 		return false;
 	}
 

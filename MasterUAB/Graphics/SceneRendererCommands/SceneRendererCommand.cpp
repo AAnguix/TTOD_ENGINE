@@ -1,7 +1,7 @@
 #include "SceneRendererCommand.h"
 #include "Engine.h"
 #include "Materials\MaterialManager.h"
-
+#include "XML\XMLTreeNode.h"
 
 CSceneRendererCommand::CSceneRendererCommand(CXMLTreeNode &TreeNode) : CNamed(TreeNode.GetName()),CActive(TreeNode),m_Material(0)
 {

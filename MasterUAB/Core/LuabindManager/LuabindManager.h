@@ -1,5 +1,5 @@
-#ifndef _SCRIPTMANAGER_H
-#define _SCRIPTMANAGER_H
+#ifndef _LUABINDMANAGER_H
+#define _LUABINDMANAGER_H
 
 #include <string>
 #include <vector>
@@ -11,7 +11,7 @@ extern "C"
 	#include "lauxlib.h"
 }
 
-class CScriptManager
+class CLuabindManager
 {
 private:
 	lua_State *m_LS;
@@ -35,8 +35,8 @@ private:
 	void Register();
 
 public:
-	CScriptManager();
-	virtual ~CScriptManager();
+	CLuabindManager();
+	virtual ~CLuabindManager();
 	void Initialize();
 	void RunLuaMain();
 	void Destroy();

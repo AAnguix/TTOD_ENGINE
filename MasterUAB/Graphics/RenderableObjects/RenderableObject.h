@@ -3,14 +3,10 @@
 
 #include "Utils\3DElement.h"
 #include "Utils\Named.h"
-#include "Utils\Utils.h"
-#include "Components\LuaComponent.h"
-
-class CComponentManager;
-class CComponent;
 class CRenderManager;
-#include <vector>
 class CAnimatorController;
+class CScript;
+class CAudioSource;
 
 class CRenderableObject : public C3DElement, public CNamed
 {
@@ -25,8 +21,12 @@ public:
 	};
 
 protected:
-	CComponentManager* m_ComponentManager;
-	std::vector<CLUAComponent*> m_LuaComponents; /*Gameplay components*/
+	CAnimatorController* m_AnimatorController;
+	CScript* m_Script;
+	CAudioSource* m_AudioSource;
+
+	//CComponentManager* m_ComponentManager;
+	//std::vector<CLUAComponent*> m_LuaComponents; /*Gameplay components*/
 
 public:
 	CRenderableObject(const CXMLTreeNode &XMLTreeNode);
@@ -34,20 +34,28 @@ public:
 	virtual ~CRenderableObject();
 	virtual void Update(float ElapsedTime);
 	virtual void Render(CRenderManager *RM) = 0;
-	virtual bool AddComponent(CComponent *Component);
+
+	virtual CAnimatorController* GetAnimatorController() const;
+	virtual CScript* GetScript() const;
+	virtual CAudioSource* GetAudioSource() const;
+	
+	virtual void SetAudioSource(CAudioSource* AudioSource);
+	virtual void SetScript(CScript* Script);
+	virtual void SetAnimatorController(CAnimatorController* AnimatorController);
+
+	/*virtual bool AddComponent(CComponent *Component);
 	virtual void RemoveComponent(const std::string &ComponentName);
 	virtual void RemoveComponents();
 
-	CAnimatorController* GetAnimatorController() const;
+	CAnimatorController* GetAnimatorController() const;*/
 
-	UAB_GET_PROPERTY_POINTER(CComponentManager,ComponentManager);
+	/*UAB_GET_PROPERTY_POINTER(CComponentManager,ComponentManager);
 	
 	virtual bool AddLuaComponent(CLUAComponent* LUAComponent);
 	CLUAComponent* GetFirstLuaComponent() const;
-	virtual void RemoveLuaComponents();
+	virtual void RemoveLuaComponents();*/
 
 	virtual TRenderableObjectType GetClassType() const = 0;
-
 	virtual CEmptyPointerClass* GetThisLuaAddress() const;
 
 };

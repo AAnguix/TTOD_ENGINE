@@ -1,6 +1,6 @@
 #include "Cinematics\Cinematic.h"
 #include "Utils\Utils.h"
-#include "Components\ComponentManager.h"
+#include "XML\XMLTreeNode.h"
 
 CCinematic::CCinematic(CXMLTreeNode &TreeNode)
 :CRenderableObject(TreeNode)

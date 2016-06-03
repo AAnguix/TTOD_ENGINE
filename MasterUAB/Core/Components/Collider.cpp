@@ -1,5 +1,4 @@
 #include "Components\Collider.h"
-#include "Components\ComponentManager.h"
 #include "Engine.h"
 #include "PhysXManager.h"
 #include "RenderableObjects\MeshInstance.h"
@@ -16,12 +15,8 @@ CCollider::~CCollider()
 {
 }
 
-void CCollider::Update(float ElapsedTime)
-{
-}
-
 /*Update graphics transform from physix transform*/
-void CCollider::Render(CRenderManager &RenderManager)
+void CCollider::Update(float ElapsedTime)
 {
 	if (IsEnabled())
 	{
@@ -30,26 +25,6 @@ void CCollider::Render(CRenderManager &RenderManager)
 		Vect3f l_V = l_Data.m_Orientation.GetRadians();
 		m_Owner->SetYawPitchRoll(l_V.x, l_V.y, l_V.z);
 	}
-}
-
-void CCollider::RenderDebug(CRenderManager &RenderManager)
-{
-}
-
-CCollider* CCollider::AddCollider(const std::string &Name, CMeshInstance *Owner)
-{
-	CCollider* l_Collider = new CCollider(Name, Owner);
-
-	if (!Owner->AddComponent(l_Collider))
-	{
-		CHECKED_DELETE(l_Collider);
-	}
-	else
-	{
-		assert(Owner->GetClassType() == CRenderableObject::MESH_INSTANCE);
-	}
-
-	return l_Collider;
 }
 
 CMaterial* CCollider::GetPhysxMaterial() const

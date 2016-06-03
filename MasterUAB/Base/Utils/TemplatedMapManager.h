@@ -3,17 +3,16 @@
 
 #include <map>
 #include <cassert>
-#include "Utils\Utils.h"
+//#include "Utils\Utils.h"
 
 template<class T>
 class CTemplatedMapManager
 {
 	public:
-	typedef std::map<std::string,T*> TMapResource;
+		typedef std::map<std::string,T*> TMapResource;
 
 	protected:
-		
-		TMapResource	m_Resources;
+		TMapResource m_Resources;
 
 	public:
 		CTemplatedMapManager(){}

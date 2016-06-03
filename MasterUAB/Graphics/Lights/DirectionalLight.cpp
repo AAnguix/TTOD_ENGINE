@@ -1,6 +1,7 @@
 #include "Lights\DirectionalLight.h"
 #include "Render\RenderManager.h"
 #include "Textures\DynamicTexture.h"
+#include "XML\XMLTreeNode.h"
 
 CDirectionalLight::CDirectionalLight()
 :CLight()

@@ -1,6 +1,7 @@
 #include "CaptureFrameBufferTexture.h"
 #include "Engine.h"
 #include "Render\RenderManager.h"
+#include "XML\XMLTreeNode.h"
 
 void CCaptureFrameBufferTexture::Init(const std::string &Name, unsigned int Width, unsigned int Height)
 {

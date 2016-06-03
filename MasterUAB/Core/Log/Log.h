@@ -1,9 +1,8 @@
 #ifndef _LOG_H
 #define _LOG_H
+
 #include <string>
 #include <fstream>
-#include <sstream>
-#include <iostream>
 #include "Math\Vector3.h"
 
 class CLog

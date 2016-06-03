@@ -10,24 +10,25 @@
 #include <AntTweakBar.h>
 #include "Render\GraphicsStats.h"
 
+/*Base*/
 #include "Math\Matrix44.h"
 #include "Math\Vector4.h"
 
+
 #include "Application.h"
 
-#include "Input\InputManagerImplementation.h"
-#include "DebugHelperImplementation.h"
-
-#include "Render\ContextManager.h"
+/*Core*/
 #include "Render\DebugRender.h"
-#include "Effects\Effect.h"
-#include "Camera/Camera.h"
+#include "Input\InputManagerImplementation.h"
+#include "DebugHelper\DebugHelperImplementation.h"
+#include "Input\KeyBoardInput.h"
 
-//Managers
+/*Graphics*/
+#include "Render\ContextManager.h"
+#include "Effects\Effect.h"
+#include "Camera\Camera.h"
 #include "Render\RenderManager.h"
 #include "Render\ContextManager.h"
-
-
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
 
@@ -214,7 +215,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 	{
 		//Create and initialize application
 		CApplication l_Application(&s_Context);
-		CGraphicsStats l_CGraphicsStats();
+		CGraphicsStats l_CGraphicsStats;
 		l_Application.Initialize(hWnd);
 		l_Application.SwitchCamera();
 		

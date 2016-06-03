@@ -5,16 +5,17 @@
 #include "Render\RenderManager.h"
 #include "Input\InputManagerImplementation.h"
 #include "Input\MouseInput.h"
-#include "Log.h"
+#include "Log\Log.h"
 #include "Materials\MaterialManager.h"
 #include <iterator>
 #include <sstream>
 #include "RenderableObjects\RenderableObjectTechnique.h"
 #include "Engine.h"
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
+#include "Input\KeyBoardInput.h"
 
-CGUIManager::CGUIManager() :
-m_Filename(""),
+CGUIManager::CGUIManager()
+:m_Filename(""),
 m_ActiveItem(""),
 m_HotItem(""),
 m_SelectedItem(""),
@@ -818,7 +819,7 @@ void CGUIManager::CreateConsole(const std::string& GuiID, const std::string& Fon
 	if (s_Text.length() > 0 && s_Text[s_Text.length() - 1] == '\n')
 	{
 		std::string l_Command = s_Text.substr(0, s_Text.length() - 1);
-		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Command);
+		CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Command);
 		s_Text = "";
 	}
 }
@@ -898,8 +899,8 @@ void CGUIManager::Render(CRenderManager* RenderManager)
 		{
 			if (l_CurrentVertex > 0)
 			{
-				if (l_CurrentVertex == s_MaxVerticesPerCall)
-					CEngine::GetSingleton().GetLogManager()->Log("GUI warning. CurrentVertex equal to s_MaxVerticesPerCall");	
+				//if (l_CurrentVertex == s_MaxVerticesPerCall)
+					//CEngine::GetSingleton().GetLogManager()->Log("GUI warning. CurrentVertex equal to s_MaxVerticesPerCall");	
 
 				CMaterial* l_Material = m_Materials[l_CurrentSpriteMap->materialIndex];
 				l_Material->Apply();

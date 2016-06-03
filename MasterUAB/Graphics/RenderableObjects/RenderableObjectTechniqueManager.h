@@ -8,8 +8,8 @@ class CRenderableObjectTechniqueManager : public CTemplatedMapManager<CRenderabl
 {
 
 private: 
-	CTemplatedMapManager<CPoolRenderableObjectTechnique>    m_PoolRenderableObjectTechniques;  
-	std::string     m_Filename; 
+	CTemplatedMapManager<CPoolRenderableObjectTechnique> m_PoolRenderableObjectTechniques;  
+	std::string m_Filename; 
 
 public: 
 	CRenderableObjectTechniqueManager(); 
@@ -19,7 +19,7 @@ public:
 	//void Destroy();  
 	void Load(const std::string &Filename);  
 	void Reload();
-	CTemplatedMapManager<CPoolRenderableObjectTechnique> & GetPoolRenderableObjectTechniques(); 
+	CTemplatedMapManager<CPoolRenderableObjectTechnique>& GetPoolRenderableObjectTechniques(); 
 };
 
 #endif

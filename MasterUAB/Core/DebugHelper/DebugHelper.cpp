@@ -1,4 +1,4 @@
-#include "DebugHelper.h"
+#include "DebugHelper\DebugHelper.h"
 
 static CDebugHelper *s_CurrentDebugHelper;
 

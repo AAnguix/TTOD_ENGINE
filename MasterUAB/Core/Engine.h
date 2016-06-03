@@ -32,54 +32,58 @@ public:
 
 template<class T> T* CSingleton<T>::ms_Singleton = 0;
 
+class CCameraControllerManager;
+class CPhysXManager;
+class CLayerManager;
+class ISoundManager;
+class CGUIManager;
+class CAnimatorControllerManager;
+class CLuabindManager;
+class CScriptManager;
 
 class CMaterialManager;
 class CEffectManager;
 class CTextureManager;
-//class CRenderableObjectsManager;
 class CStaticMeshManager;
 class CRenderManager;
-class CScriptManager;
 class CAnimatedModelManager;
 class CLightManager;
-class CCameraControllerManager;
 class CLog;
-class CPhysXManager;
-class CLayerManager;
 class CRenderableObjectTechniqueManager;
 class CSceneRendererCommandManager;
 class CDebugHelperImplementation;
 class CParticleManager;
 class CInputManagerImplementation;
-class CGUIManager;
-class ISoundManager;
 class CGraphicsStats;
+
 
 class CEngine : public CSingleton<CEngine>
 {
 friend class CSingleton<CEngine>;
 private:
+	/*Updated every frame*/
+	CCameraControllerManager* m_CameraControllerManager;
+	CPhysXManager* m_PhysXManager;
+	CLayerManager* m_LayerManager;
+	ISoundManager* m_SoundManager;
+	CGUIManager* m_GUIManager;
+	CAnimatorControllerManager* m_AnimatorControllerManager;
+	CLuabindManager* m_LuabindManager;
+	CScriptManager* m_ScriptManager;
 
 	CMaterialManager* m_MaterialManager;
 	CEffectManager* m_EffectManager;
 	CTextureManager* m_TextureManager;
-	//CRenderableObjectsManager* m_RenderableObjectsManager;
 	CStaticMeshManager* m_StaticMeshManager;
 	CRenderManager* m_RenderManager;
-	CScriptManager* m_ScriptManager;
 	CAnimatedModelManager* m_AnimatedModelManager;
 	CLightManager* m_LightManager;
-	CCameraControllerManager* m_CameraControllerManager;
 	CLog* m_Log;
-	CPhysXManager* m_PhysXManager;
-	CLayerManager* m_LayerManager;
 	CRenderableObjectTechniqueManager* m_RenderableObjectTechniqueManager;
 	CSceneRendererCommandManager* m_SceneRendererCommandManager;
 	CDebugHelperImplementation* m_DebugHelper;
 	CParticleManager* m_ParticleSystemManager;
 	CInputManagerImplementation* m_InputManager;
-	CGUIManager* m_GUIManager;
-	ISoundManager* m_SoundManager;
 	CGraphicsStats* m_GraphicsStats;
 	CEngine();
 
@@ -97,7 +101,7 @@ public:
 	//CRenderableObjectsManager* GetRenderableObjectsManager() const;
 	CStaticMeshManager* GetStaticMeshManager() const;
 	CRenderManager* GetRenderManager() const;
-	CScriptManager* GetScriptManager() const;
+	CLuabindManager* GetLuabindManager() const;
 	CAnimatedModelManager* GetAnimatedModelManager() const;
 	CLightManager* GetLightManager() const;
 	CCameraControllerManager* GetCameraControllerManager() const;
@@ -112,6 +116,9 @@ public:
 	CGUIManager* GetGUIManager() const;
 	ISoundManager* GetSoundManager() const;
 	CGraphicsStats* GetGraphicsStats() const;
+	CAnimatorControllerManager* GetAnimatorControllerManager() const;
+	CScriptManager* GetScriptManager() const;
+
 	void SetRenderManager(CRenderManager *RenderManager) {m_RenderManager=RenderManager;}
 };
 

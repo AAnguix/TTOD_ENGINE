@@ -1,4 +1,4 @@
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 
 #include <luabind/luabind.hpp>
 
@@ -8,6 +8,7 @@
 
 #include "Engine.h"
 
+#include "XML\XMLTreeNode.h"
 #include "Utils\3DElement.h"
 #include "Utils\Named.h"
 #include "Math\Vector2.h"
@@ -26,10 +27,10 @@
 
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
+#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
-void CScriptManager::RegisterBase()
+void CLuabindManager::RegisterBase()
 {
 	module(LUA_STATE)
 	[
@@ -111,6 +112,7 @@ void CScriptManager::RegisterBase()
 		.def("GetPitchLuaAddress", &C3DElement::GetPitchLuaAddress)
 		.def("GetRollLuaAddress", &C3DElement::GetRollLuaAddress)
 		.def("GetPositionLuaAddress", &C3DElement::GetPositionLuaAddress)
+		.def("GetScaleLuaAddress", &C3DElement::GetScaleLuaAddress)
 	];
 	
 	module(LUA_STATE)

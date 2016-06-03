@@ -4,6 +4,8 @@
 #include "XML\XMLTreeNode.h"
 #include "Camera.h"
 #include <assert.h>
+#include "Components\AudioSource.h"
+#include "RenderableObjects\RenderableObject.h"
 
 namespace AK
 {
@@ -33,13 +35,17 @@ ISoundManager* ISoundManager::CreateSoundManager()
 	return new CSoundManager();
 }
 
-CSoundManager::CSoundManager() : m_SoundBanksFilename(""), m_SpeakersFilename(""), m_InitOk(false)
+CSoundManager::CSoundManager() 
+:m_SoundBanksFilename("")
+,m_SpeakersFilename("")
+,m_InitOk(false)
 {
-
+	
 }
 
 CSoundManager::~CSoundManager()
 {
+	RemoveComponents();
 	Terminate();
 }
 
@@ -278,7 +284,7 @@ bool CSoundManager::Reload()
 	return Load(m_SoundBanksFilename, m_SpeakersFilename);
 }
 
-void CSoundManager::Update(const CCamera *Camera)
+void CSoundManager::Update(const CCamera *Camera, float ElapsedTime)
 {
 	std::unordered_map<const C3DElement*, AkGameObjectID>::iterator it;
 
@@ -304,7 +310,51 @@ void CSoundManager::Update(const CCamera *Camera)
 
 	SetListenerPosition(Camera);
 
+	UpdateComponents(ElapsedTime);
+
 	AK::SOUNDENGINE_DLL::Tick();
+}
+
+void CSoundManager::UpdateComponents(float ElapsedTime)
+{
+	for (size_t i = 0; i < m_Components.size(); ++i)
+	{
+		m_Components[i]->Update(ElapsedTime);
+	}
+}
+
+CAudioSource* CSoundManager::AddComponent(const std::string &Name, CRenderableObject *Owner)
+{
+	bool l_Found = false;
+	CAudioSource* l_AudioSource = nullptr;
+	for (size_t i = 0; i < m_Components.size(); ++i)
+	{
+		if (m_Components[i]->GetName() == Name)
+			l_Found = true;
+	}
+	if (!l_Found)
+	{
+		l_AudioSource = new CAudioSource(Name, Owner);
+		Owner->SetAudioSource(l_AudioSource);
+		m_Components.push_back(l_AudioSource);
+	}
+	else
+	{
+		assert(false);
+		delete(l_AudioSource); l_AudioSource = NULL;
+	}
+
+	return l_AudioSource;
+}
+
+void CSoundManager::RemoveComponents()
+{
+	for (size_t i = 0; i < m_Components.size(); ++i)
+	{
+		delete m_Components[i];
+		m_Components[i] = NULL;
+	}
+	m_Components.clear();
 }
 
 void CSoundManager::SetListenerPosition(const CCamera *Camera)
@@ -497,7 +547,7 @@ void CSoundManager::SetRTPCValue(const SoundRTPC &Rtpc, float Value, const AkGam
 
 SoundEvent CSoundManager::GetSoundEvent(const std::string &SoundEventName)
 {
-	for (int i = 0; i < m_SoundEvents.size(); i++)
+	for (size_t i = 0; i < m_SoundEvents.size(); i++)
 	{
 		if (SoundEventName == m_SoundEvents[i])
 		{

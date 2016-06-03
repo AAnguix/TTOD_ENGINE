@@ -1,13 +1,10 @@
 #include "AnimatedCoreModel.h"
-#include "Utils\Utils.h"
-#include "cal3d\error.h"
+#include "Log\Log.h"
 #include "Engine.h"
 #include "Materials\MaterialManager.h"
-#include "Materials\Material.h"
-#include <fstream>
-#include <iostream>
+#include "XML\XMLTreeNode.h"
+#include "cal3d\coremodel.h"
 #include "cal3d\coretrack.h"
-#include "Log.h"
 
 bool CAnimatedCoreModel::LoadMesh(const std::string &Filename)
 {
@@ -79,7 +76,9 @@ CAnimatedCoreModel::~CAnimatedCoreModel()
         }
 
         //Cleanup of non-auto released resources
-		CHECKED_DELETE(m_CalCoreModel)
+		if (m_CalCoreModel != NULL) 
+			delete(m_CalCoreModel);
+		m_CalCoreModel = NULL;
     }
 
 	m_Materials.clear();
@@ -138,7 +137,9 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 
 					if(!CEngine::GetSingleton().GetMaterialManager()->AddResource(l_Material->GetName(), l_Material))
 					{
-						CHECKED_DELETE(l_Material);
+						if (l_Material != NULL)
+							delete(l_Material);
+						l_Material = NULL;
 					}
 					else
 					{

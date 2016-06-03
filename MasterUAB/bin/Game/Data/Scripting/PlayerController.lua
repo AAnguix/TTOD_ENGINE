@@ -1,6 +1,3 @@
-
-CharBlock = false
-
 l_CCVelocity = Vect3f(0.0,0.0,0.0)
 
 function CPlayerComponent:PlayerController(ElapsedTime)
@@ -8,38 +5,36 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 	g_Walk = false
 	g_Run = false
 	
+	g_Forward = false
+	g_Backwards = false
+	g_Right = false
+	g_Left = false
+	
 	l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 	
-	if CInputManager.GetInputManager():IsActionActive("PRUEBA") then
+	if CInputManager.GetInputManager():IsActionActive("LOCK_CHARACTER") then
 		
-		if g_PlayerComponent:IsLocked() then		
-			g_PlayerComponent:UnLock()
-		else 	
-			g_PlayerComponent:Lock()
+		if (self:IsLocked()) then		
+			self:UnLock()
+		else
+			self:Lock()
 		end
 	end
 	
-	if g_PlayerComponent:IsLocked() == false then
-	
+	if (self:IsLocked() == false) then
 		if CInputManager.GetInputManager():IsActionActive("PLAYER_ATTACKS") then	
 			g_Player:GetAnimatorController():SetTrigger("Attack")
 		end
 		if CInputManager.GetInputManager():IsActionActive("PLAYER_BLOCKS") then	
 			g_Player:GetAnimatorController():SetTrigger("Block")
-			-- local l_SoundEvent = SoundEvent("Play_Hit")
-			-- g_SoundManager:PlayEvent(l_SoundEvent)		
 		end
 	
-		if ((CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_FORWARD")) or 
-		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_BACK")) or 
-		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_LEFT")) or 
-		(CInputManager.GetInputManager():IsActionActive("PLAYER_WALK_RIGHT")))  then
+		if ((CInputManager.GetInputManager():IsActionActive("MOVE_FWD")) or 
+		(CInputManager.GetInputManager():IsActionActive("MOVE_BACK")) or 
+		(CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT")) or 
+		(CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT")))  then
+			local l_Position = g_Player:GetPosition()
 			g_Walk = true
-			--l_Player:BlendCycle(2,1.0,0.1)
-			--g_LogManager:Log("Entrado Aca")
-		--else
-			--g_Player:ClearCycle(2,0.1)
-			--g_Player:BlendCycle(0,1.0,0.1)
 		end
 		
 		l_CCVelocity.x = 0
@@ -48,38 +43,34 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		l_Speed = 3
 		
 		if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then			
-			self:MatchPlayerYawToCameraYaw(l_CameraController)				
+			g_Forward = true
+			self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)				
 			local v = l_CameraController:GetForward()
 			l_CCVelocity = l_CCVelocity + v * l_Speed
 		end
 		
 		if CInputManager.GetInputManager():IsActionActive("MOVE_BACK") then				
-			self:MatchPlayerYawToCameraYaw(l_CameraController)
+			g_Backwards = true
+			self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)	
 			local v = l_CameraController:GetForward()
 			l_CCVelocity = l_CCVelocity - v * l_Speed
 		end
 		
 		if CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT") then
-			
-			self:MatchPlayerYawToCameraYaw(l_CameraController)	
+			g_Right = true
+			self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)		
 			local v = l_CameraController:GetRight()
 			l_CCVelocity = l_CCVelocity - v * l_Speed
 		end
 		
 		if CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT") then
-			self:MatchPlayerYawToCameraYaw(l_CameraController)	
+			g_Left = true
+			self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)		
 			local v = l_CameraController:GetRight()
 			l_CCVelocity = l_CCVelocity + v * l_Speed
 		end
 		
-		if CInputManager.GetInputManager():IsActionActive("PRUEBA") then
-			--Jump(true,ElapsedTime)
-			l_CCVelocity.y = 3
-		end
-		
 		l_CCVelocity = l_CCVelocity + Vect3f(0,-10.0,0) * ElapsedTime
-		
-		--g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), GetMoveBuffer(), ElapsedTime,3)
 		
 		if ElapsedTime>0.0 then
 			l_CCVelocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (l_CCVelocity * ElapsedTime), ElapsedTime)
@@ -88,30 +79,70 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		end 
 		
 		g_Player:GetAnimatorController():SetBool("Walk", g_Walk);
-		g_Player:GetAnimatorController():SetBool("Run", g_Run);
+		--GetPlayer():GetAnimatorController():SetBool("Run", g_Run);  
 		
-	end --end player locked
+	end --END CharBlock
 	
 end
 
-function CPlayerComponent:MatchPlayerYawToCameraYaw (CameraController)
-	g_Player:SetYaw(CameraController:GetYaw())
+
+function CPlayerComponent:MatchPlayerYawToCameraYaw (CameraController, ElapsedTime, Forward, Backwards, Right, Left)
+	local l_Offset = 0.0
+	
+	if Forward then
+		if Right then
+			l_Offset = -45.0
+		elseif Left then
+			l_Offset = 45.0
+		end
+	elseif Backwards then
+		if Right then
+			l_Offset = 40.0
+		elseif Left then
+			l_Offset = -40.0
+		end
+	elseif Right then
+		l_Offset = -90.0
+	elseif Left  then
+		l_Offset = 90.0	
+	end
+	
+	
+	--local l_CurrentYaw = CameraController:GetYaw()
+	-- local l_Result = 0.0
+	
+	-- if l_Offset < 0.0 then 
+		-- if (self.m_RotationVelocity*(-1)*ElapsedTime) < l_Offset then
+			-- l_Result = l_CurrentYaw+(l_Offset*ElapsedTime)
+		-- else
+			-- l_Result = l_CurrentYaw+(ElapsedTime*self.m_RotationVelocity*(-1))
+		-- end
+	-- else
+		-- if (self.m_RotationVelocity*ElapsedTime) > l_Offset then
+			-- l_Result = l_CurrentYaw+ (l_Offset*ElapsedTime)
+		-- else
+			-- l_Result = l_CurrentYaw+ (ElapsedTime*self.m_RotationVelocity)
+		-- end
+	-- end
+	
+	-- g_LogManager:Log(l_Result.."")
+	-- g_Player:SetYaw(l_Result)
+		
+	g_Player:SetYaw(CameraController:GetYaw()+(l_Offset))
 end
 
--- function Jump(Speed, ElapsedTime)
-
-	-- local l_ConstantSpeed=ElapsedTime*g_PlayerSpeed
-	
-	-- if Speed then
-		-- l_ConstantSpeed=l_ConstantSpeed*g_PlayerFastSpeed
+-- function CPlayerComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, ElapsedTime)
+	-- local l_Result = 0.0
+	-- if Angle < 0.0 then
+		-- if (Velocity*(-1)*ElapsedTime) < Angle then
+			-- l_Result = CurrentYaw + (Angle*ElapsedTime)
+		-- else l_Result = CurrentYaw + (Velocity*(-1)*ElapsedTime)
+		-- end
+	-- else
+		-- if (Velocity*ElapsedTime) > Angle then
+			-- l_Result = CurrentYaw + (Angle*ElapsedTime)
+		-- else l_Result = CurrentYaw + (Velocity*ElapsedTime)
+		-- end
 	-- end
-
-	-- local Displacement = Vect3f(0.0,12.0,5.0)
-	
-	-- if Displacement:SquaredLength() > 0 then
-		 -- Displacement:Normalize(1)
-		 -- Displacement = Displacement*l_ConstantSpeed
-		-- l_Position = g_PhysXManager:MoveCharacterController(g_Player:GetName(),Displacement,ElapsedTime)
-		-- g_Player:SetPosition(l_Position)
-	-- end
+	-- return l_Result
 -- end

@@ -7,7 +7,7 @@
 #include <vector>
 #include "Render\ContextManager.h"
 
-#define ENABLE_FRUSTUM 1
+#define ENABLE_FRUSTUM 0
 
 class CRenderableObjectsManager;
 class CTexture;

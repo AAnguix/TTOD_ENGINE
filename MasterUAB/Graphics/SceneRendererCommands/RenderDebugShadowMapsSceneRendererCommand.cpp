@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Textures\DynamicTexture.h"
+#include "Render\RenderManager.h"
 
 CRenderDebugShadowMapsSceneRendererCommand::CRenderDebugShadowMapsSceneRendererCommand(CXMLTreeNode &TreeNode) : CSceneRendererCommand(TreeNode)
 {

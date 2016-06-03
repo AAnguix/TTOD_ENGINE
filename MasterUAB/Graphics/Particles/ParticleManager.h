@@ -3,8 +3,8 @@
 
 #include "Utils\TemplatedMapManager.h"
 #include "Particles\ParticleSystemType.h"
-class CRenderManager;
 #include <vector>
+class CRenderManager;
 
 class CParticleManager : public CTemplatedMapManager<CParticleSystemType>
 {
@@ -22,7 +22,7 @@ public:
 	void Render(CRenderManager *RM);
 	void Load(const std::string &FileName);
 
-	UAB_GET_PROPERTY_POINTER(CParticleSystemType, DefaultType);
+	CParticleSystemType* GetDefaultType() const { return m_DefaultType; }
 
 	const std::vector<CParticleSystemType *> & GetLUAParticles();
 

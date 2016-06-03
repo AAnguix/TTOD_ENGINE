@@ -256,6 +256,9 @@
     <ClInclude Include="Render\GraphicsStats.h">
       <Filter>Render</Filter>
     </ClInclude>
+    <ClInclude Include="Animation\AnimatorControllerManager.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -497,6 +500,9 @@
     </ClCompile>
     <ClCompile Include="Render\GraphicsStats.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimatorControllerManager.cpp">
+      <Filter>Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
-#include "Textures\Texture.h"
+#include "Material.h"
 #include "Textures\TextureManager.h"
 #include "XML\XMLTreeNode.h"
-#include "Material.h"
 #include "Engine.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Materials\TemplatedMaterialParameter.h"

@@ -4,23 +4,25 @@
 #include "Textures\TextureManager.h"
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 #include "Animation\AnimatedModelManager.h"
 #include "Lights\LightManager.h"
 #include "Camera\CameraControllerManager.h"
 #include "Render\RenderManager.h"
-#include "Log.h"
+#include "Log\Log.h"
 #include "PhysXManager.h"
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
-#include "DebugHelperImplementation.h"
+#include "DebugHelper\DebugHelperImplementation.h"
 #include "Particles\ParticleManager.h"
 #include "Input\InputManagerImplementation.h"
 #include "GUIManager.h"
 #include "ISoundManager.h"
 #include "FileUtils.h" 
 #include "Render\GraphicsStats.h"
+#include "Animation\AnimatorControllerManager.h"
+#include "ScriptManager.h"
 
 CEngine::CEngine()
 : m_RenderManager(NULL)
@@ -32,7 +34,7 @@ CEngine::CEngine()
 
 	m_StaticMeshManager = new CStaticMeshManager;
 	//m_RenderableObjectsManager = new CRenderableObjectsManager;
-	m_ScriptManager = new CScriptManager;
+	m_LuabindManager = new CLuabindManager;
 	m_AnimatedModelManager = new CAnimatedModelManager;
 	m_LightManager = new CLightManager;
 	m_Log = new CLog;
@@ -46,10 +48,14 @@ CEngine::CEngine()
 	m_GUIManager = new CGUIManager;
 	m_SoundManager = ISoundManager::CreateSoundManager();
 	m_GraphicsStats = new CGraphicsStats;
+	m_AnimatorControllerManager = new CAnimatorControllerManager;
+	m_ScriptManager = new CScriptManager;
 }
 
 CEngine::~CEngine()
 {
+	{CHECKED_DELETE(m_ScriptManager); }
+	{CHECKED_DELETE(m_AnimatorControllerManager); }
 	{CHECKED_DELETE(m_GraphicsStats); }
 	{ CHECKED_DELETE(m_SoundManager); }
 	{CHECKED_DELETE(m_GUIManager);}
@@ -63,7 +69,7 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_Log);}
 	{CHECKED_DELETE(m_LightManager);}
 	{CHECKED_DELETE(m_AnimatedModelManager);}
-	{CHECKED_DELETE(m_ScriptManager);}
+	{CHECKED_DELETE(m_LuabindManager);}
 	//{CHECKED_DELETE(m_RenderableObjectsManager);}
 	{CHECKED_DELETE(m_StaticMeshManager);}
 	{CHECKED_DELETE(m_TextureManager);}
@@ -108,19 +114,13 @@ CRenderableObjectsManager* CEngine::GetRenderableObjectsManager() const
 
 CStaticMeshManager* CEngine::GetStaticMeshManager() const {	return m_StaticMeshManager; }
 
-CScriptManager* CEngine::GetScriptManager() const { return m_ScriptManager; }
+CLuabindManager* CEngine::GetLuabindManager() const { return m_LuabindManager; }
 
 CAnimatedModelManager* CEngine::GetAnimatedModelManager() const { return m_AnimatedModelManager; }
 
 CLightManager* CEngine::GetLightManager() const { return m_LightManager; }
 
-CCameraControllerManager* CEngine::GetCameraControllerManager() const { return m_CameraControllerManager; }
-
 CLog* CEngine::GetLogManager() const { return m_Log; }
-
-CPhysXManager* CEngine::GetPhysXManager() const { return m_PhysXManager; }
-
-CLayerManager* CEngine::GetLayerManager() const { return m_LayerManager; }
 
 CRenderableObjectTechniqueManager* CEngine::GetRenderableObjectTechniqueManager() const { return m_RenderableObjectTechniqueManager; }
 
@@ -132,13 +132,18 @@ CParticleManager* CEngine::GetParticleSystemManager() const { return m_ParticleS
 
 CInputManagerImplementation* CEngine::GetInputManager() const { return m_InputManager;}
 
-CGUIManager* CEngine::GetGUIManager() const{ return m_GUIManager;}
-
-ISoundManager* CEngine::GetSoundManager() const { return m_SoundManager;}
-
 CRenderManager* CEngine::GetRenderManager() const { return m_RenderManager; }
 
 CGraphicsStats* CEngine::GetGraphicsStats() const { return m_GraphicsStats; }
+
+CPhysXManager* CEngine::GetPhysXManager() const { return m_PhysXManager; }
+
+CLayerManager* CEngine::GetLayerManager() const { return m_LayerManager; }
+CGUIManager* CEngine::GetGUIManager() const{ return m_GUIManager; }
+ISoundManager* CEngine::GetSoundManager() const { return m_SoundManager; }
+CAnimatorControllerManager* CEngine::GetAnimatorControllerManager() const { return m_AnimatorControllerManager;}
+CCameraControllerManager* CEngine::GetCameraControllerManager() const { return m_CameraControllerManager; }
+CScriptManager* CEngine::GetScriptManager() const { return m_ScriptManager; }
 
 void CEngine::TerminateApplication()
 {

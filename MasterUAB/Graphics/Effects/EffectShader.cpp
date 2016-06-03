@@ -6,9 +6,9 @@
 #include <assert.h>
 #include <d3dcompiler.h>
 //#include <D3DX11async.h>
-
+#include "XML\XMLTreeNode.h"
 #include "Vertex\VertexTypes.h"
-#include "Log.h"
+#include "Log\Log.h"
 
 CEffectShader::CEffectShader(const CXMLTreeNode &TreeNode)
 : CNamed(TreeNode)

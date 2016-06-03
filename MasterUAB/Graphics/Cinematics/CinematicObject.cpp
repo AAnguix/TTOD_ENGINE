@@ -3,7 +3,7 @@
 #include "XML\XMLTreeNode.h"
 #include "Engine.h"
 #include "RenderableObjects\LayerManager.h"
-#include "Log.h"
+#include "Log\Log.h"
 #include "Math\MathUtils.h"
 #include "Engine.h"
 #include "PhysXManager.h"

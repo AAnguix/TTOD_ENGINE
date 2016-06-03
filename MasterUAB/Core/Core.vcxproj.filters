@@ -1,51 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="DebugHelper.cpp" />
-    <ClCompile Include="DebugHelperImplementation.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="ScriptManager\ScriptManager.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Input\InputManager.cpp">
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="Input\InputManagerImplementation.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptManager\RegisterGraphics.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptManager\RegisterBase.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptManager\RegisterCore.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\ComponentManager.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptManager\RegisterPhysx.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
-    <ClCompile Include="AStar.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
     <ClCompile Include="Input\MouseInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptManager\RegisterGUI.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
     <ClCompile Include="Input\KeyBoardInput.cpp">
       <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptManager\RegisterSound.cpp">
-      <Filter>ScriptManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\Script.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\Collider.cpp">
       <Filter>Components</Filter>
@@ -77,21 +44,42 @@
     <ClCompile Include="Components\AnimatorController\AnimatorControllerTriggerParameter.cpp">
       <Filter>Components\AnimatorController</Filter>
     </ClCompile>
-    <ClCompile Include="Components\LuaComponent.cpp">
+    <ClCompile Include="LuabindManager\LuabindManager.cpp">
+      <Filter>LuabindManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LuabindManager\RegisterBase.cpp">
+      <Filter>LuabindManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LuabindManager\RegisterCore.cpp">
+      <Filter>LuabindManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LuabindManager\RegisterGraphics.cpp">
+      <Filter>LuabindManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LuabindManager\RegisterGUI.cpp">
+      <Filter>LuabindManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LuabindManager\RegisterPhysx.cpp">
+      <Filter>LuabindManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LuabindManager\RegisterSound.cpp">
+      <Filter>LuabindManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\Log.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugHelper\DebugHelper.cpp">
+      <Filter>DebugHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugHelper\DebugHelperImplementation.cpp">
+      <Filter>DebugHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Script.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DebugHelper.h" />
-    <ClInclude Include="DebugHelperImplementation.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="ScriptManager\ScriptManager.h">
-      <Filter>ScriptManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptManager\testclass.h">
-      <Filter>ScriptManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h" />
     <ClInclude Include="Input\InputManager.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -101,20 +89,11 @@
     <ClInclude Include="Components\Component.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Components\ComponentManager.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AStar.h">
-      <Filter>ScriptManager</Filter>
-    </ClInclude>
     <ClInclude Include="Input\MouseInput.h">
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="Input\KeyBoardInput.h">
       <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\Script.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\Collider.h">
       <Filter>Components</Filter>
@@ -155,11 +134,23 @@
     <ClInclude Include="Components\AnimatorController\AnimatorControllerTriggerParameter.h">
       <Filter>Components\AnimatorController</Filter>
     </ClInclude>
+    <ClInclude Include="LuabindManager\LuabindManager.h">
+      <Filter>LuabindManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Log\Log.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugHelper\DebugHelper.h">
+      <Filter>DebugHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugHelper\DebugHelperImplementation.h">
+      <Filter>DebugHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Script.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="ScriptManager">
-      <UniqueIdentifier>{102434e4-af86-4ec6-8c83-3593d2150b26}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{6d8c07f2-a398-420c-a41d-5f4c2987cbaf}</UniqueIdentifier>
     </Filter>
@@ -168,6 +159,15 @@
     </Filter>
     <Filter Include="Components\AnimatorController">
       <UniqueIdentifier>{88dd3fc2-3ffe-4648-b657-1168a11836c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuabindManager">
+      <UniqueIdentifier>{102434e4-af86-4ec6-8c83-3593d2150b26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{9ea42ef1-e84d-4516-bfdb-bc21a94de7b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugHelper">
+      <UniqueIdentifier>{1d1d350a-2077-44b6-9983-a7e6309ce03f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

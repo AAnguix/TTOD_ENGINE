@@ -1,4 +1,4 @@
-#include "ScriptManager.h"
+#include "LuabindManager.h"
 #include <assert.h>
 #include <luabind/luabind.hpp>
 
@@ -6,20 +6,18 @@
 #include <luabind/iterator_policy.hpp>
 
 #include "Engine.h"
-#include "SceneRendererCommands\SceneRendererCommandManager.h"
-#include "Log.h"
-
+#include "Log\Log.h"
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
+#define LUA_STATE CEngine::GetSingleton()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
-CScriptManager::CScriptManager()
-: m_LS(NULL)
+CLuabindManager::CLuabindManager()
+:m_LS(NULL)
 {
 }
 
-CScriptManager::~CScriptManager()
+CLuabindManager::~CLuabindManager()
 {
 	Destroy();	
 }
@@ -72,7 +70,7 @@ int ShowLuaErrorDebugInfo(lua_State* L)
 	return 0;
 }
 
-void CScriptManager::Initialize() 
+void CLuabindManager::Initialize()
 {  
 	m_LS=lua_open();
 	luaopen_base(m_LS);
@@ -92,20 +90,20 @@ void CScriptManager::Initialize()
 	RegisterLUAFunctions();
 } 
 
-void CScriptManager::RunLuaMain()
+void CLuabindManager::RunLuaMain()
 {
 	RunFile("./Data/scripting/LuaMainStartScreen.lua");
 	RunCode("LuaMain()");
 }
 
-void CScriptManager::Destroy() 
+void CLuabindManager::Destroy()
 {  
 	if(m_LS!=NULL)
 	lua_close(m_LS); 
 }  
 
 //Execute code fragment in LUA
-void CScriptManager::RunCode(const std::string &Code) const 
+void CLuabindManager::RunCode(const std::string &Code) const
 {  
 	if(luaL_dostring(m_LS,Code.c_str()))  
 	{   
@@ -117,7 +115,7 @@ void CScriptManager::RunCode(const std::string &Code) const
 }  
 
 //Execute LUA file
-void CScriptManager::RunFile(const std::string &FileName) const 
+void CLuabindManager::RunFile(const std::string &FileName) const
 {  
 	if(luaL_dofile(m_LS, FileName.c_str()))  
 	{   const char *l_Str=lua_tostring(m_LS, -1);   
@@ -127,7 +125,7 @@ void CScriptManager::RunFile(const std::string &FileName) const
 	} 
 }   
 
-void CScriptManager::RegisterLUAFunctions()
+void CLuabindManager::RegisterLUAFunctions()
 {
 	RegisterBase();
 	RegisterSound();
@@ -137,7 +135,7 @@ void CScriptManager::RegisterLUAFunctions()
 	RegisterPhysics();
 }
 
-void CScriptManager::Load(const std::string &XMLFile)
+void CLuabindManager::Load(const std::string &XMLFile)
 {
 
 }

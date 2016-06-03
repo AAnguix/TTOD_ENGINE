@@ -11,8 +11,10 @@ class CThirdPersonCameraController : public CCameraController
 private:
 	float m_YawSpeed, m_PitchSpeed, m_RollSpeed;
 	float m_Speed, m_FastSpeed;
-	float m_Zoom, m_ZoomSpeed;
-	float m_LookAtPitch;
+	
+	float m_Zoom, m_ZoomSpeed, m_MaxZoom, m_MinZoom;
+	
+	float m_LookAtPitch, m_MaxLookAtPitch, m_MinLookAtPitch;
 
 public:
 	CThirdPersonCameraController();

@@ -5,11 +5,9 @@
 
 #include <dinput.h>
 #include <vector>
-#include "Utils\Utils.h"
-
 #include "Input\InputManager.h"
-#include "Input\MouseInput.h"
-#include "Input\KeyBoardInput.h"
+class CMouseInput;
+class CKeyBoardInput;
 
 class CInputManagerImplementation : public CInputManager
 {

@@ -1,4 +1,4 @@
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 
 #include <luabind/luabind.hpp>
 
@@ -7,14 +7,15 @@
 
 #include "Engine.h"
 #include "ISoundManager.h"
+#include "Components\AudioSource.h"
 
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton().GetScriptManager()->GetLuaState()
+#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
 
-void CScriptManager::RegisterSound()
+void CLuabindManager::RegisterSound()
 {
 	module(LUA_STATE)
 	[
@@ -54,6 +55,9 @@ void CScriptManager::RegisterSound()
 		.def("Update", &ISoundManager::Update)
 		.def("Load", &ISoundManager::Load)
 		.def("Reload", &ISoundManager::Reload)
+
+		.def("AddComponent", &ISoundManager::AddComponent)
+		.def("RemoveComponents", &ISoundManager::RemoveComponents)
 
 		.def("LoadSoundBank", &ISoundManager::LoadSoundBank)
 		.def("UnloadSoundBank", &ISoundManager::UnloadSoundBank)

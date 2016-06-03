@@ -1,5 +1,6 @@
 #include "Materials\MaterialManager.h"
 #include "Utils\Utils.h"
+#include "XML\XMLTreeNode.h"
 
 CMaterialManager::CMaterialManager() : m_Filename("")
 {

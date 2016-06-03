@@ -1,14 +1,14 @@
 #include "RenderableObject.h"
-#include "Components\ComponentManager.h"
-#include "Components\Component.h"
-#include <string>
-#include "Components\AnimatorController\AnimatorController.h"
+#include <assert.h>
 
 CRenderableObject::CRenderableObject(const CXMLTreeNode &XMLTreeNode) 
 :CNamed(XMLTreeNode)
 ,C3DElement(XMLTreeNode)
+,m_AudioSource(nullptr)
+,m_AnimatorController(nullptr)
+,m_Script(nullptr)
 {
-	m_ComponentManager= new CComponentManager();
+	
 }
 
 CRenderableObject::CRenderableObject(const std::string &Name, const Vect3f &Position, float Yaw, float Pitch, float Roll)
@@ -20,53 +20,29 @@ CRenderableObject::CRenderableObject(const std::string &Name, const Vect3f &Posi
 
 CRenderableObject::~CRenderableObject()
 {
-	CHECKED_DELETE(m_ComponentManager);
+
 }
 
 void CRenderableObject::Update(float ElapsedTime)
 {
-	if(m_ComponentManager!=NULL)
-	{
-		m_ComponentManager->Update(ElapsedTime);
-	}
-}
-
-bool CRenderableObject::AddComponent(CComponent *Component)
-{
-	return m_ComponentManager->AddComponent(Component);
-}
-
-void CRenderableObject::RemoveComponent(const std::string &ComponentName)
-{
-	m_ComponentManager->RemoveResource(ComponentName);
-}
-
-void CRenderableObject::RemoveComponents()
-{
-	m_ComponentManager->Destroy();
-}
-
-CAnimatorController* CRenderableObject::GetAnimatorController() const
-{
-	return (CAnimatorController*)m_ComponentManager->GetResource("AnimatorController");
-}
-
-bool CRenderableObject::AddLuaComponent(CLUAComponent* LUAComponent)
-{
-	m_LuaComponents.push_back(LUAComponent); 
-	return true;
-}
-
-CLUAComponent* CRenderableObject::GetFirstLuaComponent() const
-{
-	CLUAComponent* l_FirstComponent = m_LuaComponents.size() > 0 ? m_LuaComponents[0]:nullptr;
-	return l_FirstComponent;
-}
-
-void CRenderableObject::RemoveLuaComponents()
-{
-	m_LuaComponents.clear();
+	
 }
 
 CEmptyPointerClass* CRenderableObject::GetThisLuaAddress() const { return (CEmptyPointerClass *)(this); }
+
+CAnimatorController* CRenderableObject::GetAnimatorController() const { return m_AnimatorController; };
+CScript* CRenderableObject::GetScript() const { return m_Script; };
+CAudioSource* CRenderableObject::GetAudioSource() const { return m_AudioSource; };
+void CRenderableObject::SetAudioSource(CAudioSource* AudioSource)
+{
+	m_AudioSource = AudioSource;
+}
+void CRenderableObject::SetScript(CScript* Script)
+{
+	m_Script = Script;
+}
+void CRenderableObject::SetAnimatorController(CAnimatorController* AnimatorController)
+{
+	m_AnimatorController = AnimatorController;
+}
 	

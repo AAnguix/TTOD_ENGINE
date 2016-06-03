@@ -30,7 +30,8 @@ end
 
 function CEnemyComponent:Initialize()
 
-	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
+	local l_ComponentName = self.m_RObject:GetName().."_CharacterCollider"
+	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_ComponentName, self.m_RObject)
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
@@ -40,7 +41,8 @@ function CEnemyComponent:Initialize()
 		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
 	end
 	
-	self.m_Animator = CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
+	l_ACName = self.m_RObject:GetName().."_AnimatorController"
+	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_RObject)
 	
 	g_LogManager:Log("Enemy "..self.m_RObject:GetName().." created...")
 end

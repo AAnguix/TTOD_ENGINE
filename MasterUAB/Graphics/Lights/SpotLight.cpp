@@ -1,5 +1,7 @@
 #include "Lights\SpotLight.h"
 #include "Textures\DynamicTexture.h"
+#include "XML\XMLTreeNode.h"
+#include "Render\RenderManager.h"
 
 CSpotLight::CSpotLight() 
 :m_Angle(0.0f)

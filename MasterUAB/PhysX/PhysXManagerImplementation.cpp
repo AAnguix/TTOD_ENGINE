@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <sstream>
 #include "Engine.h"
-#include "ScriptManager\ScriptManager.h"
+#include "LuabindManager\LuabindManager.h"
 
 static physx::PxDefaultErrorCallback gDefaultErrorCallback;
 static physx::PxDefaultAllocator gDefaultAllocatorCallback;
@@ -138,7 +138,7 @@ void CPhysXManagerImplementation::onWake(physx::PxActor** actors, physx::PxU32 c
 		std::stringstream l_Call;
 		l_Call << "OnWake" << "('" << objectName << "')";
 		std::string l_Code = l_Call.str();
-		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
+		CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
 	}
 }
 
@@ -152,7 +152,7 @@ void CPhysXManagerImplementation::onSleep(physx::PxActor** actors, physx::PxU32 
 		std::stringstream l_Call;
 		l_Call << "OnSleep" << "('" << objectName << "')";
 		std::string l_Code = l_Call.str();
-		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
+		CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
 	}
 }
 
@@ -169,7 +169,7 @@ void CPhysXManagerImplementation::onContact(const physx::PxContactPairHeader& pa
 		std::stringstream l_Call;
 		l_Call << "OnContact" << "('" << objectOneName << "','" << objectTwoName << "')";
 		std::string l_Code = l_Call.str();
-		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
+		CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
 
 		//printf("\"%s\" in contact with \"%s\"",objectOneName.c_str(),objectTwoName.c_str());
 	}
@@ -194,7 +194,7 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 		l_Ss << "OnCollide" << triggerName << "('" << actorName << "')";
 
 		std::string l_Code = l_Ss.str();
-		CEngine::GetSingleton().GetScriptManager()->RunCode(l_Code);
+		CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
 	}
 
 }

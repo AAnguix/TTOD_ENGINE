@@ -1,18 +1,14 @@
 #include "DebugHelperImplementation.h"
-
 #include <cassert>
 #include "Engine.h"
-#include "Log.h"
-#include "Utils\EmptyPointerClass.h"
-#include "ScriptManager\ScriptManager.h"
-
+#include "Log\Log.h"
+#include "LuabindManager\LuabindManager.h"
 #include <luabind/luabind.hpp>
-#include "Materials\Material.h"
-
 #include "Particles\ParticleSystemType.h"
 #include "RenderableObjects\RenderableObject.h"
 #include "StaticMeshes\StaticMesh.h"
 #include "SceneRendererCommands\SceneRendererCommand.h"
+#include "Materials\Material.h"
 
 CDebugHelperImplementation::CDebugHelperImplementation() : m_CurrentBarName("")
 {
@@ -73,7 +69,6 @@ CDebugHelperImplementation::~CDebugHelperImplementation()
 void CDebugHelperImplementation::Log(const std::string& text) const
 {
 	CEngine::GetSingleton().GetLogManager()->Log("DebugHelper: "+text);
-	//OutputDebugString(("LOG: " + text).c_str());
 }
 
 void CDebugHelperImplementation::Render()
@@ -224,7 +219,7 @@ void TW_CALL CDebugHelperImplementation::CallLuaFunction(void *ClientData)
 	//const char *l_Script=(const char *)ClientData;
 	std::string* l_Script = (std::string*)ClientData;
 
-	CEngine::GetSingleton().GetScriptManager()->RunCode(*l_Script);
+	CEngine::GetSingleton().GetLuabindManager()->RunCode(*l_Script);
 }
 
 void TW_CALL CDebugHelperImplementation::CallLuaExtendedFunction(void *ClientData)
@@ -235,23 +230,23 @@ void TW_CALL CDebugHelperImplementation::CallLuaExtendedFunction(void *ClientDat
 
 	if (l_ObjectType == "partycle")
 	{
-		luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CParticleSystemType*)l_ClientData->m_Object);
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CParticleSystemType*)l_ClientData->m_Object);
 	}
 	else if (l_ObjectType  == "material")
 	{
-		luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CMaterial*)l_ClientData->m_Object);
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CMaterial*)l_ClientData->m_Object);
 	}
 	else if (l_ObjectType == "renderable_object")
 	{
-		luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CRenderableObject*)l_ClientData->m_Object);
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CRenderableObject*)l_ClientData->m_Object);
 	}
 	else if (l_ObjectType == "static_mesh")
 	{
-		luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CStaticMesh*)l_ClientData->m_Object);
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CStaticMesh*)l_ClientData->m_Object);
 	}
 	else if (l_ObjectType == "scene_renderer_command")
 	{
-		luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CSceneRendererCommand*)l_ClientData->m_Object);
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CSceneRendererCommand*)l_ClientData->m_Object);
 	}
 
 }
@@ -262,7 +257,7 @@ void TW_CALL CDebugHelperImplementation::CallLuaFunctionChangeTexture(void *Chan
 
 	std::string* l_Texture = (std::string*)l_ClientData->m_Texture;
 																																						//l_Texture->c_str()
-	luabind::call_function<void>(CEngine::GetSingleton().GetScriptManager()->GetLuaState(), l_ClientData->m_Function.c_str(), l_ClientData->m_Material, l_Texture->c_str(), l_ClientData->m_Index);
+	luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), l_ClientData->m_Material, l_Texture->c_str(), l_ClientData->m_Index);
 }
 
 void TW_CALL CDebugHelperImplementation::CopyStdStringToClient(std::string& DestinationClientString, const std::string& SourceLibraryString)
@@ -274,28 +269,20 @@ void CDebugHelperImplementation::ResetButtons()
 {
 	for (size_t i = 0; i < m_LuaParameters.size(); ++i)
 	{
-		CHECKED_DELETE(m_LuaParameters[i]);
+		if (m_LuaParameters[i] != NULL) delete(m_LuaParameters[i]); m_LuaParameters[i] = NULL;
 	}
 	for (size_t i = 0; i < m_LuaExtendedParameters.size(); ++i)
 	{
-		CHECKED_DELETE(m_LuaExtendedParameters[i]);
+		if (m_LuaExtendedParameters[i] != NULL) delete(m_LuaExtendedParameters[i]); m_LuaExtendedParameters[i] = NULL;
 	}
 	for (size_t i = 0; i < m_LuaChangeTextureParameters.size(); ++i)
 	{
-		CHECKED_DELETE(m_LuaChangeTextureParameters[i]);
+		if (m_LuaChangeTextureParameters[i] != NULL) delete(m_LuaChangeTextureParameters[i]); m_LuaChangeTextureParameters[i] = NULL;
 	}
 	m_LuaParameters.clear();
 	m_LuaChangeTextureParameters.clear();
 	m_LuaExtendedParameters.clear();
 }
-
-//void CDebugHelperImplementation::RegisterFloatParameter(const std::string &BarName, const std::string &Name, const std::string &Description)
-//{
-//	float f=1.6f;
-//	void *l_Data=(void *)&f;
-//	
-//	TwAddVarRW(m_Bars[BarName] , Name.c_str(), TW_TYPE_FLOAT, l_Data, Description.c_str());
-//}
 
 void CDebugHelperImplementation::RegisterVariable(SDebugVariable Variable,TwType BarType,const char* Params)
 {
@@ -354,10 +341,6 @@ void CDebugHelperImplementation::RegisterColor32Parameter(const std::string &Par
 
 void CDebugHelperImplementation::RegisterStringParameter(const std::string &ParameterName, CEmptyPointerClass *Data, const std::string &Description)
 {
-	/*TW_TYPE_CDSTRING
-	TW_TYPE_CHAR
-	*/
-	
 	RegisterParameter(TW_TYPE_STDSTRING, ParameterName, Data, Description);
 }
 
@@ -366,27 +349,16 @@ void CDebugHelperImplementation::RegisterPositionOrientationParameter(const std:
 	RegisterParameter(m_PosRotType,ParameterName,Data,Description);
 }
 
-
-
-
 void CDebugHelperImplementation::RegisterLUAButton(const std::string &ButtonName, const std::string &Script)
 {
 	m_LuaParameters.push_back(new std::string(Script));
 
 	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaFunction,(void*)m_LuaParameters[m_LuaParameters.size() - 1],NULL);
 	assert(l_Return == 1);
-	
-	/*m_LuaParameters.push_back(Script);
-	void *l_Data=(void *)m_LuaParameters[m_LuaParameters.size()-1].c_str();
-	TwAddButton(m_Bars[m_CurrentBarName],ButtonName.c_str(),&CDebugHelperImplementation::CallLuaFunction,l_Data,"");*/
-	
 }
 
-
-//std::vector<CDebugHelperImplementation::ClientData*> *l_TTTT;
 void CDebugHelperImplementation::RegisterLUAExtendedButton(const std::string &ButtonName, const std::string &Function, CEmptyPointerClass* Object, const std::string &ObjectType)
 {
-	//l_TTTT = &m_LuaExtendedParameters;
 	m_LuaExtendedParameters.push_back(new ClientData(Function, Object, ObjectType));
 	
 	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaExtendedFunction, (void*)(m_LuaExtendedParameters[m_LuaExtendedParameters.size() - 1]), NULL);

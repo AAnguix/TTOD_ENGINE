@@ -3,6 +3,10 @@
 
 #include <sstream>
 #include "FileUtils.h"
+#include "Components\Collider.h"
+#include "Components\CharacterCollider.h"
+#include "RenderableObjects\MeshInstance.h"
+#include "Animation\AnimatedInstanceModel.h"
 
 class CPhysxManagerImplementation;
 
@@ -40,7 +44,70 @@ CPhysXManager::CPhysXManager()
 
 CPhysXManager::~CPhysXManager()
 {
+	RemoveComponents();
+}
 
+CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CMeshInstance *Owner)
+{
+	bool l_Found = false;
+	CCollider* l_Collider = nullptr;
+	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
+	{
+		if (m_ColliderComponents[i]->GetName() == Name)
+			l_Found = true;
+	}
+	if (!l_Found)
+	{
+		l_Collider = new CCollider(Name, Owner);
+		Owner->SetCollider(l_Collider);
+		m_ColliderComponents.push_back(l_Collider);
+	}
+	else
+	{
+		assert(false);
+		delete(l_Collider); l_Collider = NULL;
+	}
+
+	return l_Collider;
+}
+CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::string &Name, CAnimatedInstanceModel *Owner)
+{
+	bool l_Found = false;
+	CCharacterCollider* l_CharacterCollider = nullptr;
+	for (size_t i = 0; i < m_CharacterColliderComponents.size(); ++i)
+	{
+		if (m_CharacterColliderComponents[i]->GetName() == Name)
+			l_Found = true;
+	}
+	if (!l_Found)
+	{
+		l_CharacterCollider = new CCharacterCollider(Name, Owner);
+		Owner->SetCharacterCollider(l_CharacterCollider);
+		m_CharacterColliderComponents.push_back(l_CharacterCollider);
+	}
+	else
+	{
+		assert(false);
+		delete(l_CharacterCollider); l_CharacterCollider = NULL;
+	}
+
+	return l_CharacterCollider;
+}
+void CPhysXManager::RemoveComponents()
+{
+	for (size_t i = 0; i < m_CharacterColliderComponents.size();++i)
+	{
+		delete m_CharacterColliderComponents[i];
+		m_CharacterColliderComponents[i] = NULL;
+	}
+	m_CharacterColliderComponents.clear();
+
+	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
+	{
+		delete m_ColliderComponents[i];
+		m_ColliderComponents[i] = NULL;
+	}
+	m_ColliderComponents.clear();
 }
 
 void CPhysXManager::RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution)
@@ -601,6 +668,20 @@ void CPhysXManager::Update(float ElapsedTime)
 			m_ActorPositions[index] = CastVec(activeTransforms[i].actor2World.p);
 			m_ActorOrientations[index] = CastQuat(activeTransforms[i].actor2World.q);
 		}
+	}
+
+	UpdateComponents(ElapsedTime);
+}
+
+void CPhysXManager::UpdateComponents(float ElapsedTime)
+{
+	for (size_t i = 0; i < m_CharacterColliderComponents.size(); ++i)
+	{
+		m_CharacterColliderComponents[i]->Update(ElapsedTime);
+	}
+	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
+	{
+		m_ColliderComponents[i]->Update(ElapsedTime);
 	}
 }
 

@@ -1,13 +1,10 @@
 #include "StaticMesh.h"
 #include "Render\RenderManager.h"
 #include "Materials\MaterialManager.h"
-#include "Render\ContextManager.h"
-#include "Materials\Material.h"
 #include "Vertex\VertexTypes.h"
 #include "Engine.h"
 #include "Vertex\RenderableVertexs.h"
 #include "RenderableObjects\RenderableObjectTechnique.h"
-#include <cmath>
 
 CStaticMesh::CStaticMesh(const std::string &Name)
 :m_NumVertexs(0)

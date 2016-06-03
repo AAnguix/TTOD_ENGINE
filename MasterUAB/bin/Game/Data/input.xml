@@ -26,10 +26,12 @@
 	<action name="ON_ALT9_PRESSED" type="KEYBOARD" mode="ON_PRESS" key="9" needs_alt="true"/>  
 	<action name="RELOAD_LUA" type="KEYBOARD" mode="ON_PRESS" key="L" needs_alt="true"/>
 	
-	<action name="PLAYER_WALK_FORWARD" type="KEYBOARD" mode="WHILE_PRESSED" key="W" needs_alt="false"/> 
+	<action name="LOCK_CHARACTER" type="KEYBOARD" mode="ON_PRESS" key="L" needs_alt="true"/>
+	
+	<!-- <action name="PLAYER_WALK_FORWARD" type="KEYBOARD" mode="WHILE_PRESSED" key="W" needs_alt="false"/> 
 	<action name="PLAYER_WALK_BACK" type="KEYBOARD" mode="WHILE_PRESSED" key="S" needs_alt="false"/> 
 	<action name="PLAYER_WALK_RIGHT" type="KEYBOARD" mode="WHILE_PRESSED" key="D" needs_alt="false"/>  
-	<action name="PLAYER_WALK_LEFT" type="KEYBOARD" mode="WHILE_PRESSED" key="A" needs_alt="false"/> 
+	<action name="PLAYER_WALK_LEFT" type="KEYBOARD" mode="WHILE_PRESSED" key="A" needs_alt="false"/>  -->
 	
 	<!-- <action name="PLAYER_WALK_FORWARD" type="KEYBOARD" mode="ON_PRESS" key="W" needs_alt="false"/> 
 	<action name="PLAYER_WALK_FORWARD_END" type="KEYBOARD" mode="ON_RELEASE" key="W" needs_alt="false"/> 
@@ -51,6 +53,7 @@
 	
 	<action name="MOVE_FWD" type="KEYBOARD" mode="WHILE_PRESSED" axis="MOVE_FWD" axis_value="1" triggers_axis="true" key="W" />
 	<action name="MOVE_BACK" type="KEYBOARD" mode="WHILE_PRESSED" axis="MOVE_BACK" axis_value="-1" triggers_axis="true" key="S" />
+	<action name="PRESS_S" type="KEYBOARD" mode="ON_PRESS" key="S"/> 
 	
 	<action name="STRAFE_RIGHT" type="KEYBOARD" mode="WHILE_PRESSED" axis="STRAFE" axis_value="1" triggers_axis="true" key="D" />
 	<action name="STRAFE_LEFT" type="KEYBOARD" mode="WHILE_PRESSED" axis="STRAFE" axis_value="-1" triggers_axis="true" key="A" />

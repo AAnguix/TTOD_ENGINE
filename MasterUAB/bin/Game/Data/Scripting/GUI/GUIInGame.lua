@@ -33,6 +33,8 @@ GRAPHICS_STATS_X_DISPLACEMENT = 0.97
 GRAPHICS_STATS_Y_DISPLACEMENT = 0.08
 GRAPHICS_STATS_Y_OFFSET = 0.025
 
+g_ShowGraphicsStats = true
+
 function UpdateGUI(ElapsedTime)
 	
 	--local l_HealthBarPos = SGUIPosition(50,50,512,128)
@@ -49,24 +51,25 @@ end
 
 function ShowGraphicsStats()
 	
-	local l_FPSPos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("FramesPerSecond","calibri_font",l_FPSPos,"","Fps:"..g_GraphicsStats:GetFps())
-	
-	local l_MillisecondsPerFrameTextPos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+GRAPHICS_STATS_Y_OFFSET,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("MillisecondsPerFrameText","calibri_font",l_MillisecondsPerFrameTextPos,"","Millisecs/frame")
-	
-	local l_MillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*2),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("MillisecondsPerFrame","calibri_font",l_MillisecondsPerFramePos,"","Frame "..Round(g_GraphicsStats:GetMilliSecondsPerFrame(),2))
-	
-	local l_MinMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*3),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("MinMillisecondsPerFrame","calibri_font",l_MinMillisecondsPerFramePos,"","Min "..Round(g_GraphicsStats:GetMinMillisecondsPerFrame(),2))
-	
-	local l_AvgMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*4),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("AvgMillisecondsPerFrame","calibri_font",l_AvgMillisecondsPerFramePos,"","Avg "..Round(g_GraphicsStats:GetAvgMillisecondsPerFrame(),2))
-	
-	local l_MaxMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*5),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("MaxMillisecondsPerFrame","calibri_font",l_MaxMillisecondsPerFramePos,"","Max "..Round(g_GraphicsStats:GetMaxMillisecondsPerFrame(),2))
-	
+	if g_ShowGraphicsStats then
+		local l_FPSPos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoText("FramesPerSecond","calibri_font",l_FPSPos,"","Fps:"..g_GraphicsStats:GetFps())
+		
+		local l_MillisecondsPerFrameTextPos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+GRAPHICS_STATS_Y_OFFSET,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoText("MillisecondsPerFrameText","calibri_font",l_MillisecondsPerFrameTextPos,"","Millisecs/frame")
+		
+		local l_MillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*2),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoText("MillisecondsPerFrame","calibri_font",l_MillisecondsPerFramePos,"","Frame "..Round(g_GraphicsStats:GetMilliSecondsPerFrame(),2))
+		
+		local l_MinMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*3),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoText("MinMillisecondsPerFrame","calibri_font",l_MinMillisecondsPerFramePos,"","Min "..Round(g_GraphicsStats:GetMinMillisecondsPerFrame(),2))
+		
+		local l_AvgMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*4),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoText("AvgMillisecondsPerFrame","calibri_font",l_AvgMillisecondsPerFramePos,"","Avg "..Round(g_GraphicsStats:GetAvgMillisecondsPerFrame(),2))
+		
+		local l_MaxMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*5),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoText("MaxMillisecondsPerFrame","calibri_font",l_MaxMillisecondsPerFramePos,"","Max "..Round(g_GraphicsStats:GetMaxMillisecondsPerFrame(),2))
+	end
 end
 
 function CheckMenu()

@@ -45,6 +45,10 @@ function ReloadLua()
 	ReloadLog()
 	dofile(g_CurrentLuaMainFile)
 	LuaMain()
+	g_ScriptManager:RemoveComponents()
+	g_PhysXManager:RemoveComponents()
+	g_SoundManager:RemoveComponents()
+	g_AnimatorControllerManager:RemoveComponents()
 	g_GameController:Reload()
 end
 
@@ -163,6 +167,5 @@ function ReloadCameras()
 end
 
 function ReloadLog()
-	local l_Engine = CEngine.GetSingleton()
-	l_Engine:GetLogManager():Reload(false)
+	g_LogManager:Reload(false)
 end

@@ -95,6 +95,29 @@ function CDragonComponent:Initialize()
 	--g_LogManager:Log("Dragon "..self.m_RObject:GetName().." created...")
 end
 
+function CDragonComponent:CreatePhysxSqueleton()
+	
+	local l_StaticFriction = 1.0
+	local l_DynamicFriction = 1.0
+	local l_Restitution = 0.5
+	local l_MaterialName = "Dragon_tail_material"
+	g_PhysXManager:RegisterMaterial(l_MaterialName, l_StaticFriction, l_DynamicFriction, l_Restitution);
+	
+	local l_Name = 	self.m_RObject:GetName()
+	local l_Size = Vect3f(3.0,1.0,1.0)
+	local l_Position = Vect3f(0.0,0.0,0.0)
+	local l_Rotation = Quatf(0.0,0.0,0.0,1.0)
+	local l_Group = 1
+	local l_Density = 5.0
+	local l_IsKinematic = true
+	
+	g_PhysXManager:CreateRigidDynamicBox(l_Name.."_tail", l_Size, l_MaterialName, l_Position, l_Rotation, l_Group, l_Density, l_IsKinematic)
+	
+	
+	
+	g_LogManager:Log("Dragon physx squeleton generated...")
+end
+
 function CDragonComponent:SpitFire()
 	--g_LogManager:Log("Escupiendo fuego: "..self.m_FireParticles:GetName())
 	self.m_FireParticles:SetVisible(true)

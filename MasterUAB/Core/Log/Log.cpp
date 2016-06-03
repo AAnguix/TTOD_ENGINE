@@ -1,11 +1,6 @@
-#include "Log.h"
-#include <iostream>
+#include "Log\Log.h"
 #include <ctime>
-#include <time.h>
-#include <errno.h>
-#include <string.h>
-#include <locale.h>
-#include <stdio.h>
+#include <sstream>
 
 CLog::CLog()
 {

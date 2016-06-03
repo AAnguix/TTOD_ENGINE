@@ -1,7 +1,6 @@
 #ifndef _LUACOMPONENT_H
 #define _LUACOMPONENT_H
 
-#include <string>
 #include "Components\Component.h"
 
 class CLUAComponent
@@ -16,6 +15,7 @@ public:
 	virtual float GetTimer() { return m_Timer; };
 	virtual void ResetTimer() { m_Timer = 0.0f; };
 	virtual std::string GetType(){ return m_Type; };
+	virtual void Update(float ElapsedTime){};
 };
 
 #endif

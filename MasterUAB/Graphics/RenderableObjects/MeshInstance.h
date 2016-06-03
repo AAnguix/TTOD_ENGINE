@@ -5,11 +5,14 @@
 class CStaticMesh;
 class CXMLTreeNode;
 class CAnimatedInstanceModel;
+class CCollider;
+
 class CMeshInstance : public CRenderableObject 
 {  
 
 private:   
 	CStaticMesh *m_StaticMesh;  
+	CCollider *m_Collider;
 
 	int m_ParentBoneId;
 	CAnimatedInstanceModel* m_Parent;
@@ -23,6 +26,9 @@ public:
 
 	void SetParent(CAnimatedInstanceModel* Parent, const std::string &BoneName);
 	CStaticMesh* GetStaticMesh() const{ return m_StaticMesh; };
+
+	virtual CCollider* GetCollider() const;
+	virtual void SetCollider(CCollider* CCollider);
 };
 
 #endif

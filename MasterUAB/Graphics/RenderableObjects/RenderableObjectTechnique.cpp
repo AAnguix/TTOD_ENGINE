@@ -1,4 +1,5 @@
 #include "RenderableObjectTechnique.h"
+#include "Effects\EffectTechnique.h"
 
 CRenderableObjectTechnique::CRenderableObjectTechnique(const std::string &Name, CEffectTechnique *EffectTechnique) : CNamed(Name)
 {

@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "RenderableObjects\RenderableObject.h"
 #include <assert.h>
+#include "ISoundManager.h"
 
 CAudioSource::CAudioSource(const std::string &Name, CRenderableObject *Owner)
 :CComponent(Name, Owner)
@@ -10,18 +11,17 @@ CAudioSource::CAudioSource(const std::string &Name, CRenderableObject *Owner)
 
 CAudioSource::~CAudioSource()
 {
+	m_SoundsToPlay.clear();
+	m_Sounds.clear();
 }
 
-CAudioSource* CAudioSource::AddAudioSource(const std::string &Name, CRenderableObject *Owner)
+void CAudioSource::Update(float ElapsedTime)
 {
-	CAudioSource* l_AudioSource = new CAudioSource(Name, Owner);
-
-	if (!Owner->AddComponent(l_AudioSource))
+	for (size_t i = 0; i < m_SoundsToPlay.size();i++)
 	{
-		CHECKED_DELETE(l_AudioSource);
+		CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_SoundsToPlay[i]);
 	}
-
-	return l_AudioSource;
+	m_SoundsToPlay.clear();
 }
 
 void CAudioSource::PlayEvent(const std::string &Key)
@@ -33,7 +33,7 @@ void CAudioSource::PlayEvent(const std::string &Key)
 		{
 			if (m_Sounds[i].first == Key)
 			{
-				CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_Sounds[i].second);
+				m_SoundsToPlay.push_back(m_Sounds[i].second);
 				l_Found = true;
 				i = m_Sounds.size();
 			}

@@ -8,6 +8,7 @@
 #include "ParticleManager.h"
 #include "Camera\CameraControllerManager.h"
 #include "Utils\EmptyPointerClass.h"
+#include "Materials\Material.h"
 
 #define s_epsilon std::pow(1.0f,-10)
 

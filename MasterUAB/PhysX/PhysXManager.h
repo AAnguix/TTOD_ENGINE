@@ -7,6 +7,7 @@
 #include "Math\Vector3.h"
 #include "Math\Quaternion.h"
 #include <assert.h>
+#include <vector>
 
 #define USE_PHYSX_DEBUG 1
 
@@ -45,12 +46,19 @@ namespace physx
 }
 
 struct RaycastData;
+class CCollider;
+class CCharacterCollider;
+class CMeshInstance;
+class CAnimatedInstanceModel;
 
 class CPhysXManager
 {
 
 private:
 	float m_LeftOverSeconds;
+	std::vector<CCollider*> m_ColliderComponents;
+	std::vector<CCharacterCollider*> m_CharacterColliderComponents;
+	void UpdateComponents(float ElapsedTime);
 
 protected:
 	CPhysXManager();
@@ -120,7 +128,9 @@ public:
 	void Update(float ElapsedTime);
 	virtual void Reload();
 
-	/*Testing*/
+	CCollider* AddColliderComponent(const std::string &Name, CMeshInstance *Owner);
+	CCharacterCollider* AddCharacterColliderComponent(const std::string &Name, CAnimatedInstanceModel *Owner);
+	void RemoveComponents();
 
 	/*Static*/
 	void CreateRigidStaticBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);

@@ -3,6 +3,7 @@
 #include "Lights\LightManager.h"
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
+#include "Render\RenderManager.h"
 
 CGenerateShadowMapsSceneRendererCommand::CGenerateShadowMapsSceneRendererCommand(CXMLTreeNode &TreeNode) : CSceneRendererCommand(TreeNode)
 {

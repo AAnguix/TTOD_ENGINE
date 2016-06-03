@@ -3,7 +3,8 @@
 
 #include <map>
 #include <vector>
-#include <cassert>
+//#include <cassert>
+#include <assert.h>
 
 template<class T>
 class CTemplatedVectorMapManager
@@ -17,13 +18,12 @@ public:
 			size_t m_Id;
 			CMapResourceValue(T *Value, size_t Id): m_Value(Value), m_Id(Id){};
 			CMapResourceValue()
-				: m_Value(NULL)
-				, m_Id(0)
+			:m_Value(NULL)
+			,m_Id(0)
 			{};
 	};
 
 	typedef std::vector<T *> TVectorResources;
-
 	typedef std::map<std::string, CMapResourceValue> TMapResources;
 
 protected:
@@ -110,7 +110,6 @@ protected:
 		}
 
 		TMapResources & GetResourcesMap(){return m_ResourcesMap;}
-
 		TVectorResources & GetResourcesVector(){return m_ResourcesVector;}
 };
 

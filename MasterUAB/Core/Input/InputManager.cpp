@@ -13,7 +13,6 @@ public:
 
 static CDummyInputManager s_DummyInputManager;
 
-
 CInputManager* CInputManager::GetInputManager()
 {
 	return s_CurrentInputManager;

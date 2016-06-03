@@ -1,29 +1,22 @@
 #include "Animation\AnimatedInstanceModel.h"
-#include "XML\XMLTreeNode.h"
-#include "Render\RenderManager.h"
-#include "Animation\AnimatedCoreModel.h"
-#include "Utils\Utils.h"
-#include "Materials\Material.h"
-#include "Vertex\RenderableVertexs.h"
-#include "Effects\EffectManager.h"
 
-#include "cal3d\coresubmesh.h"
+#include "cal3d\coremodel.h"
+#include "cal3d\hardwaremodel.h"
+#include "cal3d\model.h"
 #include "cal3d\mixer.h"
 #include "cal3d\animation.h"
 #include "cal3d\skeleton.h"
 #include "cal3d\bone.h"
 
+#include "XML\XMLTreeNode.h"
+#include "Materials\Material.h"
+#include "Vertex\RenderableVertexs.h"
 #include "Vertex\VertexTypes.h"
 #include "Engine.h"
-
 #include "Animation\AnimatedModelManager.h"
 #include "Animation\tick.h"
 #include "Textures\TextureManager.h"
-
 #include "RenderableObjects\RenderableObjectTechnique.h"
-
-
-#include "Components\ComponentManager.h"
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 :CRenderableObject(Name, Position, Yaw, Pitch, Roll)
@@ -31,6 +24,7 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(const std::string &Name, const st
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
+,m_CharacterCollider(nullptr)
 {
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(ModelName));
 }
@@ -41,6 +35,7 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
+,m_CharacterCollider(nullptr)
 {
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(TreeNode.GetPszProperty("model_name")));
 }
@@ -57,6 +52,8 @@ void CAnimatedInstanceModel::Destroy()
 	CHECKED_DELETE(m_CalHardwareModel);
 	CHECKED_DELETE(m_RenderableVertexs);
 }
+
+bool s_Update = true;
 
 void CAnimatedInstanceModel::Initialize(CAnimatedCoreModel *AnimatedCoreModel)
 {
@@ -124,10 +121,7 @@ void CAnimatedInstanceModel::Initialize(CAnimatedCoreModel *AnimatedCoreModel)
 }
 
 void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
-{
-	//m_Position=CEngine::GetSingleton().GetPhysXManager()->GetActorPosition(m_Name); /*TODO VER SI FUNCIONA*/
-	m_ComponentManager->Render(*RenderManager);
-	
+{	
 	//CalBoundingBox l_BoundingBox = m_CalModel->getBoundingBox();
 	//CalVector* l_CalVector[8];
 
@@ -173,18 +167,10 @@ Mat44f CAnimatedInstanceModel::GetBoneTransformationMatrix(const int BoneID) con
 	return l_BoneTransformation;
 }
 
-bool m_Update = true;
-
 void CAnimatedInstanceModel::Update(float ElapsedTime)
 {
-	if(m_ComponentManager!=NULL)
-	{
-		m_ComponentManager->Update(ElapsedTime);
-	}
-	if (m_Update)
+	if (s_Update)
 		m_CalModel->update(ElapsedTime);
-	else
-		m_CalModel->update(0.0f);
 }
 
 void CAnimatedInstanceModel::ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget, bool AutoLock)
@@ -264,35 +250,13 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 void CAnimatedInstanceModel::LoadMaterials()
 {
 	m_Materials = m_AnimatedCoreModel->GetMaterials();
-	/*int materialId;
-	for(materialId = 0; materialId < m_AnimatedCoreModel->GetCoreModel()->getCoreMaterialCount(); ++materialId)
-	{
-	CalCoreMaterial *pCoreMaterial;
-	pCoreMaterial =  m_AnimatedCoreModel->GetCoreModel()->getCoreMaterial(materialId);
+}
 
-	int mapId;
-	for(mapId = 0; mapId < pCoreMaterial->getMapCount(); ++mapId)
-	{
-	//std::string strFilename;
-	//strFilename = pCoreMaterial->getMapFilename(mapId);
-
-	CMaterial* l_Material = CEngine::GetSingleton().GetMaterialManager()->GetResource(pCoreMaterial->getName());
-	if(l_Material!=NULL)
-	{
-	m_Materials.push_back(l_Material);
-	}else
-	{
-	CHECKED_DELETE(l_Material)
-	}
-	//CTexture *l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(strFilename);
-	//m_Textures.push_back(l_Texture);
-	//CEngine::GetSingleton().GetMaterialManager()->AddResource("",new CMaterial());
-
-	//LPDIRECT3DTEXTURE9 texture;
-	//texture = loadTexture(strFilename);
-	//pCoreMaterial->setMapUserData(mapId, (Cal::UserData)texture);
-	}
-	}
-
-	m_CalModel->setMaterialSet(0);*/
+CCharacterCollider* CAnimatedInstanceModel::GetCharacterCollider() const
+{
+	return m_CharacterCollider;
+}
+void CAnimatedInstanceModel::SetCharacterCollider(CCharacterCollider* CharacterCollider)
+{
+	m_CharacterCollider = CharacterCollider;
 }

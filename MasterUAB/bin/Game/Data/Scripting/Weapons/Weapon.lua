@@ -6,7 +6,8 @@ function CWeaponComponent:__init(ComponentType, ParentRObject, ParentBoneName, M
 	self.m_Damage = Damage
 	self.m_Type = WeaponType
 	self.m_BoneID = self.m_ParentRObject:GetAnimatedCoreModel():GetBoneId(ParentBoneName)
-	--self.m_MeshRObject:SetParent(m_ParentRObject,ParentBoneName)
+	self.m_MeshRObject:SetParent(self.m_ParentRObject,ParentBoneName)
+	g_LogManager:Log("Weapon created")
 end
 
 -- function CWeaponComponent:Initialize(ParentBoneName)
@@ -15,6 +16,7 @@ end
 
 function CWeaponComponent:Update(ElapsedTime)
 	-- g_RenderManager:GetContextManager:SetWorldMatrix(self:GetWeaponTransform())
+	g_LogManager:Log("Actualizando arma")
 end
 
 function CWeaponComponent:GetWeaponTransform()
