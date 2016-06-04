@@ -17,6 +17,7 @@ using namespace luabind;
 #define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
 #define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
+
 void CLuabindManager::RegisterPhysics()
 {
 	module(LUA_STATE) 
@@ -29,36 +30,34 @@ void CLuabindManager::RegisterPhysics()
 		.def("GetActorPosition", &CPhysXManager::GetActorPosition)
 		.def("GetActorOrientation", &CPhysXManager::GetActorOrientation)
 		.def("GetActorPositionAndOrientation", &CPhysXManager::GetActorPositionAndOrientation)
-		.def("SetShapeAsTrigger", &CPhysXManager::SetShapeAsTrigger)
+	
 		.def("Raycast", &CPhysXManager::Raycast)
 		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Vect3f&))&CPhysXManager::MoveKinematicActor)
 		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Quatf&))&CPhysXManager::MoveKinematicActor)
 		.def("MoveKinematicActor", (void(CPhysXManager::*)(const std::string&, const Vect3f&, const Quatf&))&CPhysXManager::MoveKinematicActor)
 		.def("Reload", &CPhysXManager::Reload)
 		.def("DisplacementCharacterController", &CPhysXManager::DisplacementCharacterController)
-		.def("RegisterMaterial", &CPhysXManager::RegisterMaterial)
+		
 		.def("SetMaterialStaticFriction", &CPhysXManager::SetMaterialStaticFriction)
 		.def("SetMaterialDynamicFriction", &CPhysXManager::SetMaterialDynamicFriction)
 		.def("SetMaterialRestitution", &CPhysXManager::SetMaterialRestitution)
 
-		.def("CreateRigidStaticBox", &CPhysXManager::CreateRigidStaticBox)
-		.def("CreateRigidStaticSphere", &CPhysXManager::CreateRigidStaticSphere)
-		.def("CreateRigidStaticCapsule", &CPhysXManager::CreateRigidStaticCapsule)
-		.def("CreateRigidStaticPlane", &CPhysXManager::CreateRigidStaticPlane)
-		.def("CreateRigidStaticConvexMesh", &CPhysXManager::CreateRigidStaticConvexMesh)
-		.def("CreateRigidStaticTriangleMesh", &CPhysXManager::CreateRigidStaticTriangleMesh)
-
-		.def("CreateRigidDynamicBox", &CPhysXManager::CreateRigidDynamicBox)
-		.def("CreateRigidDynamicSphere", &CPhysXManager::CreateRigidDynamicSphere)
-		.def("CreateRigidDynamicCapsule", &CPhysXManager::CreateRigidDynamicCapsule)
-		.def("CreateRigidDynamicConvexMesh", &CPhysXManager::CreateRigidDynamicConvexMesh)
+		/*.def("CreateBox", &CPhysXManager::CreateBox)
+		.def("CreateSphere", &CPhysXManager::CreateSphere)
+		.def("CreateCapsule", &CPhysXManager::CreateCapsule)
+		.def("CreatePlane", &CPhysXManager::CreatePlane)
+		.def("CreateConvexMesh", &CPhysXManager::CreateConvexMesh)
+		.def("CreateTriangleMesh", &CPhysXManager::CreateTriangleMesh)*/
+		.def("SetShapeAsTrigger", &CPhysXManager::SetShapeAsTrigger)
+		/*.def("CreateBoxTrigger", &CPhysXManager::CreateBoxTrigger)
+		.def("CreateSphereTrigger", &CPhysXManager::CreateSphereTrigger)*/
 
 		.def("AddColliderComponent", &CPhysXManager::AddColliderComponent)
 		.def("AddCharacterColliderComponent", &CPhysXManager::AddCharacterColliderComponent)
-		
+		.def("RemoveComponents", &CPhysXManager::RemoveComponents)
 		//.def("AddComponent", (CCollider*(CPhysXManager::*)(const std::string&, CMeshInstance*))&CPhysXManager::AddComponent)
 		//.def("AddComponent", (CCharacterCollider*(CPhysXManager::*)(const std::string&, CAnimatedInstanceModel*))&CPhysXManager::AddComponent)
-		.def("RemoveComponents", &CPhysXManager::RemoveComponents)
+		
 
 		//.def("DisplacementCharacterController2", &CPhysXManager::DisplacementCharacterController2)
 	];

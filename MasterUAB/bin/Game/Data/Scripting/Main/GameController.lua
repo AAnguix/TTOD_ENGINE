@@ -2,6 +2,8 @@ dofile("./Data/Scripting/Weapons/DamageCalculator.lua")
 
 class 'CGameController'
 
+g_Weapon = nil
+
 function CGameController:__init()
 	self.m_Entities={}
 	self.m_Filename = ""
@@ -100,7 +102,9 @@ function CGameController:LoadWeapon(TreeNode, EnemyComponent)
 		local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)
 													--ComponentType, ParentRObject, MeshRObject, Damage, WeaponType)
 		local l_WeaponComponent = CWeaponComponent("weapon",l_Parent, l_BoneName, l_WeaponRObject, l_Damage, l_WeaponType)
-		--table.insert(self.m_Entities,l_WeaponComponent)
+		
+		g_Weapon = l_WeaponComponent
+		-- table.insert(self.m_Entities,l_WeaponComponent)
 		local l_ComponentName = l_WeaponRObject:GetName().."_Script"
 		g_ScriptManager:AddComponent(l_ComponentName,l_WeaponRObject,l_WeaponComponent)
 		EnemyComponent:SetWeapon(l_ArmorComponent)

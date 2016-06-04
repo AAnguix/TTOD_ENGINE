@@ -24,6 +24,7 @@
 
 /*Graphics*/
 #include "Render\RenderManager.h"
+#include "Render\DebugRender.h"
 #include "Render\GraphicsStats.h"
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "Camera\Camera.h"
@@ -87,6 +88,14 @@ void CLuabindManager::RegisterRender()
 		.def("AddRenderableObjectToRenderList", &CRenderManager::AddRenderableObjectToRenderList)
 		.def("Render", &CRenderManager::Render)
 		.def("GetContextManager", &CRenderManager::GetContextManager)
+		.def("GetDebugRender", &CRenderManager::GetDebugRender)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CDebugRender>("CDebugRender")
+		.def(constructor<>())
+		.def("GetAxis", &CDebugRender::GetAxis)
 	];
 
 	module(LUA_STATE)
@@ -159,6 +168,7 @@ void CLuabindManager::RegisterAnimations()
 		.def("IsCycleAnimationActive", &CAnimatedInstanceModel::IsCycleAnimationActive)
 		.def("IsActionAnimationActive", &CAnimatedInstanceModel::IsActionAnimationActive)
 		.def("GetCharacterCollider", &CAnimatedInstanceModel::GetCharacterCollider)
+		.def("GetBoneTransformationMatrix", &CAnimatedInstanceModel::GetBoneTransformationMatrix)
 	];
 
 	module(LUA_STATE)
@@ -938,6 +948,7 @@ void CLuabindManager::RegisterRenderableObjects()
 		.def("Render", &CMeshInstance::Render)
 		.def("SetParent", &CMeshInstance::SetParent)
 		.def("GetCollider", &CMeshInstance::GetCollider)
+		.def("GetStaticMesh", &CMeshInstance::GetStaticMesh)
 	];
 
 	//GUIA TEMPLATED VECTOR
@@ -972,7 +983,7 @@ void CLuabindManager::RegisterRenderableObjects()
 	module(LUA_STATE)
 	[
 		class_<CStaticMesh, CNamed>("CStaticMesh")
-		.def(constructor<const std::string>())
+		.def(constructor<const CXMLTreeNode&>())
 		.def("Load", &CStaticMesh::Load)
 		.def("Reload", &CStaticMesh::Reload)
 		.def("Render", &CStaticMesh::Render)

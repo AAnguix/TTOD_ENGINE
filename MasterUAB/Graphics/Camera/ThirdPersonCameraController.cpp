@@ -4,6 +4,7 @@
 #include "Engine.h"
 #include "RenderableObjects\LayerManager.h"
 #include "Animation\AnimatedInstanceModel.h"
+#include "PhysXManager.h"
 
 const float YAW_SPEED = 1.0f;
 const float PITCH_SPEED = 60.0f;
@@ -34,6 +35,8 @@ CThirdPersonCameraController::CThirdPersonCameraController()
 ,m_Zoom(ZOOM)
 ,m_ZoomSpeed(ZOOM_SPEED)
 ,m_LookAtPitch(LOOK_AT_PITCH)
+,m_PlayerPos(Vect3f(0.0, 0.0, 0.0))
+,m_NewCameraPosition(Vect3f(0.0, 0.0, 0.0))
 {
 }
 
@@ -51,8 +54,13 @@ CThirdPersonCameraController::CThirdPersonCameraController(CXMLTreeNode &TreeNod
 ,m_LookAtPitch(TreeNode.GetFloatProperty("look_at_pitch", LOOK_AT_PITCH))
 ,m_MaxLookAtPitch(TreeNode.GetFloatProperty("max_look_at_pitch", MAX_PITCH))
 ,m_MinLookAtPitch(TreeNode.GetFloatProperty("min_look_at_pitch", MIN_PITCH))
+,m_PlayerPos(Vect3f(0.0, 0.0, 0.0))
+,m_NewCameraPosition(Vect3f(0.0, 0.0, 0.0))
 {
-	
+	/*CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial("Camera_Mat", 30.0, 40.0, 0.0);
+	Quatf l_QuatCamera = Quatf(0.0, 0.0, 0.0, 1.0);
+	CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicSphere("CamPhysX", 0.1, "Camera_Mat", m_NewCameraPosition, l_QuatCamera, 0, 1.0, true);
+	CEngine::GetSingleton().GetPhysXManager()->MoveKinematicActor("CamPhysX", m_NewCameraPosition);*/
 }
 
 CThirdPersonCameraController::~CThirdPersonCameraController()
@@ -80,6 +88,41 @@ void CThirdPersonCameraController::Move(float Strafe, float Forward, bool Speed,
 		l_AddPos *= l_ConstantSpeed;
 		m_Position += l_AddPos;
 	}
+}
+
+void CThirdPersonCameraController::Update(float ElapsedTime)
+{
+	m_CurrentTime += ElapsedTime;
+	m_PlayerPos = m_Position;
+
+	CRenderableObject* l_Player = CEngine::GetSingleton().GetLayerManager()->GetPlayer();
+	assert(l_Player != nullptr);
+
+	if (l_Player != nullptr)
+	{
+		m_PlayerPos = l_Player->GetPosition();
+		m_PlayerPos.y = m_PlayerPos.y + Y_STRAFE;
+	}
+
+	Vect3f l_Direction;
+	l_Direction = GetDirection();
+	Vect3f l_Position = m_PlayerPos - l_Direction;
+	l_Position.y = l_Position.y + m_LookAtPitch;
+	std::vector<Vect3f> l_FrustumCorners = CalculateFrustrumCorners(l_Position, ZNEAR);
+	m_NewCameraPosition = CameraCollisionZoom(l_Position, m_PlayerPos, 0.1f, l_FrustumCorners);
+}
+
+void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
+{
+	//CEngine::GetSingleton().GetPhysXManager()->MoveKinematicActor("CamPhysX", Camera->GetPosition());
+	Camera->SetFOV(FOV);
+	Camera->SetAspectRatio(ASPECT_RATIO);
+	Camera->SetPosition(m_NewCameraPosition);
+	Camera->SetLookAt(m_PlayerPos);
+	Camera->SetUp(GetUp());
+	Camera->SetZNear(ZNEAR);
+	Camera->SetZFar(ZFAR);
+	Camera->SetMatrixs();
 }
 
 void CThirdPersonCameraController::MoveUpDown(float Movement, bool Speed, float ElapsedTime)
@@ -112,62 +155,14 @@ void CThirdPersonCameraController::AddPitch(float Radians)
 	CCameraController::AddPitch(Radians*m_PitchSpeed);
 }
 
-void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
-{
-	Vect3f l_PlayerPos = m_Position;
-
-	CRenderableObject* l_Player = CEngine::GetSingleton().GetLayerManager()->GetPlayer();
-	assert(l_Player != nullptr);
-
-	if (l_Player != nullptr)
-	{
-		l_PlayerPos = l_Player->GetPosition();
-		l_PlayerPos.y = l_PlayerPos.y + Y_STRAFE;
-	}
-	Vect3f l_Direction;
-
-	l_Direction = GetDirection();
-	Vect3f l_Position = l_PlayerPos - l_Direction;
-	l_Position.y = l_Position.y + m_LookAtPitch;
-
-	Camera->SetFOV(FOV);
-	Camera->SetAspectRatio(ASPECT_RATIO);
-	Camera->SetPosition(l_Position);
-	Camera->SetLookAt(l_PlayerPos);
-	Camera->SetUp(GetUp());
-	Camera->SetZNear(ZNEAR);
-	Camera->SetZFar(ZFAR);
-	Camera->SetMatrixs();
-
-}
-
 Vect3f CThirdPersonCameraController::GetDirection() const
 {
-	//return Vect3f(cos(m_Yaw)*cos(m_Pitch), sin(m_Pitch), sin(m_Yaw)*cos(m_Pitch));
-	//return Vect3f(m_Zoom*cos(m_Yaw)*cos(m_Pitch), m_Zoom*sin(m_Pitch), m_Zoom*sin(m_Yaw)*cos(m_Pitch));
 	Vect3f l_Direction = CCameraController::GetForward();
 	l_Direction.x = m_Zoom*l_Direction.x;
 	l_Direction.y = m_Zoom*l_Direction.y;
 	l_Direction.z = m_Zoom*l_Direction.z;
 	return l_Direction;
-	//return Vect3f(m_Zoom*-cos(m_Pitch)*sin(m_Yaw), m_Zoom*sin(m_Pitch), m_Zoom*cos(m_Pitch)*cos(m_Yaw));
-
-	//return Vect3f(m_Zoom*-cos(m_Pitch)*sin(m_Yaw), m_Zoom*sin(m_Pitch), m_Zoom*cos(m_Pitch)*cos(m_Yaw));
-
-	//return Vect3f(m_Zoom*-cos(m_Pitch)*sin(0.0), m_Zoom*sin(0.0), m_Zoom*cos(0.0)*cos(m_Yaw));
-	//VECTOR3D(-cos(m_pitch * M_PI / 180) * sin(m_yaw * M_PI / 180), sin(m_pitch * M_PI / 180), cos(m_pitch * M_PI / 180) * cos(m_yaw * M_PI / 180));
-
-
 }
-
-
-
-//void CThirdPersonCameraController::Update(Vect3f Rotation)
-//{
-//	AddYaw(Rotation.x);
-//	//AddPitch(Rotation.y*1.0f);
-//	//AddZoom(-Rotation.z*2.0f);
-//}
 
 void CThirdPersonCameraController::AddZoom(float Zoom)
 {
@@ -220,5 +215,90 @@ float CThirdPersonCameraController::GetPlayerCameraAngleDif(Vect3f PlayerForward
 		angle = angle*-1;
 
 	return angle;
+}
 
+std::vector<Vect3f> CThirdPersonCameraController::CalculateFrustrumCorners(Vect3f CameraPosition, float Distance) const
+{
+	Vect3f CamForward = CCameraController::GetForward();
+	Vect3f CamUp = CCameraController::GetUp();
+	Vect3f CamRight = CCameraController::GetRight();
+	//Original
+	float HalfFOV = FOV*0.5f;
+	float l_Height = tan(HalfFOV)* Distance;
+	float l_Width = l_Height * ASPECT_RATIO;
+
+
+	std::vector<Vect3f> l_FrustumCorners;
+	//Vect3f Center = CameraPosition + CamForward * Distance; 
+	Vect3f Center = CameraPosition - CamForward; //OPCION 2 ESTO ES PARA TENER UN POCO DE MAS ESPACIO Y CALCULAR DETRAS DE LA CAMARA
+	l_FrustumCorners.push_back(Center);
+
+	Vect3f BottomRight = Center + (CamRight * l_Width) - (CamUp*l_Height);
+	l_FrustumCorners.push_back(BottomRight);
+
+	Vect3f BottomLeft = Center - (CamRight * l_Width) - (CamUp*l_Height);
+	l_FrustumCorners.push_back(BottomLeft);
+
+	Vect3f TopRight = Center + (CamRight * l_Width) + (CamUp*l_Height);
+	l_FrustumCorners.push_back(TopRight);
+
+	Vect3f TopLeft = Center - (CamRight * l_Width) + (CamUp*l_Height);
+	l_FrustumCorners.push_back(TopLeft);
+
+	return l_FrustumCorners;
+}
+
+Vect3f CThirdPersonCameraController::CameraCollisionZoom(const Vect3f& camPos, const Vect3f& targetPos, float minOffsetDist, std::vector<Vect3f> frustumNearCorners) const
+{
+	float l_lengthRayCast;
+
+	Vect3f l_Dist = targetPos - camPos;
+	float offsetDist = l_Dist.Length();
+
+	float raycastLength = offsetDist - minOffsetDist;
+	if (raycastLength < 0.f)
+	{
+		// camera is already too near the lookat target
+		return camPos;
+	}
+
+	Vect3f camOut = targetPos - camPos;
+	camOut.Normalize();
+	Vect3f nearestCamPos = targetPos - camOut * minOffsetDist;
+	float minHitFraction = 1.f;
+
+	for (size_t i = 0; i < frustumNearCorners.size(); i++)
+	{
+		Vect3f corner = frustumNearCorners[i];
+		Vect3f DistanciaEntrePuntos = nearestCamPos - frustumNearCorners[i];
+		l_lengthRayCast = DistanciaEntrePuntos.Length();
+		/*Vect3f offsetToCorner = corner - camPos;
+		Vect3f rayStart = nearestCamPos + offsetToCorner;
+		Vect3f rayEnd = corner;*/
+		// a result between 0 and 1 indicates a hit along the ray segment
+
+		//CPhysXManager::SRaycastData* RayResult = new CPhysXManager::SRaycastData;
+
+		//bool l_rayCast = CEngine::GetSingleton().GetPhysXManager()->Raycast(rayStart, rayEnd, 0, RayResult);
+		//float hitFraction = RayResult->m_Distance;
+		//minHitFraction = std::fmin(hitFraction, minHitFraction);
+		float l_rayCast = CEngine::GetSingleton().GetPhysXManager()->CameraRaycast(nearestCamPos, corner, l_lengthRayCast);
+		float l_rayCastResult = l_rayCast / l_lengthRayCast;
+
+		//float l_rayCast = CEngine::GetSingleton().GetPhysXManager()->Raycast2(rayStart, rayEnd, raycastLength);
+		//float l_rayCast = CEngine::GetSingleton().GetPhysXManager()->Raycast2(frustumNearCorners[i], nearestCamPos, l_lengthRayCast);
+		//minHitFraction = std::fmin(l_rayCast, minHitFraction);
+
+		minHitFraction = std::fmin(l_rayCastResult, minHitFraction);
+	}
+
+	if (minHitFraction < 1.f)
+	{
+		Vect3f l_NewCamPos = nearestCamPos - camOut * (l_lengthRayCast * minHitFraction); //raycastLength o l_lengthRayCast Cambiado
+		return l_NewCamPos;
+	}
+	else
+	{
+		return camPos;
+	}
 }

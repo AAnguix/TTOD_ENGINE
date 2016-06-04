@@ -15,24 +15,20 @@ end
 -- end
 
 function CWeaponComponent:Update(ElapsedTime)
-	-- g_RenderManager:GetContextManager:SetWorldMatrix(self:GetWeaponTransform())
+	self:SetWeaponTransform()
 	g_LogManager:Log("Actualizando arma")
 end
 
-function CWeaponComponent:GetWeaponTransform()
-	-- local l_TransformMatrix = Mat44f()
-	-- local l_ParentTransform = self:GetParentRObject():GetTransform()
-	-- local l_BoneTransform = self:GetParentRObject():GetBoneTransformationMatrix(self.m_BoneID)
-	-- local l_WeaponLocalTransform = self.m_MeshRObject:GetTransform()
+function CWeaponComponent:SetWeaponTransform()
+	-- local l_BoneTransform = self.m_ParentRObject:GetBoneTransformationMatrix(self.m_BoneID)
+	-- local l_ParentTransform = self.m_ParentRObject:GetTransform()
+		
+	-- g_ContextManager:SetWorldMatrix(l_BoneTransform*l_ParentTransform)
+	--g_ContextManager:Draw(g_RenderManager:GetDebugRender():GetAxis())
 	
-	-- l_TransformMatrix = l_WeaponLocalTransform * l_BoneTransform * l_ParentTransform
-	
-	-- return l_TransformMatrix
-end
-
-function CWeaponComponent:DrawAxis()
-	-- g_ContextManager:SetWorldMatrix(self:GetWeaponTransform());
-	-- g_ContextManager:Draw(GetAxis());
+		--ChildGetTransform	 --self.m_MeshRObject:GetTransform()*l_BoneTransform*l_ParentTransform
+	-- g_ContextManager:SetWorldMatrix(self.m_MeshRObject:GetTransform()*l_BoneTransform*l_ParentTransform);
+	-- self.m_MeshRObject:GetStaticMesh():Render(g_RenderManager);
 end
 
 function CWeaponComponent:GetDamage()

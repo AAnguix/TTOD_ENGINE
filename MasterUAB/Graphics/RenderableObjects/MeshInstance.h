@@ -24,6 +24,8 @@ public:
 	void Render(CRenderManager* RenderManager);
 	TRenderableObjectType GetClassType() const{ return TRenderableObjectType::MESH_INSTANCE; };
 
+	CAnimatedInstanceModel* GetParent() const { return m_Parent; };
+	int GetParentBoneID() const { return m_ParentBoneId; };
 	void SetParent(CAnimatedInstanceModel* Parent, const std::string &BoneName);
 	CStaticMesh* GetStaticMesh() const{ return m_StaticMesh; };
 

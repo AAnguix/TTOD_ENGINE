@@ -113,6 +113,9 @@ void CLuabindManager::RegisterBase()
 		.def("GetRollLuaAddress", &C3DElement::GetRollLuaAddress)
 		.def("GetPositionLuaAddress", &C3DElement::GetPositionLuaAddress)
 		.def("GetScaleLuaAddress", &C3DElement::GetScaleLuaAddress)
+		
+		.def("ChildGetTransform", &C3DElement::ChildGetTransform)
+		
 	];
 	
 	module(LUA_STATE)

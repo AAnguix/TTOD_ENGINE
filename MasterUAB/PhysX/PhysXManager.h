@@ -60,21 +60,40 @@ private:
 	std::vector<CCharacterCollider*> m_CharacterColliderComponents;
 	void UpdateComponents(float ElapsedTime);
 
+	physx::PxShape* GetShape(const std::string &ShapeName);
+
+	enum Groups
+	{
+		GROUP1 = (1 << 0),
+		GROUP2 = (1 << 1),
+		GROUP3 = (1 << 2),
+		GROUP4 = (1 << 3),
+		GROUP5 = (1 << 4),
+		GROUP6 = (1 << 5),
+		GROUP7 = (1 << 6),
+		GROUP8 = (1 << 7),
+	};
+	Groups GetGroup(const std::string &Group);
+
 protected:
 	CPhysXManager();
 
 	physx::PxFoundation *m_Foundation;
 	physx::PxPhysics *m_PhysX;
 
-# if USE_PHYSX_DEBUG
-	physx::PxVisualDebuggerConnection *m_DebugConnection;
-# endif
+	# if USE_PHYSX_DEBUG
+		physx::PxVisualDebuggerConnection *m_DebugConnection;
+	# endif
 
+	physx::PxMaterial* GetMaterial(const std::string &MaterialName);
+
+	/*Physx API*/
 	physx::PxDefaultCpuDispatcher *m_Dispatcher;
 	physx::PxScene *m_Scene;
 	physx::PxCooking *m_Cooking;
 	physx::PxControllerManager *m_ControllerManager;
 
+	/*Actors*/
 	std::map<std::string, physx::PxMaterial*> m_Materials;
 	std::map<std::string, size_t> m_ActorIndexs;
 	std::vector<std::string> m_ActorNames;
@@ -83,15 +102,19 @@ protected:
 	std::vector<physx::PxActor*> m_Actors;
 	std::map<std::string, physx::PxController*> m_CharacterControllers;
 
+	/*Shared Data*/
+	std::map<std::string, physx::PxShape*> m_Shapes;
 	std::map<std::string, physx::PxConvexMesh*> m_ConvexMeshes;
 	std::map<std::string, physx::PxTriangleMesh*> m_TriangleMeshes;
-	
 	physx::PxConvexMesh* GetConvexMesh(const std::string &ConvexMeshName, physx::PxDefaultMemoryInputData MemoryInputData);
 	physx::PxTriangleMesh* GetTriangleMesh(const std::string &TriangleMeshName, physx::PxDefaultMemoryInputData MemoryInputData);
+	physx::PxShape* GenerateShape(const std::string &ShapeName, const physx::PxGeometry &Geometry, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 
-	physx::PxConvexMesh*  CreateConvexMesh(const std::string &CoreName, std::vector<Vect3f> Vertices);
-	physx::PxTriangleMesh*  CreateTriangleMesh(const std::string &CoreName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices);
+	physx::PxMaterial* RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution);
 
+	/*Cooks meshes*/
+	physx::PxConvexMesh* CookConvexMesh(const std::string &CoreName, std::vector<Vect3f> Vertices);
+	physx::PxTriangleMesh* CookTriangleMesh(const std::string &CoreName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices);
 	void WriteCookingDataToFile(const std::string &FileName, void *Data, unsigned int DataSize);
 	void ReadCookingDataFromFile(const std::string &FileName, void **Data, unsigned int &DataSize);
 	/*physx::PxDefaultMemoryOutputStream ReadCookingDataFromFile(const std::string &FileName);*/
@@ -109,6 +132,7 @@ public:
 		float m_Distance;
 		std::string m_ActorName;
 	};
+	float CameraRaycast(const Vect3f& Origin, const Vect3f& End, const float& Length);
 
 	struct SActorData
 	{
@@ -128,56 +152,42 @@ public:
 	void Update(float ElapsedTime);
 	virtual void Reload();
 
+	/*Components*/
 	CCollider* AddColliderComponent(const std::string &Name, CMeshInstance *Owner);
 	CCharacterCollider* AddCharacterColliderComponent(const std::string &Name, CAnimatedInstanceModel *Owner);
 	void RemoveComponents();
 
-	/*Static*/
-	void CreateRigidStaticBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticPlane(const std::string &Name, const Vect3f &Normal, float Distance, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	void CreateRigidStaticTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group);
+	/*Actors*/
+	bool CreateStaticActor(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Position, const Quatf &Orientation);
+	bool CreateDynamicActor(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Position, const Quatf &Orientation, float Density, bool IsKinematic);
+	size_t AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor);
+	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation);
+	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidBody* Body, Vect3f Position, Quatf Orientation, float Density, bool IsKinematic);
+	bool RemoveActor(const std::string &ActorName);
 
-	/*Dynamic*/
-	void CreateRigidDynamicBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-	void CreateRigidDynamicSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-	void CreateRigidDynamicCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
-	void CreateRigidDynamicConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic);
+	/*Triggers*/
+	bool CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
+	bool CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
+
+	/*Shapes*/
+	physx::PxShape* CreateBox(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	physx::PxShape* CreateSphere(const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	physx::PxShape* CreateCapsule(const std::string &ShapeName, float Radius, float HalfHeight, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	physx::PxShape* CreatePlane(const std::string &ShapeName, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	physx::PxShape* CreateConvexMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	physx::PxShape* CreateTriangleMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 	/*Triangle meshes can't be dynamic*/
 	/*Triangle,heightField cant be trigger*/
 	/*Plane,triangle,height must be kinematic*/
-	void CreateRigidKinematicTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density);
 
-
-	physx::PxShape* CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group);
-	physx::PxShape* CreateDinamicShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic = false);
-
-	size_t AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor);
-
-	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation, int Group);
-	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidBody* Body, Vect3f Position, Quatf Orientation, int Group, float Density, bool IsKinematic);
-	/**/
-
-	void RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution);
-	physx::PxMaterial* GetMaterial(const std::string &MaterialName);
-
+	/*Materials*/
 	void SetMaterialStaticFriction(const std::string &MaterialName, float StaticFriction);
 	void SetMaterialDynamicFriction(const std::string &MaterialName, float DynamicFriction);
 	void SetMaterialRestitution(const std::string &MaterialName, float Restitution);
 
-	void CreatePlane(const std::string &Name, const Vect3f &Normal, float Distance, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName);
-	void CreateRigidStatic(const std::string &Name, const Vect3f Size, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName);
-	void CreateRigidDynamic(const std::string &Name, const Vect3f Size, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName, float Density, bool Trigger);
-	void CreateConvexMeshOLD(std::vector<Vect3f> Vertices, const std::string &MeshName, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName);
-
-	bool RemoveActor(const std::string &ActorName);
-
-	virtual void CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName);
+	virtual void CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName, float StaticFriction, float DynamicFriction, float Restitution);
 	Vect3f MoveCharacterController(const std::string& CharacterControllerName, const Vect3f &Movement, float ElapsedTime);
 	Vect3f DisplacementCharacterController(const std::string& CharacterControllerName, const Vect3f &Displacement, float ElapsedTime);
-
 	Vect3f GetCharacterControllerPosition(const std::string& CharacterControllerName);
 	Vect3f GetCharacterControllerFootPosition(const std::string& CharacterControllerName);
 
@@ -185,12 +195,14 @@ public:
 	void MoveKinematicActor(const std::string& ActorName, const Quatf &Rotation);
 	void MoveKinematicActor(const std::string& ActorName, const Vect3f &Position, const Quatf &Rotation);
 
+	/*Gameplay*/
 	bool Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* result_ = nullptr);
-	void SetShapeAsTrigger(const std::string &ActorName);
+	void SetShapeAsTrigger(const std::string &ShapeName);
 	void ApplyForce(const std::string &ActorName, const Vect3f &Force);
 	void RemoveTriggerState(const std::string &ActorName);
 	void ChangeGravityState(const std::string& ActorName, bool State);
 	void ChangeKinematicState(const std::string& ActorName, bool State);
+	
 	Vect3f GetActorPosition(const std::string& ActorName) const
 	{
 		return m_ActorPositions[GetActorIndex(ActorName)];

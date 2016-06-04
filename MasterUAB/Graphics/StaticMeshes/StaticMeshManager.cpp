@@ -27,7 +27,7 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 
 				if (l_Element.GetName() == std::string("static_mesh"))
 				{
-					CStaticMesh *l_StaticMesh = new CStaticMesh(l_Element.GetPszProperty("name"));
+					CStaticMesh *l_StaticMesh = new CStaticMesh(l_Element);
 
 					if(!AddResource(l_StaticMesh->GetName(), l_StaticMesh))
 					{
@@ -35,7 +35,10 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 					}
 					else
 					{
-						l_StaticMesh->Load(l_Element.GetPszProperty("filename"));
+						bool l_Load = l_StaticMesh->Load(l_Element.GetPszProperty("filename"));
+						assert(l_Load);
+						if (l_Load)
+							l_StaticMesh->LoadShape(l_Element.GetPszProperty("shape_type", ""), l_Element.GetPszProperty("group", ""), l_Element.GetBoolProperty("is_exclusive", false));
 					}
 				}
 			}

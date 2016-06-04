@@ -45,6 +45,7 @@ public:
 	inline const Vect3f & GetScale() const {return m_Scale;} 
 	//virtual void Render(CRenderManager *RenderManager);
 	const Mat44f & GetTransform(); //Scale x Rotation x Translation
+	const Mat44f & ChildGetTransform(float Yaw, float Pitch, float Roll); /*Used for child objects (weapons, etc), in order to match 3DMax rotation order*/
 
 	bool GetVisible() const;
 	virtual void SetVisible(bool Visible);

@@ -7,6 +7,8 @@
 #include "Components\CharacterCollider.h"
 #include "RenderableObjects\MeshInstance.h"
 #include "Animation\AnimatedInstanceModel.h"
+#include "Engine.h"
+#include "Log\Log.h"
 
 class CPhysxManagerImplementation;
 
@@ -45,6 +47,30 @@ CPhysXManager::CPhysXManager()
 CPhysXManager::~CPhysXManager()
 {
 	RemoveComponents();
+}
+
+CPhysXManager::Groups CPhysXManager::GetGroup(const std::string &Group)
+{
+	if (Group == "GROUP1")
+		return GROUP1;
+	else if (Group == "GROUP2")
+		return GROUP2;
+	else if (Group == "GROUP3")
+		return GROUP3;
+	else if (Group == "GROUP4")
+		return GROUP4;
+	else if (Group == "GROUP5")
+		return GROUP5;
+	else if (Group == "GROUP6")
+		return GROUP6;
+	else if (Group == "GROUP7")
+		return GROUP7;
+	else if (Group == "GROUP8")
+		return GROUP8;
+	else 
+	{
+		return GROUP1;
+	}
 }
 
 CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CMeshInstance *Owner)
@@ -110,7 +136,7 @@ void CPhysXManager::RemoveComponents()
 	m_ColliderComponents.clear();
 }
 
-void CPhysXManager::RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution)
+physx::PxMaterial* CPhysXManager::RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution)
 {
 	auto it = m_Materials.find(Name);
 
@@ -122,6 +148,7 @@ void CPhysXManager::RegisterMaterial(const std::string &Name, float StaticFricti
 	}
 
 	m_Materials[Name] = m_PhysX->createMaterial(StaticFriction, DynamicFriction, Restitution);
+	return m_Materials[Name];
 }
 
 physx::PxMaterial* CPhysXManager::GetMaterial(const std::string &MaterialName)
@@ -136,28 +163,21 @@ physx::PxMaterial* CPhysXManager::GetMaterial(const std::string &MaterialName)
 	return nullptr;
 }
 
-void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation, int Group)
+void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation)
 {
-	//L_PutGroupToShape(Shape, Group);
-
 	Body->attachShape(*Shape);
 	m_Scene->addActor(*Body);
 	Body->userData = (void*)AddActor(ActorName, Position, Orientation, Body);
-
 }
 
-void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidBody* Body, Vect3f Position, Quatf Orientation, int Group, float Density, bool IsKinematic)
+void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidBody* Body, Vect3f Position, Quatf Orientation, float Density, bool IsKinematic)
 {
 	Body->attachShape(*Shape);
 	physx::PxRigidBodyExt::updateMassAndInertia(*Body, Density);
-
-	//Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Trigger);
-	//Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Trigger);
 	Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, IsKinematic);
 
 	Body->userData = (void*)AddActor(ActorName, Position, Orientation, Body);
 	m_Scene->addActor(*Body);
-
 }
 
 size_t CPhysXManager::AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor)
@@ -179,199 +199,62 @@ size_t CPhysXManager::AddActor(const std::string &ActorName, const Vect3f &Posit
 	return m_ActorIndexs[ActorName];
 }
 
-physx::PxShape* CPhysXManager::CreateStaticShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+bool CPhysXManager::CreateStaticActor(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Position, const Quatf &Orientation)
 {
-	physx::PxMaterial* l_Material = GetMaterial(Material);
-	physx::PxShape* shape = m_PhysX->createShape(Geometry, *l_Material, false);
-
-	assert(shape != nullptr);
-	physx::PxRigidStatic* body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-
-	RegisterActor(Name, shape, body, Position, Orientation, Group);
-
-	return shape;
-}
-physx::PxShape* CPhysXManager::CreateDinamicShape(const std::string &Name, physx::PxGeometry &Geometry, const std::string &Material, const Vect3f &Position, const Quatf &Orientation, int Group, physx::PxReal Density, bool IsKinematic)
-{
-	physx::PxMaterial* l_Material = GetMaterial(Material);
-	physx::PxShape* shape = m_PhysX->createShape(Geometry, *l_Material, false);
-
-	assert(shape != nullptr);
-	physx::PxRigidDynamic* body = m_PhysX->createRigidDynamic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-
-	RegisterActor(Name, shape, body, Position, Orientation, Group, Density, IsKinematic);
-
-	return shape;
-}
-
-/*OBSOLETE*/
-void CPhysXManager::CreateRigidDynamic(const std::string &Name, const Vect3f Size, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName, physx::PxReal Density, bool Trigger)
-{
-	CheckMapAndVectors();
-
-	physx::PxVec3 v = CastVec(Size);
-	physx::PxMaterial* l_Material = GetMaterial(MaterialName);
-	physx::PxShape* l_Shape = m_PhysX->createShape(physx::PxBoxGeometry(v.x / 2, v.y / 2, v.z / 2), *l_Material);
-	physx::PxRigidDynamic* l_Body = m_PhysX->createRigidDynamic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-
-	l_Body->attachShape(*l_Shape);
-	physx::PxRigidBodyExt::updateMassAndInertia(*l_Body, Density);
-	l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Trigger);
-	l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Trigger);
-
-	size_t index = m_Actors.size();
-	l_Body->userData = (void*)index;
-	m_Scene->addActor(*l_Body);
-	l_Shape->release();
-
-	SaveActorData(index, Name, Position, Orientation, l_Body);
-}
-
-/*Rigid static*/
-void CPhysXManager::CreateRigidStaticBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
-{
-	physx::PxVec3 l_Size = CastVec(Size);
-	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxBoxGeometry(l_Size.x / 2, l_Size.y / 2, l_Size.z / 2), Material, Position, Orientation, Group);
-
+	physx::PxShape* l_Shape = GetShape(ShapeName);
+	assert(l_Shape != nullptr);
 	if (l_Shape != nullptr)
-		l_Shape->release();
+	{
+		physx::PxRigidStatic* l_Body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
+		RegisterActor(ActorName, l_Shape, l_Body, Position, Orientation);
+		return true;
+	}
+	CEngine::GetSingleton().GetLogManager()->Log("Error creating static actor " + ActorName);
+	return false;
 }
-void CPhysXManager::CreateRigidStaticSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
-{
-	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxSphereGeometry(Radius), Material, Position, Orientation, Group);
 
+bool CPhysXManager::CreateDynamicActor(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Position, const Quatf &Orientation, float Density, bool IsKinematic)
+{
+	physx::PxShape* l_Shape = GetShape(ShapeName);
+	assert(l_Shape != nullptr);
 	if (l_Shape != nullptr)
-		l_Shape->release();
+	{
+		physx::PxRigidDynamic* l_Body = m_PhysX->createRigidDynamic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
+		RegisterActor(ActorName, l_Shape, l_Body, Position, Orientation, Density, IsKinematic);
+		return true;
+	}
+	CEngine::GetSingleton().GetLogManager()->Log("Error creating dynamic actor "+ActorName);
+	return false;
 }
-void CPhysXManager::CreateRigidStaticCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+
+bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
-	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxCapsuleGeometry(Radius, HalfHeight), Material, Position, Orientation, Group);
-
-	if (l_Shape != nullptr)
-		l_Shape->release();
+	physx::PxShape* l_Shape = CreateBox(ShapeName, Size,MaterialName,MaterialStaticFriction,MaterialDynamicFriction,MaterialRestitution,Group,true);
+	
+	if (ActorType == "static")
+		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+	else if (ActorType == "dynamic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, false);
+	else if (ActorType == "kinematic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
+	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 }
-void CPhysXManager::CreateRigidStaticPlane(const std::string &Name, const Vect3f &Normal, float Distance, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
+bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
-	physx::PxMaterial* l_Material = GetMaterial(Material);
+	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
 
-	physx::PxRigidStatic* l_GroundPlane = PxCreatePlane(*m_PhysX, physx::PxPlane(CastVec(Normal), Distance), *l_Material);
-
-	physx::PxShape* l_Shape;
-	size_t numShapes = l_GroundPlane->getShapes(&l_Shape, 1);
-	assert(numShapes == 1);
-
-	l_GroundPlane->userData = (void*)AddActor(Name, Position, Orientation, l_GroundPlane);
-	m_Scene->addActor(*l_GroundPlane);
+	if (ActorType == "static")
+		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+	else if (ActorType == "dynamic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, false);
+	else if (ActorType == "kinematic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
+	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 }
-void CPhysXManager::CreateRigidStaticConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
-{
-	/*physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(Vertices);
-
-	physx::PxMaterial* l_Material = GetMaterial(Material);
-
-	physx::PxRigidStatic* l_Body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-	physx::PxShape* l_Shape = l_Body->createShape(physx::PxConvexMeshGeometry(l_ConvexMesh), *l_Material);
-
-	RegisterActor(Name, l_Shape, l_Body, Position, Orientation, Group);
-	*/
-	//if (l_Shape != nullptr)
-	//l_Shape->release();
-
-	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(CoreName, Vertices);
-	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxConvexMeshGeometry(l_ConvexMesh), Material, Position, Orientation, Group);
-
-	if (l_Shape != nullptr)
-		l_Shape->release();
-
-}
-
-void CPhysXManager::CreateRigidStaticTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group)
-{
-	//physx::PxTriangleMesh* l_TriangleMesh= CreateTriangleMesh(Vertices);
-
-	//physx::PxMaterial* l_Material = GetMaterial(Material);
-
-	//physx::PxRigidStatic* l_Body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-	//physx::PxShape* l_Shape = l_Body->createShape(physx::PxTriangleMeshGeometry(l_TriangleMesh), *l_Material);
-
-	////l_Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-
-	//RegisterActor(Name, l_Shape, l_Body, Position, Orientation, Group);
-
-	//if (l_Shape != nullptr)
-	//	l_Shape->release();
-
-	physx::PxTriangleMesh* l_TriangleMesh = CreateTriangleMesh(CoreName, Vertices, Indices);
-	physx::PxShape* l_Shape = CreateStaticShape(Name, physx::PxTriangleMeshGeometry(l_TriangleMesh), Material, Position, Orientation, Group);
-
-	if (l_Shape != nullptr)
-		l_Shape->release();
-}
-
-/*Rigid dynamic*/
-void CPhysXManager::CreateRigidDynamicBox(const std::string &Name, const Vect3f &Size, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
-{
-	physx::PxVec3 l_Size = CastVec(Size);
-	physx::PxShape* l_Shape = CreateDinamicShape(Name, physx::PxBoxGeometry(l_Size.x / 2, l_Size.y / 2, l_Size.z / 2), Material, Position, Orientation, Group, Density, IsKinematic);
-
-	if (l_Shape != nullptr)
-		l_Shape->release();
-}
-void CPhysXManager::CreateRigidDynamicSphere(const std::string &Name, const float &Radius, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
-{
-	physx::PxShape* l_Shape = CreateDinamicShape(Name, physx::PxSphereGeometry(Radius), Material, Position, Orientation, Group, Density, IsKinematic);
-
-	if (l_Shape != nullptr)
-		l_Shape->release();
-}
-void CPhysXManager::CreateRigidDynamicCapsule(const std::string &Name, const float &Radius, const float &HalfHeight, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, physx::PxReal Density, bool IsKinematic)
-{
-	physx::PxShape* l_Shape = CreateDinamicShape(Name, physx::PxCapsuleGeometry(Radius, HalfHeight), Material, Position, Orientation, Group, Density, IsKinematic);
-
-	//physx::PxTransform l_RelativePose(physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0, 0, 1)));
-	//l_Shape->setLocalPose(l_RelativePose);
-
-	if (l_Shape != nullptr)
-		l_Shape->release();
-}
-void CPhysXManager::CreateRigidDynamicConvexMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density, bool IsKinematic)
-{
-	physx::PxConvexMesh* l_ConvexMesh = CreateConvexMesh(CoreName, Vertices);
-
-	physx::PxMaterial* l_Material = GetMaterial(Material);
-
-	physx::PxRigidDynamic* l_Body = m_PhysX->createRigidDynamic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-	physx::PxShape* l_Shape = l_Body->createShape(physx::PxConvexMeshGeometry(l_ConvexMesh), *l_Material);
-
-	l_Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, IsKinematic);
-
-	l_Body->userData = (void*)AddActor(Name, Position, Orientation, l_Body);
-	m_Scene->addActor(*l_Body);
-
-	//if (l_Shape != nullptr)
-	//l_Shape->release();
-	if (Name == "ball0" || Name == "ball3")
-		ChangeGravityState(Name, true);
-}
-
-void CPhysXManager::CreateRigidKinematicTriangleMesh(const std::string &Name, const std::string &CoreName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string Material, const Vect3f &Position, const Quatf &Orientation, int Group, float Density)
-{
-	physx::PxTriangleMesh* l_ConvexMesh = CreateTriangleMesh(CoreName, Vertices, Indices);
-
-	physx::PxMaterial* l_Material = GetMaterial(Material);
-
-	physx::PxRigidDynamic* l_Body = m_PhysX->createRigidDynamic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-	l_Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-	physx::PxShape* l_Shape = l_Body->createShape(physx::PxTriangleMeshGeometry(l_ConvexMesh), *l_Material);
-
-	l_Body->userData = (void*)AddActor(Name, Position, Orientation, l_Body);
-	m_Scene->addActor(*l_Body);
-}
-
 
 
 /*Meshes that need to be cooked*/
-physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &CoreName, std::vector<Vect3f> Vertices)
+physx::PxConvexMesh*  CPhysXManager::CookConvexMesh(const std::string &CoreName, std::vector<Vect3f> Vertices)
 {
 	#if USE_PHYSX_DEBUG
 		CheckMapAndVectors();
@@ -391,12 +274,20 @@ physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &CoreNam
 
 		physx::PxDefaultMemoryOutputStream l_Buffer;
 		physx::PxConvexMeshCookingResult::Enum l_Result;
-		bool success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
-		if (!success)
+		bool l_Success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
+		if (!l_Success)
+		{
+			CEngine::GetSingleton().GetLogManager()->Log("Error cooking convex mesh " + CoreName);
+		}
+		if (!l_Success)
 		{
 			l_ConvexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eINFLATE_CONVEX;
-			success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
-			assert(success);
+			l_Success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
+			if (!l_Success)
+			{
+				CEngine::GetSingleton().GetLogManager()->Log("Error cooking inflated convex mesh " + CoreName);
+				assert(false);
+			}
 		}
 
 		WriteCookingDataToFile(l_CookedMeshFilename, (void *)l_Buffer.getData(), l_Buffer.getSize());
@@ -482,7 +373,7 @@ physx::PxConvexMesh*  CPhysXManager::CreateConvexMesh(const std::string &CoreNam
 //	return l_TriangleMesh;
 //}
 
-physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &CoreName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices)
+physx::PxTriangleMesh*  CPhysXManager::CookTriangleMesh(const std::string &CoreName, std::vector<Vect3f> &Vertices, std::vector<unsigned short> &Indices)
 {
 	#if USE_PHYSX_DEBUG
 		CheckMapAndVectors();
@@ -555,74 +446,23 @@ physx::PxTriangleMesh*  CPhysXManager::CreateTriangleMesh(const std::string &Cor
 	return l_TriangleMesh;
 }
 
-void CPhysXManager::CreateRigidStatic(const std::string &Name, const Vect3f Size, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName)
-{
-	CheckMapAndVectors();
-	const physx::PxMaterial* l_Material = GetMaterial(MaterialName);
+//void CPhysXManager::CreatePlane(const std::string &Name, const Vect3f &Normal, float Distance, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName)
+//{
+//	CheckMapAndVectors();
+//	physx::PxMaterial* l_Material = GetMaterial(MaterialName);
+//
+//	physx::PxRigidStatic* groundPlane = PxCreatePlane(*m_PhysX, physx::PxPlane(CastVec(Normal), Distance), *l_Material);
+//	size_t index = m_Actors.size();
+//	groundPlane->userData = (void*)index;
+//	m_Scene->addActor(*groundPlane);
+//
+//	physx::PxShape* shape;
+//	size_t numShapes = groundPlane->getShapes(&shape, 1);
+//	assert(numShapes == 1);
+//
+//	SaveActorData(index, Name, Position, Orientation, groundPlane);
+//}
 
-	physx::PxVec3 v = CastVec(Size);
-	physx::PxShape* l_Shape = m_PhysX->createShape(physx::PxBoxGeometry(v.x / 2, v.y / 2, v.z / 2), *l_Material, false);
-	physx::PxRigidStatic* l_Body = m_PhysX->createRigidStatic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-
-	l_Body->attachShape(*l_Shape);
-	size_t index = m_Actors.size();
-	l_Body->userData = (void*)index;
-	m_Scene->addActor(*l_Body);
-	l_Shape->release();
-
-	SaveActorData(index, Name, Position, Orientation, l_Body);
-}
-
-void CPhysXManager::CreatePlane(const std::string &Name, const Vect3f &Normal, float Distance, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName)
-{
-	CheckMapAndVectors();
-	physx::PxMaterial* l_Material = GetMaterial(MaterialName);
-
-	physx::PxRigidStatic* groundPlane = PxCreatePlane(*m_PhysX, physx::PxPlane(CastVec(Normal), Distance), *l_Material);
-	size_t index = m_Actors.size();
-	groundPlane->userData = (void*)index;
-	m_Scene->addActor(*groundPlane);
-
-	physx::PxShape* shape;
-	size_t numShapes = groundPlane->getShapes(&shape, 1);
-	assert(numShapes == 1);
-
-	SaveActorData(index, Name, Position, Orientation, groundPlane);
-}
-
-/*va aqui*/
-
-void CPhysXManager::CreateConvexMeshOLD(std::vector<Vect3f> Vertices, const std::string &MeshName, const Vect3f &Position, const Quatf &Orientation, const std::string &MaterialName)
-{
-	CheckMapAndVectors();
-
-	physx::PxConvexMeshDesc l_ConvexDesc;
-	l_ConvexDesc.points.count = Vertices.size();
-	l_ConvexDesc.points.stride = sizeof(Vect3f);
-	l_ConvexDesc.points.data = &Vertices[0];
-	l_ConvexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
-
-	physx::PxDefaultMemoryOutputStream l_Buffer;
-	physx::PxConvexMeshCookingResult::Enum l_Result;
-	bool success = m_Cooking->cookConvexMesh(l_ConvexDesc, l_Buffer, &l_Result);
-	assert(success);
-	physx::PxDefaultMemoryInputData l_Input(l_Buffer.getData(), l_Buffer.getSize());
-	physx::PxConvexMesh* l_ConvexMesh = m_PhysX->createConvexMesh(l_Input);
-
-	physx::PxMaterial* l_Material = GetMaterial(MaterialName);
-
-	physx::PxRigidDynamic* l_Body = m_PhysX->createRigidDynamic(physx::PxTransform(CastVec(Position), CastQuat(Orientation)));
-	physx::PxShape* l_Shape = l_Body->createShape(physx::PxConvexMeshGeometry(l_ConvexMesh), *l_Material);
-
-	l_Body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-
-	size_t index = m_Actors.size();
-	l_Body->userData = (void*)index;
-	m_Scene->addActor(*l_Body);
-	//l_Shape->release();
-
-	SaveActorData(index, MeshName, Position, Orientation, l_Body);
-}
 
 size_t CPhysXManager::GetActorIndex(const std::string& ActorName) const
 {
@@ -768,7 +608,7 @@ return false;
 }
 */
 
-void CPhysXManager::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName)
+void CPhysXManager::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName, float StaticFriction, float DynamicFriction, float Restitution)
 {
 
 }
@@ -867,36 +707,44 @@ Vect3f CPhysXManager::GetCharacterControllerFootPosition(const std::string& Char
 	return Vect3f(CastVec(l_CController->getFootPosition()));
 }
 
-void CPhysXManager::SetShapeAsTrigger(const std::string &ActorName)
+void CPhysXManager::SetShapeAsTrigger(const std::string &ShapeName)
 {
-	auto it_Actors = m_ActorIndexs.find(ActorName);
+	physx::PxShape* l_Shape = GetShape(ShapeName);
+	assert(l_Shape != nullptr);
 
-	if (it_Actors != m_ActorIndexs.end())
+	if (l_Shape != nullptr)
 	{
-		size_t l_Index = it_Actors->second;
-		physx::PxActor* l_PxActor = m_Actors[l_Index];
-
-		physx::PxRigidDynamic* l_DynamicActor = l_PxActor->is<physx::PxRigidDynamic>();
-		physx::PxShape* l_Shape;
-
-		if (l_DynamicActor != nullptr)
-		{
-			l_DynamicActor->getShapes(&l_Shape, 1);
-			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-		}
-		else
-		{
-			physx::PxRigidStatic* l_StaticActor = l_PxActor->is<physx::PxRigidStatic>();
-
-			if (l_StaticActor != nullptr)
-			{
-				l_StaticActor->getShapes(&l_Shape, 1);
-				l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-				l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-			}
-		}
+		l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+		l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
+	//auto it_Actors = m_ActorIndexs.find(ActorName);
+
+	//if (it_Actors != m_ActorIndexs.end())
+	//{
+	//	size_t l_Index = it_Actors->second;
+	//	physx::PxActor* l_PxActor = m_Actors[l_Index];
+
+	//	physx::PxRigidDynamic* l_DynamicActor = l_PxActor->is<physx::PxRigidDynamic>();
+	//	physx::PxShape* l_Shape;
+
+	//	if (l_DynamicActor != nullptr)
+	//	{
+	//		l_DynamicActor->getShapes(&l_Shape, 1);
+	//		l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+	//		l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+	//	}
+	//	else
+	//	{
+	//		physx::PxRigidStatic* l_StaticActor = l_PxActor->is<physx::PxRigidStatic>();
+
+	//		if (l_StaticActor != nullptr)
+	//		{
+	//			l_StaticActor->getShapes(&l_Shape, 1);
+	//			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+	//			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+	//		}
+	//	}
+	//}
 }
 
 bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* Result_)
@@ -927,6 +775,35 @@ bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterM
 	Result_->m_ActorName = m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
 
 	return true;
+}
+
+float CPhysXManager::CameraRaycast(const Vect3f& Origin, const Vect3f& End, const float& Length)
+{
+	float l_HitDistance = Length;
+	Vect3f l_Direction = End - Origin;
+	float l_Lenght = l_Direction.Length();
+	l_Direction.Normalize(); 
+
+	// [in] Define filter for static objects only
+	physx::PxQueryFilterData filterData(physx::PxQueryFlag::eSTATIC);
+
+	physx::PxRaycastBuffer l_ReturnBuffer;
+	bool status = m_Scene->raycast
+	(
+		CastVec(Origin),
+		CastVec(l_Direction),
+		Length,
+		l_ReturnBuffer,
+		physx::PxHitFlags(physx::PxHitFlag::eDEFAULT),
+		filterData
+	);
+	if (status)
+	{
+		Vect3f l_HitPosition = CastVec(l_ReturnBuffer.block.position);
+		//std::string l_HitName = m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
+		l_HitDistance = l_ReturnBuffer.block.distance;
+	}
+	return l_HitDistance;
 }
 
 void CPhysXManager::MoveKinematicActor(const std::string& ActorName, const Vect3f &Position)
@@ -1108,7 +985,6 @@ physx::PxTriangleMesh* CPhysXManager::GetTriangleMesh(const std::string &Triangl
 	}
 }
 
-
 physx::PxConvexMesh* CPhysXManager::GetConvexMesh(const std::string &ConvexMeshName, physx::PxDefaultMemoryInputData MemoryInputData)
 {
 	std::map<std::string, physx::PxConvexMesh*>::iterator itMap;
@@ -1123,4 +999,56 @@ physx::PxConvexMesh* CPhysXManager::GetConvexMesh(const std::string &ConvexMeshN
 		m_ConvexMeshes.insert(std::pair<std::string, physx::PxConvexMesh*>(ConvexMeshName, l_ConvexMesh));
 		return l_ConvexMesh;
 	}
+}
+
+/*SHAPES*/
+physx::PxShape* CPhysXManager::GetShape(const std::string &ShapeName)
+{
+	std::map<std::string, physx::PxShape*>::iterator itMap;
+	itMap = m_Shapes.find(ShapeName);
+	if (itMap != m_Shapes.end())
+	{
+		return itMap->second;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+physx::PxShape* CPhysXManager::GenerateShape(const std::string &ShapeName, const physx::PxGeometry &Geometry, const std::string Material, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	physx::PxMaterial* l_Material = RegisterMaterial(Material, MaterialStaticFriction,MaterialDynamicFriction,MaterialRestitution);
+	physx::PxShape* l_Shape = m_PhysX->createShape(Geometry, *l_Material,IsExclusive);
+	m_Shapes.insert(std::pair<std::string, physx::PxShape*>(ShapeName, l_Shape));
+	physx::PxFilterData l_FilterData;
+	l_FilterData.word0 = GetGroup(Group);
+	l_Shape->setQueryFilterData(l_FilterData);
+	return l_Shape;
+}
+
+physx::PxShape* CPhysXManager::CreateBox(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	return GenerateShape(ShapeName, physx::PxBoxGeometry(Size.x / 2, Size.y / 2, Size.z / 2), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+physx::PxShape* CPhysXManager::CreateSphere(const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	return GenerateShape(ShapeName, physx::PxSphereGeometry(Radius), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+physx::PxShape* CPhysXManager::CreateCapsule(const std::string &ShapeName, float Radius, float HalfHeight, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	return GenerateShape(ShapeName, physx::PxCapsuleGeometry(Radius, HalfHeight), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+physx::PxShape* CPhysXManager::CreatePlane(const std::string &ShapeName, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	return GenerateShape(ShapeName, physx::PxPlaneGeometry(), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+physx::PxShape* CPhysXManager::CreateConvexMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	physx::PxConvexMesh* l_ConvexMesh = CookConvexMesh(ShapeName, Vertices);
+	return GenerateShape(ShapeName, physx::PxConvexMeshGeometry(l_ConvexMesh), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+physx::PxShape* CPhysXManager::CreateTriangleMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	physx::PxTriangleMesh* l_TriangleMesh = CookTriangleMesh(ShapeName, Vertices, Indices);
+	return GenerateShape(ShapeName, physx::PxTriangleMeshGeometry(l_TriangleMesh), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
 }

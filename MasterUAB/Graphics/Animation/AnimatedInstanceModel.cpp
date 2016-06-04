@@ -154,6 +154,8 @@ void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 	}
 }
 
+bool b = true;
+
 Mat44f CAnimatedInstanceModel::GetBoneTransformationMatrix(const int BoneID) const
 {
 	Mat44f l_BoneTransformation; 
@@ -161,9 +163,19 @@ Mat44f CAnimatedInstanceModel::GetBoneTransformationMatrix(const int BoneID) con
 	CalQuaternion l_Rotation = l_Bone->getRotationAbsolute();
 	CalVector l_Translation = l_Bone->getTranslationAbsolute();
 		
+	//OK
 	l_BoneTransformation.SetIdentity();
 	l_BoneTransformation.SetRotByQuat((const Quatf &)l_Rotation);
 	l_BoneTransformation.SetPos(Vect3f(l_Translation.x, l_Translation.y, l_Translation.z));
+	
+	//Vect3f eulers = ((Quatf &)l_Rotation).GetRadians();
+	
+	//Quatf q1(eulers.y, eulers.x, eulers.z);
+	//l_BoneTransformation.SetRotByQuat(q1); //x,y,z x,z,y y,x,z y,z,x z,x,y
+	
+	//l_BoneTransformation.SetRotByAnglesYXZ(eulers.x, eulers.y, eulers.z);
+	//l_BoneTransformation.SetPos(Vect3f(l_Translation.x, l_Translation.y, l_Translation.z));
+
 	return l_BoneTransformation;
 }
 

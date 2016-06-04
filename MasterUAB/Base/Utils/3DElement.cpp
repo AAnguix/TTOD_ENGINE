@@ -8,7 +8,7 @@ m_PrevPos(v3fZERO),
 m_Yaw(0.0f),
 m_Pitch(0.0f),
 m_Roll(0.0f),
-m_Scale(v3fZERO),
+m_Scale(Vect3f(1.0,1.0,1.0)),
 m_Visible(true)
 {
 }
@@ -19,7 +19,7 @@ m_PrevPos(v3fZERO),
 m_Yaw(0.0f),
 m_Pitch(0.0f),
 m_Roll(0.0f),
-m_Scale(v3fZERO),
+m_Scale(Vect3f(1.0, 1.0, 1.0)),
 m_Visible(true)
 {
 }
@@ -30,7 +30,7 @@ m_PrevPos(v3fZERO),
 m_Yaw(Yaw),
 m_Pitch(Pitch),
 m_Roll(Roll),
-m_Scale(v3fZERO)
+m_Scale(Vect3f(1.0, 1.0, 1.0))
 {
 }
   
@@ -40,7 +40,7 @@ m_PrevPos(v3fZERO),
 m_Yaw(Yaw),
 m_Pitch(Pitch),
 m_Roll(Roll),
-m_Scale(v3fZERO)
+m_Scale(Vect3f(1.0, 1.0, 1.0))
 {
 }
 
@@ -50,7 +50,7 @@ m_Position(XMLTreeNode.GetVect3fProperty("pos", v3fZERO))
 ,m_Yaw(XMLTreeNode.GetFloatProperty("yaw", 0.0f))
 ,m_Pitch(XMLTreeNode.GetFloatProperty("pitch", 0.0f))
 ,m_Roll(XMLTreeNode.GetFloatProperty("roll", 0.0f))
-,m_Scale(XMLTreeNode.GetVect3fProperty("scale", 1.0f))
+,m_Scale(Vect3f(1.0, 1.0, 1.0))
 ,m_Visible(XMLTreeNode.GetBoolProperty("visible", true))
 {
 } 
@@ -170,8 +170,17 @@ const Mat44f & C3DElement::GetTransform()
 {
 	m_TransformMatrix.SetIdentity();
 	m_TransformMatrix.SetFromPosAndAnglesYXZ(m_Position, m_Yaw, m_Pitch, m_Roll);
+	m_TransformMatrix.SetScale(m_Scale);
 	return m_TransformMatrix;
 } 
+
+/*Used for child objects (weapons, etc), in order to match 3DMax rotation order*/
+const Mat44f & C3DElement::ChildGetTransform(float Yaw, float Pitch, float Roll)
+{
+	m_TransformMatrix.SetIdentity();
+	m_TransformMatrix.SetFromPosAndAnglesYXZ(m_Position, Yaw, Pitch, Roll);
+	return m_TransformMatrix;
+}
 
 bool C3DElement::GetVisible() const
 {

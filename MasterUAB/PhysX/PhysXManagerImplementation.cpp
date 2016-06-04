@@ -74,6 +74,18 @@ CPhysXManagerImplementation::~CPhysXManagerImplementation()
 	}
 	m_CharacterControllers.clear();
 
+	/*for (size_t i = 0; i<m_Actors.size();++i)
+	{
+		physx::PxRigidDynamic* l_DynamicActor = m_Actors[i]->is<physx::PxRigidDynamic>();
+		{
+			if (l_DynamicActor != nullptr)
+			{
+				l_DynamicActor->detachShape();
+			}
+		}
+	}*/
+	m_CharacterControllers.clear();
+
 	if (m_ControllerManager != nullptr)
 	{
 		m_ControllerManager->release();	m_ControllerManager = nullptr;
@@ -215,7 +227,7 @@ void CPhysXManagerImplementation::onShapeHit(const physx::PxControllerShapeHit& 
 	hit.actor;
 	hit.controller;
 }
-void CPhysXManagerImplementation::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName)
+void CPhysXManagerImplementation::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName, float StaticFriction, float DynamicFriction, float Restitution)
 {
 	CheckMapAndVectors();
 	physx::PxCapsuleControllerDesc l_Desc;
@@ -228,7 +240,7 @@ void CPhysXManagerImplementation::CreateCharacterController(const std::string &N
 	l_Desc.density = Density;
 	l_Desc.reportCallback = this;
 	l_Desc.position = physx::PxExtendedVec3(Position.x, Position.y + Radius + Height * 0.5f, Position.z);
-	physx::PxMaterial* l_Material = GetMaterial(MaterialName);
+	physx::PxMaterial* l_Material = RegisterMaterial(MaterialName,StaticFriction,DynamicFriction,Restitution);
 	l_Desc.material = l_Material;
 	size_t l_Index = m_CharacterControllers.size();
 	l_Desc.userData = (void*)l_Index;

@@ -62,6 +62,7 @@ void CDebugHelperImplementation::Initialize(void *device)
 
 CDebugHelperImplementation::~CDebugHelperImplementation()
 {
+	ResetButtons();
 	int status = TwTerminate();
 	assert(status);
 }

@@ -8,6 +8,11 @@
 class CRenderableVertexs;
 class CRenderManager;
 class CMaterial;
+namespace physx
+{
+	class PxShape;
+	class PxGeometry;
+}
 
 struct AxisAlignedBoundingBox
 {
@@ -36,6 +41,7 @@ protected:
 
 	std::vector<CRenderableVertexs*> m_RVs;
 	std::vector<CMaterial *> m_Materials;
+	physx::PxShape* m_Shape;
 	unsigned int m_NumVertexs;
 
 	std::vector<Vect3f> m_MeshVertex;
@@ -43,9 +49,11 @@ protected:
 
 public:
 	//unsigned int  m_NumFaces;
-	CStaticMesh(const std::string &Name);
+	CStaticMesh(const CXMLTreeNode &XMLTreeNode);
 	~CStaticMesh();
 	bool Load(const std::string &FileName);
+	bool LoadShape(const std::string &ShapeType, const std::string &Group, bool IsExclusive);
+
 	bool Reload();
 	void Render(CRenderManager *RM) const;
 

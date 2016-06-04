@@ -91,20 +91,20 @@ function CPlayerComponent:MatchPlayerYawToCameraYaw (CameraController, ElapsedTi
 	
 	if Forward then
 		if Right then
-			l_Offset = -45.0
+			l_Offset = -0.785398
 		elseif Left then
-			l_Offset = 45.0
+			l_Offset = 0.785398
 		end
 	elseif Backwards then
 		if Right then
-			l_Offset = 40.0
+			l_Offset = 0.785398
 		elseif Left then
-			l_Offset = -40.0
+			l_Offset = -0.785398
 		end
 	elseif Right then
-		l_Offset = -90.0
+		l_Offset = -1.5708
 	elseif Left  then
-		l_Offset = 90.0	
+		l_Offset = 1.5708	
 	end
 	
 	

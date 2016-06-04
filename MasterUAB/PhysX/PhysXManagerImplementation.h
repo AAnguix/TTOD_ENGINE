@@ -31,7 +31,7 @@ public:
 	void onControllerHit(const physx::PxControllersHit& hit);
 	void onObstacleHit(const physx::PxControllerObstacleHit& hit);
 
-	void CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName);
+	void CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName, float StaticFriction, float DynamicFriction, float Restitution);
 
 	bool filter(const physx::PxController& a, const physx::PxController& b);
 };

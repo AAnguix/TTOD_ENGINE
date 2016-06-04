@@ -5,14 +5,16 @@
 #include "Engine.h"
 #include "Vertex\RenderableVertexs.h"
 #include "RenderableObjects\RenderableObjectTechnique.h"
+#include "PhysXManager.h"
 
-CStaticMesh::CStaticMesh(const std::string &Name)
+CStaticMesh::CStaticMesh(const CXMLTreeNode &XMLTreeNode)
 :m_NumVertexs(0)
 //,m_NumFaces(0)
 ,m_RVs(NULL)
 ,m_Materials(NULL)
-,CNamed(Name)
+,CNamed(XMLTreeNode)
 ,m_Filename("")
+,m_Shape(nullptr)
 {
 
 }
@@ -34,6 +36,8 @@ bool CStaticMesh::Load(const std::string &FileName)
 {
 	/*char l_CurrentPath[300];
 	_getcwd(l_CurrentPath,sizeof(l_CurrentPath));*/
+
+	bool l_Loaded = false;
 
 	std::string l_BinaryFile = FileName;
 
@@ -335,12 +339,36 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 			m_Materials.clear();
 		}
+		else { l_Loaded = true; }
 
 	}//check header
 
 	fclose(l_File);
 
-	return 0;
+	return l_Loaded;
+}
+
+bool CStaticMesh::LoadShape(const std::string &ShapeType, const std::string &Group, bool IsExclusive)
+{
+	if (ShapeType == "")
+		return false;
+	else
+	{
+		if (ShapeType == "box")
+			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateBox(m_Name, GetBoundingBoxSize(), m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+		else if (ShapeType == "sphere")
+			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateSphere(m_Name, m_BoundingSphere.radius, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+		else if (ShapeType == "capsule")
+			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateCapsule(m_Name, GetCapsuleRadius(), GetCapsuleHalfHeight(), m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+		else if (ShapeType == "plane")
+			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreatePlane(m_Name, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+
+		else if (ShapeType == "convex")
+			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateConvexMesh(m_Name, m_MeshVertex, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+		else if (ShapeType == "triangle")
+			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateTriangleMesh(m_Name, m_MeshVertex, m_MeshIndex, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+		return true;
+	}
 }
 
 bool CStaticMesh::Reload()

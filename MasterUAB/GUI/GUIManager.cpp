@@ -38,42 +38,7 @@ void CGUIManager::Initialize(float ScreenWidth, float ScreenHeight)
 
 CGUIManager::~CGUIManager()
 {
-
-	for (size_t i = 0; i<m_VertexBuffers.size(); ++i)
-	{
-		delete m_VertexBuffers[i];
-	}
-
-	m_VertexBuffers.clear();
-	m_Materials.clear();
-
-	std::map<std::string, SSliderInfo*>::iterator itSlider;
-	for (itSlider = m_Sliders.begin(); itSlider != m_Sliders.end(); ++itSlider)
-	{
-		CHECKED_DELETE(itSlider->second);
-	}
-	m_Sliders.clear();
-
-	std::map<std::string, SButtonInfo*>::iterator itButton;
-	for (itButton = m_Buttons.begin(); itButton != m_Buttons.end(); ++itButton)
-	{
-		CHECKED_DELETE(itButton->second);
-	}
-	m_Buttons.clear();
-
-	std::map<std::string, SSpriteMapInfo*>::iterator itMap;
-	for (itMap = m_SpriteMaps.begin(); itMap != m_SpriteMaps.end(); ++itMap)
-	{
-		CHECKED_DELETE(itMap->second);
-	}
-	m_SpriteMaps.clear();
-
-	std::map<std::string, SSpriteInfo*>::iterator itSprite;
-	for (itSprite = m_Sprites.begin(); itSprite != m_Sprites.end(); ++itSprite)
-	{
-		CHECKED_DELETE(itSprite->second);
-	}
-	m_Sprites.clear();
+	Destroy();
 }
 
 bool CGUIManager::IsMouseInside(float MouseX, float MouseY, float X, float Y, float Width, float Height)

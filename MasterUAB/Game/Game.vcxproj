@@ -69,7 +69,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)_d.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>Base_d.lib;Core_d.lib;Graphics_d.lib;GUI_d.lib;PhysX_d.lib;Sound_d.lib;DirectXTK_d.lib;AntTweakBar.lib;Lua_d.lib;luabind_d.lib;iconv.lib;libxml2.lib;cal3d_d.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXProfileSDKDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Base_d.lib;Core_d.lib;Graphics_d.lib;GUI_d.lib;PhysX_d.lib;Sound_d.lib;DirectXTK_d.lib;AntTweakBarDebug.lib;Lua_d.lib;luabind_d.lib;iconv.lib;libxml2.lib;cal3d_d.lib;AkSoundEngineDLL.lib;d3dcompiler.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXProfileSDKDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;d3d11.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\lib;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(WindowsSDK_LibraryPath_x86);$(SolutionDir)3rdParty\PhysX\Lib\vc12win32;$(WWISESDK)\Win32_vc120\$(Configuration)\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

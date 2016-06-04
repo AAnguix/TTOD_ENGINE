@@ -64,24 +64,26 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 			{
 				bool l_Trigger = TreeNode.GetBoolProperty("trigger", false);
 				unsigned int l_Group = TreeNode.GetIntProperty("group", 0);
-				bool l_IsKinematic = false;
-				if (l_ActorType == "kinematic")
-					l_IsKinematic = true;
 				float l_Density = TreeNode.GetFloatProperty("density", 1.0f);
 
-				bool l_AbleToBeTrigger = true;
+				//bool l_AbleToBeTrigger = true;
 
 				CEngine::GetSingleton().GetPhysXManager()->AddColliderComponent(m_Name+"_Collider", this);
-				CMaterial* m_PhysxMaterial = m_StaticMesh->GetPhysxMaterial();
-				CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, m_PhysxMaterial->GetStaticFriction(), m_PhysxMaterial->GetDynamicFriction(), m_PhysxMaterial->GetRestitution());
+				//CMaterial* m_PhysxMaterial = m_StaticMesh->GetPhysxMaterial();
+				//CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial(l_MaterialName, m_PhysxMaterial->GetStaticFriction(), m_PhysxMaterial->GetDynamicFriction(), m_PhysxMaterial->GetRestitution());
 				
 				//m_StaticMesh->GetPhysxMaterial()->SetPhysxPropertiesAddresses();
 				
-
 				//Quatf l_Rotation(0.0f, 0.0f, 0.0f, 1.0f);
 				Quatf l_Rotation(m_Yaw, m_Pitch, m_Roll);
 
-				if (l_Geometry == "plane")
+				if (l_ActorType == "static")
+					CEngine::GetSingleton().GetPhysXManager()->CreateStaticActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation);
+				else if (l_ActorType == "dynamic")
+					CEngine::GetSingleton().GetPhysXManager()->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation, l_Density, false);
+				else if (l_ActorType == "kinematic")
+					CEngine::GetSingleton().GetPhysXManager()->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation, l_Density, true);
+				/*if (l_Geometry == "plane")
 				{
 					assert(l_ActorType == "static");
 					CEngine::GetSingleton().GetPhysXManager()->CreateRigidStaticPlane(l_Name, Vect3f(0.0f, 1.0f, 0.0f), 0.0f, l_MaterialName, m_Position, l_Rotation, l_Group);
@@ -122,12 +124,12 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 					else if (l_ActorType == "kinematic")
 						CEngine::GetSingleton().GetPhysXManager()->CreateRigidKinematicTriangleMesh(l_Name, m_StaticMesh->GetName(), m_StaticMesh->GetVertex(), m_StaticMesh->GetIndex(), l_MaterialName, m_Position, l_Rotation, l_Group, l_Density);
 				}
-				else assert(false);
+				else assert(false);*/
 
 				if (l_Trigger)
 				{
-					assert(l_AbleToBeTrigger);
-					CEngine::GetSingleton().GetPhysXManager()->SetShapeAsTrigger(l_Name);
+					//assert(l_AbleToBeTrigger);
+					CEngine::GetSingleton().GetPhysXManager()->SetShapeAsTrigger(m_StaticMesh->GetName());
 				}
 			}
 		
@@ -157,14 +159,13 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 		if (m_Parent != nullptr && m_ParentBoneId != -1)
 		{
 			Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
+			//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
 			Mat44f l_ParentTransform = m_Parent->GetTransform();
 			CContextManager* l_ContextManager = RenderManager->GetContextManager();
 			
-			l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
-			l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
-			//m_StaticMesh->Render(RenderManager);
-			
-			
+			//l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
+			//l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
+			//l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);
 			l_ContextManager->SetWorldMatrix(GetTransform()*l_BoneTransform*l_ParentTransform);
 		}
 		else

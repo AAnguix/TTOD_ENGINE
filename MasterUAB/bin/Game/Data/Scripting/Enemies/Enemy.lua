@@ -35,10 +35,9 @@ function CEnemyComponent:Initialize()
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
-		g_PhysXManager:RegisterMaterial(l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
 		m_Position = self.m_RObject:GetPosition()
 		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
+		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
 	end
 	
 	l_ACName = self.m_RObject:GetName().."_AnimatorController"

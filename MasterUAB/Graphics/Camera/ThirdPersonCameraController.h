@@ -2,6 +2,7 @@
 #define _THIRDPERSONCAMERACONTROLLER_H
 
 #include "Camera\CameraController.h"
+#include <vector>
 class CCamera;
 class CXMLTreeNode;
 
@@ -15,6 +16,12 @@ private:
 	float m_Zoom, m_ZoomSpeed, m_MaxZoom, m_MinZoom;
 	
 	float m_LookAtPitch, m_MaxLookAtPitch, m_MinLookAtPitch;
+
+	Vect3f m_PlayerPos;
+	float m_CurrentTime;
+	Vect3f m_NewCameraPosition;
+	std::vector<Vect3f> CalculateFrustrumCorners(Vect3f CameraPosition, float Distance) const;
+	Vect3f CameraCollisionZoom(const Vect3f& camPos, const Vect3f& targetPos, float minOffsetDist, std::vector<Vect3f> frustumNearCorners) const;
 
 public:
 	CThirdPersonCameraController();
@@ -33,6 +40,7 @@ public:
 	void AddYaw(float Radians);
 	void AddPitch(float Radians);
 	Vect3f GetDirection() const;
+	void Update(float ElapsedTime);
 
 	//void Update(Vect3f rotation);
 

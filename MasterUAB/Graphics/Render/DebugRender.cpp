@@ -8,6 +8,8 @@
 #include "Lights\SpotLight.h"
 
 #include "RenderableObjects\RenderableObjectsManager.h"
+#include "RenderableObjects\MeshInstance.h"
+#include "Animation\AnimatedInstanceModel.h"
 
 CDebugRender::CDebugRender()
 {
@@ -333,7 +335,23 @@ void CDebugRender::RenderDebugLayer(CContextManager* ContextManager, CRenderable
 	{
 		Mat44f world;
 		world.SetIdentity();
-		ContextManager->SetWorldMatrix(Layer->GetResourceById(i)->GetTransform());
+		CRenderableObject* l_RObject = Layer->GetResourceById(i);
+
+		if (l_RObject->GetClassType() == CRenderableObject::MESH_INSTANCE)
+		{
+			CAnimatedInstanceModel* l_Parent = ((CMeshInstance*)l_RObject)->GetParent();
+			int l_ParentBoneID = ((CMeshInstance*)l_RObject)->GetParentBoneID();
+
+			if (l_Parent != nullptr && l_ParentBoneID != -1)
+			{
+				Mat44f l_BoneTransform = l_Parent->GetBoneTransformationMatrix(l_ParentBoneID);
+				Mat44f l_ParentTransform = l_Parent->GetTransform();
+				ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);/*Bone axis*/
+			}
+			else ContextManager->SetWorldMatrix(l_RObject->GetTransform());
+		}
+		else ContextManager->SetWorldMatrix(l_RObject->GetTransform());
+		
 		ContextManager->Draw(GetAxis());
 
 		/*CRenderableObject* l_RObject = Layer->GetResourceById(i);

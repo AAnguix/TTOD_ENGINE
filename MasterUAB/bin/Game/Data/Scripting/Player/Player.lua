@@ -44,10 +44,9 @@ function CPlayerComponent:Initialize()
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
-		g_PhysXManager:RegisterMaterial(l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
 		m_Position = self.m_RObject:GetPosition()
 		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName)
+		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
 	end
 	
 	local l_AudioSourceName = self.m_RObject:GetName().."_AudioSource"
@@ -76,6 +75,9 @@ function CPlayerComponent:Initialize()
 	local l_WalkToIdle = l_Walk:AddTransition("WalkToIdle", l_Idle, false, 0.0, 0.1, 0.2)
 	l_WalkToIdle:AddBoolCondition("Walk", false)
 
+	 local l_WalkToAttack = l_Walk:AddTransition("WalkToAttack", l_Attack, false, 0.0, 0.1, 0.2)
+     l_WalkToAttack:AddTriggerCondition("Attack")
+	
 	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false, 0.0, 0.1, 0.25)
 	l_IdleToAttack:AddTriggerCondition("Attack")
 
