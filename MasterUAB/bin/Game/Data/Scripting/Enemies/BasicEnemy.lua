@@ -1,6 +1,6 @@
 class 'CBasicEnemyComponent' (CEnemyComponent)
 function CBasicEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject, "basic")
+	CEnemyComponent.__init(self, CRenderableObject,"BasicEnemy")
 	self.m_Health=100.0
 	self.m_Speed=1.2
 	self.m_AttackDelay=1.5

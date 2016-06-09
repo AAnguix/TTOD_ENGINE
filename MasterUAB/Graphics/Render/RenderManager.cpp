@@ -28,7 +28,6 @@ CRenderManager::~CRenderManager()
 void CRenderManager::InitializeDebugRender()
 {
 	m_DebugRender = new CDebugRender;
-	m_DebugRender->InitializeDebugLights();
 	
 	MV_POSITION4_COLOR_TEXTURE_VERTEX l_ScreenVertexsQuad[4]=
 	{

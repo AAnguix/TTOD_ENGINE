@@ -4,9 +4,9 @@
 
 CFPSCameraController::CFPSCameraController()
 :CCameraController()
-,m_YawSpeed(100.f)
-,m_PitchSpeed(60.f)
-,m_RollSpeed(60.f)
+,m_YawSpeed(1.f)
+,m_PitchSpeed(1.0f)
+,m_RollSpeed(1.0f)
 ,m_Speed(5.0f)
 ,m_FastSpeed(10.0f)
 {
@@ -15,11 +15,11 @@ CFPSCameraController::CFPSCameraController()
 }
 CFPSCameraController::CFPSCameraController(CXMLTreeNode &TreeNode)
 :CCameraController(TreeNode)
-,m_YawSpeed(100.f)
-,m_PitchSpeed(60.f)
-,m_RollSpeed(60.f)
-,m_Speed(5.0f)
-,m_FastSpeed(10.0f)
+,m_YawSpeed(TreeNode.GetFloatProperty("yaw_speed", 1.0f))
+,m_PitchSpeed(TreeNode.GetFloatProperty("pitch_speed", 1.0f))
+,m_RollSpeed(1.0f)
+,m_Speed(TreeNode.GetFloatProperty("speed", 1.0f))
+,m_FastSpeed(TreeNode.GetFloatProperty("fast_speed", 1.0f))
 {
 }
 
@@ -93,7 +93,7 @@ void CFPSCameraController::MoveUpDown(float Movement, bool Speed, float ElapsedT
 
 void CFPSCameraController::AddYaw(float Radians)
 {
-	CCameraController::AddYaw(-Radians*m_YawSpeed);
+	CCameraController::AddYaw(Radians*m_YawSpeed);
 }
 
 void CFPSCameraController::AddPitch(float Radians)

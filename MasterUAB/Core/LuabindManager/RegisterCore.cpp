@@ -10,6 +10,7 @@
 #include "Log\Log.h"
 #include "Input\InputManagerImplementation.h"
 #include "DebugHelper\DebugHelperImplementation.h"
+#include "Utils\EmptyPointerClass.h"
 
 /*Graphics*/
 #include "Render\RenderManager.h"
@@ -60,11 +61,6 @@ void CLuabindManager::RegisterCore()
 	module(LUA_STATE)
 	[
 		class_<CApplication>("CApplication")
-		.scope
-		[
-			def("IsGamePaused", &CApplication::IsGamePaused)
-			,def("Pause", &CApplication::Pause)
-		]
 	];
 
 	module(LUA_STATE) 
@@ -111,6 +107,11 @@ void CLuabindManager::RegisterCore()
 		.def("GetLogManager", &CEngine::GetLogManager)
 		.def("GetDebugHelper", &CEngine::GetDebugHelper)
 		.def("LoadLevel", &CEngine::LoadLevel)
+		.def("GetCurrentLevel", &CEngine::GetCurrentLevel)
+		.def("IsPaused", &CEngine::IsPaused)
+		.def("Pause", &CEngine::Pause)
+		.def("GetPausedLuaAddress", &CEngine::GetPausedLuaAddress)
+		.def("GetTimeScaleLuaAddress", &CEngine::GetTimeScaleLuaAddress)
 	];
 
 	/*module(LUA_STATE) 
@@ -272,8 +273,14 @@ void CLuabindManager::RegisterCore()
 struct CLUAComponent_wrapper : CLUAComponent, luabind::wrap_base
 {
 public:
-	CLUAComponent_wrapper(const std::string Type) :CLUAComponent(Type){}
-	virtual void Update(float ElapsedTime){	call<void>("Update", ElapsedTime); }
+	CLUAComponent_wrapper(const std::string Name):CLUAComponent(Name){}
+	virtual void Update(float ElapsedTime)
+	{	
+		if (IsEnabled())
+		{
+			call<void>("Update", ElapsedTime);
+		}
+	}
 	static void default_Update(CLUAComponent* ptr, float ElapsedTime)
 	{
 		return ptr->CLUAComponent::Update(ElapsedTime);
@@ -290,12 +297,18 @@ void CLuabindManager::RegisterComponents()
 	[
 		class_<CLUAComponent, CLUAComponent_wrapper>("CLUAComponent")
 		.def(constructor<const std::string>())
+		.def("GetName", &CLUAComponent::GetName)
 		.def("Update", &CLUAComponent::Update, &CLUAComponent_wrapper::default_Update)
 		.def("AddTime", &CLUAComponent::AddTime)
 		.def("GetTimer", &CLUAComponent::GetTimer)
 		.def("ResetTimer", &CLUAComponent::ResetTimer)
-		.def("GetType", &CLUAComponent::GetType)
+		//.def("GetType", &CLUAComponent::GetType)
 		.def("Update", &CLUAComponent::Update)
+		.def("Enable", &CLUAComponent::Enable)
+		.def("Disable", &CLUAComponent::Disable)
+		.def("IsEnabled", &CLUAComponent::IsEnabled)
+		.def("GetThisLuaAddress", &CLUAComponent::GetThisLuaAddress)
+		.def("GetEnabledLuaAddress", &CLUAComponent::GetEnabledLuaAddress)
 	];
 
 	module(LUA_STATE)

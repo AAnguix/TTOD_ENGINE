@@ -1,6 +1,8 @@
 #include "Materials\MaterialManager.h"
 #include "Utils\Utils.h"
 #include "XML\XMLTreeNode.h"
+#include "Engine.h"
+#include "Log\Log.h"
 
 CMaterialManager::CMaterialManager() : m_Filename("")
 {
@@ -59,7 +61,25 @@ void CMaterialManager::Load(const std::string &Filename)
 void CMaterialManager::Reload()
 {
 	Destroy();
-	Load(m_Filename);
+	std::vector<std::string> l_MaterialsFileNames;
+	
+	std::map<const std::string, std::vector<CMaterial*>>::iterator itMap;
+	for (itMap = m_MaterialsPerFileName.begin(); itMap != m_MaterialsPerFileName.end(); ++itMap)
+	{
+		std::string l_MaterialFileName = itMap->first;
+		l_MaterialsFileNames.push_back(l_MaterialFileName);
+	}
+	m_MaterialsPerFileName.clear();
+
+	for (size_t i = 0; i < l_MaterialsFileNames.size(); ++i)
+	{
+		Load(l_MaterialsFileNames[i]);
+	}
+	l_MaterialsFileNames.clear();
+
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("MaterialManager reloaded");
+	#endif
 }
  
 const std::vector<CMaterial *> & CMaterialManager::GetLUAMaterials()

@@ -1,6 +1,6 @@
 class 'CEnemyComponent' (CLUAComponent)
-function CEnemyComponent:__init(CRenderableObject, ComponentType)
-	CLUAComponent.__init(self,ComponentType)
+function CEnemyComponent:__init(CRenderableObject,EnemyType)
+	CLUAComponent.__init(self,CRenderableObject:GetName().."_"..EnemyType.."Script")
 	self.m_RObject = CRenderableObject
 	self.m_Dead=false
 	self.m_Health=0.0

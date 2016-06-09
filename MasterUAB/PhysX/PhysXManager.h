@@ -149,6 +149,7 @@ public:
 
 	static CPhysXManager* CreatePhysxManager();
 	virtual ~CPhysXManager();
+	virtual void Destroy(){};
 	void Update(float ElapsedTime);
 	virtual void Reload();
 

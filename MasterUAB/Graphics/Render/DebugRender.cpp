@@ -160,7 +160,14 @@ CDebugRender::CDebugRender()
 
 void CDebugRender::InitializeDebugLights()
 {
+	for (size_t i = 0; i<m_DebugLights.size(); ++i)
+	{
+		CHECKED_DELETE(m_DebugLights[i]);
+	}
+	m_DebugLights.clear();
+
 	CLightManager* l_LightManager = CEngine::GetSingleton().GetLightManager();
+
 	size_t l_Size=l_LightManager->GetResourcesVector().size();
 	
 	for(size_t i=0;i<l_Size;++i)

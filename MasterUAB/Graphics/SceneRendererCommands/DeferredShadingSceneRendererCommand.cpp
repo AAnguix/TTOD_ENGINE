@@ -97,7 +97,7 @@ void CDeferredShadingSceneRendererCommand::ExecuteDeferredShadingUsingLightVolum
 			CEngine::GetSingleton().GetEffectManager()->SetLightConstants(0, l_Lights[i]);
 			m_RenderableObjectTechnique->GetEffectTechnique()->SetConstantBuffer(1, &CEffectManager::m_LightEffectParameters);
 
-			if (!l_Lights[i]->GetType() == CLight::OMNI) //
+			if (l_Lights[i]->GetType() != CLight::OMNI) //
 			{
 				RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_SOLID);
 				RenderManager.DrawScreenQuad(m_RenderableObjectTechnique->GetEffectTechnique(), NULL, 0, 0, 1.0f, 1.0f, CColor(v4fZERO));

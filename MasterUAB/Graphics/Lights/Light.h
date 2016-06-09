@@ -29,7 +29,6 @@ protected:
 	std::vector<CRenderableObjectsManager *> m_Layers;
 	Mat44f m_ViewShadowMap, m_ProjectionShadowMap;
 	
-	Vect3f m_Position;
 	CColor m_Color;
 	TLightType m_Type; 
 	

@@ -2,19 +2,24 @@
 #include "Render\RenderManager.h"
 #include "Textures\DynamicTexture.h"
 #include "XML\XMLTreeNode.h"
+#include "RenderableObjects\LayerManager.h"
+#include "Engine.h"
 
 CDirectionalLight::CDirectionalLight()
 :CLight()
 ,m_Direction(v3fZERO)
 ,m_OrthoShadowMapSize(v2fZERO)
+,m_PlayerOffset(v3fZERO)
 {
 	m_Type = DIRECTIONAL;
+	
 }
 
 CDirectionalLight::CDirectionalLight(CXMLTreeNode &TreeNode)
 :CLight(TreeNode)
 ,m_Direction(TreeNode.GetVect3fProperty("dir", v3fZERO))
 ,m_OrthoShadowMapSize(TreeNode.GetVect2fProperty("ortho_shadow_map_size", v2fZERO))
+,m_PlayerOffset(TreeNode.GetVect3fProperty("player_offset", v3fZERO))
 {
 	m_Type = DIRECTIONAL;
 }
@@ -26,6 +31,12 @@ void CDirectionalLight::Render(CRenderManager *RM)
 
 void CDirectionalLight::SetShadowMap(CRenderManager &RenderManager)
 {
+	Vect3f l_ShadowMapFrameDisplacement = v3fZERO;
+
+	CRenderableObject* l_Player = (CRenderableObject*)CEngine::GetSingleton().GetLayerManager()->GetPlayer();
+	Vect3f l_PlayerPos = l_Player->GetPosition();
+	SetPosition(l_PlayerPos + m_PlayerOffset);
+	
 	m_ViewShadowMap.SetIdentity();
 	m_ViewShadowMap.SetFromLookAt(m_Position, m_Position+m_Direction, v3fY);
 	

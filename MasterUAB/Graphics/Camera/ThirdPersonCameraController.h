@@ -5,7 +5,7 @@
 #include <vector>
 class CCamera;
 class CXMLTreeNode;
-
+class CEmptyPointerClass;
 
 class CThirdPersonCameraController : public CCameraController
 {
@@ -42,12 +42,20 @@ public:
 	Vect3f GetDirection() const;
 	void Update(float ElapsedTime);
 
-	//void Update(Vect3f rotation);
-
 	float GetPlayerCameraAngleDif(Vect3f PlayerPosition);
-
 	EType GetType() const{ return THIRD_PERSON; };
 
+	CEmptyPointerClass* GetZoomLuaAddress() const;
+	CEmptyPointerClass* GetZoomSpeedLuaAddress() const;
+	CEmptyPointerClass* GetMinZoomLuaAddress() const;
+	CEmptyPointerClass* GetMaxZoomLuaAddress() const;
+	CEmptyPointerClass* GetYawSpeedLuaAddress() const;
+	CEmptyPointerClass* GetPitchSpeedLuaAddress() const;
+	CEmptyPointerClass* GetRollSpeedLuaAddress() const;
+	CEmptyPointerClass* GetSpeedLuaAddress() const;
+	CEmptyPointerClass* GetFastSpeedLuaAddress() const;
+	CEmptyPointerClass* GetMinLookAtPitchLuaAddress() const;
+	CEmptyPointerClass* GetMaxLookAtPitchLuaAddress() const;
 };
 
 #endif

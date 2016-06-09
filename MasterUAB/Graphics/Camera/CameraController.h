@@ -21,6 +21,7 @@ protected:
 		FIXED=0,
 		THIRD_PERSON,
 		KEY,
+		DEBUG,
 		COUNT
 	};
 

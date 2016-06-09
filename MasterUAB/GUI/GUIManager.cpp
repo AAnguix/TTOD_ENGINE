@@ -15,17 +15,15 @@
 #include "Input\KeyBoardInput.h"
 
 CGUIManager::CGUIManager()
-:m_Filename(""),
-m_ActiveItem(""),
-m_HotItem(""),
-m_SelectedItem(""),
-m_InputUpToDate(false),
-m_MouseX(0),
-m_MouseY(0),
-m_MouseWentPressed(false),
-m_MouseWentReleased(false),
-m_AnimationTimer(0.0f)
-
+:m_ActiveItem("")
+,m_HotItem("")
+,m_SelectedItem("")
+,m_InputUpToDate(false)
+,m_MouseX(0)
+,m_MouseY(0)
+,m_MouseWentPressed(false)
+,m_MouseWentReleased(false)
+,m_AnimationTimer(0.0f)
 {
 	
 }
@@ -198,7 +196,14 @@ CGUIManager::SGUIPosition::SGUIPosition(float X, float Y, float Width, float Hei
 
 void CGUIManager::Load(const std::string &Filename)
 {
-	m_Filename=Filename;
+	bool l_Found = false;
+	for (size_t i = 0; i < m_Filenames.size(); ++i)
+	{
+		if (m_Filenames[i] == Filename)
+			l_Found = true;
+	}
+	if (!l_Found)
+		m_Filenames.push_back(Filename);
 
 	CXMLTreeNode l_XML;
 
@@ -265,7 +270,10 @@ void CGUIManager::AddSpriteMap(CXMLTreeNode &TreeNode)
 void CGUIManager::Reload()
 {
 	Destroy();
-	Load(m_Filename);
+	for (size_t i = 0; i < m_Filenames.size(); ++i)
+	{
+		Load(m_Filenames[i]);
+	}
 }
 
 void CGUIManager::Destroy()

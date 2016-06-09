@@ -32,7 +32,10 @@ CScript* CScriptManager::AddComponent(const std::string& Name, CRenderableObject
 	for (size_t i = 0; i < m_Components.size(); ++i)
 	{
 		if (m_Components[i]->GetName() == Name)
+		{
 			l_Found = true;
+			i = m_Components.size();
+		}
 	}
 	if (!l_Found)
 	{

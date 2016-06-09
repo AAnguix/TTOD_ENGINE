@@ -2,6 +2,8 @@
 #include "XML\XMLTreeNode.h"
 #include "Utils\Utils.h"
 #include "cal3d\loader.h"
+#include "Log\Log.h"
+#include "Engine.h"
 
 CAnimatedModelManager::CAnimatedModelManager()
 {
@@ -10,7 +12,7 @@ CAnimatedModelManager::CAnimatedModelManager()
 
 CAnimatedModelManager::~CAnimatedModelManager(){}  
 
-void CAnimatedModelManager::Load(const std::string &Filename)
+bool CAnimatedModelManager::Load(const std::string &Filename)
 {
 	m_Filename=Filename;
 	
@@ -41,14 +43,22 @@ void CAnimatedModelManager::Load(const std::string &Filename)
 					}
 				}
 			}
+			return true;
 		}
 	}
+	return false;
 }
 
-void CAnimatedModelManager::Reload()
+bool CAnimatedModelManager::Reload()
 {
 	Destroy();
-	Load(m_Filename);
+	bool l_Result = Load(m_Filename);
+
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("AnimatedModelManager reloaded");
+	#endif
+
+	return l_Result;
 }
 
 const std::vector<CAnimatedCoreModel *> & CAnimatedModelManager::GetLUAAnimatedModels()

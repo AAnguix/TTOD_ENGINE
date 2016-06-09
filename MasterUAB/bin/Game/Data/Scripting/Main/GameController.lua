@@ -9,6 +9,10 @@ function CGameController:__init()
 	self.m_Filename = ""
 end
 
+function CGameController:GetScripts()
+	return self.m_Entities
+end
+
 function CGameController:Update(ElapsedTime)
 	-- for i=1, (#self.m_Entities) do
 		-- self.m_Entities[i]:Update(ElapsedTime)
@@ -18,21 +22,35 @@ end
 function CGameController:LoadXML(Filename)
 	self.m_Filename = Filename
 	self.m_Entities={}
+	
+	local l_Pedestal = nil
+	
 	local l_XMLTreeNode=CXMLTreeNode()
 	local l_Loaded=l_XMLTreeNode:LoadFile(Filename)
+	
+	if l_Loaded == false then
+		g_LogManager:Log("Unable to load game entities file")
+	end
+	
 	if l_Loaded and l_XMLTreeNode:GetName() == "game_entities" then
 		for i=0, l_XMLTreeNode:GetNumChildren() do
 			local l_Element=l_XMLTreeNode:GetChild(i)
 			local l_ElemName=l_Element:GetName()
+			
+			g_LogManager:Log("Cargada entidad "..i)
 			
 			if l_ElemName=="enemy" then
 				self:LoadEnemy(l_Element)
 			elseif l_ElemName=="player" then
 				self:LoadPlayer(l_Element)
 			elseif l_ElemName=="pedestal" then
-				self:LoadPedestal(l_Element)
+				l_Pedestal = self:LoadPedestal(l_Element)
 			elseif l_ElemName=="dragon" then
 				self:LoadDragon(l_Element)
+			elseif l_ElemName=="shadow_manager" then
+				self:LoadShadowManager(l_Element)
+				elseif l_ElemName=="light_manager" then
+				self:LoadLightManager(l_Element,l_Pedestal)
 			end 
 		end
 		g_LogManager:Log("Game entities loaded.")
@@ -46,9 +64,52 @@ function CGameController:Reload()
 	for i=1, (#self.m_Entities) do
 		self.m_Entities[i] = nil
 	end
-	--g_LayerManager:RemoveLuaComponents()
-	--g_LayerManager:RemoveComponent("AnimatorController") --removes this component from all layers
 	self:LoadXML(self.m_Filename)
+	g_LogManager:Log("GameController reloaded")
+end
+
+function CGameController:LoadShadowManager(XMLTreeNode)
+	local l_RObject = GetElementFromLayer(XMLTreeNode)
+	local l_ShadowManager=CShadowManager()
+	local l_ComponentName = "ShadowManager_Script"
+	
+	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_ShadowManager)
+	table.insert(self.m_Entities,l_ShadowManager)
+	
+	for i=0, XMLTreeNode:GetNumChildren() do
+		local l_Element=XMLTreeNode:GetChild(i)
+		if l_Element:GetName()=="spot_light" then
+			local l_SpotLightName = l_Element:GetPszProperty("name","",false)
+			local l_Spotlight = g_LightManager:GetResource(l_SpotLightName)
+			if l_Spotlight == nil then
+				g_LogManager:Log("Unable to find "..l_SpotLightName.." to add it to ShadowManager")
+			else
+				l_ShadowManager:AddSpotlight(l_Spotlight)
+			end
+		end
+	end
+end
+
+function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
+	local l_RObject = GetElementFromLayer(XMLTreeNode)
+	local l_LightManager=CLightManager(Pedestal)
+	local l_ComponentName = "LightManager_Script"
+	
+	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_LightManager)
+	table.insert(self.m_Entities,l_LightManager)
+	
+	for i=0, XMLTreeNode:GetNumChildren() do
+		local l_Element=XMLTreeNode:GetChild(i)
+		if l_Element:GetName()=="light" then
+			local l_LightName = l_Element:GetPszProperty("name","",false)
+			local l_Light = g_LightManager:GetResource(l_LightName)
+			if l_Light == nil then
+				g_LogManager:Log("Unable to find "..l_LightName.." to add it to LightManager")
+			else
+				l_LightManager:AddLight(l_Light)
+			end
+		end
+	end
 end
 
 function CGameController:LoadEnemy(XMLTreeNode)
@@ -166,16 +227,12 @@ function CGameController:LoadDragon(XMLTreeNode)
 end
 
 function CGameController:LoadPedestal(XMLTreeNode)
-	
-	--g_LogManager:Log(XMLTreeNode:GetPszProperty("gui_id", "", false))
-	
 	local l_RObject = GetElementFromLayer(XMLTreeNode)
 	local l_PedestalComponent=CPedestalComponent(l_RObject)
-	l_PedestalComponent:Initialize(XMLTreeNode)
-	l_RObject:AddLuaComponent(l_PedestalComponent)
-	
-	l_PedestalComponent:Initialize(l_RObject)
+	local l_ComponentName = l_RObject:GetName().."_PedestalScript"
+	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_PedestalComponent)
 	table.insert(self.m_Entities,l_PedestalComponent)
+	return l_PedestalComponent
 end
 
 function GetElementFromLayer(XMLTreeNode)

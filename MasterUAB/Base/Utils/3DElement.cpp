@@ -57,6 +57,7 @@ m_Position(XMLTreeNode.GetVect3fProperty("pos", v3fZERO))
 
 void C3DElement::SetPosition(const Vect3f &Position)
 {
+	if (Position != m_Position) { m_PrevPos = m_Position; }
 	m_Position=Position;
 }  
 

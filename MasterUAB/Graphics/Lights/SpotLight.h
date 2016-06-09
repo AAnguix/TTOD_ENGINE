@@ -7,8 +7,8 @@ class CSpotLight : public CDirectionalLight
 {  
 
 protected:  
-	float	m_Angle; 
-	float	m_FallOff; 
+	float m_Angle; 
+	float m_FallOff; 
 
 public:   
 	CSpotLight();
@@ -17,8 +17,10 @@ public:
 	UAB_GET_SET_STANDARD_PROPERTY(float, FallOff);
 	void Render(CRenderManager *RenderManager); 
 	void SetShadowMap(CRenderManager &RenderManager);
-	UAB_GET_VAR_ADDRESS(Angle);
-	UAB_GET_VAR_ADDRESS(FallOff);
+
+	CEmptyPointerClass* GetAngleLuaAddress() const;
+	CEmptyPointerClass* GetFallOffLuaAddress() const;
+
 };
 
 #endif

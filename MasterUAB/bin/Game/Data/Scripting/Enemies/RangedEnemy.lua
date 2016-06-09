@@ -1,6 +1,6 @@
 class 'CRangedEnemyComponent' (CEnemyComponent)
 function CRangedEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject, "ranged")
+	CEnemyComponent.__init(self, CRenderableObject, "RanguedEnemy")
 	self.m_Health=150.0
 	self.m_Speed=2.0
 	self.m_AttackDelay=2.0

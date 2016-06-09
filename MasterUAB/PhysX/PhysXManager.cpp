@@ -46,7 +46,7 @@ CPhysXManager::CPhysXManager()
 
 CPhysXManager::~CPhysXManager()
 {
-	RemoveComponents();
+	
 }
 
 CPhysXManager::Groups CPhysXManager::GetGroup(const std::string &Group)
@@ -80,7 +80,10 @@ CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CMeshIns
 	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
 	{
 		if (m_ColliderComponents[i]->GetName() == Name)
+		{
 			l_Found = true;
+			i = m_ColliderComponents.size();
+		}
 	}
 	if (!l_Found)
 	{
@@ -103,7 +106,10 @@ CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::stri
 	for (size_t i = 0; i < m_CharacterColliderComponents.size(); ++i)
 	{
 		if (m_CharacterColliderComponents[i]->GetName() == Name)
+		{
 			l_Found = true;
+			i = m_CharacterColliderComponents.size();
+		}
 	}
 	if (!l_Found)
 	{
@@ -182,9 +188,9 @@ void CPhysXManager::RegisterActor(const std::string &ActorName, physx::PxShape* 
 
 size_t CPhysXManager::AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor)
 {
-#ifdef USE_PHYSX_DEBUG
-	CheckMapAndVectors();
-#endif
+	#ifdef USE_PHYSX_DEBUG
+		CheckMapAndVectors();
+	#endif
 
 	size_t index = m_Actors.size();
 
@@ -467,8 +473,25 @@ physx::PxTriangleMesh*  CPhysXManager::CookTriangleMesh(const std::string &CoreN
 size_t CPhysXManager::GetActorIndex(const std::string& ActorName) const
 {
 	auto it = m_ActorIndexs.find(ActorName);
-	assert(it != m_ActorIndexs.end());
+	
+	if (it == m_ActorIndexs.end())
+	{
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("Can't find actor " + ActorName + " index");
+		#endif
+		assert(false);
+	}
 	return it->second;
+
+	/*assert(it != m_ActorIndexs.end());
+	return it->second;*/
+
+	/*auto it = m_ActorIndexs.find(ActorName);
+	if (it == m_ActorIndexs.end());
+	{
+
+	}
+	*/
 }
 
 void CPhysXManager::SaveActorData(size_t Index, const std::string ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor *Actor)
@@ -482,10 +505,13 @@ void CPhysXManager::SaveActorData(size_t Index, const std::string ActorName, con
 
 void CPhysXManager::CheckMapAndVectors()
 {
-	assert(m_Actors.size() == m_ActorNames.size());
-	assert(m_Actors.size() == m_ActorPositions.size());
-	assert(m_Actors.size() == m_ActorOrientations.size());
-	assert(m_Actors.size() == m_ActorIndexs.size());
+	if (m_Actors.size() != m_ActorNames.size() || m_Actors.size() != m_ActorPositions.size() || m_Actors.size() != m_ActorOrientations.size() || m_Actors.size() != m_ActorIndexs.size())
+	{
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("Actor vectors size doesn't match");
+		#endif
+		assert(false);
+	}
 }
 
 void CPhysXManager::Update(float ElapsedTime)
@@ -697,14 +723,24 @@ Vect3f CPhysXManager::DisplacementCharacterController(const std::string& Charact
 
 Vect3f CPhysXManager::GetCharacterControllerPosition(const std::string& CharacterControllerName)
 {
+	Vect3f l_Result = v3fZERO;
 	physx::PxController* l_CController = m_CharacterControllers[CharacterControllerName];
-	return Vect3f(CastVec(l_CController->getPosition()));
+	if (l_CController != nullptr)
+	{
+		l_Result = Vect3f(CastVec(l_CController->getPosition()));
+	}
+	return l_Result;
 }
 
 Vect3f CPhysXManager::GetCharacterControllerFootPosition(const std::string& CharacterControllerName)
 {
+	Vect3f l_Result = v3fZERO;
 	physx::PxController* l_CController = m_CharacterControllers[CharacterControllerName];
-	return Vect3f(CastVec(l_CController->getFootPosition()));
+	if (l_CController != nullptr)
+	{
+		l_Result = Vect3f(CastVec(l_CController->getFootPosition()));
+	}
+	return l_Result;
 }
 
 void CPhysXManager::SetShapeAsTrigger(const std::string &ShapeName)
@@ -1012,6 +1048,9 @@ physx::PxShape* CPhysXManager::GetShape(const std::string &ShapeName)
 	}
 	else
 	{
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("Can't find the shape "+ShapeName+". It hasn't been loaded.");
+		#endif	
 		return nullptr;
 	}
 }

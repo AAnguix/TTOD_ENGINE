@@ -15,8 +15,8 @@ private:
 public:  
 	CAnimatedModelManager();  
 	virtual ~CAnimatedModelManager();  
-	void Load(const std::string &Filename);  
-	void Reload(); 
+	bool Load(const std::string &Filename);  
+	bool Reload();
 
 	const std::vector<CAnimatedCoreModel *> & GetLUAAnimatedModels();
 };

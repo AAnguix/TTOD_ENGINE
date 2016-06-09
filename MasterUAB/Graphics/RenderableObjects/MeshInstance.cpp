@@ -141,6 +141,7 @@ CMeshInstance::~CMeshInstance()
 {
 }
 
+static int b_Test = 0;
 void CMeshInstance::Render(CRenderManager* RenderManager)
 {
 	if (m_StaticMesh == NULL)
@@ -163,10 +164,35 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 			Mat44f l_ParentTransform = m_Parent->GetTransform();
 			CContextManager* l_ContextManager = RenderManager->GetContextManager();
 			
-			//l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
-			//l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
-			//l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);
-			l_ContextManager->SetWorldMatrix(GetTransform()*l_BoneTransform*l_ParentTransform);
+			l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
+			l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
+			/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
+			Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
+			l_Translation.SetIdentity();
+			l_Translation.Translate(m_Position);
+			l_RotX.SetIdentity();
+			l_RotX.RotByAngleX(m_Pitch);
+			l_RotY.SetIdentity();
+			l_RotY.RotByAngleY(m_Yaw);
+			l_RotZ.SetIdentity();
+			l_RotZ.RotByAngleZ(m_Roll);
+
+			Mat44f l_Tranform;
+			l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
+			/*if (b_Test==0)
+				l_Tranform = l_RotZ*l_RotY*l_RotX*l_Translation;
+			else if (b_Test == 1)
+				l_Tranform = l_RotZ*l_RotX*l_RotY*l_Translation;
+			else if (b_Test == 2)*/
+				
+			/*else if (b_Test == 3)
+				l_Tranform = l_RotX*l_RotZ*l_RotY*l_Translation;
+			else if (b_Test == 4)
+				l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
+			else if (b_Test == 5)
+				l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
+
+			l_ContextManager->SetWorldMatrix(l_Tranform*l_BoneTransform*l_ParentTransform);
 		}
 		else
 		{

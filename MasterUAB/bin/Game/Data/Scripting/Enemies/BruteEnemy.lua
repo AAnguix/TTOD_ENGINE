@@ -1,6 +1,6 @@
 class 'CBruteEnemyComponent' (CEnemyComponent)
 function CBruteEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject, "brute")
+	CEnemyComponent.__init(self, CRenderableObject, "BruteEnemy")
 	self.m_Health=300.0
 	self.m_Speed=1.5
 	self.m_AttackDelay=1.0

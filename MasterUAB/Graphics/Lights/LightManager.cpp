@@ -4,6 +4,8 @@
 #include "Lights\OmniLight.h"
 #include "Utils\Utils.h"
 #include "XML\XMLTreeNode.h"
+#include "Log\Log.h"
+#include "Engine.h"
 
 CLightManager::CLightManager() 
 :m_AmbientLight(Vect4f(0.1f,0.1f,0.1f,1.0f))
@@ -16,7 +18,7 @@ CLightManager::~CLightManager()
 {
 }
 
-void CLightManager::Load(const std::string &FileName)
+bool CLightManager::Load(const std::string &FileName)
 {
 	m_FileName=FileName;
 	CXMLTreeNode l_XML;
@@ -61,14 +63,20 @@ void CLightManager::Load(const std::string &FileName)
 					}
 				}
 			}
+			return true;
 		}
 	}
+	return false;
 }
 
-void CLightManager::Reload()
+bool CLightManager::Reload()
 {
 	Destroy();
-	Load(m_FileName);
+	bool l_Result = Load(m_FileName);
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("LightManager reloaded");
+	#endif	
+	return l_Result;
 }
 
 void CLightManager::Render(CRenderManager *RenderManager)

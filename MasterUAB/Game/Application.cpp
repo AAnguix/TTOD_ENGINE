@@ -39,12 +39,8 @@
 /*Sound*/
 #include "ISoundManager.h"
 
-#include <sstream>
 #include <cmath>
 #include "AStar.h"
-
-
-bool CApplication::m_Paused = false;
 
 static void __stdcall SwitchCameraCallback(void* _app)
 {
@@ -60,7 +56,6 @@ CApplication::CApplication(CContextManager *_ContextManager)
 	//CSingleton<CEngine> *l_Sing = new CSingleton<CEngine>();
 	CEngine::GetSingleton().SetRenderManager(&m_RenderManager);
 	CDebugHelper::GetDebugHelper()->Log("CApplication::CApplication");
-	m_Paused = false;
 	/*CDebugHelper::SDebugBar bar;
 	bar.name = "CApplication";
 	{
@@ -127,45 +122,15 @@ void CApplication::SwitchCamera()
 
 void CApplication::Update(float ElapsedTime)
 {	
-	CLuabindManager* l_LuabindManager = CEngine::GetSingleton().GetLuabindManager();
-
-	CCamera l_Camera = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera();
-	
-	ISoundManager* l_SoundManager = CEngine::GetSingleton().GetSoundManager(); assert(l_SoundManager != nullptr);
-	
-	CAnimatorControllerManager* l_AnimatorControllerManager = CEngine::GetSingleton().GetAnimatorControllerManager();
-	
-	CScriptManager* l_ScriptManager = CEngine::GetSingleton().GetScriptManager();
-	
-	CCameraControllerManager* l_CameraController = CEngine::GetSingleton().GetCameraControllerManager(); assert(l_CameraController != nullptr);
-	
-	std::stringstream l_Ss;
-	l_Ss << "Update(" << ElapsedTime << ")";
-	std::string l_Code = l_Ss.str();
-	l_LuabindManager->RunCode(l_Code);
-	
-	if (!CApplication::IsGamePaused())
-	{
-		m_RenderManager.GetContextManager()->SetTimes(ElapsedTime);
-		
-		l_CameraController->Update(ElapsedTime);
-
-		CEngine::GetSingleton().GetPhysXManager()->Update(ElapsedTime);
-
-		CEngine::GetSingleton().GetLayerManager()->Update(ElapsedTime);
-
-		l_AnimatorControllerManager->Update(ElapsedTime);
-
-		l_ScriptManager->Update(ElapsedTime);
-	}
-
-	l_SoundManager->Update(&l_Camera, ElapsedTime);
-	
+	CEngine::GetSingleton().Update(ElapsedTime);
 }
 
 void CApplication::Render()
 {
-	/*m_ContextManager->BeginRender(m_BackgroundColor);
+	CEngine::GetSingleton().GetSceneRendererCommandManager()->Execute(m_RenderManager);
+
+	/*m_ContextManager->
+	Render(m_BackgroundColor);
 	Mat44f world;
 
 	world.SetIdentity();
@@ -185,18 +150,7 @@ void CApplication::Render()
 
 	CDebugHelper::GetDebugHelper()->Render();*/
 
-	
-	CEngine::GetSingleton().GetSceneRendererCommandManager()->Execute(m_RenderManager);
 	//m_RenderManager.Render(m_ContextManager);
 	
 	//m_ContextManager->EndRender();
 }
-
-bool CApplication::IsGamePaused()
-{
-	return m_Paused; 
-};
-void CApplication::Pause() 
-{ 
-	m_Paused = !m_Paused; 
-};

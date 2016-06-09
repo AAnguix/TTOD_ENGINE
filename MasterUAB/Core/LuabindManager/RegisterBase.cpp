@@ -46,6 +46,7 @@ void CLuabindManager::RegisterBase()
 		[
 			def("GetAngleToFacePoint", &CTTODMathUtils::GetAngleToFacePoint)
 			,def("PointInsideCircle", &CTTODMathUtils::PointInsideCircle)
+			, def("CalculateNewAngle", &CTTODMathUtils::CalculateNewAngle)
 		]
 	];
 

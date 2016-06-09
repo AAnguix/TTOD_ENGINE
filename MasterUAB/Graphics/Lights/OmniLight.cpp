@@ -15,7 +15,7 @@ COmniLight::COmniLight(CXMLTreeNode &TreeNode)
 
 void COmniLight::Render(CRenderManager *RenderManager)
 {
-
+	
 }
 
 void COmniLight::SetShadowMap(CRenderManager &RenderManager)

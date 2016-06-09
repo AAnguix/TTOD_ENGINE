@@ -27,7 +27,9 @@ function InitializeDebugBar()
 	g_DebugHelper:RegisterButton("[8]Commands","OpenSceneRendererCommands()")
 	g_DebugHelper:RegisterButton("[9]GUI","ReloadGUI()")
 	g_DebugHelper:RegisterButton("Particles","OpenParticles()")
-	g_DebugHelper:RegisterButton("Cameras","ReloadCameras()")
+	g_DebugHelper:RegisterButton("Cameras","OpenCameras()")
+	g_DebugHelper:RegisterButton("Scripts","OpenScripts()")
+	g_DebugHelper:RegisterButton("Engine","ShowEngineParameters()")
 end
 
 function OpenEffects()
@@ -44,6 +46,12 @@ end
 
 ------------------------------ MATERIALS -------------------------------------------------------------------------
 dofile("./Data/Scripting/AntTweakBarMaterials.lua")
+
+------------------------------ CAMERAS -------------------------------------------------------------------------
+dofile("./Data/Scripting/AntTweakBarCameras.lua")
+
+------------------------------ ENGINE -------------------------------------------------------------------------
+dofile("./Data/Scripting/AntTweakBarEngine.lua")
 
 function OpenAnimatedModels()
 	ClickOnElement("Animated Models")
@@ -109,6 +117,9 @@ end
 
 ------------------------------ LIGHTS -------------------------------------------------------------------------
 dofile("./Data/Scripting/AntTweakBarLights.lua")
+ 
+ ------------------------------ SCRIPTS -------------------------------------------------------------------------
+dofile("./Data/Scripting/AntTweakBarScripts.lua")
  
  function OpenSceneRendererCommands()
 	ClickOnElement("Commands")

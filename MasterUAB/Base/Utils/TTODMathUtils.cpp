@@ -53,3 +53,25 @@ bool CTTODMathUtils::PointInsideCircle(const Vect3f &Point, const Vect3f &Circun
 
 	return false;
 }
+
+float CTTODMathUtils::CalculateNewAngle(float Angle, float CurrentYaw, float Velocity, float ElapsedTime)
+{
+	float l_Result = 0.0f;
+	if (Angle < 0.0f)
+	{
+		if ((Velocity*(-1)*ElapsedTime) < Angle)
+		{
+			l_Result = CurrentYaw + (Angle*ElapsedTime);
+		}
+		else { l_Result = CurrentYaw + (Velocity*(-1)*ElapsedTime); }
+	}
+	else
+	{
+		if ((Velocity*ElapsedTime) > Angle)
+		{
+			l_Result = CurrentYaw + (Angle*ElapsedTime);
+		}
+		else { l_Result = CurrentYaw + (Velocity*ElapsedTime); }
+	}
+	return l_Result;
+}

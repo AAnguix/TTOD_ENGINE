@@ -55,31 +55,8 @@ function ShowLoadScreen()
 	g_GUIManager:DoImage("background_image_0","background_image",l_BackgroundPos)
 end
 
-function StartLevelOne()
-	
-	g_LogManager:Log("Level one is going to be loaded.")
-	g_GUIManager:Load("./Data/gui_in_game.xml")
-	dofile("./Data/Scripting/LuaMainInGame.lua")
-	LoadGamePlayScripts() --LuaMainInGame.lua
-	g_Engine:LoadLevel("1")
-	g_CurrentLevel = 1
-	g_DamageCalculator:LoadXML("Data/damage_reduction_percentages.xml")
-	g_GameController:LoadXML("Data/Level1/game_entities.xml")
-	
-	g_LogManager:Log("Level one loaded...")
-	
-	LuaMain() --Load new LUA behavior (per frame)
-
-	g_CameraControllerManager:SetCurrentCameraController("ThirdPersonCamera")
-	g_SceneRendererCommandManager:Reload()
-	
-	local l_SoundEvent = SoundEvent("Play_WolfBlood")
-	g_SoundManager:PlayEvent(l_SoundEvent)
-	
-	g_LogManager:Log("Level one loaded.")
-end
-
-
+------------------------------ LEVELS -------------------------------------------------------------------------
+dofile("./Data/Scripting/Levels.lua")
 
 function OptionsMenu()
 

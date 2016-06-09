@@ -16,7 +16,7 @@ dofile("./Data/Scripting/Player/Inventory.lua")
 
 class 'CPlayerComponent' (CLUAComponent)
 function CPlayerComponent:__init(CRObject)
-	CLUAComponent.__init(self,"player")
+	CLUAComponent.__init(self,CRObject:GetName().."_PlayerScript")
 	self.m_RObject = CRObject
 	self.m_MaxHealth=500.0
 	self.m_Health=self.m_MaxHealth

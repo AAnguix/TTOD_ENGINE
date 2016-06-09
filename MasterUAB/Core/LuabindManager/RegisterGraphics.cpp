@@ -236,7 +236,8 @@ void CLuabindManager::RegisterCamera()
 		[
 			value("FIXED", 0),
 			value("THIRD_PERSON", 1),
-			value("KEY", 2)
+			value("KEY", 2),
+			value("DEBUG", 3)
 		]
 	];
 
@@ -288,6 +289,18 @@ void CLuabindManager::RegisterCamera()
 		.def("GetType", &CThirdPersonCameraController::GetType)
 		.def("GetPlayerCameraAngleDif", &CThirdPersonCameraController::GetPlayerCameraAngleDif)
 		.def("AddLookAtPitch", &CThirdPersonCameraController::AddLookAtPitch)
+		.def("GetZoomLuaAddress", &CThirdPersonCameraController::GetZoomLuaAddress)
+		.def("GetZoomSpeedLuaAddress", &CThirdPersonCameraController::GetZoomSpeedLuaAddress)
+		.def("GetMinZoomLuaAddress", &CThirdPersonCameraController::GetMinZoomLuaAddress)
+		.def("GetMaxZoomLuaAddress", &CThirdPersonCameraController::GetMaxZoomLuaAddress)
+		.def("GetYawSpeedLuaAddress", &CThirdPersonCameraController::GetYawSpeedLuaAddress)
+		.def("GetPitchSpeedLuaAddress", &CThirdPersonCameraController::GetPitchSpeedLuaAddress)
+		.def("GetRollSpeedLuaAddress", &CThirdPersonCameraController::GetRollSpeedLuaAddress)
+		.def("GetSpeedLuaAddress", &CThirdPersonCameraController::GetSpeedLuaAddress)
+		.def("GetFastSpeedLuaAddress", &CThirdPersonCameraController::GetFastSpeedLuaAddress)
+		.def("GetMinLookAtPitchLuaAddress", &CThirdPersonCameraController::GetMinLookAtPitchLuaAddress)
+		.def("GetMaxLookAtPitchLuaAddress", &CThirdPersonCameraController::GetMaxLookAtPitchLuaAddress)
+
 	];
 
 	module(LUA_STATE)
@@ -305,6 +318,8 @@ void CLuabindManager::RegisterCamera()
 		.def("Update", &CCameraControllerManager::Update)
 		.def("SetCurrentCameraController", &CCameraControllerManager::SetCurrentCameraController)
 		.def("GetCurrentCameraController", &CCameraControllerManager::GetCurrentCameraController)
+		.def("NextCameraController", &CCameraControllerManager::NextCameraController)
+
 		.def("GetLocked", &CCameraControllerManager::GetLocked)
 		.def("SetLocked", &CCameraControllerManager::SetLocked)
 		.def("ChangeLockState", &CCameraControllerManager::ChangeLockState)
@@ -455,6 +470,8 @@ void CLuabindManager::RegisterLights()
 		]
 		.def("GetIntensity", &CLight::GetIntensity)
 		.def("SetIntensity", &CLight::SetIntensity)
+		.def("SetActive", &CLight::SetActive)
+		.def("GetActive", &CLight::GetActive)
 		.def("GetColor", &CLight::GetColor)
 		.def("SetColor", &CLight::SetColor)
 		.def("GetStartRangeAttenuation", &CLight::GetStartRangeAttenuation)
@@ -502,8 +519,8 @@ void CLuabindManager::RegisterLights()
 		.def("GetAngle", &CSpotLight::GetAngle)
 		.def("GetFallOff", &CSpotLight::GetFallOff)
 		.def("Render", &CSpotLight::Render)
-		.def("GetAngleAddress", &CSpotLight::GetAngleAddress)
-		.def("GetFallOffAddress", &CSpotLight::GetFallOffAddress)
+		.def("GetAngleLuaAddress", &CSpotLight::GetAngleLuaAddress)
+		.def("GetFallOffLuaAddress", &CSpotLight::GetFallOffLuaAddress)
 	];
 
 	module(LUA_STATE)

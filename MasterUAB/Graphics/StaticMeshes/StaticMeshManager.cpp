@@ -1,9 +1,11 @@
 #include "StaticMeshes\StaticMeshManager.h"
 #include "Utils\Utils.h"
 #include "XML\XMLTreeNode.h"
+#include "Engine.h"
+#include "Log\Log.h"
 
 CStaticMeshManager::CStaticMeshManager()
-: m_FileName("")
+:m_FileName("")
 {
 }
 
@@ -52,7 +54,11 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 bool CStaticMeshManager::Reload()
 {
 	Destroy();
-	return Load(m_FileName);
+	bool l_Result = Load(m_FileName);
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("StaticMeshManager reloaded");
+	#endif	
+	return l_Result;
 }
 
 const std::vector<CStaticMesh *> & CStaticMeshManager::GetLUAStaticMeshes()

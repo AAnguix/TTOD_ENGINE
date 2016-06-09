@@ -17,6 +17,7 @@ class CPhysXManagerImplementation :
 public:
 	CPhysXManagerImplementation();
 	virtual ~CPhysXManagerImplementation();
+	void Destroy();
 	void Reload();
 
 	//PxSimulationEventCallback

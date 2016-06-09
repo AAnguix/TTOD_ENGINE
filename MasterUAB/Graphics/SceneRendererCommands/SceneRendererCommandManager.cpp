@@ -27,6 +27,7 @@
 #include "GenerateShadowMapsSceneRendererCommand.h"
 #include "ApplyFiltersSceneRendererCommand.h"
 #include "Utils.h"
+#include "Log\Log.h"
 
 CSceneRendererCommandManager::CSceneRendererCommandManager()
 {
@@ -259,7 +260,11 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 bool CSceneRendererCommandManager::Reload()
 {
 	Destroy();
-	return Load(m_Filename);
+	bool l_Result = Load(m_Filename);
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("SceneRendererCommandManager reloaded");
+	#endif
+	return l_Result;
 }
 
 void CSceneRendererCommandManager::Execute(CRenderManager &RenderManager)

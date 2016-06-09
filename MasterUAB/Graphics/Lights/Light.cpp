@@ -5,6 +5,7 @@
 #include "RenderableObjects\LayerManager.h"
 #include "XML\XMLTreeNode.h"
 #include "RenderableObjects\RenderableObjectsManager.h"
+#include "Log\Log.h"
 
 CLight::TLightType CLight::GetLightTypeByName(const std::string &StrLightType)
 {
@@ -38,6 +39,14 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 ,m_Intensity(TreeNode.GetFloatProperty("intensity", 0.0f))
 ,m_GenerateShadowMap(TreeNode.GetBoolProperty("generate_shadow_map", false))
 {	
+	#ifdef _DEBUG
+	if (m_StartRangeAttenuation > m_EndRangeAttenuation)
+	{ 
+		CEngine::GetSingleton().GetLogManager()->Log("Error. Start attenuation is lower than end attenuation on light "+m_Name);
+		assert(false);
+	}
+	#endif
+
 	//SetPosition(TreeNode.GetVect3fProperty("pos",v3fZERO));
 	if (m_GenerateShadowMap)
 	{
@@ -68,12 +77,11 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 }
 
 CLight::CLight() 
-: CNamed("")
+:CNamed("")
 ,m_GenerateShadowMap(false)
 ,m_ShadowMap(nullptr)
 ,m_ShadowMaskTexture(nullptr)
 ,m_Color(v4fZERO)
-,m_Position(v3fZERO)
 ,m_Intensity(0.0f)
 ,m_StartRangeAttenuation(0.0f)
 ,m_EndRangeAttenuation(0.0f)

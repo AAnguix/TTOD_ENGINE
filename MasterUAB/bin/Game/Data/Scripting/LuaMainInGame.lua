@@ -14,7 +14,9 @@ function DefineFunctions()
 	dofile("./Data/Scripting/Globals/GlobalsInGame.lua")
 	dofile("./Data/Scripting/Globals/AIGlobals.lua")
 	dofile("./Data/Scripting/GUI/GUIInGame.lua")
-	dofile("./Data/Scripting/CameraController.lua")
+	dofile("./Data/Scripting/CameraControllers/CameraControllerFunctions.lua")
+	dofile("./Data/Scripting/CameraControllers/DebugCameraController.lua")
+	dofile("./Data/Scripting/CameraControllers/ThirdPersonCameraController.lua")
 	--dofile("./Data/Scripting/AI.lua")
 	dofile("./Data/Scripting/Reload.lua")
 	dofile("./Data/Scripting/AntTweakBar.lua")
@@ -40,10 +42,10 @@ function InitializeLuaMain()
 end
 
 function Update(ElapsedTime)
-	if CApplication.IsGamePaused() == false then
+	if g_Engine:IsPaused() == false then
 		-- g_GameController:Update(ElapsedTime)
 		Reload(ElapsedTime)
-		CameraController(ElapsedTime)
+		UpdateCameraController(ElapsedTime)
 		UpdateCinematics(ElapsedTime)
 	end
 	UpdateGUI(ElapsedTime)
@@ -64,6 +66,8 @@ function LoadGamePlayScripts()
 	dofile("./Data/Scripting/Enemies/Dragon.lua")
 	dofile("./Data/Scripting/Enemies/DragonFSM.lua")
 	dofile("./Data/Scripting/Elements/Pedestal.lua")
+	dofile("./Data/Scripting/Elements/ShadowManager.lua")
+	dofile("./Data/Scripting/Elements/LightsManager.lua")
 	g_LogManager:Log("Gameplayscripts loaded.")
 end
 

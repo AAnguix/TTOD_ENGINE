@@ -1,7 +1,7 @@
 -- Used to define global variables and functions at start screen
 g_CameraXAxisRotationSpeed=0.3
 
-g_CurrentLevel = 0
+--g_CurrentLevel = 0
 
 g_PlayerComponent = nil --Store the instance to the player component
 g_Player = nil -- ... player RObject
@@ -17,11 +17,14 @@ g_StaticMeshManager = g_Engine:GetStaticMeshManager()
 g_AnimatedModelManager = g_Engine:GetAnimatedModelManager()
 g_TextureManager = g_Engine:GetTextureManager()
 g_EffectManager = g_Engine:GetEffectManager()
-
+g_ParticleSystemManager = g_Engine:GetParticleSystemManager()
+g_LightManager = g_Engine:GetLightManager()
+g_MaterialManager = g_Engine:GetMaterialManager()
 
 g_LayerManager = g_Engine:GetLayerManager()
 g_PhysXManager = g_Engine:GetPhysXManager()
 g_CameraControllerManager = g_Engine:GetCameraControllerManager()
+g_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 g_GUIManager = g_Engine:GetGUIManager()
 g_SoundManager = g_Engine:GetSoundManager()
 g_AnimatorControllerManager = g_Engine:GetAnimatorControllerManager()

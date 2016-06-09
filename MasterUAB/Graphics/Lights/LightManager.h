@@ -16,9 +16,10 @@ protected:
 public:   
 	CLightManager();   
 	~CLightManager();   
-	void Load(const std::string &FileName);   
+	bool Load(const std::string &FileName);
+	bool Reload();
 	void Render(CRenderManager *RenderManager); 
-	void Reload(); 
+	
 	Vect4f GetAmbientLight() const {return m_AmbientLight;};
 	Vect4f GetFogParameters() const {return m_FogParameters;};
 	Vect4f GetFogColor() const {return m_FogColor;};

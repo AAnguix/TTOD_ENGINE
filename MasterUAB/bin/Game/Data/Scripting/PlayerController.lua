@@ -26,6 +26,7 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 			g_Player:GetAnimatorController():SetTrigger("Attack")
 		end
 		if CInputManager.GetInputManager():IsActionActive("PLAYER_BLOCKS") then	
+			--StartLevelTwo()
 			g_Player:GetAnimatorController():SetTrigger("Block")
 		end
 	

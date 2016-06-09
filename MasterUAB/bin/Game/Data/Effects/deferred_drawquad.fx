@@ -38,8 +38,11 @@ float4 PS(PS_INPUT IN) : SV_Target
 	
 	float3 l_WorldPos=GetPositionFromZDepthView(l_Depth, IN.UV,m_InverseView, m_InverseProjection);
 	float3 l_WorldNormal = normalize(Texture2Normal(l_NormalMap.xyz));
+	
+	
 	float l_ShadowMapContrib = GetShadowMapContrib(0,l_WorldPos,T6Texture,S6Sampler);
 	
+
 	// if(m_LightTypeArray[0]==0)
 	// {
 		// //OMNI
@@ -65,7 +68,6 @@ float4 PS(PS_INPUT IN) : SV_Target
 	float3 l_DiffuseLight;
 	float3 l_SpecularLight;
 	//float4 h = T6Texture.Sample(S6Sampler, IN.UV);
-	
 	
 	//if(m_UseShadowMapArray[0])
 		//return float4(h);

@@ -18,7 +18,7 @@ public:
 	void Update(float ElapsedTime);
 	CScript* AddComponent(const std::string& Name, CRenderableObject* Owner, CLUAComponent* Component);
 	void RemoveComponents();
-
+	const std::vector<CScript *> & GetLUAScripts();
 };
 
 #endif

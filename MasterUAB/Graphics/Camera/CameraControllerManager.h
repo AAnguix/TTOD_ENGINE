@@ -32,6 +32,8 @@ public:
 	void SetLocked(bool Value){m_Locked=Value;};
 	void ChangeLockState(){m_Locked=!m_Locked;};
 
+	void NextCameraController();
+
 	const std::vector<CCameraController *> & GetLUACameraControllers();
 };
 

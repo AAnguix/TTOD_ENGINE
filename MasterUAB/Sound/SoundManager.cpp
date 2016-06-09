@@ -281,6 +281,7 @@ bool CSoundManager::Load(const std::string& SoundBanksFilename, const std::strin
 bool CSoundManager::Reload()
 {
 	Clean();
+	RemoveComponents();
 	return Load(m_SoundBanksFilename, m_SpeakersFilename);
 }
 
@@ -330,7 +331,10 @@ CAudioSource* CSoundManager::AddComponent(const std::string &Name, CRenderableOb
 	for (size_t i = 0; i < m_Components.size(); ++i)
 	{
 		if (m_Components[i]->GetName() == Name)
+		{
 			l_Found = true;
+			i = m_Components.size();
+		}
 	}
 	if (!l_Found)
 	{

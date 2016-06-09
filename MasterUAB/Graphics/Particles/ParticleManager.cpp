@@ -4,6 +4,7 @@
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "Particles\ParticleSystemInstance.h"
+#include "Log\Log.h"
 
 CParticleManager::CParticleManager() : m_Filename("")
 {
@@ -60,6 +61,10 @@ void CParticleManager::Reload()
 		((CParticleSystemInstance*)m_ParticleSystemInstances[i])->SetEmissionScaler
 			(l_NewSystemType->m_EmitAbsolute ? 1 : 1.0f / ((CParticleSystemInstance*)m_ParticleSystemInstances[i])->GetEmissionVolume());
 	}
+
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("ParticleManager reloaded");
+	#endif
 }
 
 const std::vector<CParticleSystemType *> & CParticleManager::GetLUAParticles()

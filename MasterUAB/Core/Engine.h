@@ -55,7 +55,7 @@ class CDebugHelperImplementation;
 class CParticleManager;
 class CInputManagerImplementation;
 class CGraphicsStats;
-
+class CEmptyPointerClass;
 
 class CEngine : public CSingleton<CEngine>
 {
@@ -85,13 +85,28 @@ private:
 	CParticleManager* m_ParticleSystemManager;
 	CInputManagerImplementation* m_InputManager;
 	CGraphicsStats* m_GraphicsStats;
+
+	std::string m_CurrentLevel;
+	float m_TimeScale;
+	bool m_Paused;
+
+	//std::vector<CLevel*> m_Levels;
+
 	CEngine();
 
 public:
 	virtual ~CEngine();
 
+	void SetTimeScale(float TimeScale);
+	void Pause(){ m_Paused = true; };
+	bool IsPaused() const { return m_Paused; };
+	CEmptyPointerClass* GetTimeScaleLuaAddress() const;
+	CEmptyPointerClass* GetPausedLuaAddress() const;
+	void Update(float ElapsedTime);
+
 	void Init();
-	void LoadLevel(const std::string& Level);
+	bool LoadLevel(const std::string &Level);
+	std::string GetCurrentLevel() const { return m_CurrentLevel; };
 
 	static void TerminateApplication(); /*Called from LUA when exit button is pressed*/
 

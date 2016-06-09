@@ -15,8 +15,8 @@ end
 -- end
 
 function CWeaponComponent:Update(ElapsedTime)
-	self:SetWeaponTransform()
-	g_LogManager:Log("Actualizando arma")
+	-- self:SetWeaponTransform()
+	-- g_LogManager:Log("Actualizando arma")
 end
 
 function CWeaponComponent:SetWeaponTransform()
@@ -24,11 +24,37 @@ function CWeaponComponent:SetWeaponTransform()
 	-- local l_ParentTransform = self.m_ParentRObject:GetTransform()
 		
 	-- g_ContextManager:SetWorldMatrix(l_BoneTransform*l_ParentTransform)
-	--g_ContextManager:Draw(g_RenderManager:GetDebugRender():GetAxis())
+	-- -- g_ContextManager:Draw(g_RenderManager:GetDebugRender():GetAxis())
 	
-		--ChildGetTransform	 --self.m_MeshRObject:GetTransform()*l_BoneTransform*l_ParentTransform
-	-- g_ContextManager:SetWorldMatrix(self.m_MeshRObject:GetTransform()*l_BoneTransform*l_ParentTransform);
-	-- self.m_MeshRObject:GetStaticMesh():Render(g_RenderManager);
+	-- --ChildGetTransform	 --self.m_MeshRObject:GetTransform()*l_BoneTransform*l_ParentTransform
+	-- local l_Transform = self.m_MeshRObject:GetTransform()
+	-- --local l_Transform = Get3DMaxTransform()
+	-- g_ContextManager:SetWorldMatrix(l_Transform*l_BoneTransform*l_ParentTransform)
+	-- self.m_MeshRObject:GetStaticMesh():Render(g_RenderManager)
+end
+
+function CWeaponComponent:Get3DMaxTransform()
+
+	local l_Yaw = self.m_MeshRObject:GetYaw()
+	local l_Pitch = self.m_MeshRObject:GetPitch()
+	local l_Roll = self.m_MeshRObject:GetRoll()
+
+	local l_RotX = Mat44f()
+	local l_RotY = Mat44f()
+	local l_RotZ = Mat44f()
+	local l_Translation = Mat44f()
+	l_Translation:SetIdentity()
+	l_Translation:Translate(self.m_MeshRObject:GetPosition())
+	l_RotX:SetIdentity()
+	l_RotX:RotByAngleX(l_Pitch+1.57)
+	l_RotY:SetIdentity()
+	l_RotY:RotByAngleY(l_Yaw)
+	l_RotZ:SetIdentity()
+	l_RotZ:RotByAngleZ(l_Roll)
+
+	local l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation
+	return l_Tranform
+
 end
 
 function CWeaponComponent:GetDamage()

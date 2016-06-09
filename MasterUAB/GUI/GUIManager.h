@@ -168,7 +168,8 @@ private:
 	float m_ScreenWidth;
 	float m_ScreenHeight;
 
-	std::string m_Filename;
+	std::vector<std::string> m_Filenames;
+
 	std::string m_ActiveItem;
 	std::string m_HotItem;
 	std::string m_SelectedItem;

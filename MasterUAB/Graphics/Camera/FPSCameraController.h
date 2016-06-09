@@ -23,7 +23,7 @@ public:
 	void AddPitch(float Radians);
 	Vect3f GetDirection() const;
 
-	EType GetType() const{ return FIXED; };
+	EType GetType() const{ return DEBUG; };
 
 };
 

@@ -32,8 +32,8 @@ float GetSpotSpecularContrib( float3 NormalNormalized, float4 CameraPosition, fl
 }
 float GetSpotAttenuation( float Angle, float FallOffAngle, float3 LightDirectionCalc, float4 LightDirection)
 {
-	float l_CosAngle = cos(Angle*0.5*3.1416/180.0);
-	float l_CosFallOff = cos(FallOffAngle*0.5*3.1416/180.0);
+	float l_CosAngle = cos(Angle*0.5/**3.1416/180.0*/);
+	float l_CosFallOff = cos(FallOffAngle*0.5/**3.1416/180.0*/);
 	float l_DotLight = dot(LightDirectionCalc, -LightDirection.xyz);
 	return float(saturate((l_DotLight-l_CosFallOff)/(l_CosAngle-l_CosFallOff)));
 }
@@ -142,14 +142,18 @@ float GetShadowMapContrib(int IdLight, float3 WorldPos, Texture2D ShadowMapTextu
 		
 		float l_DepthShadowMap=ShadowMapTexture.Sample(Sampler, l_ProjectedLightCoords).r;
 		float l_LightDepth=l_LightViewPosition.z/l_LightViewPosition.w;
+		//float m_ShadowMapBias=0.001;
 		float m_ShadowMapBias=0.001;
 		l_DepthShadowMap=l_DepthShadowMap+m_ShadowMapBias;
 		float m_ShadowMapStrength=0.5;
+		
 		if((saturate(l_ProjectedLightCoords.x)==l_ProjectedLightCoords.x) && (saturate(l_ProjectedLightCoords.y)==l_ProjectedLightCoords.y))
 		{
+			// l_ShadowContrib=0
 			if(l_LightDepth>l_DepthShadowMap)
-				l_ShadowContrib=m_ShadowMapStrength;
+				l_ShadowContrib=0;
 		}
 	}
+	
 	return l_ShadowContrib;
 }

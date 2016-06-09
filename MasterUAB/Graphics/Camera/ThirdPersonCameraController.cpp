@@ -302,3 +302,18 @@ Vect3f CThirdPersonCameraController::CameraCollisionZoom(const Vect3f& camPos, c
 		return camPos;
 	}
 }
+
+CEmptyPointerClass* CThirdPersonCameraController::GetZoomLuaAddress() const { return (CEmptyPointerClass *)&m_Zoom; }
+CEmptyPointerClass* CThirdPersonCameraController::GetZoomSpeedLuaAddress() const { return (CEmptyPointerClass *)&m_ZoomSpeed; }
+CEmptyPointerClass* CThirdPersonCameraController::GetMaxZoomLuaAddress() const { return (CEmptyPointerClass *)&m_MaxZoom; }
+CEmptyPointerClass* CThirdPersonCameraController::GetMinZoomLuaAddress() const { return (CEmptyPointerClass *)&m_MinZoom; }
+
+CEmptyPointerClass* CThirdPersonCameraController::GetYawSpeedLuaAddress() const { return (CEmptyPointerClass *)&m_YawSpeed; }
+CEmptyPointerClass* CThirdPersonCameraController::GetPitchSpeedLuaAddress() const { return (CEmptyPointerClass *)&m_PitchSpeed; }
+CEmptyPointerClass* CThirdPersonCameraController::GetRollSpeedLuaAddress() const { return (CEmptyPointerClass *)&m_RollSpeed; }
+
+CEmptyPointerClass* CThirdPersonCameraController::GetSpeedLuaAddress() const { return (CEmptyPointerClass *)&m_Speed; }
+CEmptyPointerClass* CThirdPersonCameraController::GetFastSpeedLuaAddress() const { return (CEmptyPointerClass *)&m_FastSpeed; }
+
+CEmptyPointerClass* CThirdPersonCameraController::GetMinLookAtPitchLuaAddress() const { return (CEmptyPointerClass *)&m_MinLookAtPitch; }
+CEmptyPointerClass* CThirdPersonCameraController::GetMaxLookAtPitchLuaAddress() const { return (CEmptyPointerClass *)&m_MaxLookAtPitch; }

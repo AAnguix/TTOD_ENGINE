@@ -51,3 +51,5 @@ void CSpotLight::SetShadowMap(CRenderManager &RenderManager)
 	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, m_ShadowMap->GetDepthStencilView());
 }
 
+CEmptyPointerClass* CSpotLight::GetFallOffLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_FallOff); }
+CEmptyPointerClass* CSpotLight::GetAngleLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_Angle); }

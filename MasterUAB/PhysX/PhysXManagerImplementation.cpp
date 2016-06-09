@@ -3,6 +3,7 @@
 #include <sstream>
 #include "Engine.h"
 #include "LuabindManager\LuabindManager.h"
+#include "Log\Log.h"
 
 static physx::PxDefaultErrorCallback gDefaultErrorCallback;
 static physx::PxDefaultAllocator gDefaultAllocatorCallback;
@@ -65,8 +66,22 @@ CPhysXManagerImplementation::CPhysXManagerImplementation()
 	m_ControllerManager->setOverlapRecoveryModule(true);
 }
 
+void CPhysXManagerImplementation::Destroy()
+{
+	RemoveComponents();
+
+	for (auto it = m_CharacterControllers.begin(); it != m_CharacterControllers.end(); ++it)
+	{
+		physx::PxController* l_Controller = it->second;
+		l_Controller->release();
+	}
+	m_CharacterControllers.clear();
+}
+
 CPhysXManagerImplementation::~CPhysXManagerImplementation()
 {
+	RemoveComponents();
+
 	for (auto it = m_CharacterControllers.begin(); it != m_CharacterControllers.end(); ++it)
 	{
 		physx::PxController* l_Controller = it->second;
@@ -84,7 +99,6 @@ CPhysXManagerImplementation::~CPhysXManagerImplementation()
 			}
 		}
 	}*/
-	m_CharacterControllers.clear();
 
 	if (m_ControllerManager != nullptr)
 	{
@@ -197,7 +211,7 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 
 		size_t indexTrigger = (size_t)pairs[i].triggerActor->userData;
 		size_t indexActor = (size_t)pairs[i].otherActor->userData;
-
+		
 		std::string triggerName = m_ActorNames[indexTrigger];
 		std::string actorName = m_ActorNames[indexActor];
 
@@ -247,7 +261,7 @@ void CPhysXManagerImplementation::CreateCharacterController(const std::string &N
 
 	physx::PxController* l_Controller = m_ControllerManager->createController(l_Desc);
 	m_CharacterControllers.insert(std::pair<std::string, physx::PxController*>(Name, l_Controller));
-
+	
 	size_t l_ActorIndex = m_Actors.size();
 	l_Controller->getActor()->userData = (void*)l_ActorIndex;
 	SaveActorData(l_ActorIndex, Name, Position, Quatf(0.0f, 0.0f, 0.0f, 1.0f), l_Controller->getActor());
@@ -255,6 +269,8 @@ void CPhysXManagerImplementation::CreateCharacterController(const std::string &N
 
 void CPhysXManagerImplementation::Reload()
 {
+	RemoveComponents();
+
 	for (auto it = m_CharacterControllers.begin(); it != m_CharacterControllers.end(); ++it)
 	{
 		if (it->second != nullptr)
@@ -299,11 +315,15 @@ void CPhysXManagerImplementation::Reload()
 		}
 	}
 	m_Actors.clear();
-
+	
 	m_ActorIndexs.clear();
 	m_ActorNames.clear();
 	m_ActorPositions.clear();
 	m_ActorOrientations.clear();
+
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("PhysxManager reloaded");
+	#endif	
 }
 
 bool CPhysXManagerImplementation::filter(const physx::PxController& a, const physx::PxController& b)

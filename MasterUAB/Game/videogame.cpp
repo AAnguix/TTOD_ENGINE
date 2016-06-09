@@ -32,7 +32,6 @@
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
 
-#pragma comment(lib, "Graphics_d.lib")
 #pragma comment(lib, "Winmm.lib")
 
 #define APPLICATION_NAME	"The Tale Of Degann"
@@ -255,7 +254,6 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 					float m_ElapsedTime = (float)(l_CurrentTime - m_PreviousTime)*0.001f;
 					m_PreviousTime = l_CurrentTime;*/
 
-					CEngine::GetSingleton().GetGraphicsStats()->Update(l_ElapsedTime);
 					l_Application.Update(l_ElapsedTime);
 					l_Application.Render();
 

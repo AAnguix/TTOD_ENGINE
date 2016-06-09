@@ -86,10 +86,48 @@ void CCameraControllerManager::Reload()
 void CCameraControllerManager::SetCurrentCameraController(const std::string CameraControllerName)
 {
 	CCameraController* l_Controller = GetResource(CameraControllerName);
-	assert(l_Controller != nullptr);
+	assert(l_Controller != nullptr && "Trying to set a camera controller that hasn't been loaded");
 	if(l_Controller)
 	{
 		m_CurrentCameraController=l_Controller;
+	}
+}
+
+void CCameraControllerManager::NextCameraController()
+{
+	bool l_Next = false;
+	bool l_Changed = false;
+
+	CTemplatedMapManager<CCameraController>::TMapResource &l_Resources = GetResourcesMap();
+
+	for (CTemplatedMapManager<CCameraController>::TMapResource::iterator it = l_Resources.begin(); it != l_Resources.end(); ++it)
+	{
+		if (l_Next && !l_Changed)
+		{
+			SetCurrentCameraController(it->first);
+			l_Changed = true;
+		}
+
+		if (!l_Next && it->second == m_CurrentCameraController)
+		{
+			l_Next = true;
+		}
+	}
+
+	if (!l_Changed)
+	{
+		for (CTemplatedMapManager<CCameraController>::TMapResource::iterator it = l_Resources.begin(); it != l_Resources.end(); ++it)
+		{
+			if (l_Next && !l_Changed)
+			{
+				SetCurrentCameraController(it->first);
+			}
+
+			if (!l_Next && it->second == m_CurrentCameraController)
+			{
+				l_Next = true;
+			}
+		}
 	}
 }
 

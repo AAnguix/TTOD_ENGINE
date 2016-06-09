@@ -194,15 +194,19 @@
 	<!-- <set_depth_stencil_state enable_z_test="true" write_z_buffer="false"/> -->
 	<!-- <render_layer layer="skybox" active="true"/> -->
 	
+	<!-- <render_debug_shadowmap/> -->
+	
 	<render_debug_gui/>
+	
 	<enable_alpbha_blend/>
 	<render_gui/>
 	<disable_alpha_blend/>
+	<!-- <render_debug_lights/> -->
 	<!-- <render_debug_grid/> -->
 	<!--
 	-->
 	<!-- <render_debug_layer layer="solid" active="true"/> -->
-	<!-- <render_debug_lights/> -->
+	
 	
 	<present/>
 </scene_renderer_commands>

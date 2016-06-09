@@ -21,6 +21,7 @@
     <ClCompile Include="Components\AudioSource.cpp" />
     <ClCompile Include="Components\CharacterCollider.cpp" />
     <ClCompile Include="Components\Collider.cpp" />
+    <ClCompile Include="Components\LuaComponent.cpp" />
     <ClCompile Include="Components\Script.cpp" />
     <ClCompile Include="DebugHelper\DebugHelper.cpp" />
     <ClCompile Include="DebugHelper\DebugHelperImplementation.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="Input\InputManagerImplementation.cpp" />
     <ClCompile Include="Input\KeyBoardInput.cpp" />
     <ClCompile Include="Input\MouseInput.cpp" />
+    <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Log\Log.cpp" />
     <ClCompile Include="LuabindManager\LuabindManager.cpp" />
     <ClCompile Include="LuabindManager\RegisterBase.cpp" />
@@ -61,6 +63,7 @@
     <ClInclude Include="Input\InputManagerImplementation.h" />
     <ClInclude Include="Input\KeyBoardInput.h" />
     <ClInclude Include="Input\MouseInput.h" />
+    <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Log\Log.h" />
     <ClInclude Include="LuabindManager\LuabindManager.h" />
   </ItemGroup>

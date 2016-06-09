@@ -2,11 +2,11 @@ class 'CPedestalComponent' (CLUAComponent)
 function CPedestalComponent:__init(CRenderableObject)
 CLUAComponent.__init(self,"pedestal")	
 	self.m_RObject = CRenderableObject
-	self.m_Activated = false
-	self.m_Function = ""
+	self.m_Active = false
 	self.m_InteractionRange = 1.5
-	self.m_ElapsedTime = 0.0
-	self.m_Button = nil
+	g_GUIManager:AddButton("pedestal01_button", "pedestal_button_normal", "pedestal_button_highlight", "pedestal_button_pressed")
+	self.m_TimeActive = 4.0
+	self.m_SoundPlayed = false
 end
 
 function CPedestalComponent:Initialize(XMLTreeNode)
@@ -22,7 +22,6 @@ function CPedestalComponent:Initialize(XMLTreeNode)
 	--self.m_Button = EItemButton(GuiID,ButtonID,Normal,Highlight,Pressed,GuiPosition)
 	
 	--g_GUIManager:AddButton(ButtonID, Normal, Highlight, Pressed)
-	g_GUIManager:AddButton("pedestal01_button", "pedestal_button_normal", "pedestal_button_highlight", "pedestal_button_pressed")
 	
 	--g_LogManager:Log("Pedestal "..self.m_RObject:GetName().." created...")
 end
@@ -53,11 +52,22 @@ function CPedestalComponent:IsPlayerInsideInteractionRange(PlayerPosition)
 end
 
 function CPedestalComponent:Update(ElapsedTime)
-	if self:IsPlayerInsideInteractionRange(g_Player:GetPosition()) then
+	
+	if self.m_Active == true then
+		self:AdTime()
+		if(self:GetTimer() <= self.m_TimeActive) then
+			if self.m_SoundPlayed == false then
+				self.m_RObject:GetAudioSource():PlayEvent("pedestal_sound")
+				self.m_SoundPlayed = true
+			end
+			--Show GUI message telling player that he has reach and objetive
+		else
+			self.m_Active = false
+			self:ResetTimer()
+			self:Disable()
+		end
+	elseif self:IsPlayerInsideInteractionRange(g_Player:GetPosition()) then
 		self:ShowGuiMessage()
-	end
-	if self.m_Activated == true then
-		-- call this function -> self.m_Function
 	end
 end
 
@@ -67,11 +77,10 @@ function CPedestalComponent:ShowGuiMessage()
 	local l_Pressed = g_GUIManager:DoButton("pedestal01_button","pedestal01_button", l_Center)
 	--local l_Pressed = g_GUIManager:DoButton(self.m_Button.m_GuiID, self.m_Button.m_ButtonID, l_Center)
 	if l_Pressed then
-		self:Activate()
+		self.m_Active = true
 	end
 end
 
-function CPedestalComponent:Activate()
-	self.m_Activated = true
+function CPedestalComponent:IsActive()
+	return self.m_Active
 end
-

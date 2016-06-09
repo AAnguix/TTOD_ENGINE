@@ -9,6 +9,7 @@
 #include "StaticMeshes\StaticMesh.h"
 #include "SceneRendererCommands\SceneRendererCommand.h"
 #include "Materials\Material.h"
+#include "Components\LuaComponent.h"
 
 CDebugHelperImplementation::CDebugHelperImplementation() : m_CurrentBarName("")
 {
@@ -248,6 +249,16 @@ void TW_CALL CDebugHelperImplementation::CallLuaExtendedFunction(void *ClientDat
 	else if (l_ObjectType == "scene_renderer_command")
 	{
 		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CSceneRendererCommand*)l_ClientData->m_Object);
+	}
+	else if (l_ObjectType == "lua_component")
+	{
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CLUAComponent*)l_ClientData->m_Object);
+	}
+	else
+	{	
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("Object type " + l_ObjectType + " isn't defined. Unable to call function " + l_ClientData->m_Function+" from extended button");
+		#endif
 	}
 
 }

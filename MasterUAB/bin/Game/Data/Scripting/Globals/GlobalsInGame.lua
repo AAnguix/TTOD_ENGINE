@@ -13,6 +13,4 @@ g_Enemies = {}
 g_CurrentGuiFile = "./Data/Scripting/GUI/GUIInGame.lua"
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainInGame.lua"
 
-g_ParticleSystemManager = g_Engine:GetParticleSystemManager()
-
 g_IsGamePaused = false

@@ -77,6 +77,12 @@
     <ClCompile Include="Components\Script.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Components\LuaComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\Level.cpp">
+      <Filter>Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h" />
@@ -149,6 +155,9 @@
     <ClInclude Include="Components\Script.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="Level\Level.h">
+      <Filter>Level</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Input">
@@ -168,6 +177,9 @@
     </Filter>
     <Filter Include="DebugHelper">
       <UniqueIdentifier>{1d1d350a-2077-44b6-9983-a7e6309ce03f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Level">
+      <UniqueIdentifier>{d84add22-f121-44eb-8285-58d493bc35f9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
