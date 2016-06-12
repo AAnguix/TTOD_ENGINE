@@ -21,7 +21,8 @@ void CScriptManager::UpdateComponents(float ElapsedTime)
 {
 	for (size_t i = 0; i < m_Components.size(); ++i)
 	{
-		m_Components[i]->Update(ElapsedTime);
+		if (m_Components[i])
+			m_Components[i]->Update(ElapsedTime);
 	}
 }
 

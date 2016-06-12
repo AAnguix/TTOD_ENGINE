@@ -6,6 +6,8 @@
 #include <assert.h>
 #include "Components\AudioSource.h"
 #include "RenderableObjects\RenderableObject.h"
+#include "Engine.h"
+#include "Log\Log.h"
 
 namespace AK
 {
@@ -558,7 +560,9 @@ SoundEvent CSoundManager::GetSoundEvent(const std::string &SoundEventName)
 			return m_SoundEvents[i];
 		}
 	}
-	assert(false);
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("Sound " + SoundEventName + " not found");
+	#endif
 	return SoundEvent("");
 }
 

@@ -3,6 +3,7 @@
 
 //#include "Utils\SingletonPattern.h"
 #include <string>
+#include <vector>
 
 template <class T> 
 class CSingleton
@@ -56,6 +57,7 @@ class CParticleManager;
 class CInputManagerImplementation;
 class CGraphicsStats;
 class CEmptyPointerClass;
+class CLevel;
 
 class CEngine : public CSingleton<CEngine>
 {
@@ -90,7 +92,9 @@ private:
 	float m_TimeScale;
 	bool m_Paused;
 
-	//std::vector<CLevel*> m_Levels;
+	std::vector<CLevel*> m_Levels;
+	bool m_LoadingLevel;
+	bool m_GuiLoaded;
 
 	CEngine();
 
@@ -103,9 +107,13 @@ public:
 	CEmptyPointerClass* GetTimeScaleLuaAddress() const;
 	CEmptyPointerClass* GetPausedLuaAddress() const;
 	void Update(float ElapsedTime);
-
-	void Init();
+	
+	void Initialize();
+	void LoadLevelsCommonData();
+	bool AddLevel(const std::string &Level);
 	bool LoadLevel(const std::string &Level);
+	bool UnloadLevel(const std::string &Level);
+	bool LoadingLevel() const { return m_LoadingLevel; };
 	std::string GetCurrentLevel() const { return m_CurrentLevel; };
 
 	static void TerminateApplication(); /*Called from LUA when exit button is pressed*/

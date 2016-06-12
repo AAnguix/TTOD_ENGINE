@@ -119,27 +119,14 @@ CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::stri
 	}
 	else
 	{
-		assert(false);
-		delete(l_CharacterCollider); l_CharacterCollider = NULL;
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("Unable to create component " + Name + ". It's already created");
+		#endif
+		delete(l_CharacterCollider); 
+		l_CharacterCollider = NULL;
 	}
 
 	return l_CharacterCollider;
-}
-void CPhysXManager::RemoveComponents()
-{
-	for (size_t i = 0; i < m_CharacterColliderComponents.size();++i)
-	{
-		delete m_CharacterColliderComponents[i];
-		m_CharacterColliderComponents[i] = NULL;
-	}
-	m_CharacterColliderComponents.clear();
-
-	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
-	{
-		delete m_ColliderComponents[i];
-		m_ColliderComponents[i] = NULL;
-	}
-	m_ColliderComponents.clear();
 }
 
 physx::PxMaterial* CPhysXManager::RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution)
@@ -563,76 +550,40 @@ bool CPhysXManager::RemoveActor(const std::string &ActorName)
 
 		return true;
 	}
-	else
+
+	if (it_Actors != m_ActorIndexs.end())
 	{
-		if (it_Actors != m_ActorIndexs.end())
+		size_t l_RemovedActorIndex = it_Actors->second;
+
+		m_Actors[l_RemovedActorIndex]->release();
+
+		size_t l_MovedActorIndex = m_Actors.size() - 1;
+
+		//Coppy last actor info to removed actor index.
+		m_Actors[l_RemovedActorIndex] = m_Actors[m_Actors.size() - 1];
+		m_Actors.resize(m_Actors.size() - 1);
+
+		m_ActorNames[l_RemovedActorIndex] = m_ActorNames[m_ActorNames.size() - 1];
+		m_ActorNames.resize(m_ActorNames.size() - 1);
+
+		m_ActorPositions[l_RemovedActorIndex] = m_ActorPositions[m_ActorPositions.size() - 1];
+		m_ActorPositions.resize(m_ActorPositions.size() - 1);
+
+		m_ActorOrientations[l_RemovedActorIndex] = m_ActorOrientations[m_ActorOrientations.size() - 1];
+		m_ActorOrientations.resize(m_ActorOrientations.size() - 1);
+
+		m_ActorIndexs.erase(it_Actors);
+
+		if (l_RemovedActorIndex<m_Actors.size())
 		{
-			size_t l_RemovedActorIndex = it_Actors->second;
-
-			m_Actors[l_RemovedActorIndex]->release();
-
-			size_t l_MovedActorIndex = m_Actors.size() - 1;
-
-			//Coppy last actor info to removed actor index.
-			m_Actors[l_RemovedActorIndex] = m_Actors[m_Actors.size() - 1];
-			m_Actors.resize(m_Actors.size() - 1);
-
-			m_ActorNames[l_RemovedActorIndex] = m_ActorNames[m_ActorNames.size() - 1];
-			m_ActorNames.resize(m_ActorNames.size() - 1);
-
-			m_ActorPositions[l_RemovedActorIndex] = m_ActorPositions[m_ActorPositions.size() - 1];
-			m_ActorPositions.resize(m_ActorPositions.size() - 1);
-
-			m_ActorOrientations[l_RemovedActorIndex] = m_ActorOrientations[m_ActorOrientations.size() - 1];
-			m_ActorOrientations.resize(m_ActorOrientations.size() - 1);
-
-			m_ActorIndexs.erase(it_Actors);
-
-			if (l_RemovedActorIndex<m_Actors.size())
-			{
-				m_ActorIndexs[m_ActorNames[l_RemovedActorIndex]] = l_RemovedActorIndex; //indice del obj movido
-				m_Actors[l_RemovedActorIndex]->userData = (void*)l_RemovedActorIndex;
-			}
-			return true;
+			m_ActorIndexs[m_ActorNames[l_RemovedActorIndex]] = l_RemovedActorIndex; //indice del obj movido
+			m_Actors[l_RemovedActorIndex]->userData = (void*)l_RemovedActorIndex;
 		}
+		return true;
 	}
 
 	return false;
 }
-
-/*bool CPhysXManager::RemoveActor(const std::string &ActorName)
-{
-auto it_controller = m_CharacterControllers.find(ActorName);
-auto it_Actors = m_ActorIndexs.find(ActorName);
-
-if(it_Actors != m_ActorIndexs.end())
-{
-size_t index = it_Actors->second;
-
-if(it_controller!=m_CharacterControllers.end()) //Is a C.Controller
-{
-it_controller->second->release();
-m_CharacterControllers.erase(it_controller);
-}
-else
-{
-m_Actors[index]->release();
-}
-
-//Coppy last object to removed actor pos.
-m_Actors[index] = m_Actors[m_Actors.size()-1];
-
-m_Actors.resize(m_Actors.size() - 1);
-
-m_ActorIndexs[m_ActorNames[index]] = index;
-m_Actors[index]->userData = (void*)index;
-
-return true;
-}
-
-return false;
-}
-*/
 
 void CPhysXManager::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName, float StaticFriction, float DynamicFriction, float Restitution)
 {
@@ -690,9 +641,13 @@ Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterContro
 
 	physx::PxController* l_Controller = m_CharacterControllers[CharacterControllerName];
 	const physx::PxControllerFilters l_Filters(nullptr, nullptr, &l_Filter);
+	
+	#ifdef _DEBUG
+	if (l_Controller == nullptr)
+		CEngine::GetSingleton().GetLogManager()->Log("Unable to move " + CharacterControllerName + ". Is nullptr.");
+	#endif
 
 	size_t index = (size_t)l_Controller->getUserData();
-
 	l_Controller->move(CastVec(l_Move), l_Move.Length()*0.01f, ElapsedTime, l_Filters);
 
 	physx::PxRigidDynamic* l_Actor = l_Controller->getActor();
@@ -707,6 +662,8 @@ Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterContro
 
 	return l_Return;
 }
+
+
 
 Vect3f CPhysXManager::DisplacementCharacterController(const std::string& CharacterControllerName, const Vect3f &Displacement, float ElapsedTime)
 {
@@ -1090,4 +1047,85 @@ physx::PxShape* CPhysXManager::CreateTriangleMesh(const std::string &ShapeName, 
 {
 	physx::PxTriangleMesh* l_TriangleMesh = CookTriangleMesh(ShapeName, Vertices, Indices);
 	return GenerateShape(ShapeName, physx::PxTriangleMeshGeometry(l_TriangleMesh), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+
+physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group)
+{
+	physx::PxShape* l_Shape = nullptr;
+
+	std::vector<Vect3f> l_ShapeVertex;
+	std::vector<unsigned short> l_ShapeIndex;
+
+	FILE *l_File = NULL;
+	fopen_s(&l_File, (Filename.c_str()), "rb");
+
+	void *l_VtxsData = NULL;
+	void *l_IdxData = NULL;
+
+	unsigned short l_DefaultHeader = 0xfe55;
+	unsigned short l_DefaultFooter = 0x55fe;
+
+	unsigned short l_Header;
+
+	fread(&l_Header, sizeof(unsigned short), 1, l_File);
+
+	if (l_Header == l_DefaultHeader)
+	{
+		unsigned int l_NumVertexs = 0;
+		fread(&l_NumVertexs, sizeof(unsigned short), 1, l_File);
+
+		if (l_NumVertexs > 0)
+		{
+			unsigned int l_NumBytes = sizeof(float) * 3 * l_NumVertexs;
+
+			l_VtxsData = malloc(l_NumBytes);
+			fread(l_VtxsData, l_NumBytes, 1, l_File);
+			long offset = (l_NumBytes / l_NumVertexs);
+
+			size_t l_LastNumberOfVertices = l_ShapeVertex.size();
+			l_ShapeVertex.resize(l_LastNumberOfVertices + l_NumVertexs);
+
+			for (size_t i = 0; i < l_NumVertexs; ++i)
+			{
+				Vect3f* l_Vertex = static_cast<Vect3f*>(l_VtxsData);
+				l_ShapeVertex[i + l_LastNumberOfVertices] = *l_Vertex;
+
+				l_VtxsData = static_cast<char*>(l_VtxsData)+offset;
+			}
+
+			unsigned short m_NumIndexs;
+			unsigned short l_NumIndexsFile;
+			fread(&l_NumIndexsFile, sizeof(unsigned short), 1, l_File);
+			l_NumBytes = sizeof(unsigned short)*l_NumIndexsFile;
+			m_NumIndexs = (unsigned short)l_NumIndexsFile;
+			l_IdxData = malloc(l_NumBytes);
+			fread(l_IdxData, 1, l_NumBytes, l_File);
+
+			size_t l_LastNumberOfIndexs = l_ShapeIndex.size();
+			l_ShapeIndex.resize(l_LastNumberOfIndexs + m_NumIndexs);
+
+			for (size_t i = 0; i < m_NumIndexs; ++i)
+			{
+				unsigned short* l_Index = static_cast<unsigned short*>(l_IdxData);
+				l_ShapeIndex[i + l_LastNumberOfIndexs] = *l_Index + l_LastNumberOfVertices;
+				l_IdxData = static_cast<char*>(l_IdxData)+sizeof(unsigned short);
+			}
+		}
+		unsigned short l_Footer = 0;
+		fread(&l_Footer, sizeof(unsigned short), 1, l_File);
+		if (l_Footer == l_DefaultFooter)
+		{ 
+			l_Shape = CreateTriangleMesh(ShapeName, l_ShapeVertex, l_ShapeIndex, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
+		}
+		else
+		{
+			#ifdef _DEBUG
+				CEngine::GetSingleton().GetLogManager()->Log("Error loading shape file " + Filename);
+			#endif
+		}
+	}
+
+	fclose(l_File);
+
+	return l_Shape;
 }

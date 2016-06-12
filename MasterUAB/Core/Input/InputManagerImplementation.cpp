@@ -688,8 +688,8 @@ void CInputManagerImplementation::EndFrame()
 		m_KeysPrevious[i] = m_KeysCurrent[i];
 	}
 
-	m_Alt = m_Ctrl = false;
-
+	m_Alt = false;
+	m_Ctrl = false;
 	m_CursorD = Vect2i(0, 0);
 }
 
@@ -697,7 +697,14 @@ bool CInputManagerImplementation::KeyEventReceived(unsigned int wParam, unsigned
 {
 	bool IsDown = ((lParam & (1 << 31)) == 0);
 	m_Alt = ((lParam & (1 << 29)) != 0);
-
+	m_Ctrl = false;
+	switch (wParam)
+	{
+		case VK_CONTROL:
+			m_Ctrl = true;
+		break;
+	}
+	
 	m_KeysCurrent[wParam] = IsDown;
 
 	return false;

@@ -236,35 +236,46 @@ void CGUIManager::AddSpriteMap(CXMLTreeNode &TreeNode)
 
 	std::string l_MaterialName = TreeNode.GetPszProperty("material");
 	CMaterial* l_Material = CEngine::GetSingleton().GetMaterialManager()->GetResource(l_MaterialName);
-	m_Materials.push_back(l_Material);
-
-	SSpriteMapInfo* l_SpriteMapInfo = new SSpriteMapInfo(l_SpriteMapName, m_Materials.size() - 1, l_Width, l_Height);
-
-	for (int i = 0; i < TreeNode.GetNumChildren(); ++i)
+	
+	#ifdef _DEBUG
+	if (l_Material == nullptr)
 	{
-		CXMLTreeNode l_Element = TreeNode(i);
-
-		if (l_Element.GetName() == std::string("sprite"))
-		{
-			std::string l_SpriteName = l_Element.GetPszProperty("name");
-			float l_x = l_Element.GetFloatProperty("x", 0.0f);
-			float l_y = l_Element.GetFloatProperty("y", 0.0f);
-			float l_w = l_Element.GetFloatProperty("w", 0.0f);
-			float l_h = l_Element.GetFloatProperty("h", 0.0f);
-			
-			float l_u1 = l_x / (float)l_Width;
-			float l_u2 = (l_x + l_w) / (float)l_Width;
-			float l_v1 = l_y / (float)l_Height;
-			float l_v2 = (l_y + l_h) / (float)l_Height;
-
-			SSpriteInfo* l_Sprite = new SSpriteInfo(l_SpriteMapInfo,l_u1,l_u2,l_v1,l_v2);
-			m_Sprites.insert(std::pair<std::string, SSpriteInfo*>(l_SpriteName, l_Sprite));
-		}
+		CEngine::GetSingleton().GetLogManager()->Log("Unable to find material " + l_MaterialName + ". Spritemap " + l_SpriteMapName + " can't be created");
 	}
+	#endif
 
-	m_SpriteMaps.insert(std::pair<std::string, SSpriteMapInfo*>(l_SpriteMapName, l_SpriteMapInfo));
-	CRenderableVertexs *l_RV = new CTrianglesListRenderableVertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(m_CurrentBufferData, s_MaxVerticesPerCall, 10, true);
-	m_VertexBuffers.push_back(l_RV);
+	if (l_Material)
+	{
+		m_Materials.push_back(l_Material);
+
+		SSpriteMapInfo* l_SpriteMapInfo = new SSpriteMapInfo(l_SpriteMapName, m_Materials.size() - 1, l_Width, l_Height);
+
+		for (int i = 0; i < TreeNode.GetNumChildren(); ++i)
+		{
+			CXMLTreeNode l_Element = TreeNode(i);
+
+			if (l_Element.GetName() == std::string("sprite"))
+			{
+				std::string l_SpriteName = l_Element.GetPszProperty("name");
+				float l_x = l_Element.GetFloatProperty("x", 0.0f);
+				float l_y = l_Element.GetFloatProperty("y", 0.0f);
+				float l_w = l_Element.GetFloatProperty("w", 0.0f);
+				float l_h = l_Element.GetFloatProperty("h", 0.0f);
+
+				float l_u1 = l_x / (float)l_Width;
+				float l_u2 = (l_x + l_w) / (float)l_Width;
+				float l_v1 = l_y / (float)l_Height;
+				float l_v2 = (l_y + l_h) / (float)l_Height;
+
+				SSpriteInfo* l_Sprite = new SSpriteInfo(l_SpriteMapInfo, l_u1, l_u2, l_v1, l_v2);
+				m_Sprites.insert(std::pair<std::string, SSpriteInfo*>(l_SpriteName, l_Sprite));
+			}
+		}
+
+		m_SpriteMaps.insert(std::pair<std::string, SSpriteMapInfo*>(l_SpriteMapName, l_SpriteMapInfo));
+		CRenderableVertexs *l_RV = new CTrianglesListRenderableVertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(m_CurrentBufferData, s_MaxVerticesPerCall, 10, true);
+		m_VertexBuffers.push_back(l_RV);
+	}
 }
 
 void CGUIManager::Reload()
@@ -836,8 +847,8 @@ void CGUIManager::CheckInput()
 	if (!m_InputUpToDate)
 	{
 		CMouseInput* l_Mouse = CEngine::GetSingleton().GetInputManager()->GetMouse();
-		m_MouseX = l_Mouse->GetX();
-		m_MouseY = l_Mouse->GetY();
+		m_MouseX = (float)l_Mouse->GetX();
+		m_MouseY = (float)l_Mouse->GetY();
 
 		m_MouseWentPressed = l_Mouse->LeftButtonBecomesPressed();
 		m_MouseWentReleased = l_Mouse->LeftButtonBecomesReleased();

@@ -3,13 +3,13 @@
 #include "XML\XMLTreeNode.h"
 
 CFixedCameraController::CFixedCameraController() 
-: CCameraController()
+:CCameraController()
 ,m_LookAt(v3fZERO)
 {
 }
 
 CFixedCameraController::CFixedCameraController(CXMLTreeNode &TreeNode) 
-: CCameraController(TreeNode)
+:CCameraController(TreeNode)
 ,m_LookAt(TreeNode.GetVect3fProperty("look_at", v3fZERO))
 {
 	

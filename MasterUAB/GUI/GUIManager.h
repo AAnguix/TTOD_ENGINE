@@ -211,11 +211,12 @@ private:
 	void SetSelected(const std::string& ID);
 	void SetNotSelected(const std::string& ID);
 
-	void Destroy();
+	
 
 public:
 	CGUIManager();
 	virtual ~CGUIManager();
+	void Destroy();
 
 	float GetScreenWidth(){ return m_ScreenWidth; };
 	float GetScreenHeight(){ return m_ScreenHeight; };

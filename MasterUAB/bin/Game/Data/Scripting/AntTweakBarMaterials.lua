@@ -9,7 +9,7 @@ end
 
 function OpenMaterial(MaterialName)
 	ClickOnElement(MaterialName)
-	local l_Material = CEngine.GetSingleton():GetMaterialManager():GetResource(MaterialName)
+	local l_Material = g_MaterialManager:GetResource(MaterialName)
 	local l_Parameters = l_Material:GetParameters()
 	for l_Param in l_Parameters do
 		if l_Param:GetMaterialType() == CMaterialParameter.float then

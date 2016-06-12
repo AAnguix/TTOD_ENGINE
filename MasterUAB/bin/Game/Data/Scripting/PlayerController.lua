@@ -13,9 +13,8 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 	l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 	
 	if CInputManager.GetInputManager():IsActionActive("LOCK_CHARACTER") then
-		
 		if (self:IsLocked()) then		
-			self:UnLock()
+			self:Unlock()
 		else
 			self:Lock()
 		end
@@ -26,10 +25,10 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 			g_Player:GetAnimatorController():SetTrigger("Attack")
 		end
 		if CInputManager.GetInputManager():IsActionActive("PLAYER_BLOCKS") then	
-			--StartLevelTwo()
-			g_Player:GetAnimatorController():SetTrigger("Block")
+			StartLevelTwo()
+			--g_Player:GetAnimatorController():SetTrigger("Block")
 		end
-	
+		
 		if ((CInputManager.GetInputManager():IsActionActive("MOVE_FWD")) or 
 		(CInputManager.GetInputManager():IsActionActive("MOVE_BACK")) or 
 		(CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT")) or 
@@ -37,7 +36,7 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 			local l_Position = g_Player:GetPosition()
 			g_Walk = true
 		end
-		
+
 		l_CCVelocity.x = 0
 		l_CCVelocity.z = 0
 		
@@ -73,17 +72,19 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		
 		l_CCVelocity = l_CCVelocity + Vect3f(0,-10.0,0) * ElapsedTime
 		
-		if ElapsedTime>0.0 then
-			l_CCVelocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (l_CCVelocity * ElapsedTime), ElapsedTime)
-		else 
-			l_CCVelocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (l_CCVelocity), ElapsedTime)
-		end 
-		
-		g_Player:GetAnimatorController():SetBool("Walk", g_Walk);
-		--GetPlayer():GetAnimatorController():SetBool("Run", g_Run);  
+		if g_Engine:LoadingLevel() == false then
+			if ElapsedTime>0.0 then
+				l_CCVelocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (l_CCVelocity * ElapsedTime), ElapsedTime)
+			else 
+				l_CCVelocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (l_CCVelocity), ElapsedTime)
+			end 
+			
+			g_Player:GetAnimatorController():SetBool("Walk", g_Walk)
+			--GetPlayer():GetAnimatorController():SetBool("Run", g_Run); 
+		end
 		
 	end --END CharBlock
-	
+
 end
 
 

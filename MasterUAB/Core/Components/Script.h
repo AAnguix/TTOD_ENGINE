@@ -8,10 +8,10 @@ class CScript : public CComponent
 {
 
 private:
-	CLUAComponent* m_Component;
+	CLUAComponent* m_LuaComponent;
 
 public:
-	CLUAComponent* GetLuaComponent() const{ return m_Component; };
+	CLUAComponent* GetLuaComponent() const{ return m_LuaComponent; };
 	CScript(const std::string& Name, CRenderableObject* Owner, CLUAComponent* Component);
 	virtual ~CScript();
 	void Update(float ElapsedTime);

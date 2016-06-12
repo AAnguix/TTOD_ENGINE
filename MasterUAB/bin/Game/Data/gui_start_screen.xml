@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <gui_elements>
-	<gui_spritemap name="play_button" width="512" height="512" material="gui1_material">
+	<gui_spritemap name="play_button" width="512" height="512" material="play_button_material">
 		<sprite name="play_button_normal" x="0" y="0" w="512" h="512" />
 		<sprite name="play_button_highlight" x="0" y="0" w="200" h="200" />
 		<sprite name="play_button_pressed" x="0" y="0" w="100" h="100" />
 	</gui_spritemap>
-	<gui_spritemap name="options_button" width="512" height="512" material="gui1_material">
+	<gui_spritemap name="options_button" width="512" height="512" material="options_button_material">
 		<sprite name="options_button_normal" x="0" y="0" w="512" h="512" />
 		<sprite name="options_button_highlight" x="0" y="0" w="200" h="200" />
 		<sprite name="options_button_pressed" x="0" y="0" w="100" h="100" />
 	</gui_spritemap>
-	<gui_spritemap name="credits_button" width="512" height="512" material="gui1_material">
+	<gui_spritemap name="credits_button" width="512" height="512" material="credits_button_material">
 		<sprite name="credits_button_normal" x="0" y="0" w="512" h="512" />
 		<sprite name="credits_button_highlight" x="0" y="0" w="200" h="200" />
 		<sprite name="credits_button_pressed" x="0" y="0" w="100" h="100" />
 	</gui_spritemap>
-	<gui_spritemap name="exit_button" width="512" height="512" material="gui5_material">
+	<gui_spritemap name="exit_button" width="512" height="512" material="exit_game_button_material">
 		<sprite name="exit_button_normal" x="0" y="0" w="512" h="512" />
 		<sprite name="exit_button_highlight" x="0" y="0" w="200" h="200" />
 		<sprite name="exit_button_pressed" x="0" y="0" w="100" h="100" />

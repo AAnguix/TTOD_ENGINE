@@ -8,6 +8,7 @@
 #include "Components\Component.h"
 
 class CRenderableObject;
+class CTransition;
 
 class CAnimatorController : public CComponent
 {
@@ -17,6 +18,7 @@ private:
 	std::map<const std::string, CState*> m_States;
 	CState* m_CurrentState;
 	CState* m_PreviousState;
+	std::map<const std::string, CTransition*> m_AnyStateTransitions;
 
 	bool SearchParameter(const std::string &Name);
 	
@@ -28,11 +30,14 @@ public:
 	void RenderDebug(CRenderManager &RenderManager);
 
 	CAnimatorControllerParameter* GetParameter(const std::string &Name);
+	
 	CState* GetCurrentState() const { return m_CurrentState; };
 	CState* GetPreviousState() const { return m_PreviousState; };
 	CState* GetState(const std::string &Name);
 	CState* AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
 	void ChangeCurrentState(CState* NewState, CTransition* Transition);
+
+	CTransition* AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut);
 
 	bool AddInteger(const std::string &Name, int Value);
 	bool AddFloat(const std::string &Name, float Value);

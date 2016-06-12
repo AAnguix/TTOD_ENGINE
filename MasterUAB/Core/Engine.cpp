@@ -23,7 +23,7 @@
 #include "Animation\AnimatorControllerManager.h"
 #include "ScriptManager.h"
 #include "Render\DebugRender.h"
-
+#include "Level\Level.h"
 #include "FileUtils.h" 
 #include <sstream>
 
@@ -31,6 +31,8 @@ CEngine::CEngine()
 :m_RenderManager(NULL)
 ,m_TimeScale(1.0f)
 ,m_Paused(false)
+,m_LoadingLevel(false)
+,m_GuiLoaded(false)
 {
 	m_CurrentLevel = "0";
 	m_CameraControllerManager = new CCameraControllerManager;
@@ -58,11 +60,11 @@ CEngine::CEngine()
 
 CEngine::~CEngine()
 {
-	/*for (size_t i = 0; i < m_Levels.Size(); ++i)
+	for (size_t i = 0; i < m_Levels.size(); ++i)
 	{
 		delete m_Levels[i];
 		m_Levels[i] = NULL;
-	}*/
+	}
 
 	{CHECKED_DELETE(m_ScriptManager); }
 	{CHECKED_DELETE(m_AnimatorControllerManager); }
@@ -88,9 +90,37 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_CameraControllerManager);}
 }
 
-void CEngine::Init()
+void CEngine::Initialize()
 {
+	CInputManager::SetCurrentInputManager(m_InputManager);
 
+	CContextManager* l_ContextManager = m_RenderManager->GetContextManager();
+	m_DebugHelper->Initialize(l_ContextManager->GetDevice());
+	CDebugHelper::SetCurrentDebugHelper(m_DebugHelper);
+
+	m_GUIManager->Initialize((float)l_ContextManager->GetFrameBufferWidth(), (float)l_ContextManager->GetFrameBufferHeight());
+	m_Log->Initialize(true);
+
+	m_LuabindManager->Initialize();
+
+	m_EffectManager->Load("./Data/effects.xml");
+	m_RenderableObjectTechniqueManager->Load("Data/renderable_objects_techniques.xml");
+
+	m_SoundManager->SetPath("./Data/Audio/Soundbanks/");
+	m_SoundManager->Init();
+
+}
+
+/*Data taht needs to be loaded before load evert level*/
+void CEngine::LoadLevelsCommonData()
+{
+	m_MaterialManager->Load("./Data/effects_materials.xml");
+	m_MaterialManager->Load("./Data/gui_materials.xml");
+	
+	m_GUIManager->Load("./Data/gui_start_screen.xml");
+	m_GUIManager->Load("./Data/gui_in_game.xml");
+	
+	m_CameraControllerManager->Load("./Data/cameras.xml");
 }
 
 void CEngine::SetTimeScale(float TimeScale)
@@ -135,29 +165,70 @@ void CEngine::Update(float ElapsedTime)
 	m_GraphicsStats->Update(ElapsedTime);
 }
 
+bool CEngine::AddLevel(const std::string &Level)
+{
+	bool l_Exists = false;
+
+	for (size_t i = 0; i < m_Levels.size(); ++i)
+	{
+		if (m_Levels[i]->GetID() == Level)
+			l_Exists = true;
+	}
+	if (!l_Exists)
+		m_Levels.push_back(new CLevel(Level));
+
+	return !l_Exists;
+}
+
 bool CEngine::LoadLevel(const std::string &Level)
 {
-	CFileUtils::CheckPhysxFolders(Level);
- 	m_MaterialManager->Load("./Data/Level" + Level + "/materials.xml");
-	m_StaticMeshManager->Load("./Data/Level" + Level + "/static_meshes.xml");
-	m_ParticleSystemManager->Load("./Data/Level" + Level + "/particles_systems.xml");
-	m_AnimatedModelManager->Load("./Data/Level" + Level + "/animated_models.xml");
-	m_LayerManager->Load("./Data/Level" + Level + "/renderable_objects.xml");
-	m_LightManager->Load("./Data/Level" + Level + "/lights.xml");
+	bool l_Loaded = false;
 
-	m_RenderManager->GetDebugRender()->InitializeDebugLights();
+	for (size_t i = 0; i < m_Levels.size(); ++i)
+	{
+		if (m_Levels[i]->GetID() == Level)
+		{
+			m_LoadingLevel = true;
+				LoadLevelsCommonData();
+				l_Loaded = m_Levels[i]->Load(*this);
+				m_CurrentLevel = Level;
+			m_LoadingLevel = false;
+		}
+	}
 
-	m_SoundManager->SetPath("./Data/Level" + Level + "/Audio/Soundbanks/");
-	m_SoundManager->Init();
-	m_SoundManager->Load("SoundbanksInfo.xml", "./Data/Level" + Level + "/Audio/speakers.xml");
-	
-	//m_SceneRendererCommandManager->Load("./Data/Level" + Level + "/scene_renderer_commands.xml");
-	m_CurrentLevel = Level; 
 	#ifdef _DEBUG
+	if (l_Loaded)
 		m_Log->Log("Level " + Level + " loaded");
+	else
+		m_Log->Log("Can't load level " + Level);
+	#endif
+	
+	return l_Loaded;
+}
+
+bool CEngine::UnloadLevel(const std::string &Level)
+{
+	bool l_Unloaded = false;
+
+	for (size_t i = 0; i < m_Levels.size(); ++i)
+	{
+		if (m_Levels[i]->GetID() == Level)
+		{
+			m_LoadingLevel = true;
+				l_Unloaded = m_Levels[i]->Unload(*this);
+				m_CurrentLevel = "";
+			m_LoadingLevel = false;
+		}
+	}
+
+	#ifdef _DEBUG
+	if (l_Unloaded)
+		m_Log->Log("Level " + Level + " unloaded");
+	else
+		m_Log->Log("Can't unload level " + Level);
 	#endif
 
-	return true;
+	return l_Unloaded;
 }
 
 CEffectManager* CEngine::GetEffectManager() const {	return m_EffectManager; }

@@ -216,7 +216,7 @@ void CLuabindManager::RegisterCamera()
 
 	module(LUA_STATE)
 	[
-		class_<CCameraController>("CCameraController")
+		class_<CCameraController, CNamed>("CCameraController")
 		//.def(constructor<>())
 		.def("SetCamera", &CCameraController::SetCamera)
 		.def("AddYaw", &CCameraController::AddYaw)
@@ -232,6 +232,7 @@ void CLuabindManager::RegisterCamera()
 		.def("SetPosition", &CCameraController::SetPosition)
 		.def("GetType", &CCameraController::GetType)
 		.def("Update", &CCameraController::Update)
+		.def("GetThisLuaAddress", &CCameraController::GetThisLuaAddress)
 		.enum_("t_camera_controller_type")
 		[
 			value("FIXED", 0),

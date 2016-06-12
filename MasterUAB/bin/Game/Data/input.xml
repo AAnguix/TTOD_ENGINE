@@ -26,7 +26,7 @@
 	<action name="ON_ALT9_PRESSED" type="KEYBOARD" mode="ON_PRESS" key="9" needs_alt="true"/>  
 	<action name="RELOAD_LUA" type="KEYBOARD" mode="ON_PRESS" key="L" needs_alt="true"/>
 	
-	<action name="LOCK_CHARACTER" type="KEYBOARD" mode="ON_PRESS" key="L" needs_alt="true"/>
+	<action name="LOCK_CHARACTER" type="KEYBOARD" mode="ON_PRESS" key="L" needs_alt="false"/>
 	
 	<!-- <action name="PLAYER_WALK_FORWARD" type="KEYBOARD" mode="WHILE_PRESSED" key="W" needs_alt="false"/> 
 	<action name="PLAYER_WALK_BACK" type="KEYBOARD" mode="WHILE_PRESSED" key="S" needs_alt="false"/> 

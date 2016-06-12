@@ -129,14 +129,15 @@ void CCameraKeyController::SetCamera(CCamera *Camera) const
 }
 
 CCameraKeyController::CCameraKeyController(CXMLTreeNode &XMLTreeNode)
-: m_Cycle(true)
-, m_Reverse(false)
-, m_Backing(false)
-, m_CurrentKey(0)
-, m_NextKey(1)
-, m_CurrentTime(0)
-, m_TotalTime(0)
-, m_NewPosition(v3fZERO)
+:CCameraController(XMLTreeNode)
+,m_Cycle(true)
+,m_Reverse(false)
+,m_Backing(false)
+,m_CurrentKey(0)
+,m_NextKey(1)
+,m_CurrentTime(0)
+,m_TotalTime(0)
+,m_NewPosition(v3fZERO)
 {
 	LoadXML(XMLTreeNode.GetPszProperty("filename",""));
 }

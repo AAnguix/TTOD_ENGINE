@@ -82,30 +82,15 @@ void CApplication::Initialize(HWND Hwnd)
 
 	l_Engine.GetInputManager()->Initialize(Hwnd);
 	l_Engine.GetInputManager()->LoadCommandsFromFile("./Data/input.xml");
-	CInputManager::SetCurrentInputManager(l_Engine.GetInputManager());
 
-	l_Engine.GetDebugHelper()->Initialize(m_ContextManager->GetDevice());
-	CDebugHelper::SetCurrentDebugHelper(l_Engine.GetDebugHelper());
-
-	l_Engine.GetGUIManager()->Initialize((float)m_ContextManager->GetFrameBufferWidth(), (float)m_ContextManager->GetFrameBufferHeight());
-	l_Engine.GetLogManager()->Initialize(true);
-
-	l_Engine.GetLuabindManager()->Initialize();
+	l_Engine.Initialize();
 
 	//CAStar l_AStar;
 	//m_RenderManager.GetDebugRender()->InitializeASTarDebug(l_AStar.SearchPathA(Vect3f(0.0f,0.0f,0.0f),Vect3f(-10.0f,0.0f,5.0f)));
-
-	l_Engine.GetEffectManager()->Load("./Data/effects.xml");
-	l_Engine.GetRenderableObjectTechniqueManager()->Load("Data/renderable_objects_techniques.xml");
-	l_Engine.GetMaterialManager()->Load("./Data/effects_materials.xml");
-	l_Engine.GetMaterialManager()->Load("./Data/gui_materials.xml");
-	l_Engine.GetGUIManager()->Load("./Data/gui_start_screen.xml");
-	l_Engine.GetCameraControllerManager()->Load("./Data/cameras.xml");
+		
+	l_Engine.LoadLevelsCommonData();
 
 	m_RenderManager.InitializeDebugRender();
-
-//	l_Engine.GetSoundManager()->SetPath("./Data/Audio/Soundbanks/");
-	//l_Engine.GetSoundManager()->Init();
 
 	CEngine::GetSingleton().GetSceneRendererCommandManager()->Load("./Data/scene_renderer_commands.xml");
 	l_Engine.GetLuabindManager()->RunLuaMain();

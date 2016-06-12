@@ -4,11 +4,13 @@
 #include "Math\Matrix44.h"
 #include "Math\Vector3.h"
 #include <string>
+#include "Utils\Named.h"
 
 class CCamera;
 class CXMLTreeNode;
+class CEmptyPointerClass;
 
-class CCameraController
+class CCameraController : public CNamed
 {
 protected:
 	Vect3f m_Position;
@@ -45,6 +47,8 @@ public:
 	virtual EType GetType() const = 0;
 
 	virtual void Update(float ElapsedTime);
+
+	CEmptyPointerClass* GetThisLuaAddress() const;
 };
 
 #endif

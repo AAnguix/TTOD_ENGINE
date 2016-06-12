@@ -10,6 +10,7 @@
 #include "SceneRendererCommands\SceneRendererCommand.h"
 #include "Materials\Material.h"
 #include "Components\LuaComponent.h"
+#include "Camera\CameraController.h"
 
 CDebugHelperImplementation::CDebugHelperImplementation() : m_CurrentBarName("")
 {
@@ -241,6 +242,10 @@ void TW_CALL CDebugHelperImplementation::CallLuaExtendedFunction(void *ClientDat
 	else if (l_ObjectType == "renderable_object")
 	{
 		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CRenderableObject*)l_ClientData->m_Object);
+	}
+	else if (l_ObjectType == "camera_controller")
+	{
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CCameraController*)l_ClientData->m_Object);
 	}
 	else if (l_ObjectType == "static_mesh")
 	{

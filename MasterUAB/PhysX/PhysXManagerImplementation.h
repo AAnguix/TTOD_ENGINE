@@ -14,11 +14,15 @@ class CPhysXManagerImplementation :
 	public physx::PxControllerFilterCallback
 {
 
+private:
+	void CreateScene();
+
 public:
 	CPhysXManagerImplementation();
 	virtual ~CPhysXManagerImplementation();
 	void Destroy();
 	void Reload();
+	void RemoveComponents();
 
 	//PxSimulationEventCallback
 	void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count);

@@ -1,7 +1,7 @@
 function UpdateCameraController(ElapsedTime)
-	if g_CameraController:GetType() == CCameraController.THIRD_PERSON then
+	if g_CameraControllerManager:GetCurrentCameraController():GetType() == CCameraController.THIRD_PERSON then
 		UpdateThirdPersonCameraController(ElapsedTime)
-	elseif g_CameraController:GetType() == CCameraController.DEBUG then
+	elseif g_CameraControllerManager:GetCurrentCameraController():GetType() == CCameraController.DEBUG then
 		UpdateDebugCameraController(ElapsedTime) 
 	end
 end
@@ -14,10 +14,6 @@ function CheckCameraControllerInput()
 	if CInputManager.GetInputManager():IsActionActive("CENTER_CAMERA") then
 		CenterCamera(g_CameraController)
 	end
-	
-	if CInputManager.GetInputManager():IsActionActive("CHANGE_CAMERA") then
-		ChangeCamera()
-	end
 end
 
 function CenterCamera(CameraController)
@@ -29,6 +25,3 @@ function BlockCamera(CameraControllerManager)
 	CameraControllerManager:ChangeLockState()
 end
 
-function ChangeCamera()
-	g_CameraControllerManager:NextCameraController()
-end

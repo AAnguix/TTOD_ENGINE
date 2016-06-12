@@ -4,6 +4,8 @@
 #include "Animation\AnimatedInstanceModel.h"
 #include "Components\AnimatorController\Animation.h"
 #include "Animation\AnimatedCoreModel.h"
+#include "Components\AnimatorController\Transition.h"
+
 
 CAnimatorController::CAnimatorController(const std::string &Name, CRenderableObject* Owner)
 :CComponent(Name,Owner)
@@ -37,27 +39,42 @@ CAnimatorControllerParameter* CAnimatorController::GetParameter(const std::strin
 CAnimatorController::~CAnimatorController()
 {
 	std::map<const std::string, CState*>::iterator itMap;
-
 	for (itMap = m_States.begin(); itMap != m_States.end(); ++itMap)
 	{
 		delete itMap->second;
 	}
-
 	m_States.clear();
 
 	std::map<const std::string, CAnimatorControllerParameter*>::iterator itMapParams;
-
 	for (itMapParams = m_Parameters.begin(); itMapParams != m_Parameters.end(); ++itMapParams)
 	{
 		delete itMapParams->second;
 	}
-
 	m_Parameters.clear();
+
+	std::map<const std::string, CTransition*>::iterator itMapTransitions;
+	for (itMapTransitions = m_AnyStateTransitions.begin(); itMapTransitions != m_AnyStateTransitions.end(); ++itMapTransitions)
+	{
+		delete itMapTransitions->second;
+	}
+	m_AnyStateTransitions.clear();
 }
 
 void CAnimatorController::Update(float ElapsedTime)
 {
+	std::map<const std::string, CTransition*>::iterator itMap;
+	if (!m_AnyStateTransitions.empty())
+	{
+		for (itMap = m_AnyStateTransitions.begin(); itMap != m_AnyStateTransitions.end(); ++itMap)
+		{
+			if ((itMap->second->MeetsConditions()))
+			{
+				ChangeCurrentState(itMap->second->GetNewState(), itMap->second);
+			}
+		}
+	}
 	m_CurrentState->OnUpdate(ElapsedTime);
+
 }
 
 void CAnimatorController::Render(CRenderManager &RenderManager)
@@ -70,6 +87,12 @@ void CAnimatorController::RenderDebug(CRenderManager &RenderManager)
 
 }
 
+CTransition* CAnimatorController::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut)
+{
+	CTransition* l_Transition = new CTransition(NewState, HasExitTime, ExitTime, DelayIn, DelayOut);
+	m_AnyStateTransitions.insert(std::pair<const std::string, CTransition*>(Name, l_Transition));
+	return l_Transition;
+}
 
 CState* CAnimatorController::AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
 {

@@ -5,14 +5,16 @@
 #include "XML\XMLTreeNode.h"
 
 CCameraController::CCameraController()
-:m_Yaw(0.0f)
+:CNamed("")
+,m_Yaw(0.0f)
 ,m_Pitch(0.0f)
 ,m_Position(0, 0, 0)
 {
 }
 
 CCameraController::CCameraController(CXMLTreeNode &TreeNode)
-:m_Position(TreeNode.GetVect3fProperty("position", v3fZERO))
+:CNamed(TreeNode)
+,m_Position(TreeNode.GetVect3fProperty("position", v3fZERO))
 ,m_Yaw(TreeNode.GetFloatProperty("yaw", 0.0f))
 ,m_Pitch(TreeNode.GetFloatProperty("pitch", 0.0f))
 {
@@ -61,3 +63,5 @@ void CCameraController::Update(float ElapsedTime)
 {
 
 }
+
+CEmptyPointerClass* CCameraController::GetThisLuaAddress() const { return (CEmptyPointerClass *)this; }

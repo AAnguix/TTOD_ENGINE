@@ -56,8 +56,7 @@ class CPhysXManager
 
 private:
 	float m_LeftOverSeconds;
-	std::vector<CCollider*> m_ColliderComponents;
-	std::vector<CCharacterCollider*> m_CharacterColliderComponents;
+	
 	void UpdateComponents(float ElapsedTime);
 
 	physx::PxShape* GetShape(const std::string &ShapeName);
@@ -76,6 +75,9 @@ private:
 	Groups GetGroup(const std::string &Group);
 
 protected:
+	std::vector<CCharacterCollider*> m_CharacterColliderComponents;
+	std::vector<CCollider*> m_ColliderComponents;
+
 	CPhysXManager();
 
 	physx::PxFoundation *m_Foundation;
@@ -120,7 +122,9 @@ protected:
 	/*physx::PxDefaultMemoryOutputStream ReadCookingDataFromFile(const std::string &FileName);*/
 
 	void SaveActorData(size_t Index, const std::string ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor *Actor);
+	
 	size_t GetActorIndex(const std::string& ActorName) const;
+	
 	void CheckMapAndVectors();
 	physx::PxActor* IsRigidDynamic(const std::string& ActorName);
 
@@ -156,7 +160,7 @@ public:
 	/*Components*/
 	CCollider* AddColliderComponent(const std::string &Name, CMeshInstance *Owner);
 	CCharacterCollider* AddCharacterColliderComponent(const std::string &Name, CAnimatedInstanceModel *Owner);
-	void RemoveComponents();
+	virtual void RemoveComponents(){};
 
 	/*Actors*/
 	bool CreateStaticActor(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Position, const Quatf &Orientation);
@@ -177,6 +181,7 @@ public:
 	physx::PxShape* CreatePlane(const std::string &ShapeName, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 	physx::PxShape* CreateConvexMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 	physx::PxShape* CreateTriangleMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	physx::PxShape* CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group);
 	/*Triangle meshes can't be dynamic*/
 	/*Triangle,heightField cant be trigger*/
 	/*Plane,triangle,height must be kinematic*/

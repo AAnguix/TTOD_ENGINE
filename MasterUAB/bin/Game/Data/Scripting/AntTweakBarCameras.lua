@@ -1,16 +1,31 @@
 function OpenCameras()
-	ClickOnElement("Camera")
-	g_DebugHelper:RegisterButton("Reload","ReloadCameras()")
-	local l_Camera = g_CameraControllerManager:GetCurrentCameraController()
-	g_DebugHelper:RegisterFloatParameter("Zoom", l_Camera:GetZoomLuaAddress(), "step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Zoom speed", l_Camera:GetZoomSpeedLuaAddress(), "step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Max. zoom", l_Camera:GetMaxZoomLuaAddress(), "step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Min. zoom", l_Camera:GetMinZoomLuaAddress(), "step=0.01")
+	ClickOnElement("Cameras")
+	g_DebugHelper:RegisterButton("Reload cameras","ReloadCameras()")
 	
-	g_DebugHelper:RegisterFloatParameter("Speed", l_Camera:GetSpeedLuaAddress(), "step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Fast speed", l_Camera:GetFastSpeedLuaAddress(), "step=0.01")
-	
-	g_DebugHelper:RegisterFloatParameter("Yaw speed", l_Camera:GetYawSpeedLuaAddress(), "step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Pitch speed", l_Camera:GetPitchSpeedLuaAddress(), "step=0.01")
-	g_DebugHelper:RegisterFloatParameter("Roll speed", l_Camera:GetRollSpeedLuaAddress(), "step=0.01")
+	local l_CameraControllers=g_CameraControllerManager:GetLUACameraControllers()
+	for l_CameraController in l_CameraControllers do
+		g_DebugHelper:RegisterExtendedButton(l_CameraController:GetName(),"OpenCamera",l_CameraController:GetThisLuaAddress(),"camera_controller")
+	end
+end
+
+function OpenCamera(CameraController)
+	ClickOnElement(CameraController:GetName())
+	if CameraController:GetType() == CCameraController.THIRD_PERSON then
+		g_DebugHelper:RegisterFloatParameter("Zoom", CameraController:GetZoomLuaAddress(), "step=0.01")
+		g_DebugHelper:RegisterFloatParameter("Zoom speed", CameraController:GetZoomSpeedLuaAddress(), "step=0.01")
+		g_DebugHelper:RegisterFloatParameter("Max. zoom", CameraController:GetMaxZoomLuaAddress(), "step=0.01")
+		g_DebugHelper:RegisterFloatParameter("Min. zoom", CameraController:GetMinZoomLuaAddress(), "step=0.01")
+		
+		g_DebugHelper:RegisterFloatParameter("Speed", CameraController:GetSpeedLuaAddress(), "step=0.01")
+		g_DebugHelper:RegisterFloatParameter("Fast speed", CameraController:GetFastSpeedLuaAddress(), "step=0.01")
+		
+		g_DebugHelper:RegisterFloatParameter("Yaw speed", CameraController:GetYawSpeedLuaAddress(), "step=0.01")
+		g_DebugHelper:RegisterFloatParameter("Pitch speed", CameraController:GetPitchSpeedLuaAddress(), "step=0.01")
+		g_DebugHelper:RegisterFloatParameter("Roll speed", CameraController:GetRollSpeedLuaAddress(), "step=0.01")
+	end
+	g_DebugHelper:RegisterButton("Set camera","ChangeCameraController('"..CameraController:GetName().."')")
+end
+
+function ChangeCameraController(CameraControllerName)
+	g_CameraControllerManager:SetCurrentCameraController(CameraControllerName)
 end

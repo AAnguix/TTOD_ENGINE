@@ -15,7 +15,7 @@ function OnUpdate_Idle_BruteEnemy(Enemy, ElapsedTime)
 	end
 		
 end
-function OnExit_Idle_BruteEnemy(Enemy, ElapsedTime)
+function OnExit_Idle_BruteEnemy(Enemy)
 	g_LogManager:Log(Enemy.m_RObject:GetName().." exits idle")
 	Enemy:GetAnimator():SetBool("DelayToPatrol", false)
 end
@@ -37,7 +37,7 @@ function OnUpdate_Charge_BruteEnemy(Enemy, ElapsedTime)
 	--end
 	--Enemy:Charge(l_PosToCharge,ElapsedTime)
 end
-function OnExit_Charge_BruteEnemy(Enemy, ElapsedTime)
+function OnExit_Charge_BruteEnemy(Enemy)
 	--g_AnimatorController:SetBool("IsPlayerInsideVisionRange", false)
 	g_LogManager:Log(Enemy.m_RObject:GetName().." exits Charge")
 end
@@ -50,13 +50,13 @@ end
 function OnUpdate_Melee_BruteEnemy(Enemy, ElapsedTime)
 	
 end
-function OnExit_Melee_BruteEnemy(Enemy, ElapsedTime)	
+function OnExit_Melee_BruteEnemy(Enemy)	
 	g_LogManager:Log(Enemy.m_RObject:GetName().." exits Melee")
 end
 
 ------------------------------------------------------------
 
-function OnEnter_Patrol_BruteEnemy(Enemy, ElapsedTime)
+function OnEnter_Patrol_BruteEnemy(Enemy)
 	-- g_LogManager:Log(Enemy.m_RObject:GetName().." enters patrol")
 	-- g_PhysXManager:RemoveTriggerState("ball1")
 	-- local force = Vect3f(0.0,400.0,400.0)
@@ -69,6 +69,6 @@ function OnUpdate_Patrol_BruteEnemy(Enemy, ElapsedTime)
 		-- Enemy:GetAnimator():SetTrigger("IsPlayerInsideVisionRange")
 	-- end
 end
-function OnExit_Patrol_BruteEnemy(Enemy, ElapsedTime)
+function OnExit_Patrol_BruteEnemy(Enemy)
 	g_LogManager:Log(Enemy.m_RObject:GetName().." exits Patrol")
 end

@@ -31,7 +31,7 @@ function CPlayerComponent:__init(CRObject)
 	
 	self.m_Locked = false
 	
-	self.m_RotationVelocity = 3.0
+	self.m_RotationVelocity = 6.0
 	
 	--Components
 	self.m_Animator = nil 
@@ -149,4 +149,27 @@ function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
 	end
 end
 
---loadstring(string_s)()
+function CPlayerComponent:GetClosestEnemy(Enemies)
+	local l_ClosestEnemy = nil
+	local l_MinDistance = 0.0
+	for i=1, (#Enemies) do
+		local l_EnemyPos = Enemies[i]:GetRenderableObject():GetPosition()
+		local l_Distance = (l_EnemyPos-self.m_RObject:GetPosition()):Length()
+		if ((l_MinDistance==0.0)or(l_Distance <= l_MinDistance)) then
+			l_ClosestEnemy = Enemies[i]
+			l_MinDistance = l_Distance
+		end
+	end
+	return l_ClosestEnemy
+end
+
+function CPlayerComponent:FaceEnemy(Enemies,ElapsedTime)
+	local l_ClosestEnemy = self:GetClosestEnemy(Enemies)
+	local l_Forward = self.m_RObject:GetForward()
+	local l_EnemyPos = l_ClosestEnemy:GetRenderableObject():GetPosition()
+	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_RObject:GetPosition(), l_EnemyPos)	
+	
+	local l_CurrentYaw = self.m_RObject:GetYaw()
+	local l_Velocity = self.m_RotationVelocity
+	self.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+end

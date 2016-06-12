@@ -35,6 +35,7 @@
 #include "Components\AnimatorController\Transition.h"
 #include "Components\AudioSource.h"
 #include "ScriptManager.h"
+#include "Level\Level.h"
 
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
@@ -61,6 +62,15 @@ void CLuabindManager::RegisterCore()
 	module(LUA_STATE)
 	[
 		class_<CApplication>("CApplication")
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CLevel>("CLevel")
+		.def(constructor<const std::string& >())
+		.def("GetID", &CLevel::GetID)
+		.def("Load", &CLevel::Load)
+		.def("Unload", &CLevel::Unload)
 	];
 
 	module(LUA_STATE) 
@@ -106,12 +116,16 @@ void CLuabindManager::RegisterCore()
 		.def("GetLuabindManager", &CEngine::GetLuabindManager)
 		.def("GetLogManager", &CEngine::GetLogManager)
 		.def("GetDebugHelper", &CEngine::GetDebugHelper)
-		.def("LoadLevel", &CEngine::LoadLevel)
-		.def("GetCurrentLevel", &CEngine::GetCurrentLevel)
 		.def("IsPaused", &CEngine::IsPaused)
 		.def("Pause", &CEngine::Pause)
 		.def("GetPausedLuaAddress", &CEngine::GetPausedLuaAddress)
 		.def("GetTimeScaleLuaAddress", &CEngine::GetTimeScaleLuaAddress)
+		
+		.def("LoadingLevel", &CEngine::LoadingLevel)
+		.def("AddLevel", &CEngine::AddLevel)
+		.def("LoadLevel", &CEngine::LoadLevel)
+		.def("UnloadLevel", &CEngine::UnloadLevel)
+		.def("GetCurrentLevel", &CEngine::GetCurrentLevel)
 	];
 
 	/*module(LUA_STATE) 
@@ -404,6 +418,7 @@ void CLuabindManager::RegisterComponents()
 		.def("SetFloat", &CAnimatorController::SetFloat)
 		.def("SetBool", &CAnimatorController::SetBool)
 		.def("SetTrigger", &CAnimatorController::SetTrigger)
+		.def("AddAnyStateTransition", &CAnimatorController::AddAnyStateTransition)
 	];
 
 	module(LUA_STATE)

@@ -1,66 +1,6 @@
 g_Walk = false
 g_Run = false
 
-
---[[class 'CLUAComponent' 
-	function CLUAComponent:__init()
-		self.m_Type=""
-	end
-	function CLUAComponent:Update()
-	end
-	function CLUAComponent:Render()
-	end
-	function CLUAComponent:Init()
-	end
-	function CLUAComponent:GetType()
-		return self.m_Type
-	end
---end]]
-
--- class 'CPlayerComponent' (CLUAComponent)
-	-- function CPlayerComponent:__init()
-		-- self.m_Typer="CPlayerComponent"
-	-- end
-	-- function CPlayerComponent:Update()
-	-- end
-	-- function CPlayerComponent:Render()
-	-- end
-	-- function CPlayerComponent:Init()
-	-- end
-
--- class 'CEnemyComponent' (CLUAComponent)
-	-- function CEnemyComponent:__init()
-	-- end
-	-- function CEnemyComponent:Update()
-	-- end
-	-- function CEnemyComponent:Render()
-	-- end
-	-- function CEnemyComponent:Init()
-	-- end
-	-- function CEnemyComponent:OnEnter()
-	-- end
-
--- en C++
-	-- Tienes un vector<CLUAComponent>
-	-- En renderableObject haces un AddComponent
-	
--- function CreatePlayer()
-	-- l_Player=CreatePlayerCompnent()
-	-- RenderableObject:AddComponent(l_Player)
--- end
-
--- function OnUpdateComponent(Component)
-	-- Component:Update()
--- end
-
--- function OnRenderComponent(Component)
-	-- Component:Render()
--- end
-
--- function OnInitComponent(Component)
-	-- Component:Init()
--- end
-
 --Idle_State
 function OnEnter_Idle_Player(PlayerComponent)
 	--g_LogManager:Log("Player enters Idle")
@@ -81,15 +21,15 @@ function OnExit_Idle_Player(Player)
 end
 
 --Attack_State
-function OnEnter_Attack_Player(Player, ElapsedTime)
+function OnEnter_Attack_Player(Player)
 	--g_LogManager:Log("Enters attack")
 end
 
 function OnUpdate_Attack_Player(Player, ElapsedTime)
-	
+	Player:FaceEnemy(g_GameController:GetEnemies(),ElapsedTime)
 end
 
-function OnExit_Attack_Player(Player, ElapsedTime)
+function OnExit_Attack_Player(Player)
 	--g_LogManager:Log("Exit attack")
 end
 

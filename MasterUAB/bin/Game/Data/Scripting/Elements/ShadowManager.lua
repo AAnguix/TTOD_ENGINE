@@ -14,7 +14,7 @@ function CShadowManager:AddSpotlight(Spotlight)
 end
 
 function CShadowManager:Update(ElapsedTime)
-	-- self:LookAtPlayer(g_Player:GetPosition(),ElapsedTime)	
+	self:LookAtPlayer(g_Player:GetPosition(),ElapsedTime)	
 end
 
 function CShadowManager:LookAtPlayer(PlayerPosition, ElapsedTime)

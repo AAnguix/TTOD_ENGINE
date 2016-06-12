@@ -5,23 +5,23 @@
 
 CScript::CScript(const std::string& Name, CRenderableObject* Owner, CLUAComponent* Component)
 :CComponent(Name, Owner)
-,m_Component(Component)
+,m_LuaComponent(Component)
 {
 }
 
 CScript::~CScript()
 {
-
+	m_LuaComponent = nullptr;
 }
 
 void CScript::Update(float ElapsedTime)
 {
-	if (m_Component == nullptr)
+	if (m_LuaComponent == nullptr)
 	{
 		assert(false);
 	}
 	else
 	{
-		m_Component->Update(ElapsedTime);
+		m_LuaComponent->Update(ElapsedTime);
 	}
 }

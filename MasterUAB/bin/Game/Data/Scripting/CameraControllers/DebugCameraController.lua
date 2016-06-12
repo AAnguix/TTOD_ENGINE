@@ -2,28 +2,30 @@ function UpdateDebugCameraController(ElapsedTime)
 	
 	CheckCameraControllerInput()
 	
+	local l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
+	
 	if CInputManager.GetInputManager():GetAxis("X_AXIS") then
-		RotateDebugCamera(g_CameraController,ElapsedTime)
+		RotateDebugCamera(l_CameraController,ElapsedTime)
 	end
 	
 	if CInputManager.GetInputManager():GetAxis("Y_AXIS") then
-		AddPitchDebugCamera(g_CameraController,ElapsedTime)
+		AddPitchDebugCamera(l_CameraController,ElapsedTime)
 	end
 	
 	local l_Speed = false
 	
 	if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then
-		g_CameraController:Move(0.0, 1.0,l_Speed,ElapsedTime)
+		l_CameraController:Move(0.0, 1.0,l_Speed,ElapsedTime)
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("MOVE_BACK") then
-		g_CameraController:Move(0.0,-1.0,l_Speed,ElapsedTime)
+		l_CameraController:Move(0.0,-1.0,l_Speed,ElapsedTime)
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("MOVE_UP") then
-		g_CameraController:MoveUpDown(1.0,l_Speed,ElapsedTime)
+		l_CameraController:MoveUpDown(1.0,l_Speed,ElapsedTime)
 	elseif CInputManager.GetInputManager():IsActionActive("MOVE_DOWN") then
-		g_CameraController:MoveUpDown(-1.0,l_Speed,ElapsedTime)
+		l_CameraController:MoveUpDown(-1.0,l_Speed,ElapsedTime)
 	end
 end
 

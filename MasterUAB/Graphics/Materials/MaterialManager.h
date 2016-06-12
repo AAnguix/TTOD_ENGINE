@@ -17,6 +17,7 @@ public:
 	virtual ~CMaterialManager();  
 	void Load(const std::string &Filename);  
 	void Reload(); 
+	void Destroy();
 
 	const std::vector<CMaterial *> & GetLUAMaterials();
 	const std::vector<CMaterial *> & GetLUAFileNameMaterials(const std::string &Filename);

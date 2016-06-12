@@ -253,7 +253,10 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 			return false;
 		}
 	}
-	assert(false);
+
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("Unable to load scene renderer commands file " + m_Filename);
+	#endif
 	return false;
 }  
 
@@ -269,6 +272,11 @@ bool CSceneRendererCommandManager::Reload()
 
 void CSceneRendererCommandManager::Execute(CRenderManager &RenderManager)
 {
+	#ifdef _DEBUG
+	if (m_ResourcesVector.size()==0)
+		CEngine::GetSingleton().GetLogManager()->Log("There aren't any renderer commands");
+	#endif
+
 	for(size_t i=0;i<m_ResourcesVector.size();++i)
 	{
 		if(m_ResourcesVector[i]->GetActive())

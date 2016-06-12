@@ -11,12 +11,19 @@ CMaterialManager::CMaterialManager() : m_Filename("")
 
 CMaterialManager::~CMaterialManager()
 {
+	Destroy();
+}
+
+void CMaterialManager::Destroy()
+{
 	std::map<const std::string, std::vector<CMaterial*>>::iterator itMap;
 
 	for (itMap = m_MaterialsPerFileName.begin(); itMap != m_MaterialsPerFileName.end(); ++itMap)
 	{
 		itMap->second.clear();
 	}
+
+	CTemplatedMapManager::Destroy();
 }
 
 void CMaterialManager::Load(const std::string &Filename)

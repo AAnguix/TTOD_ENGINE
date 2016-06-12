@@ -4,6 +4,8 @@
 #include "Engine.h"
 #include "LuabindManager\LuabindManager.h"
 #include "Log\Log.h"
+#include "Components\Collider.h"
+#include "Components\CharacterCollider.h"
 
 static physx::PxDefaultErrorCallback gDefaultErrorCallback;
 static physx::PxDefaultAllocator gDefaultAllocatorCallback;
@@ -66,6 +68,44 @@ CPhysXManagerImplementation::CPhysXManagerImplementation()
 	m_ControllerManager->setOverlapRecoveryModule(true);
 }
 
+void CPhysXManagerImplementation::RemoveComponents()
+{
+	for (size_t i = 0; i < m_CharacterColliderComponents.size(); ++i)
+	{
+		delete m_CharacterColliderComponents[i];
+		m_CharacterColliderComponents[i] = NULL;
+	}
+	m_CharacterColliderComponents.clear();
+
+	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
+	{
+		delete m_ColliderComponents[i];
+		m_ColliderComponents[i] = NULL;
+	}
+	m_ColliderComponents.clear();
+}
+
+void CPhysXManagerImplementation::CreateScene()
+{
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+	DWORD numCPU = sysinfo.dwNumberOfProcessors;
+	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(numCPU);
+
+	physx::PxSceneDesc sceneDesc(m_PhysX->getTolerancesScale());
+	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+	sceneDesc.cpuDispatcher = m_Dispatcher;
+	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
+	m_Scene = m_PhysX->createScene(sceneDesc);
+	assert(m_Scene);
+
+	m_Scene->setSimulationEventCallback(this);
+
+	m_ControllerManager = PxCreateControllerManager(*m_Scene);
+	m_ControllerManager->setOverlapRecoveryModule(true);
+}
+
 void CPhysXManagerImplementation::Destroy()
 {
 	RemoveComponents();
@@ -74,8 +114,55 @@ void CPhysXManagerImplementation::Destroy()
 	{
 		physx::PxController* l_Controller = it->second;
 		l_Controller->release();
+		l_Controller = nullptr;
+		int l_CControllerIndex = GetActorIndex(it->first);
+		m_Actors[l_CControllerIndex] = nullptr;
 	}
 	m_CharacterControllers.clear();
+
+	for (size_t i = 0; i < m_Actors.size(); ++i)
+	{
+		if (m_Actors[i])
+		{
+			m_Actors[i]->release();
+			m_Actors[i] = nullptr;
+		}
+	}
+	m_Actors.clear();
+	
+	/*if (m_ControllerManager != nullptr)
+	{
+		m_ControllerManager->release();	m_ControllerManager = nullptr;
+	}
+
+	if (m_Scene != nullptr)
+	{
+		m_Scene->release();	m_Scene = nullptr;
+	}*/
+
+	std::map<std::string, physx::PxMaterial*>::iterator it;
+	for (it = m_Materials.begin(); it != m_Materials.end(); ++it)
+	{
+		it->second->release();
+		it->second = nullptr;
+	}
+	m_Materials.clear();
+
+	m_ActorIndexs.clear();
+	m_ActorNames.clear();
+	m_ActorPositions.clear();
+	m_ActorOrientations.clear();
+	
+	m_Shapes.clear();
+	//std::map<std::string, physx::PxShape*>::iterator itShape;
+
+	/*for (itShape = m_Shapes.begin(); itShape != m_Shapes.end(); ++itShape)
+	{
+		itShape->second->release();
+	}*/
+
+	//CreateScene();
+
 }
 
 CPhysXManagerImplementation::~CPhysXManagerImplementation()
@@ -280,7 +367,7 @@ void CPhysXManagerImplementation::Reload()
 			it->second->release();
 			it->second = nullptr;
 
-			for (auto it = m_ActorIndexs.begin(); it != m_ActorIndexs.end(); ++it)
+			/*for (auto it = m_ActorIndexs.begin(); it != m_ActorIndexs.end(); ++it)
 			{
 				if (it->first == l_CControllerName)
 				{
@@ -290,7 +377,7 @@ void CPhysXManagerImplementation::Reload()
 						m_Actors[index] = nullptr;
 					}
 				}
-			}
+			}*/
 
 		}
 	}

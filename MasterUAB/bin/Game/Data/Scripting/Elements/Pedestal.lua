@@ -54,7 +54,7 @@ end
 function CPedestalComponent:Update(ElapsedTime)
 	
 	if self.m_Active == true then
-		self:AdTime()
+		self:AddTime()
 		if(self:GetTimer() <= self.m_TimeActive) then
 			if self.m_SoundPlayed == false then
 				self.m_RObject:GetAudioSource():PlayEvent("pedestal_sound")

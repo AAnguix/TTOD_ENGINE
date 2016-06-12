@@ -20,21 +20,23 @@ g_CameraControllerName = "FixedCamera"
 function UpdateThirdPersonCameraController(ElapsedTime)
 	
 	CheckCameraControllerInput()
+	local l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
+	
 	
 	if CInputManager.GetInputManager():GetAxis("X_AXIS") then
-		RotateThirdPersonCamera(g_CameraController,ElapsedTime)
+		RotateThirdPersonCamera(l_CameraController,ElapsedTime)
 	end
 	
 	if CInputManager.GetInputManager():GetAxis("Y_AXIS") then
-		AddLookAtPitch(g_CameraController,ElapsedTime)
+		AddLookAtPitch(l_CameraController,ElapsedTime)
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("ZOOM_IN_CAMERA") then
-		AddZoom(g_CameraController,1.0)
+		AddZoom(l_CameraController,1.0)
 	end
 	
 	if CInputManager.GetInputManager():IsActionActive("ZOOM_OUT_CAMERA") then
-		AddZoom(g_CameraController,-1.0)
+		AddZoom(l_CameraController,-1.0)
 	end
 end
 

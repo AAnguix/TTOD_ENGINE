@@ -6,11 +6,28 @@ g_Weapon = nil
 
 function CGameController:__init()
 	self.m_Entities={}
+	self.m_Enemies={}
 	self.m_Filename = ""
+end
+
+function CGameController:Destroy()
+	for i=1, (#self.m_Entities) do
+		g_LogManager:Log(self.m_Entities[i]:GetName().. " destroyed")
+		if self.m_Entities[i]:GetName() ~= "Player_PlayerScript" then
+			self.m_Entities[i] = nil
+		end
+	end
+	for i=1, (#self.m_Enemies) do
+		self.m_Enemies[i] = nil
+	end
 end
 
 function CGameController:GetScripts()
 	return self.m_Entities
+end
+
+function CGameController:GetEnemies()
+	return self.m_Enemies
 end
 
 function CGameController:Update(ElapsedTime)
@@ -37,7 +54,7 @@ function CGameController:LoadXML(Filename)
 			local l_Element=l_XMLTreeNode:GetChild(i)
 			local l_ElemName=l_Element:GetName()
 			
-			g_LogManager:Log("Cargada entidad "..i)
+			-- g_LogManager:Log("Cargada entidad "..i)
 			
 			if l_ElemName=="enemy" then
 				self:LoadEnemy(l_Element)
@@ -61,9 +78,7 @@ function CGameController:LoadXML(Filename)
 end 
 
 function CGameController:Reload()
-	for i=1, (#self.m_Entities) do
-		self.m_Entities[i] = nil
-	end
+	self:Destroy()
 	self:LoadXML(self.m_Filename)
 	g_LogManager:Log("GameController reloaded")
 end
@@ -135,6 +150,7 @@ function CGameController:LoadEnemy(XMLTreeNode)
 		l_EnemyComponent:Initialize()
 		CGameController:LoadEnemyChilds(l_EnemyComponent,XMLTreeNode)
 		table.insert(self.m_Entities,l_EnemyComponent)
+		table.insert(self.m_Enemies,l_EnemyComponent)
 	end
 end
 
