@@ -1,14 +1,15 @@
 #include "Components\Collider.h"
-#include "Engine.h"
-#include "PhysXManager.h"
+#include "Utils\GameObject.h"
 #include "RenderableObjects\MeshInstance.h"
 #include "StaticMeshes\StaticMesh.h"
+#include "Engine.h"
+#include "PhysXManager.h"
 #include "Materials\Material.h"
 
-CCollider::CCollider(const std::string &Name, CMeshInstance *Owner)
+CCollider::CCollider(const std::string &Name, CGameObject *Owner)
 :CComponent(Name,Owner)
-,m_PhysxMaterial(Owner->GetStaticMesh()->GetPhysxMaterial())
 {
+	m_PhysxMaterial = ((CMeshInstance*)Owner->GetRenderableObject())->GetStaticMesh()->GetPhysxMaterial();
 }
 
 CCollider::~CCollider()
@@ -20,10 +21,11 @@ void CCollider::Update(float ElapsedTime)
 {
 	if (IsEnabled())
 	{
+		assert(m_Owner->GetRenderableObject() != nullptr);
 		CPhysXManager::SActorData l_Data = CEngine::GetSingleton().GetPhysXManager()->GetActorPositionAndOrientation(m_Owner->GetName());
-		m_Owner->SetPosition(l_Data.m_Position);
+		m_Owner->GetRenderableObject()->SetPosition(l_Data.m_Position);
 		Vect3f l_V = l_Data.m_Orientation.GetRadians();
-		m_Owner->SetYawPitchRoll(l_V.x, l_V.y, l_V.z);
+		m_Owner->GetRenderableObject()->SetYawPitchRoll(l_V.x, l_V.y, l_V.z);
 	}
 }
 

@@ -12,7 +12,7 @@ private:
 
 public:
 	CLUAComponent* GetLuaComponent() const{ return m_LuaComponent; };
-	CScript(const std::string& Name, CRenderableObject* Owner, CLUAComponent* Component);
+	CScript(const std::string& Name, CGameObject* Owner, CLUAComponent* Component);
 	virtual ~CScript();
 	void Update(float ElapsedTime);
 	

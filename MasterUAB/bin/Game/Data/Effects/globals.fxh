@@ -1,4 +1,4 @@
-#define MAXBONES 40
+#define MAXBONES 70
 #define MAX_LIGHTS_BY_SHADER 4
 
 cbuffer SceneConstantBuffer : register( b0 )

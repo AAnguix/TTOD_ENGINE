@@ -1,7 +1,7 @@
 #include "AnimatorControllerManager.h"
 #include "Components\AnimatorController\AnimatorController.h"
 #include <assert.h>
-#include "RenderableObjects\RenderableObject.h"
+#include "Utils\GameObject.h"
 
 CAnimatorControllerManager::CAnimatorControllerManager()
 {
@@ -19,7 +19,7 @@ void CAnimatorControllerManager::UpdateComponents(float ElapsedTime)
 	}
 }
 
-CAnimatorController* CAnimatorControllerManager::AddComponent(const std::string &Name, CRenderableObject* Owner)
+CAnimatorController* CAnimatorControllerManager::AddComponent(const std::string &Name, CGameObject* Owner)
 {
 	bool l_Found = false;
 	CAnimatorController* l_AnimatorController = nullptr;

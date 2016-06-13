@@ -6,6 +6,7 @@
 #include "Cinematics\Cinematic.h"
 #include "Particles\ParticleSystemInstance.h"
 #include "Engine.h"
+#include "Utils\GameObjectManager.h"
 
 CRenderableObjectsManager* CLayerManager::GetLayer(CXMLTreeNode &Node)
 {
@@ -33,10 +34,41 @@ CRenderableObjectsManager* CLayerManager::AddLayer(CXMLTreeNode &TreeNode)
 }
 
 CLayerManager::CLayerManager()
-:m_Player(nullptr),
-m_DefaultLayer(nullptr)
+:m_DefaultLayer(nullptr)
 {
 
+}
+
+CMeshInstance* CLayerManager::AddMeshComponent(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+{
+	CMeshInstance* l_RObject = new CMeshInstance(Owner, InstanceMeshName, CoreMeshName, Position, Yaw, Pitch, Roll);
+	if (!AddElementToLayer(Layer, l_RObject))
+	{
+		assert(false);
+		delete(l_RObject); l_RObject = NULL;
+	}
+	else
+	{
+		Owner->SetRenderableObject(l_RObject);
+	}
+
+	return l_RObject;
+}
+
+CAnimatedInstanceModel* CLayerManager::AddAnimatedComponent(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+{
+	CAnimatedInstanceModel* l_RObject = new CAnimatedInstanceModel(Owner, InstanceModelName, CoreModelName, Position, Yaw, Pitch, Roll);
+	if (!AddElementToLayer(Layer, l_RObject))
+	{
+		assert(false);
+		delete(l_RObject); l_RObject = NULL;
+	}
+	else
+	{
+		Owner->SetRenderableObject(l_RObject);
+	}
+
+	return l_RObject;
 }
 
 CLayerManager::~CLayerManager()
@@ -44,28 +76,28 @@ CLayerManager::~CLayerManager()
 	
 }
 
-CRenderableObject * CLayerManager::AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
-{
-	CMeshInstance *l_MeshInstance = nullptr;
-	l_MeshInstance = new CMeshInstance(InstanceMeshName, CoreMeshName, Position, Yaw, Pitch, Roll);
-	
-	if(AddElementToLayer(Layer, l_MeshInstance))
-		return l_MeshInstance;
-	return nullptr;
-}
-
-CRenderableObject * CLayerManager::AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
-{
-	CAnimatedInstanceModel *l_AnimatedInstanceModel;
-	l_AnimatedInstanceModel = new CAnimatedInstanceModel(InstanceModelName, CoreModelName,Position,Yaw,Pitch,Roll);
-
-	if (AddElementToLayer(Layer, l_AnimatedInstanceModel))
-	{
-		l_AnimatedInstanceModel->Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(CoreModelName));
-		return l_AnimatedInstanceModel;
-	}
-	return nullptr;
-}
+//CRenderableObject * CLayerManager::AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+//{
+//	CMeshInstance *l_MeshInstance = nullptr;
+//	l_MeshInstance = new CMeshInstance(InstanceMeshName, CoreMeshName, Position, Yaw, Pitch, Roll);
+//	
+//	if(AddElementToLayer(Layer, l_MeshInstance))
+//		return l_MeshInstance;
+//	return nullptr;
+//}
+//
+//CRenderableObject * CLayerManager::AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+//{
+//	CAnimatedInstanceModel *l_AnimatedInstanceModel;
+//	l_AnimatedInstanceModel = new CAnimatedInstanceModel(InstanceModelName, CoreModelName,Position,Yaw,Pitch,Roll);
+//
+//	if (AddElementToLayer(Layer, l_AnimatedInstanceModel))
+//	{
+//		l_AnimatedInstanceModel->Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(CoreModelName));
+//		return l_AnimatedInstanceModel;
+//	}
+//	return nullptr;
+//}
 
 
 /*
@@ -122,6 +154,8 @@ void CLayerManager::Load(const std::string &Filename)
 
 		if (l_RenderableObjects.Exists())
 		{
+			CGameObjectManager* l_GOManager = CEngine::GetSingleton().GetGameObjectManager();
+
 			for (int i = 0; i < l_RenderableObjects.GetNumChildren(); ++i)
 			{
 				CXMLTreeNode l_Element = l_RenderableObjects(i);
@@ -133,72 +167,111 @@ void CLayerManager::Load(const std::string &Filename)
 
 				else if (l_Element.GetName() == std::string("mesh_instance"))
 				{
-					CMeshInstance *l_MeshInstance = new CMeshInstance(l_Element);
+					CGameObject* l_GameObject = new CGameObject(l_Element);
 
-					CRenderableObjectsManager* l_Layer=GetLayer(l_Element);
-
-					if(!l_Layer)
+					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
 					{
-						l_Layer=m_DefaultLayer;
+						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
 					}
-
-					if(!l_Layer->AddResource(l_MeshInstance->GetName(), l_MeshInstance))
+					else
 					{
-						if (l_MeshInstance != NULL) delete(l_MeshInstance); l_MeshInstance = NULL;
-					}
-					
+						CMeshInstance *l_MeshInstance = new CMeshInstance(l_Element);
+						CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
+
+						if (!l_Layer) l_Layer = m_DefaultLayer; 
+
+						if (!l_Layer->AddResource(l_MeshInstance->GetName(), l_MeshInstance))
+						{
+							if (l_MeshInstance != NULL) delete(l_MeshInstance); l_MeshInstance = NULL;
+						}
+						else
+						{
+							l_GameObject->SetRenderableObject(l_MeshInstance);
+							l_MeshInstance->GeneratePhysxActor(l_Element);
+						}
+					}	
 				}
 				else if (l_Element.GetName() == std::string("animated_model"))
 				{
-					CAnimatedInstanceModel* l_AnimatedInstance = new CAnimatedInstanceModel(l_Element);
-					
-					CRenderableObjectsManager* l_Layer=GetLayer(l_Element);
 
-					if(!l_Layer)
-					{
-						l_Layer=m_DefaultLayer;
-					}
+					CGameObject* l_GameObject = new CGameObject(l_Element);
 
-					if(!l_Layer->AddResource(l_AnimatedInstance->GetName(), l_AnimatedInstance))
+					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
 					{
-						if (l_AnimatedInstance != NULL) delete(l_AnimatedInstance); l_AnimatedInstance = NULL;
+						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
 					}
-					else if (l_Element.GetBoolProperty("player"))
+					else
 					{
-						m_Player = l_AnimatedInstance;
-					}	
+						CAnimatedInstanceModel* l_AnimatedInstance = new CAnimatedInstanceModel(l_Element);
+						CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
+
+						if (!l_Layer) l_Layer = m_DefaultLayer;
+
+						if (!l_Layer->AddResource(l_AnimatedInstance->GetName(), l_AnimatedInstance))
+						{
+							if (l_AnimatedInstance != NULL) delete(l_AnimatedInstance); l_AnimatedInstance = NULL;
+						}
+						else 
+						{
+							l_GameObject->SetRenderableObject(l_AnimatedInstance);
+
+							if (l_Element.GetBoolProperty("player"))
+								CEngine::GetSingleton().GetGameObjectManager()->SetPlayer(l_GameObject);
+						}
+					}
 				}
 				else if (l_Element.GetName() == std::string("cinematic"))
 				{
-					CRenderableObjectsManager* l_Layer=GetLayer(l_Element);
 
-					if(!l_Layer)
+					CGameObject* l_GameObject = new CGameObject(l_Element);
+					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
 					{
-						l_Layer=m_DefaultLayer;
+						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
 					}
-
-					CCinematic *l_Cinematic = new CCinematic(l_Element);
-					l_Cinematic->LoadXML(l_Element.GetPszProperty("file"));
-
-					if(!l_Layer->AddResource(l_Cinematic->GetName(),l_Cinematic))
+					else
 					{
-						if (l_Cinematic != NULL) delete(l_Cinematic); l_Cinematic = NULL;
+						CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
+						if (!l_Layer) l_Layer = m_DefaultLayer;
+
+						CCinematic *l_Cinematic = new CCinematic(l_Element);
+						l_Cinematic->LoadXML(l_Element.GetPszProperty("file"));
+
+						if (!l_Layer->AddResource(l_Cinematic->GetName(), l_Cinematic))
+						{
+							if (l_Cinematic != NULL) delete(l_Cinematic); l_Cinematic = NULL;
+						}
+						else
+						{
+							l_GameObject->SetRenderableObject(l_Cinematic);
+						}
 					}
 				}
 				else if (l_Element.GetName() == std::string("particle_emiter"))
 				{
-					CParticleSystemInstance* l_ParticleSystemInstance = new CParticleSystemInstance(l_Element);
-
-					CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
-
-					if (!l_Layer)
+					CGameObject* l_GameObject = new CGameObject(l_Element);
+					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
 					{
-						l_Layer = m_DefaultLayer;
+						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
 					}
-
-					if (!l_Layer->AddResource(l_ParticleSystemInstance->GetName(), l_ParticleSystemInstance))
+					else
 					{
-						if (l_ParticleSystemInstance != NULL) delete(l_ParticleSystemInstance); l_ParticleSystemInstance = NULL;
+						CParticleSystemInstance* l_ParticleSystemInstance = new CParticleSystemInstance(l_Element);
+
+						CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
+
+						if (!l_Layer)
+						{
+							l_Layer = m_DefaultLayer;
+						}
+
+						if (!l_Layer->AddResource(l_ParticleSystemInstance->GetName(), l_ParticleSystemInstance))
+						{
+							if (l_ParticleSystemInstance != NULL) delete(l_ParticleSystemInstance); l_ParticleSystemInstance = NULL;
+						}
+						else
+						{
+							l_GameObject->SetRenderableObject(l_ParticleSystemInstance);
+						}
 					}
 				}
 			}

@@ -55,6 +55,10 @@ void CLuabindManager::RegisterPhysics()
 		.def("AddColliderComponent", &CPhysXManager::AddColliderComponent)
 		.def("AddCharacterColliderComponent", &CPhysXManager::AddCharacterColliderComponent)
 		.def("RemoveComponents", &CPhysXManager::RemoveComponents)
+		.def("ApplyForce", &CPhysXManager::ApplyForce)
+		.def("ChangeKinematicState", &CPhysXManager::ChangeKinematicState)
+		.def("ChangeGravityState", &CPhysXManager::ChangeGravityState)
+		
 		//.def("AddComponent", (CCollider*(CPhysXManager::*)(const std::string&, CMeshInstance*))&CPhysXManager::AddComponent)
 		//.def("AddComponent", (CCharacterCollider*(CPhysXManager::*)(const std::string&, CAnimatedInstanceModel*))&CPhysXManager::AddComponent)
 		

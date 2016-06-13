@@ -2,7 +2,7 @@
 #include "Render\RenderManager.h"
 #include "Textures\DynamicTexture.h"
 #include "XML\XMLTreeNode.h"
-#include "RenderableObjects\LayerManager.h"
+#include "Utils\GameObjectManager.h"
 #include "Engine.h"
 
 CDirectionalLight::CDirectionalLight()
@@ -33,7 +33,8 @@ void CDirectionalLight::SetShadowMap(CRenderManager &RenderManager)
 {
 	Vect3f l_ShadowMapFrameDisplacement = v3fZERO;
 
-	CRenderableObject* l_Player = (CRenderableObject*)CEngine::GetSingleton().GetLayerManager()->GetPlayer();
+	CGameObject* l_PlayerGameObject = CEngine::GetSingleton().GetGameObjectManager()->GetPlayer();
+	CRenderableObject* l_Player = l_PlayerGameObject->GetRenderableObject();
 	Vect3f l_PlayerPos = l_Player->GetPosition();
 	SetPosition(l_PlayerPos + m_PlayerOffset);
 	

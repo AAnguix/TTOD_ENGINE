@@ -1,9 +1,8 @@
 #include "Components\Script.h"
-#include "RenderableObjects\RenderableObject.h"
 #include "Components\LuaComponent.h"
 #include <cassert>
 
-CScript::CScript(const std::string& Name, CRenderableObject* Owner, CLUAComponent* Component)
+CScript::CScript(const std::string& Name, CGameObject* Owner, CLUAComponent* Component)
 :CComponent(Name, Owner)
 ,m_LuaComponent(Component)
 {

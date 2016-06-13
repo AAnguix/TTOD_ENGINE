@@ -1,5 +1,5 @@
 #include "ScriptManager.h"
-#include "RenderableObjects\RenderableObject.h"
+#include "Utils\GameObject.h"
 #include "Components\LuaComponent.h"
 #include "Components\Script.h"
 #include <assert.h>
@@ -26,7 +26,7 @@ void CScriptManager::UpdateComponents(float ElapsedTime)
 	}
 }
 
-CScript* CScriptManager::AddComponent(const std::string& Name, CRenderableObject* Owner, CLUAComponent* Component)
+CScript* CScriptManager::AddComponent(const std::string& Name, CGameObject* Owner, CLUAComponent* Component)
 {
 	bool l_Found = false;
 	CScript* l_Script = nullptr;

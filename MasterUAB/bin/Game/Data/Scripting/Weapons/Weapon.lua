@@ -1,7 +1,8 @@
 class 'CWeaponComponent' (CLUAComponent)
-function CWeaponComponent:__init(ComponentType, ParentRObject, ParentBoneName, MeshRObject, Damage, WeaponType)
+function CWeaponComponent:__init(ComponentType, ParentRObject, ParentBoneName, GameObject, Damage, WeaponType)
 	CLUAComponent.__init(self,ComponentType)
-	self.m_MeshRObject = MeshRObject --The mesh instance that points to this class
+	self.m_GameObject = GameObject
+	self.m_MeshRObject = GameObject:GetRenderableObject() 
 	self.m_ParentRObject = ParentRObject --The A.Model that is going to use this weapon
 	self.m_Damage = Damage
 	self.m_Type = WeaponType

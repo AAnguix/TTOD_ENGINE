@@ -1,7 +1,8 @@
 class 'CDragonComponent' (CLUAComponent)
-function CDragonComponent:__init(CRenderableObject, ParticleSystemInstance, BoneID)
-	CLUAComponent.__init(self,CRenderableObject:GetName().."_script")
-	self.m_RObject = CRenderableObject
+function CDragonComponent:__init(CGameObject, ParticleSystemInstance, BoneID)
+	CLUAComponent.__init(self,CGameObject:GetName().."_script")
+	self.m_GameObject = CGameObject
+	self.m_RObject = CGameObject:GetRenderableObject()
 	
 	self.m_Dead=false
 	self.m_MaxHealth=1000.0
@@ -19,7 +20,7 @@ function CDragonComponent:__init(CRenderableObject, ParticleSystemInstance, Bone
 	
 	self.m_FireParticles = ParticleSystemInstance
 	self.m_BoneID = BoneID
-	-- self.m_FireParticles:SetParent(CRenderableObject, BoneName)
+	-- self.m_FireParticles:SetParent(CGameObject, BoneName)
 	self.m_Target = Vect3f(0.0,0.0,0.0)
 	
 	--Character collider
@@ -34,17 +35,17 @@ end
 
 function CDragonComponent:Initialize()
 	--Physyx
-	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_RObject)
+	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_GameObject)
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
 		g_PhysXManager:RegisterMaterial(l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
 		m_Position = self.m_RObject:GetPosition()
 		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
+		g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
 	end
 
-	self.m_Animator = CAnimatorController.AddAnimatorController("AnimatorController", self.m_RObject)
+	self.m_Animator = CAnimatorController.AddAnimatorController("AnimatorController", self.m_GameObject)
 	local l_Idle = self.m_Animator:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Dragon", "OnUpdate_Idle_Dragon", "OnExit_Idle_Dragon")
 	local l_Scratch = self.m_Animator:AddState("Scratch_State", "normalAttack", 1.0, "OnEnter_Scratch_Dragon", "OnUpdate_Scratch_Dragon", "OnExit_Scratch_Dragon")
 	local l_SpitFire = self.m_Animator:AddState("SpitFire_State", "normalAttack", 1.0, "OnEnter_SpitFire_Dragon", "OnUpdate_SpitFire_Dragon", "OnExit_SpitFire_Dragon")
@@ -92,7 +93,7 @@ function CDragonComponent:Initialize()
 	self:AddState(2.0, 15.0, 2.0, 30.0, 3.0, 4.0)
 	self:AddState(1.0, 20.0, 2.0, 50.0, 3.0, 4.0)
 	
-	--g_LogManager:Log("Dragon "..self.m_RObject:GetName().." created...")
+	--g_LogManager:Log("Dragon "..self.m_GameObject:GetName().." created...")
 end
 
 function CDragonComponent:CreatePhysxSqueleton()
@@ -102,7 +103,7 @@ function CDragonComponent:CreatePhysxSqueleton()
 	local l_Restitution = 0.5
 	local l_MaterialName = "Dragon_tail_material"
 	
-	local l_Name = 	self.m_RObject:GetName()
+	local l_Name = 	self.m_GameObject:GetName()
 	local l_Size = Vect3f(3.0,1.0,1.0)
 	local l_Position = Vect3f(0.0,0.0,0.0)
 	local l_Orientation = Quatf(0.0,0.0,0.0,1.0)
@@ -179,8 +180,6 @@ end
 function CDragonComponent:Update(ElapsedTime)
 
 end
-
-function CDragonComponent:GetRenderableObject() return self.m_RObject end
 
 function CDragonComponent:GetAnimator() return self.m_Animator end
 function CDragonComponent:GetAudioSource() return self.m_AudioSource end

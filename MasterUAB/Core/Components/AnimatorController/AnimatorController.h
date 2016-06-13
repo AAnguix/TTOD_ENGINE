@@ -7,7 +7,7 @@
 #include "Components\AnimatorController\AnimatorControllerFloatParameter.h"
 #include "Components\Component.h"
 
-class CRenderableObject;
+class CGameObject;
 class CTransition;
 
 class CAnimatorController : public CComponent
@@ -23,7 +23,7 @@ private:
 	bool SearchParameter(const std::string &Name);
 	
 public:
-	CAnimatorController(const std::string &Name, CRenderableObject* Owner);
+	CAnimatorController(const std::string &Name, CGameObject* Owner);
 	virtual ~CAnimatorController();
 	void Update(float ElapsedTime);
 	void Render(CRenderManager &RenderManager);

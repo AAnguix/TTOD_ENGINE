@@ -1,5 +1,6 @@
 #include "State.h"
 #include "Components\AnimatorController\AnimatorController.h"
+#include "Utils\GameObject.h"
 #include <luabind/luabind.hpp>
 #include "Engine.h"
 #include "LuabindManager\LuabindManager.h"
@@ -40,12 +41,12 @@ void CState::OnEnter(CTransition* Transition)
 
 	if (m_Animation.m_Loop)
 	{
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()))->BlendCycle(m_Animation.m_ID, m_Animation.m_Weight, l_DelayIn);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->BlendCycle(m_Animation.m_ID, m_Animation.m_Weight, l_DelayIn);
 	}
 	else
 	{
 		float l_DelayOut = Transition != nullptr ? Transition->GetDelayOut() : 0.0f;
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()))->ExecuteAction(m_Animation.m_ID, l_DelayIn, l_DelayOut, m_Animation.m_Weight, false);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ExecuteAction(m_Animation.m_ID, l_DelayIn, l_DelayOut, m_Animation.m_Weight, false);
 	}
 
 	try
@@ -73,7 +74,7 @@ void CState::OnExit(CTransition* Transition)
 	if (m_Animation.m_Loop)
 	{
 		float l_DelayOut = Transition != nullptr ? Transition->GetDelayOut() : 0.0f;
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()))->ClearCycle(m_Animation.m_ID, l_DelayOut);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ClearCycle(m_Animation.m_ID, l_DelayOut);
 	}
 
 	try

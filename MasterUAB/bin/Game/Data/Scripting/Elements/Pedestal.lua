@@ -1,7 +1,7 @@
 class 'CPedestalComponent' (CLUAComponent)
-function CPedestalComponent:__init(CRenderableObject)
+function CPedestalComponent:__init(CGameObject)
 CLUAComponent.__init(self,"pedestal")	
-	self.m_RObject = CRenderableObject
+	self.m_GameObject = CGameObject
 	self.m_Active = false
 	self.m_InteractionRange = 1.5
 	g_GUIManager:AddButton("pedestal01_button", "pedestal_button_normal", "pedestal_button_highlight", "pedestal_button_pressed")
@@ -23,7 +23,7 @@ function CPedestalComponent:Initialize(XMLTreeNode)
 	
 	--g_GUIManager:AddButton(ButtonID, Normal, Highlight, Pressed)
 	
-	--g_LogManager:Log("Pedestal "..self.m_RObject:GetName().." created...")
+	--g_LogManager:Log("Pedestal "..self.m_GameObject:GetName().." created...")
 end
 
 function CPedestalComponent:GetInteractionRange()
@@ -34,7 +34,7 @@ function CPedestalComponent:IsPlayerInsideInteractionRange(PlayerPosition)
 
 	local l_Distance = 0.0
 	local l_IsPlayerInsideInteractionRange = false
-	local l_Position = self.m_RObject:GetPosition()
+	local l_Position = self.m_GameObject:GetRenderableObject():GetPosition()
 	
 	local l_X=(l_Position.x - PlayerPosition.x)^2
 	local l_Y = (l_Position.y - PlayerPosition.y)^2
@@ -52,12 +52,11 @@ function CPedestalComponent:IsPlayerInsideInteractionRange(PlayerPosition)
 end
 
 function CPedestalComponent:Update(ElapsedTime)
-	
 	if self.m_Active == true then
 		self:AddTime()
 		if(self:GetTimer() <= self.m_TimeActive) then
 			if self.m_SoundPlayed == false then
-				self.m_RObject:GetAudioSource():PlayEvent("pedestal_sound")
+				self.m_GameObject:GetAudioSource():PlayEvent("pedestal_sound")
 				self.m_SoundPlayed = true
 			end
 			--Show GUI message telling player that he has reach and objetive
@@ -66,7 +65,7 @@ function CPedestalComponent:Update(ElapsedTime)
 			self:ResetTimer()
 			self:Disable()
 		end
-	elseif self:IsPlayerInsideInteractionRange(g_Player:GetPosition()) then
+	elseif self:IsPlayerInsideInteractionRange(g_Player:GetRenderableObject():GetPosition()) then
 		self:ShowGuiMessage()
 	end
 end

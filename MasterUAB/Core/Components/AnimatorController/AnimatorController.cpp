@@ -5,9 +5,9 @@
 #include "Components\AnimatorController\Animation.h"
 #include "Animation\AnimatedCoreModel.h"
 #include "Components\AnimatorController\Transition.h"
+#include "Utils\GameObject.h"
 
-
-CAnimatorController::CAnimatorController(const std::string &Name, CRenderableObject* Owner)
+CAnimatorController::CAnimatorController(const std::string &Name, CGameObject* Owner)
 :CComponent(Name,Owner)
 ,m_PreviousState(nullptr)
 ,m_CurrentState(nullptr)
@@ -106,7 +106,7 @@ CState* CAnimatorController::AddState(const std::string &Name, const std::string
 	}
 	else
 	{	
-	 	EAnimation l_Animation = ((CAnimatedInstanceModel*)m_Owner)->m_AnimatedCoreModel->GetAnimation(Animation);
+		EAnimation l_Animation = ((CAnimatedInstanceModel*)m_Owner->GetRenderableObject())->m_AnimatedCoreModel->GetAnimation(Animation);
 
 		CState* l_State = new CState(this, Name, l_Animation, Speed, OnEnter, OnUpdate, OnExit);
 

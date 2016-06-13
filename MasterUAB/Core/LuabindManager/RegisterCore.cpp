@@ -12,6 +12,9 @@
 #include "DebugHelper\DebugHelperImplementation.h"
 #include "Utils\EmptyPointerClass.h"
 
+/*Base*/
+#include "Utils\GameObjectManager.h"
+
 /*Graphics*/
 #include "Render\RenderManager.h"
 #include "Materials\MaterialManager.h"
@@ -92,6 +95,7 @@ void CLuabindManager::RegisterCore()
 		]
 		.def("GetEffectManager", &CEngine::GetEffectManager)
 		.def("GetRenderableObjectTechniqueManager", &CEngine::GetRenderableObjectTechniqueManager)
+		.def("GetGameObjectManager", &CEngine::GetGameObjectManager)
 		.def("GetMaterialManager", &CEngine::GetMaterialManager)
 		.def("GetAnimatedModelManager", &CEngine::GetAnimatedModelManager)
 		.def("GetStaticMeshManager", &CEngine::GetStaticMeshManager)
@@ -359,7 +363,7 @@ void CLuabindManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CScript, CComponent>("CScript")
-		.def(constructor<const std::string&, CRenderableObject*,CLUAComponent*>())
+		.def(constructor<const std::string&, CGameObject*,CLUAComponent*>())
 		.def("GetLuaComponent", &CScript::GetLuaComponent)
 		.def("Update", &CScript::Update)
 	];
@@ -367,14 +371,14 @@ void CLuabindManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CCollider, CComponent>("CCollider")
-		.def(constructor<const std::string&, CMeshInstance*>())
+		.def(constructor<const std::string&, CGameObject*>())
 		.def("GetPhysxMaterial", &CCollider::GetPhysxMaterial)
 	];
 
 	module(LUA_STATE)
 	[
 		class_<CCharacterCollider, CComponent>("CCharacterCollider")
-		.def(constructor<const std::string&, CAnimatedInstanceModel*>())
+		.def(constructor<const std::string&, CGameObject*>())
 		.def("GetPhysxMaterial",&CCharacterCollider::GetPhysxMaterial)
 	];
 
@@ -408,7 +412,7 @@ void CLuabindManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CAnimatorController>("CAnimatorController")
-		.def(constructor<const std::string, CRenderableObject*>())
+		.def(constructor<const std::string, CGameObject*>())
 		.def("AddState", &CAnimatorController::AddState)
 		.def("AddInteger", &CAnimatorController::AddInteger)
 		.def("AddFloat", &CAnimatorController::AddFloat)
@@ -424,7 +428,7 @@ void CLuabindManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CAudioSource>("CAudioSource")
-		.def(constructor<const std::string, CRenderableObject*>())
+		.def(constructor<const std::string, CGameObject*>())
 		.def("RemoveSounds", &CAudioSource::RemoveSounds)
 		.def("PlayEvent", &CAudioSource::PlayEvent)
 		.def("AddSound", &CAudioSource::AddSound)

@@ -1,6 +1,6 @@
 class 'CBasicEnemyComponent' (CEnemyComponent)
-function CBasicEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject,"BasicEnemy")
+function CBasicEnemyComponent:__init(CGameObject)
+	CEnemyComponent.__init(self, CGameObject,"BasicEnemy")
 	self.m_Health=100.0
 	self.m_Speed=1.2
 	self.m_AttackDelay=1.5
@@ -19,7 +19,7 @@ end
 function CBasicEnemyComponent:Initialize()
 	
 	CEnemyComponent.Initialize(self)
-	local l_AnimatorController = CEnemyComponent.GetRenderableObject(self):GetAnimatorController()
+	local l_AnimatorController = CEnemyComponent.GetGameObject(self):GetAnimatorController()
 	
 	local l_Idle = l_AnimatorController:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_BasicEnemy", "OnUpdate_Idle_BasicEnemy", "OnExit_Idle_BasicEnemy")
 	local l_MoveToAttack = l_AnimatorController:AddState("MoveToAttack_State", "run", 1.0, "OnEnter_MoveToAttack_BasicEnemy", "OnUpdate_MoveToAttack_BasicEnemy", "OnExit_MoveToAttack_BasicEnemy")

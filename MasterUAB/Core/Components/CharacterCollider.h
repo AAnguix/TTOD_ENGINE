@@ -2,7 +2,7 @@
 #define _CHARACTERCOLLIDER_H
 
 #include "Components\Component.h"
-class CAnimatedInstanceModel;
+class CGameObject;
 class CMaterial;
 
 class CCharacterCollider : public CComponent
@@ -11,7 +11,7 @@ private:
 	CMaterial* m_PhysxMaterial;
 
 public:
-	CCharacterCollider(const std::string &Name, CAnimatedInstanceModel *Owner);
+	CCharacterCollider(const std::string &Name, CGameObject* Owner);
 	virtual ~CCharacterCollider();
 	virtual void Update(float ElapsedTime);
 	

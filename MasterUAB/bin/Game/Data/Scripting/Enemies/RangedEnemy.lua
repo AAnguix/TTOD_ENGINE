@@ -1,6 +1,6 @@
 class 'CRangedEnemyComponent' (CEnemyComponent)
-function CRangedEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject, "RanguedEnemy")
+function CRangedEnemyComponent:__init(CGameObject)
+	CEnemyComponent.__init(self, CGameObject, "RanguedEnemy")
 	self.m_Health=150.0
 	self.m_Speed=2.0
 	self.m_AttackDelay=2.0
@@ -8,6 +8,9 @@ function CRangedEnemyComponent:__init(CRenderableObject)
 	self.m_PointRadius=0.66
 	
 	self.m_ShootingForce=50.0
+	
+	--self.m_Weapon = "Cristalmanec"
+	
 	--self.m_Weapon = CWeapon(100,"bow")
 	--self.m_Armor = CArmor(5,"light")
 end
@@ -19,7 +22,7 @@ end
 function CRangedEnemyComponent:Initialize()
 	
 	CEnemyComponent.Initialize(self)
-	local l_AnimatorController = self.m_RObject:GetAnimatorController()
+	local l_AnimatorController = CEnemyComponent.GetGameObject(self):GetAnimatorController()
 
 	local l_Idle = l_AnimatorController:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_RangedEnemy", "OnUpdate_Idle_RangedEnemy", "OnExit_Idle_RangedEnemy")
 	local l_Attack = l_AnimatorController:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_RangedEnemy", "OnUpdate_Attack_RangedEnemy", "OnExit_Attack_RangedEnemy")
@@ -48,4 +51,31 @@ function CRangedEnemyComponent:Flee(Position, ElapsedTime)
 	-- end
 	
 	-- return true
+end
+
+function CRangedEnemyComponent:LaunchProjectile(Destination)
+	
+	--g_PhysXManager:ChangeKinematicState(self.m_Weapon, true)
+	--SetParent(CAnimatedInstanceModel* Parent, const std::string &BoneName) AQUI DEBERIA SER NIL
+	
+	local l_VectorToPlayer = Destination - self.m_RObject:GetPosition()
+	l_VectorToPlayer:Normalize(1.0)
+	
+	--g_PhysXManager:MoveKinematicActor(self.m_Weapon,l_EnemyPos)
+	g_PhysXManager:ChangeKinematicState(self.m_Weapon, false)
+	local l_Force = 90
+	g_PhysXManager:ChangeGravityState(self.m_Weapon, false)
+	g_PhysXManager:ApplyForce(self.m_Weapon, (l_VectorToPlayer*l_Force))
+end
+
+function CRangedEnemyComponent:AttachProjectile()
+	g_PhysXManager:ChangeKinematicState(self.m_Weapon, true)
+	local StartPosition = Vect3f(0.0,0.0,0.0)
+	StartPosition = self.m_RObject:GetPosition()
+	local Y1 = 5.0
+	local Position = Vect3f(StartPosition.x,Y1,StartPosition.z)
+	
+	g_PhysXManager:MoveKinematicActor(self.m_Weapon,Position)
+	
+	--SetParent(CAnimatedInstanceModel* Parent, const std::string &BoneName)
 end

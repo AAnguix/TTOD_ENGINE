@@ -6,11 +6,19 @@
 #include <luabind/iterator_policy.hpp>
 
 
+/*Core*/
+#include "Components\AnimatorController\AnimatorController.h"
+#include "Components\CharacterCollider.h"
+#include "Components\Collider.h"
+#include "Components\Script.h"
+#include "Components\AudioSource.h"
+#include "RenderableObjects\RenderableObject.h"
 #include "Engine.h"
 
 #include "XML\XMLTreeNode.h"
 #include "Utils\3DElement.h"
 #include "Utils\Named.h"
+#include "Utils\GameObjectManager.h"
 #include "Math\Vector2.h"
 #include "Math\Vector3.h"
 #include "Math\Vector4.h"
@@ -46,7 +54,8 @@ void CLuabindManager::RegisterBase()
 		[
 			def("GetAngleToFacePoint", &CTTODMathUtils::GetAngleToFacePoint)
 			,def("PointInsideCircle", &CTTODMathUtils::PointInsideCircle)
-			, def("CalculateNewAngle", &CTTODMathUtils::CalculateNewAngle)
+			,def("CalculateNewAngle", &CTTODMathUtils::CalculateNewAngle)
+			,def("AngleBetweenVectors", &CTTODMathUtils::AngleBetweenVectors)
 		]
 	];
 
@@ -84,6 +93,15 @@ void CLuabindManager::RegisterBase()
 		.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)*/
 	];
 
+	module(LUA_STATE)
+	[
+		class_<CNamed>("CNamed")
+		.def(constructor<CXMLTreeNode>())
+		.def("GetName", &CNamed::GetName)
+		.def("SetName", &CNamed::SetName)
+		.def("GetNameLuaAddress", &CNamed::GetNameLuaAddress)
+	];
+
 	module(LUA_STATE) 
 	[
 		class_<C3DElement>("C3DElement")
@@ -117,6 +135,52 @@ void CLuabindManager::RegisterBase()
 		
 		.def("ChildGetTransform", &C3DElement::ChildGetTransform)
 		
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CGameObject, CNamed>("CGameObject")
+		.def(constructor<>())
+		.def(constructor<const std::string&>())
+		.def(constructor<const CXMLTreeNode&>())
+		.def("GetAnimatorController", &CGameObject::GetAnimatorController)
+		.def("GetScript", &CGameObject::GetScript)
+		.def("GetAudioSource", &CGameObject::GetAudioSource)
+		.def("GetRenderableObject", &CGameObject::GetRenderableObject)
+		.def("GetCharacterCollider", &CGameObject::GetCollider)
+		.def("GetCharacterCollider", &CGameObject::GetCharacterCollider)
+
+		.def("SetAnimatorController", &CGameObject::SetAnimatorController)
+		.def("SetScript", &CGameObject::SetScript)
+		.def("SetAudioSource", &CGameObject::SetAudioSource)
+		.def("SetRenderableObject", &CGameObject::SetRenderableObject)
+		.def("SetCollider", &CGameObject::SetCollider)
+		.def("SetCharacterCollider", &CGameObject::SetCharacterCollider)
+		.def("GetThisLuaAddress", &CGameObject::GetThisLuaAddress)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedVectorMapManager<CGameObject>::TVectorResources>("TVectorResources")
+		.def("size", &CTemplatedVectorMapManager<CGameObject>::TVectorResources::size)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedVectorMapManager<CGameObject>>("CTemplatedVectorMapManager")
+		.def("GetResource", &CTemplatedVectorMapManager<CGameObject>::GetResource)
+		.def("GetResourceById", &CTemplatedVectorMapManager<CGameObject>::GetResourceById)
+		.def("AddResource", &CTemplatedVectorMapManager<CGameObject>::AddResource)
+		.def("RemoveResource", &CTemplatedVectorMapManager<CGameObject>::RemoveResource)
+		.def("GetResourcesMap", &CTemplatedVectorMapManager<CGameObject>::GetResourcesMap)
+		.def("GetResourcesVector", &CTemplatedVectorMapManager<CGameObject>::GetResourcesVector)
+	];
+
+	module(LUA_STATE)
+	[
+		class_< CGameObjectManager, CTemplatedVectorMapManager<CGameObject>>("CGameObjectManager")
+		.def("GetPlayer", &CGameObjectManager::GetPlayer)
+		.def("SetPlayer", &CGameObjectManager::SetPlayer)
 	];
 	
 	module(LUA_STATE)
@@ -156,15 +220,6 @@ void CLuabindManager::RegisterBase()
 		.def("Exists", &CXMLTreeNode::Exists)
 		.def("[]", &CXMLTreeNode::operator[])
 		.def("GetChild", &CXMLTreeNode::operator())
-	];
-
-	module(LUA_STATE) 
-	[
-		class_<CNamed>("CNamed")
-		.def(constructor<CXMLTreeNode>())
-		.def("GetName", &CNamed::GetName)
-		.def("SetName", &CNamed::SetName)
-		.def("GetNameLuaAddress", &CNamed::GetNameLuaAddress)
 	];
 
 	module(LUA_STATE)

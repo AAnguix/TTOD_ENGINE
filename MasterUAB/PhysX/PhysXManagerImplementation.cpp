@@ -304,12 +304,19 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 
 		std::stringstream l_Ss;
 
-		l_Ss << "OnCollide" << triggerName << "('" << actorName << "')";
-
-		std::string l_Code = l_Ss.str();
-		CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
+		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			l_Ss << "OnTriggerEnter" << triggerName << "('" << actorName << "')";
+			std::string l_Code = l_Ss.str();
+			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
+		}
+		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			l_Ss << "OnTriggerExit" << triggerName << "('" << actorName << "')";
+			std::string l_Code = l_Ss.str();
+			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
+		}
 	}
-
 }
 
 void CPhysXManagerImplementation::onControllerHit(const physx::PxControllersHit& hit)

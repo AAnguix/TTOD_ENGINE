@@ -3,7 +3,7 @@
 
 #include <vector>
 class CScript;
-class CRenderableObject;
+class CGameObject;
 class CLUAComponent;
 
 class CScriptManager
@@ -16,7 +16,7 @@ public:
 	CScriptManager();
 	virtual ~CScriptManager();
 	void Update(float ElapsedTime);
-	CScript* AddComponent(const std::string& Name, CRenderableObject* Owner, CLUAComponent* Component);
+	CScript* AddComponent(const std::string& Name, CGameObject* Owner, CLUAComponent* Component);
 	void RemoveComponents();
 	const std::vector<CScript *> & GetLUAScripts();
 };

@@ -33,6 +33,14 @@
 	<pixel_shader name="gbuffer_diffuse_normal_environment_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS"  macro="HAS_NORMAL;HAS_ENVIRONMENT"/>
 	<effect_technique name="gbuffer_diffuse_normal_environment_technique" vertex_shader="gbuffer_diffuse_normal_environment_vs" pixel_shader="gbuffer_diffuse_normal_environment_ps"/>
 	
+	<vertex_shader name="gbuffer_diffuse_lightmap_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX" macro="HAS_LIGHTMAP"/>
+    <pixel_shader name="gbuffer_diffuse_lightmap_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS"  macro="HAS_LIGHTMAP"/>
+    <effect_technique name="gbuffer_diffuse_lightmap_technique" vertex_shader="gbuffer_diffuse_lightmap_vs" pixel_shader="gbuffer_diffuse_lightmap_ps"/>
+    
+	<vertex_shader name="gbuffer_diffuse_normal_lightmap_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX" macro="HAS_NORMAL;HAS_LIGHTMAP"/>
+    <pixel_shader name="gbuffer_diffuse_normal_lightmap_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS"  macro="HAS_NORMAL;HAS_LIGHTMAP"/>
+    <effect_technique name="gbuffer_diffuse_normal_lightmap_technique" vertex_shader="gbuffer_diffuse_normal_lightmap_vs" pixel_shader="gbuffer_diffuse_normal_lightmap_ps"/>
+ 
 	<vertex_shader name="gbuffer_animated_models_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" macro="HAS_WEIGHTS"/>
 	<pixel_shader name="gbuffer_animated_models_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS"/>
 	<effect_technique name="gbuffer_animated_models_technique" vertex_shader="gbuffer_animated_models_vs" pixel_shader="gbuffer_animated_models_ps"/>

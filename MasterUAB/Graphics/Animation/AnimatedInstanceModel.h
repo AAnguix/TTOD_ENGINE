@@ -2,10 +2,10 @@
 #define _ANIMATEDINSTANCEMODEL_H
 
 class CXMLTreeNode;
+class CGameObject;
 class CRenderManager;
 class CMaterial;
 class CRenderableVertexs;
-class CCharacterCollider;
 class CAnimatedCoreModel;
 class CalCoreModel;
 class CalHardwareModel;
@@ -43,11 +43,10 @@ private:
 
 protected:
 	CAnimatedCoreModel* m_AnimatedCoreModel;
-	CCharacterCollider* m_CharacterCollider;
 
 public:  
 	CAnimatedInstanceModel(CXMLTreeNode &TreeNode);  
-	CAnimatedInstanceModel(const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll);  //Own 
+	CAnimatedInstanceModel(CGameObject* Owner, const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll);  //Own 
 	virtual ~CAnimatedInstanceModel();  
 	void Initialize(CAnimatedCoreModel *AnimatedCoreModel);  
 	void Render(CRenderManager* RenderManager);  
@@ -63,9 +62,6 @@ public:
 	TRenderableObjectType GetClassType() const{ return TRenderableObjectType::ANIMATED_INSTANCE; };
 
 	Mat44f GetBoneTransformationMatrix(const int BoneID) const;
-
-	virtual CCharacterCollider* GetCharacterCollider() const;
-	virtual void SetCharacterCollider(CCharacterCollider* CharacterCollider);
 }; 
 
 #endif

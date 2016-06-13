@@ -25,7 +25,7 @@ private:
 	std::vector<CAudioSource*> m_Components;
 	void UpdateComponents(float ElapsedTime);
 public:
-	CAudioSource* AddComponent(const std::string &Name, CRenderableObject *Owner);
+	CAudioSource* AddComponent(const std::string &Name, CGameObject *Owner);
 	void RemoveComponents();
 
 private:

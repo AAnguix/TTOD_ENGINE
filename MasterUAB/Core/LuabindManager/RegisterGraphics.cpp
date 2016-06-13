@@ -15,10 +15,7 @@
 #include "Engine.h"
 #include "Log\Log.h"
 #include "Components\AnimatorController\AnimatorController.h"
-#include "Components\CharacterCollider.h"
-#include "Components\Collider.h"
-#include "Components\Script.h"
-#include "Components\AudioSource.h"
+
 #include "DebugHelper\DebugHelperImplementation.h"
 #include "Input\InputManagerImplementation.h"
 
@@ -156,7 +153,7 @@ void CLuabindManager::RegisterAnimations()
 	[
 		class_<CAnimatedInstanceModel, CRenderableObject>("CAnimatedInstanceModel")
 		.def(constructor<CXMLTreeNode>())
-		.def(constructor<const std::string ,const std::string,const Vect3f,float,float,float>())
+		.def(constructor<CGameObject*, const std::string, const std::string, const Vect3f, float, float, float>())
 		.def("GetAnimatedCoreModel", &CAnimatedInstanceModel::GetAnimatedCoreModel)
 		.def("Initialize", &CAnimatedInstanceModel::Initialize)
 		.def("Render", &CAnimatedInstanceModel::Render)
@@ -167,7 +164,6 @@ void CLuabindManager::RegisterAnimations()
 		.def("ClearCycle", &CAnimatedInstanceModel::ClearCycle)
 		.def("IsCycleAnimationActive", &CAnimatedInstanceModel::IsCycleAnimationActive)
 		.def("IsActionAnimationActive", &CAnimatedInstanceModel::IsActionAnimationActive)
-		.def("GetCharacterCollider", &CAnimatedInstanceModel::GetCharacterCollider)
 		.def("GetBoneTransformationMatrix", &CAnimatedInstanceModel::GetBoneTransformationMatrix)
 	];
 
@@ -887,10 +883,8 @@ void CLuabindManager::RegisterRenderableObjects()
 		.def("Destroy", &CLayerManager::Destroy)
 		.def("Load", &CLayerManager::Load)
 		.def("Reload", &CLayerManager::Reload)
-		.def("GetPlayer", &CLayerManager::GetPlayer)
-		.def("SetPlayer", &CLayerManager::SetPlayer)
-		.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
-		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)
+		/*.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
+		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)*/
 		
 	/*	.def("RemoveLayerComponent", &CLayerManager::RemoveLayerComponent)
 		.def("RemoveLayerComponents", &CLayerManager::RemoveLayerComponents)
@@ -930,22 +924,10 @@ void CLuabindManager::RegisterRenderableObjects()
 
 	module(LUA_STATE)
 	[
-		class_<CRenderableObject, bases<C3DElement, CNamed>>("CRenderableObject")
+		class_<CRenderableObject, bases<CComponent, C3DElement>>("CRenderableObject")
 		//.def(constructor<>())
 		.def("Update", &CRenderableObject::Update)
 		.def("Render", &CRenderableObject::Render)
-		.def("GetAnimatorController", &CRenderableObject::GetAnimatorController)
-		.def("GetScript", &CRenderableObject::GetScript)
-		.def("GetAudioSource", &CRenderableObject::GetAudioSource)
-		.def("SetAnimatorController", &CRenderableObject::SetAnimatorController)
-		.def("SetAudioSource", &CRenderableObject::SetAudioSource)
-		.def("SetScript", &CRenderableObject::SetScript)
-		/*.def("GetComponentManager", &CRenderableObject::GetComponentManager)
-		.def("GetAnimatorController", &CRenderableObject::GetAnimatorController)
-		.def("AddComponent", &CRenderableObject::AddComponent)
-		.def("RemoveComponent", &CRenderableObject::RemoveComponent)
-		.def("RemoveComponents", &CRenderableObject::RemoveComponents)*/
-		
 		.def("GetThisLuaAddress", &CRenderableObject::GetThisLuaAddress)
 		
 		.def("GetClassType", &CRenderableObject::GetClassType)
@@ -962,10 +944,9 @@ void CLuabindManager::RegisterRenderableObjects()
 	[
 		class_<CMeshInstance, CRenderableObject>("CMeshInstance")
 		.def(constructor<CXMLTreeNode>())
-		.def(constructor<const std::string, const std::string, const Vect3f , float, float, float>())
+		.def(constructor<CGameObject*, const std::string, const std::string, const Vect3f, float, float, float>())
 		.def("Render", &CMeshInstance::Render)
 		.def("SetParent", &CMeshInstance::SetParent)
-		.def("GetCollider", &CMeshInstance::GetCollider)
 		.def("GetStaticMesh", &CMeshInstance::GetStaticMesh)
 	];
 

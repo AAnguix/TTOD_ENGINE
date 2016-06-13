@@ -1,7 +1,8 @@
 class 'CEnemyComponent' (CLUAComponent)
-function CEnemyComponent:__init(CRenderableObject,EnemyType)
-	CLUAComponent.__init(self,CRenderableObject:GetName().."_"..EnemyType.."Script")
-	self.m_RObject = CRenderableObject
+function CEnemyComponent:__init(CGameObject,EnemyType)
+	CLUAComponent.__init(self,CGameObject:GetName().."_"..EnemyType.."Script")
+	self.m_GameObject = CGameObject
+	self.m_RObject = CGameObject:GetRenderableObject()
 	self.m_Dead=false
 	self.m_Health=0.0
 	
@@ -30,20 +31,20 @@ end
 
 function CEnemyComponent:Initialize()
 
-	local l_ComponentName = self.m_RObject:GetName().."_CharacterCollider"
-	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_ComponentName, self.m_RObject)
+	local l_ComponentName = self.m_GameObject:GetName().."_CharacterCollider"
+	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_ComponentName, self.m_GameObject)
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
 		m_Position = self.m_RObject:GetPosition()
 		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
+		g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
 	end
 	
-	l_ACName = self.m_RObject:GetName().."_AnimatorController"
-	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_RObject)
+	l_ACName = self.m_GameObject:GetName().."_AnimatorController"
+	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_GameObject)
 	
-	g_LogManager:Log("Enemy "..self.m_RObject:GetName().." created...")
+	g_LogManager:Log("Enemy "..self.m_GameObject:GetName().." created...")
 end
 
 function CEnemyComponent:Update(ElapsedTime)
@@ -62,6 +63,7 @@ function CEnemyComponent:SetArmor(Armor) self.m_Armor = Armor end
 function CEnemyComponent:GetWeapon() return self.m_Weapon end
 function CEnemyComponent:SetWeapon(Weapon) self.m_Weapon = Weapon end
 function CEnemyComponent:GetRenderableObject() return self.m_RObject end
+function CEnemyComponent:GetGameObject() return self.m_GameObject end
 
 function CEnemyComponent:AddWaypoint(WayPoint)
 	table.insert(self.m_WayPoints,WayPoint)
@@ -100,7 +102,7 @@ end
 
 function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 	m_Position = self.m_RObject:GetPosition()
-	local l_Name = self.m_RObject:GetName()
+	local l_Name = self.m_GameObject:GetName()
 	
 	if (#self.m_WayPoints)>0 then
 		local l_Destiny = Vect3f(0.0,0.0,0.0)

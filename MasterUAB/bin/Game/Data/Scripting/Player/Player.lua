@@ -15,9 +15,10 @@ dofile("./Data/Scripting/Player/Slot.lua")
 dofile("./Data/Scripting/Player/Inventory.lua")
 
 class 'CPlayerComponent' (CLUAComponent)
-function CPlayerComponent:__init(CRObject)
-	CLUAComponent.__init(self,CRObject:GetName().."_PlayerScript")
-	self.m_RObject = CRObject
+function CPlayerComponent:__init(CGameObject)
+	CLUAComponent.__init(self,CGameObject:GetName().."_PlayerScript")
+	self.m_GameObject = CGameObject
+	self.m_RObject = CGameObject:GetRenderableObject()
 	self.m_MaxHealth=500.0
 	self.m_Health=self.m_MaxHealth
 	self.m_Speed=1.0
@@ -31,7 +32,15 @@ function CPlayerComponent:__init(CRObject)
 	
 	self.m_Locked = false
 	
-	self.m_RotationVelocity = 6.0
+	--Animator 
+	self.m_Walk = false
+	self.m_Rotation = false
+	self.m_Forward = false
+	self.m_Backwards = false
+	self.m_Right = false
+	self.m_Left = false
+	
+	self.m_RotationVelocity = 4.0
 	
 	--Components
 	self.m_Animator = nil 
@@ -39,50 +48,68 @@ function CPlayerComponent:__init(CRObject)
 end
 
 function CPlayerComponent:Initialize()
-	local l_CColliderName = self.m_RObject:GetName().."_CharacterCollider"
-	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, self.m_RObject)
+
+	local l_CColliderName = self.m_GameObject:GetName().."_CharacterCollider"
+	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, self.m_GameObject)
 	if l_CharacterCollider ~= nil then 
 		local l_Material = l_CharacterCollider:GetPhysxMaterial()
 		local l_MaterialName = l_Material:GetName()
 		m_Position = self.m_RObject:GetPosition()
 		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_RObject:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
+		g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
 	end
 	
-	local l_AudioSourceName = self.m_RObject:GetName().."_AudioSource"
-	local l_AudioSource = g_SoundManager:AddComponent(l_AudioSourceName, self.m_RObject)
+	local l_AudioSourceName = self.m_GameObject:GetName().."_AudioSource"
+	local l_AudioSource = g_SoundManager:AddComponent(l_AudioSourceName, self.m_GameObject)
 	if l_AudioSource ~= nil then  
 		self.m_AudioSource = l_AudioSource
 		self.m_AudioSource:AddSound("SonidoDePrueba","Play_Hit")
 	end
 
 	--Animations
-	local l_ACName = self.m_RObject:GetName().."_AnimatorController"
-	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_RObject)
+	local l_ACName = self.m_GameObject:GetName().."_AnimatorController"
+	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_GameObject)
 	
 	local l_Idle = self.m_Animator:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
 	local l_Walk = self.m_Animator:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
 	local l_Attack = self.m_Animator:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
 	local l_Block = self.m_Animator:AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
+	local l_Rotate = self.m_Animator:AddState("Rotate_State", "walk", 1.0, "OnEnter_Rotate_Player", "OnUpdate_Rotate_Player", "OnExit_Rotate_Player")
+	
 	--GetAnimatorController()->AddBool("Run", false);
 	self.m_Animator:AddBool("Walk", false)
+	self.m_Animator:AddBool("Rotate", false)
 	self.m_Animator:AddTrigger("Attack", false)
 	self.m_Animator:AddTrigger("Block", false)
-
+	
+	
 	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.0, 0.1, 0.2)
 	l_IdleToWalk:AddBoolCondition("Walk", true)
-
+	
+	-- local l_IdleToRotate = l_Idle:AddTransition("IdleToRotate", l_Rotate, false, 0.0, 0.1, 0.2)
+	-- l_IdleToRotate:AddBoolCondition("Rotate",true)
+	
+	-- local l_RotateToIdle = l_Rotate:AddTransition("RotateToIdle", l_Idle, true, 0.0, 0.1, 0.2)
+	-- l_RotateToIdle:AddBoolCondition("Rotate",false)
+	
+	
+	-- local l_RotateToWalk = l_Rotate:AddTransition("RotateToWalk", l_Walk, false, 0.0, 0.1, 0.2)
+	-- l_RotateToWalk:AddBoolCondition("Walk", true)
+	-- l_RotateToWalk:AddBoolCondition("Rotate",false)
+	
 	local l_WalkToIdle = l_Walk:AddTransition("WalkToIdle", l_Idle, false, 0.0, 0.1, 0.2)
 	l_WalkToIdle:AddBoolCondition("Walk", false)
-
-	 local l_WalkToAttack = l_Walk:AddTransition("WalkToAttack", l_Attack, false, 0.0, 0.1, 0.2)
-     l_WalkToAttack:AddTriggerCondition("Attack")
 	
-	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false, 0.0, 0.1, 0.25)
-	l_IdleToAttack:AddTriggerCondition("Attack")
-
-	local l_IdleToBlock = l_Idle:AddTransition("IdleToBlock", l_Block, true, 0.0, 0.5, 1.0)
-	l_IdleToBlock:AddTriggerCondition("Block")
+	
+	-- local l_WalkToIdle = l_Walk:AddTransition("IdleToRotate", l_Idle, false, 0.0, 0.1, 0.2)
+	-- l_WalkToIdle:AddBoolCondition("Walk", false)
+	
+	-- local l_RotateToAttack = l_Rotate:AddTransition("RotateToAttack", l_Attack, false, 0.0, 0.1, 0.2)
+	-- l_RotateToAttack:AddTriggerCondition("Attack")
+	-- l_RotateToAttack:AddTriggerCondition("Rotate")
+	
+	-- local l_IdleToBlock = l_Idle:AddTransition("IdleToBlock", l_Block, true, 0.0, 0.5, 1.0)
+	-- l_IdleToBlock:AddTriggerCondition("Block")
 
 	self:InitializePlayerStats()
 	g_LogManager:Log("Player initialized...")
@@ -172,4 +199,21 @@ function CPlayerComponent:FaceEnemy(Enemies,ElapsedTime)
 	local l_CurrentYaw = self.m_RObject:GetYaw()
 	local l_Velocity = self.m_RotationVelocity
 	self.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+end
+
+function CPlayerComponent:FaceAttackDirection(ElapsedTime)
+	
+	--self.m_RObject:SetYaw(g_CameraControllerManager:GetCurrentCameraController():GetYaw())
+	local l_CurrentYaw = self.m_RObject:GetYaw()
+	local l_Angle = g_CameraControllerManager:GetCurrentCameraController():GetYaw() - l_CurrentYaw
+	self.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
+	
+	-- local l_Forward = self.m_RObject:GetForward()
+	-- local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
+	
+	-- local l_Angle = CTTODMathUtils.AngleBetweenVectors(l_Forward,l_CameraForward)	
+	
+	-- local l_CurrentYaw = self.m_RObject:GetYaw()
+	-- local l_Velocity = self.m_RotationVelocity
+	-- self.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
 end

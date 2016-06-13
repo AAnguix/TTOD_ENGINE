@@ -1,7 +1,8 @@
 class 'CArmorComponent' (CLUAComponent)
-function CArmorComponent:__init(ComponentType, ParentRObject, ParentBoneName, MeshRObject, Resistance, ArmorType)
+function CArmorComponent:__init(ComponentType, ParentRObject, ParentBoneName, GameObject, Resistance, ArmorType)
 	CLUAComponent.__init(self,ComponentType)
-	self.m_MeshRObject = MeshRObject 
+	self.m_GameObject = GameObject
+	self.m_MeshRObject = GameObject:GetRenderableObject() 
 	self.m_ParentRObject = ParentRObject 
 	self.m_Resistance = Resistance
 	self.m_Type = ArmorType

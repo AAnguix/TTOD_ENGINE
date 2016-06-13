@@ -4,7 +4,7 @@
 #include <vector>
 
 class CAnimatorController;
-class CRenderableObject;
+class CGameObject;
 
 class CAnimatorControllerManager
 {
@@ -15,7 +15,7 @@ private:
 public:
 	CAnimatorControllerManager();
 	virtual ~CAnimatorControllerManager();
-	CAnimatorController* AddComponent(const std::string &Name, CRenderableObject* Owner);
+	CAnimatorController* AddComponent(const std::string &Name, CGameObject* Owner);
 	void RemoveComponents();
 	void Update(float ElapsedTime);
 };

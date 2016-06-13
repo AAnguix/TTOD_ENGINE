@@ -2,7 +2,7 @@
 #include "Camera\Camera.h"
 #include "XML\XMLTreeNode.h"
 #include "Engine.h"
-#include "RenderableObjects\LayerManager.h"
+#include "Utils\GameObjectManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "PhysXManager.h"
 
@@ -95,7 +95,8 @@ void CThirdPersonCameraController::Update(float ElapsedTime)
 	m_CurrentTime += ElapsedTime;
 	m_PlayerPos = m_Position;
 
-	CRenderableObject* l_Player = CEngine::GetSingleton().GetLayerManager()->GetPlayer();
+	CGameObject* l_PlayerGameObject = CEngine::GetSingleton().GetGameObjectManager()->GetPlayer();
+	CRenderableObject* l_Player = l_PlayerGameObject->GetRenderableObject();
 	assert(l_Player != nullptr);
 
 	if (l_Player != nullptr)

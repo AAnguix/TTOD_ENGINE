@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include <assert.h>
 #include "Components\AudioSource.h"
-#include "RenderableObjects\RenderableObject.h"
+#include "Utils\GameObject.h"
 #include "Engine.h"
 #include "Log\Log.h"
 
@@ -326,7 +326,7 @@ void CSoundManager::UpdateComponents(float ElapsedTime)
 	}
 }
 
-CAudioSource* CSoundManager::AddComponent(const std::string &Name, CRenderableObject *Owner)
+CAudioSource* CSoundManager::AddComponent(const std::string &Name, CGameObject *Owner)
 {
 	bool l_Found = false;
 	CAudioSource* l_AudioSource = nullptr;

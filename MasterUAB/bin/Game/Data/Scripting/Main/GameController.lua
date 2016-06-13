@@ -54,7 +54,7 @@ function CGameController:LoadXML(Filename)
 			local l_Element=l_XMLTreeNode:GetChild(i)
 			local l_ElemName=l_Element:GetName()
 			
-			-- g_LogManager:Log("Cargada entidad "..i)
+			g_LogManager:Log("Going to load entity "..i)
 			
 			if l_ElemName=="enemy" then
 				self:LoadEnemy(l_Element)
@@ -106,11 +106,11 @@ function CGameController:LoadShadowManager(XMLTreeNode)
 end
 
 function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
-	local l_RObject = GetElementFromLayer(XMLTreeNode)
+	local l_GameObject = GetGameObject(XMLTreeNode)
 	local l_LightManager=CLightManager(Pedestal)
 	local l_ComponentName = "LightManager_Script"
 	
-	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_LightManager)
+	g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_LightManager)
 	table.insert(self.m_Entities,l_LightManager)
 	
 	for i=0, XMLTreeNode:GetNumChildren() do
@@ -128,24 +128,24 @@ function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
 end
 
 function CGameController:LoadEnemy(XMLTreeNode)
-	local l_RObject = GetElementFromLayer(XMLTreeNode)
+	local l_GameObject = GetGameObject(XMLTreeNode)
 	
-	if l_RObject ~= nil then
+	if l_GameObject ~= nil then
 
 		local l_EnemyType = XMLTreeNode:GetPszProperty("enemy_type", "basic_enemy", false)
 		local l_EnemyComponent = nil
 		
 		if l_EnemyType == "basic_enemy" then
-			l_EnemyComponent  = CBasicEnemyComponent(l_RObject)
+			l_EnemyComponent  = CBasicEnemyComponent(l_GameObject)
 		elseif l_EnemyType == "ranged_enemy" then
-			l_EnemyComponent  = CRangedEnemyComponent(l_RObject)
+			l_EnemyComponent  = CRangedEnemyComponent(l_GameObject)
 		elseif l_EnemyType == "brute_enemy" then
-			l_EnemyComponent  = CBruteEnemyComponent(l_RObject)
+			l_EnemyComponent  = CBruteEnemyComponent(l_GameObject)
 		end
 		
 		
-		local l_ComponentName = l_RObject:GetName().."_Script"
-		g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_EnemyComponent)
+		local l_ComponentName = l_GameObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_EnemyComponent)
 		
 		l_EnemyComponent:Initialize()
 		CGameController:LoadEnemyChilds(l_EnemyComponent,XMLTreeNode)
@@ -170,36 +170,36 @@ function CGameController:LoadEnemyChilds(Enemy, XMLTreeNode)
 end	
 
 function CGameController:LoadWeapon(TreeNode, EnemyComponent)
-	local l_WeaponRObject = GetElementFromLayer(TreeNode)
-	if l_WeaponRObject ~= nil then
+	local l_WeaponGameObject = GetGameObject(TreeNode)
+	if l_WeaponGameObject ~= nil then
 		
 		local l_Parent = EnemyComponent.m_RObject
 		local l_BoneName = TreeNode:GetPszProperty("parent_bone", "", false)
 		local l_WeaponType = TreeNode:GetPszProperty("type", "", false)
 		local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)
 													--ComponentType, ParentRObject, MeshRObject, Damage, WeaponType)
-		local l_WeaponComponent = CWeaponComponent("weapon",l_Parent, l_BoneName, l_WeaponRObject, l_Damage, l_WeaponType)
+		local l_WeaponComponent = CWeaponComponent("weapon",l_Parent, l_BoneName, l_WeaponGameObject, l_Damage, l_WeaponType)
 		
 		g_Weapon = l_WeaponComponent
 		-- table.insert(self.m_Entities,l_WeaponComponent)
-		local l_ComponentName = l_WeaponRObject:GetName().."_Script"
-		g_ScriptManager:AddComponent(l_ComponentName,l_WeaponRObject,l_WeaponComponent)
+		local l_ComponentName = l_WeaponGameObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_WeaponGameObject,l_WeaponComponent)
 		EnemyComponent:SetWeapon(l_ArmorComponent)
 	
 	end
 end
 
 function CGameController:LoadArmor(TreeNode, EnemyComponent)
-	local l_ArmorRObject = GetElementFromLayer(XMLTreeNode)
-	if l_ArmorRObject ~= nil then
+	local l_ArmorGameObject = GetGameObject(TreeNode)
+	if l_ArmorGameObject ~= nil then
 	
 		local l_Parent = EnemyComponent.m_RObject
 		local l_BoneName = TreeNode:GetPszProperty("parent_bone", "", false)
 		local l_ArmorType = TreeNode:GetPszProperty("type", "", false)
 		local l_Damage = TreeNode:GetFloatProperty("resistance", 0.0, false)
 	
-		local l_ArmorComponent  = CArmorComponent("armor",l_Parent, l_BoneName, l_ArmorRObject, l_Damage, l_ArmorType)
-		l_ArmorRObject:AddLuaComponent(l_ArmorComponent)
+		local l_ArmorComponent  = CArmorComponent("armor",l_Parent, l_BoneName, l_ArmorGameObject, l_Damage, l_ArmorType)
+		l_ArmorGameObject:AddLuaComponent(l_ArmorComponent)
 		EnemyComponent:SetArmor(l_ArmorComponent)
 		-- l_ArmorComponent:Initialize(l_BoneName)
 		
@@ -209,23 +209,25 @@ end
 
 function CGameController:LoadPlayer(XMLTreeNode)
 	
-	local l_RObject = GetElementFromLayer(XMLTreeNode)
-	g_LayerManager:SetPlayer(l_RObject) --Tells layer manager who is the player.
-	g_Player = l_RObject --Tells Lua ...
+	local l_GameObject = GetGameObject(XMLTreeNode)
+	local l_RObject = l_GameObject:GetRenderableObject()
 	
-	local l_PlayerComponent=CPlayerComponent(l_RObject)
-	local l_ComponentName = l_RObject:GetName().."_Script"
-	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_PlayerComponent)
+	g_GameObjectManager:SetPlayer(l_GameObject) --Tells layer manager who is the player.
+	g_Player = l_GameObject --Tells Lua ...
+	
+	local l_PlayerComponent=CPlayerComponent(l_GameObject)
+	local l_ComponentName = l_GameObject:GetName().."_Script"
+	g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_PlayerComponent)
 	
 	l_PlayerComponent:Initialize()
 	g_PlayerComponent = l_PlayerComponent
-
+	
 	table.insert(self.m_Entities,l_PlayerComponent)
 end
 
 function CGameController:LoadDragon(XMLTreeNode)
-	
-	local l_RObject = GetElementFromLayer(XMLTreeNode) 
+	local l_GameObject = GetGameObject(XMLTreeNode)
+	local l_RObject = l_GameObject:GetRenderableObject()
 	local l_ParticleEmitter = GetParticleEmitter(XMLTreeNode)
 	local l_BoneName = XMLTreeNode:GetPszProperty("bone_name", "", false)
 	local l_ModelName = XMLTreeNode:GetPszProperty("model_name", "", false)
@@ -234,21 +236,26 @@ function CGameController:LoadDragon(XMLTreeNode)
 	local l_CoreModel = l_RObject:GetAnimatedCoreModel()
 	local l_BoneID = l_CoreModel:GetBoneId(l_BoneName)
 	
-	if l_RObject ~= nil and l_ParticleEmitter ~= nil and l_BoneName ~= "" then
-		local l_DragonComponent = CDragonComponent(l_RObject,l_ParticleEmitter,l_BoneID)
-		l_RObject:AddLuaComponent(l_DragonComponent)
+	if l_GameObject ~= nil and l_ParticleEmitter ~= nil and l_BoneName ~= "" then
+		local l_DragonComponent = CDragonComponent(l_GameObject,l_ParticleEmitter,l_BoneID)
+		l_GameObject:AddLuaComponent(l_DragonComponent)
 		l_DragonComponent:Initialize()
 		table.insert(self.m_Entities,l_DragonComponent)
 	end
 end
 
 function CGameController:LoadPedestal(XMLTreeNode)
-	local l_RObject = GetElementFromLayer(XMLTreeNode)
-	local l_PedestalComponent=CPedestalComponent(l_RObject)
-	local l_ComponentName = l_RObject:GetName().."_PedestalScript"
-	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_PedestalComponent)
+	local l_GameObject = GetGameObject(XMLTreeNode)
+	local l_PedestalComponent=CPedestalComponent(l_GameObject)
+	local l_ComponentName = l_GameObject:GetName().."_PedestalScript"
+	g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_PedestalComponent)
 	table.insert(self.m_Entities,l_PedestalComponent)
 	return l_PedestalComponent
+end
+
+function GetGameObject(XMLTreeNode)
+	local l_GameObject = XMLTreeNode:GetPszProperty("game_object", "", false)
+	return g_GameObjectManager:GetResource(l_GameObject)
 end
 
 function GetElementFromLayer(XMLTreeNode)

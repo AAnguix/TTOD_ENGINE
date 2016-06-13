@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "Utils\GameObjectManager.h"
 #include "Materials\MaterialManager.h"
 #include "Effects\EffectManager.h"
 #include "Textures\TextureManager.h"
@@ -35,6 +36,7 @@ CEngine::CEngine()
 ,m_GuiLoaded(false)
 {
 	m_CurrentLevel = "0";
+	m_GameObjectManager = new CGameObjectManager();
 	m_CameraControllerManager = new CCameraControllerManager;
 	m_EffectManager = new CEffectManager;
 	m_MaterialManager = new CMaterialManager;
@@ -88,6 +90,7 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_MaterialManager);}
 	{CHECKED_DELETE(m_EffectManager);}
 	{CHECKED_DELETE(m_CameraControllerManager);}
+	{CHECKED_DELETE(m_GameObjectManager); }
 }
 
 void CEngine::Initialize()
@@ -151,9 +154,9 @@ void CEngine::Update(float ElapsedTime)
 
 		l_CameraController->Update(ElapsedTime);
 
-		CEngine::GetSingleton().GetPhysXManager()->Update(ElapsedTime);
+		m_PhysXManager->Update(ElapsedTime);
 
-		CEngine::GetSingleton().GetLayerManager()->Update(ElapsedTime);
+		m_LayerManager->Update(ElapsedTime);
 
 		l_AnimatorControllerManager->Update(ElapsedTime);
 
@@ -230,6 +233,8 @@ bool CEngine::UnloadLevel(const std::string &Level)
 
 	return l_Unloaded;
 }
+
+CGameObjectManager* CEngine::GetGameObjectManager() const { return m_GameObjectManager; }
 
 CEffectManager* CEngine::GetEffectManager() const {	return m_EffectManager; }
 

@@ -15,6 +15,7 @@
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "Animation\AnimatorControllerManager.h"
 #include "GUIManager.h"
+#include "Utils\GameObjectManager.h"
 
 CLevel::CLevel(const std::string &ID)
 :m_ID(ID)
@@ -46,6 +47,7 @@ bool CLevel::Load(CEngine& Engine)
 	Engine.GetParticleSystemManager()->Load(m_ParticleSystemsFilename);
 	Engine.GetAnimatedModelManager()->Load(m_AnimatedModelsFilename);
 	Engine.GetLayerManager()->Load(m_RenderableObjectsFilename);
+	
 	Engine.GetLightManager()->Load(m_LightsFilename);
 
 	Engine.GetRenderManager()->GetDebugRender()->InitializeDebugLights();
@@ -77,6 +79,7 @@ bool CLevel::Unload(CEngine& Engine)
 	Engine.GetGUIManager()->Destroy();
 	Engine.GetLayerManager()->Destroy();
 	Engine.GetLightManager()->Destroy();
+	Engine.GetGameObjectManager()->Destroy();
 	
 	Engine.GetSceneRendererCommandManager()->Destroy();
 

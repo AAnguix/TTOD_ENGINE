@@ -26,37 +26,18 @@ struct VS_INPUT
 	#endif
 	
 	float2 UV : TEXCOORD0;
-	#ifdef HAS_LIGHTMAP 
-		float2 UV2: TEXCOORD1;
-	#endif
 };
 struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
 	float2 UV : TEXCOORD0;
-	
-	#ifdef HAS_LIGHTMAP 
-		float2 UV2: TEXCOORD1;
-		float3 Normal : TEXCOORD2;
-		float4 HPos : TEXCOORD3;
-		float3 WorldPos : TEXCOORD4;
-	#else
-		float3 Normal : TEXCOORD1;
-		float4 HPos : TEXCOORD2;
-		float3 WorldPos : TEXCOORD3;
-	#endif
-	
+	float3 Normal : TEXCOORD1;
+	float4 HPos : TEXCOORD2;
+	float3 WorldPos : TEXCOORD3;
 	#ifdef HAS_NORMAL
-		#ifdef HAS_LIGHTMAP 
-			float3 WorldTangent : TEXCOORD5;
-			float3 WorldBinormal : TEXCOORD6;
-		#else
-			float3 WorldTangent : TEXCOORD4;
-			float3 WorldBinormal : TEXCOORD5;
-		#endif
-		
+		float3 WorldTangent : TEXCOORD4;
+		float3 WorldBinormal : TEXCOORD5;
 	#endif
-	
 };
 struct PixelOutputType
 {
@@ -116,9 +97,6 @@ PS_INPUT VS( VS_INPUT IN )
 	#endif
 	
 	l_Output.UV = IN.UV;
-	#ifdef HAS_LIGHTMAP 
-		l_Output.UV2 = IN.UV2;
-	#endif
 	
 	#ifdef HAS_NORMAL
 		l_Output.WorldTangent = mul(IN.Tangent.xyz,(float3x3)m_World);
@@ -167,38 +145,18 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 			
 			l_Target1 = m_LightAmbient.xyz*l_Output.Target0.xyz + (l_ReflectColor*n_EnvironmentFactor);
 	#else
-		#ifdef HAS_LIGHTMAP
-			// float4 Color1 = float4(1.0,0.0,0.0,1.0);
-			//l_Output.Target0.xyz = Color1.xyz;
-			float4 l_LightMap=T1Texture.Sample(S1Sampler, IN.UV2);
-			l_Target1 = l_LightMap*l_Output.Target0.xyz;
-			#ifdef HAS_NORMAL
-				float4 l_NormalMapTexture = T2Texture.Sample(S2Sampler, IN.UV);
-				l_Spec = l_NormalMapTexture.a;
-				float3 l_TangentNormalized=normalize(IN.WorldTangent);
-				float3 l_BinormalNormalized=normalize(IN.WorldBinormal); 
-				float3 l_Bump=m_BumpFactor*(l_NormalMapTexture.rgb - float3(0.5,0.5,0.5));	
-				float3 Nn = normalize(IN.Normal);
-				Nn = Nn + (l_Bump.x*l_TangentNormalized) + (l_Bump.y*l_BinormalNormalized);
-				l_Output.Target2 = float4(Normal2Texture(Nn), 1.0f); 
-			#else 
-				l_Output.Target2 = float4(Normal2Texture(IN.Normal.xyz), 1.0f);
-			#endif
-		#else //NO LIGHTMAP
-			l_Target1 = m_LightAmbient.xyz*l_Output.Target0.xyz; 
-			#ifdef HAS_NORMAL
-				
-				float4 l_NormalMapTexture = T1Texture.Sample(S1Sampler, IN.UV);
-				l_Spec = l_NormalMapTexture.a;
-				float3 l_TangentNormalized=normalize(IN.WorldTangent);
-				float3 l_BinormalNormalized=normalize(IN.WorldBinormal); 
-				float3 l_Bump=m_BumpFactor*(l_NormalMapTexture.rgb - float3(0.5,0.5,0.5));	
-				float3 Nn = normalize(IN.Normal);
-				Nn = Nn + (l_Bump.x*l_TangentNormalized) + (l_Bump.y*l_BinormalNormalized);
-				l_Output.Target2 = float4(Normal2Texture(Nn), 1.0f); 
-			#else 
-				l_Output.Target2 = float4(Normal2Texture(IN.Normal.xyz), 1.0f);
-			#endif
+		l_Target1 = m_LightAmbient.xyz*l_Output.Target0.xyz; //No environment
+		#ifdef HAS_NORMAL
+			float4 l_NormalMapTexture = T1Texture.Sample(S1Sampler, IN.UV);
+			l_Spec = l_NormalMapTexture.a;
+			float3 l_TangentNormalized=normalize(IN.WorldTangent);
+			float3 l_BinormalNormalized=normalize(IN.WorldBinormal); 
+			float3 l_Bump=m_BumpFactor*(l_NormalMapTexture.rgb - float3(0.5,0.5,0.5));	
+			float3 Nn = normalize(IN.Normal);
+			Nn = Nn + (l_Bump.x*l_TangentNormalized) + (l_Bump.y*l_BinormalNormalized);
+			l_Output.Target2 = float4(Normal2Texture(Nn), 1.0f); 
+		#else 
+			l_Output.Target2 = float4(Normal2Texture(IN.Normal.xyz), 1.0f);
 		#endif
 	#endif
 	

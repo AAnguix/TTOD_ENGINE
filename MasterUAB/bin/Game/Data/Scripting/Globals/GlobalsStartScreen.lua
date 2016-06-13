@@ -13,6 +13,7 @@ g_Engine = CEngine.GetSingleton()
 g_RenderManager = g_Engine:GetRenderManager()
 g_ContextManager = g_RenderManager:GetContextManager()
 
+g_GameObjectManager = g_Engine:GetGameObjectManager()
 g_StaticMeshManager = g_Engine:GetStaticMeshManager()
 g_AnimatedModelManager = g_Engine:GetAnimatedModelManager()
 g_TextureManager = g_Engine:GetTextureManager()

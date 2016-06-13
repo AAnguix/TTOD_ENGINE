@@ -1,14 +1,12 @@
 #ifndef _RENDERABLEOBJECT_H
 #define _RENDERABLEOBJECT_H
 
+#include "Components\Component.h"
 #include "Utils\3DElement.h"
-#include "Utils\Named.h"
 class CRenderManager;
-class CAnimatorController;
-class CScript;
-class CAudioSource;
+class CGameObject;
 
-class CRenderableObject : public C3DElement, public CNamed
+class CRenderableObject : public CComponent, public C3DElement
 {
 
 public:
@@ -20,28 +18,15 @@ public:
 		PARTICLE_EMITER
 	};
 
-protected:
-	CAnimatorController* m_AnimatorController;
-	CScript* m_Script;
-	CAudioSource* m_AudioSource;
-
 	//CComponentManager* m_ComponentManager;
 	//std::vector<CLUAComponent*> m_LuaComponents; /*Gameplay components*/
 
 public:
 	CRenderableObject(const CXMLTreeNode &XMLTreeNode);
-	CRenderableObject(const std::string &Name, const Vect3f &Position, float Yaw, float Pitch, float Roll);
+	CRenderableObject(CGameObject *Owner, const std::string &Name, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	virtual ~CRenderableObject();
 	virtual void Update(float ElapsedTime);
 	virtual void Render(CRenderManager *RM) = 0;
-
-	virtual CAnimatorController* GetAnimatorController() const;
-	virtual CScript* GetScript() const;
-	virtual CAudioSource* GetAudioSource() const;
-	
-	virtual void SetAudioSource(CAudioSource* AudioSource);
-	virtual void SetScript(CScript* Script);
-	virtual void SetAnimatorController(CAnimatorController* AnimatorController);
 
 	/*virtual bool AddComponent(CComponent *Component);
 	virtual void RemoveComponent(const std::string &ComponentName);

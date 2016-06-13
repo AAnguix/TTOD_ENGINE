@@ -68,6 +68,12 @@
     <ClInclude Include="Utils\TTODXMLWriter.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\GameObject.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\GameObjectManager.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Math">
@@ -103,6 +109,12 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\TTODXMLWriter.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\GameObject.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\GameObjectManager.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>

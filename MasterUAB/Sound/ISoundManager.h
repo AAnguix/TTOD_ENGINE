@@ -7,7 +7,7 @@
 class CCamera;
 class C3DElement;
 class CAudioSource;
-class CRenderableObject;
+class CGameObject;
 
 struct SoundEvent
 {
@@ -52,7 +52,7 @@ protected:
 public:
 	void SetPath(const std::string& Path){ m_Path = Path; }
 
-	virtual CAudioSource* AddComponent(const std::string &Name, CRenderableObject *Owner) = 0;
+	virtual CAudioSource* AddComponent(const std::string &Name, CGameObject *Owner) = 0;
 	virtual void RemoveComponents() = 0;
 
 	virtual bool Init() = 0;

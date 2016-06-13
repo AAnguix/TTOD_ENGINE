@@ -2,7 +2,7 @@
 #define _COLLIDER_H
 
 #include "Components\Component.h"
-class CMeshInstance;
+class CGameObject;
 class CMaterial;
 
 class CCollider : public CComponent
@@ -11,7 +11,7 @@ private:
 	CMaterial* m_PhysxMaterial;
 
 public:
-	CCollider(const std::string &Name, CMeshInstance *Owner);
+	CCollider(const std::string &Name, CGameObject *Owner);
 	virtual ~CCollider();
 	virtual void Update(float ElapsedTime);
 

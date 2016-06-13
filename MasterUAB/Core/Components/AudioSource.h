@@ -12,7 +12,7 @@ private:
 	std::vector<SoundEvent> m_SoundsToPlay;
 
 public:
-	CAudioSource(const std::string &Name, CRenderableObject *Owner);
+	CAudioSource(const std::string &Name, CGameObject *Owner);
 	virtual ~CAudioSource();
 
 	void Update(float ElapsedTime);

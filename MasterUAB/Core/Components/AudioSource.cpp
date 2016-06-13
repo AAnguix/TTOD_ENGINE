@@ -1,10 +1,10 @@
 #include "Components\AudioSource.h"
 #include "Engine.h"
-#include "RenderableObjects\RenderableObject.h"
+#include "Utils\GameObject.h"
 #include <assert.h>
 #include "ISoundManager.h"
 
-CAudioSource::CAudioSource(const std::string &Name, CRenderableObject *Owner)
+CAudioSource::CAudioSource(const std::string &Name, CGameObject *Owner)
 :CComponent(Name, Owner)
 {
 }

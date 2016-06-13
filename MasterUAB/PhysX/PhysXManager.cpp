@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include "FileUtils.h"
+#include "Utils\GameObject.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
 #include "RenderableObjects\MeshInstance.h"
@@ -73,7 +74,7 @@ CPhysXManager::Groups CPhysXManager::GetGroup(const std::string &Group)
 	}
 }
 
-CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CMeshInstance *Owner)
+CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CGameObject *Owner)
 {
 	bool l_Found = false;
 	CCollider* l_Collider = nullptr;
@@ -99,7 +100,7 @@ CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CMeshIns
 
 	return l_Collider;
 }
-CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::string &Name, CAnimatedInstanceModel *Owner)
+CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::string &Name, CGameObject *Owner)
 {
 	bool l_Found = false;
 	CCharacterCollider* l_CharacterCollider = nullptr;

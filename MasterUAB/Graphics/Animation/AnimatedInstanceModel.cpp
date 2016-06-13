@@ -18,13 +18,12 @@
 #include "Textures\TextureManager.h"
 #include "RenderableObjects\RenderableObjectTechnique.h"
 
-CAnimatedInstanceModel::CAnimatedInstanceModel(const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
-:CRenderableObject(Name, Position, Yaw, Pitch, Roll)
+CAnimatedInstanceModel::CAnimatedInstanceModel(CGameObject* Owner, const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+:CRenderableObject(Owner, Name, Position, Yaw, Pitch, Roll)
 ,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL)
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
-,m_CharacterCollider(nullptr)
 {
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(ModelName));
 }
@@ -35,7 +34,6 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
-,m_CharacterCollider(nullptr)
 {
 	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(TreeNode.GetPszProperty("model_name")));
 }
@@ -262,13 +260,4 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 void CAnimatedInstanceModel::LoadMaterials()
 {
 	m_Materials = m_AnimatedCoreModel->GetMaterials();
-}
-
-CCharacterCollider* CAnimatedInstanceModel::GetCharacterCollider() const
-{
-	return m_CharacterCollider;
-}
-void CAnimatedInstanceModel::SetCharacterCollider(CCharacterCollider* CharacterCollider)
-{
-	m_CharacterCollider = CharacterCollider;
 }

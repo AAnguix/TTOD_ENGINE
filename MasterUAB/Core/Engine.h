@@ -33,6 +33,7 @@ public:
 
 template<class T> T* CSingleton<T>::ms_Singleton = 0;
 
+class CGameObjectManager;
 class CCameraControllerManager;
 class CPhysXManager;
 class CLayerManager;
@@ -73,6 +74,7 @@ private:
 	CLuabindManager* m_LuabindManager;
 	CScriptManager* m_ScriptManager;
 
+	CGameObjectManager* m_GameObjectManager;
 	CMaterialManager* m_MaterialManager;
 	CEffectManager* m_EffectManager;
 	CTextureManager* m_TextureManager;
@@ -118,6 +120,7 @@ public:
 
 	static void TerminateApplication(); /*Called from LUA when exit button is pressed*/
 
+	CGameObjectManager* GetGameObjectManager() const;
 	CMaterialManager* GetMaterialManager() const;
 	CEffectManager* GetEffectManager() const;
 	CTextureManager* GetTextureManager() const;

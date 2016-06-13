@@ -1,6 +1,6 @@
 class 'CBruteEnemyComponent' (CEnemyComponent)
-function CBruteEnemyComponent:__init(CRenderableObject)
-	CEnemyComponent.__init(self, CRenderableObject, "BruteEnemy")
+function CBruteEnemyComponent:__init(CGameObject)
+	CEnemyComponent.__init(self, CGameObject, "BruteEnemy")
 	self.m_Health=300.0
 	self.m_Speed=1.5
 	self.m_AttackDelay=1.0
@@ -23,7 +23,7 @@ end
 function CBruteEnemyComponent:Initialize()
 	
 	CEnemyComponent.Initialize(self)
-	local l_AnimatorController = CEnemyComponent.GetRenderableObject(self):GetAnimatorController()
+	local l_AnimatorController = CEnemyComponent.GetGameObject(self):GetAnimatorController()
 
 	local l_Idle = l_AnimatorController:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_BruteEnemy", "OnUpdate_Idle_BruteEnemy", "OnExit_Idle_BruteEnemy")
 	local l_Charge = self.m_RObject:GetAnimatorController():AddState("Charge_State", "run", 1.0, "OnEnter_Charge_BruteEnemy", "OnUpdate_Charge_BruteEnemy", "OnExit_Charge_BruteEnemy")
