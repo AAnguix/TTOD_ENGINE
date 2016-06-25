@@ -7,7 +7,7 @@ MasterUAB/bin/Game/*
 !MasterUAB/bin/Game/Data
 MasterUAB/bin/Game/Data/*
 !MasterUAB/bin/Game/Data/Scripting
-!MasterUAB/bin/Game/Data/Effects
+!MasterUAB/bin/Game/Data/Effects/*.fx
 !MasterUAB/bin/Game/Data/basic_scene_renderer_commands.xml
 !MasterUAB/bin/Game/Data/scene_renderer_commands.xml
 !MasterUAB/bin/Game/Data/renderable_objects_techniques.xml

@@ -33,6 +33,16 @@ CParticleSystemInstance::CParticleSystemInstance(CXMLTreeNode &TreeNode)
 		//l_RV = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_NORMAL_TEXTURE_VERTEX>(l_VtxsData, l_NumVertexs, l_IdxData, m_NumIndexs, false);
 }
 
+CParticleSystemInstance::CParticleSystemInstance(const std::string &Name, const std::string &TypeName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+:CRenderableObject(Owner, Name, Position, Yaw, Pitch, Roll)
+,m_ActiveParticles(0), m_RandomEngine(rnd()), m_UnitDistribution(0.0f, 1.0f)
+,m_NextParticleEmission(0.0f), m_Awake(false), m_AwakeTimer(0.0f)
+,m_Type(CEngine::GetSingleton().GetParticleSystemManager()->GetResource(TypeName))
+,m_EmissionBoxHalfSize(Vect3f(1, 1, 1))
+{
+	assert(m_Type != nullptr);
+}
+
 CParticleSystemInstance::~CParticleSystemInstance()
 {
 	CHECKED_DELETE(m_Vertices);
@@ -56,7 +66,7 @@ void CParticleSystemInstance::Render(CRenderManager *RenderManager)
 		m_ParticleRenderableData[i].UV2.y = 0;
 	}
 
-	if (m_ActiveParticles > 0 && m_Visible)
+	if (m_ActiveParticles > 0 && m_Enabled)
 	{
 		CMaterial*  l_Material = m_Type->GetMaterial();
 		l_Material->Apply();
@@ -98,6 +108,9 @@ CParticleSystemInstance::ParticleData CParticleSystemInstance::AddParticle()
 	l_Particle.Position = GetRandomValue(-m_EmissionBoxHalfSize, m_EmissionBoxHalfSize);
 	l_Particle.Velocity = GetRandomValue(m_Type->m_StartingSpeed1, m_Type->m_StartingSpeed2);
 	l_Particle.Acceleration = GetRandomValue(m_Type->m_StartingAcceleration1, m_Type->m_StartingAcceleration2);
+	l_Particle.Angle = GetRandomValue(m_Type->m_StartingAngle);
+	l_Particle.AngularSpeed = GetRandomValue(m_Type->m_StartingAngularSpeed);
+	l_Particle.AngularAcceleration = GetRandomValue(m_Type->m_AngularAcceleration);
 
 	l_Particle.CurrentFrame = 0;
 	l_Particle.TimeToNextFrame = m_Type->m_TimerPerFrame;
@@ -110,6 +123,12 @@ CParticleSystemInstance::ParticleData CParticleSystemInstance::AddParticle()
 	l_Particle.LastSize = GetRandomValue(m_Type->m_ControlPointSizes[0].m_Size);
 	l_Particle.NextSizeControlTime = m_Type->m_ControlPointSizes.size() < 2 ? l_Particle.TotalLife : GetRandomValue(m_Type->m_ControlPointSizes[1].m_Time);
 	l_Particle.NextSize = m_Type->m_ControlPointSizes.size() < 2 ? l_Particle.LastSize : GetRandomValue(m_Type->m_ControlPointSizes[1].m_Size);
+
+	l_Particle.ColorControlPoint = 0;
+	l_Particle.LastColorControlTime = 0;
+	l_Particle.LastColor = GetRandomValue(m_Type->m_ControlPointColor[0].m_Color1, m_Type->m_ControlPointColor[0].m_Color2);
+	l_Particle.NextColorControlTime = m_Type->m_ControlPointColor.size() < 2 ? l_Particle.TotalLife : GetRandomValue(m_Type->m_ControlPointColor[1].m_Time);
+	l_Particle.NextColor = m_Type->m_ControlPointColor.size() < 2 ? l_Particle.LastColor : GetRandomValue(m_Type->m_ControlPointColor[1].m_Color1, m_Type->m_ControlPointColor[1].m_Color2);
 
 	return l_Particle;
 }
@@ -248,13 +267,28 @@ Vect3f CParticleSystemInstance::GetRandomValue(Vect3f Min, Vect3f Max)
 
 CColor CParticleSystemInstance::GetRandomValue(CColor Min, CColor Max)
 {
-	CColor l_Min = RGBtoHSV(Min);
-	CColor l_Max = RGBtoHSV(Max);
+	float l_a1 = m_UnitDistribution(m_RandomEngine);
+	float l_a2 = m_UnitDistribution(m_RandomEngine);
+	float l_a3 = m_UnitDistribution(m_RandomEngine);
+	float l_a4 = m_UnitDistribution(m_RandomEngine);
 
-	float l_a = m_UnitDistribution(m_RandomEngine);
-	CColor l_HSVResult = l_Min.Lerp(l_Max, l_a);
+	Vect3f l_MinHSV = v3fZERO;
+	Vect3f l_MaxHSV = v3fZERO;
+	RGBtoHSV(Min.x, Min.y, Min.z, &l_MinHSV.x, &l_MinHSV.y, &l_MinHSV.z);
+	RGBtoHSV(Max.x, Max.y, Max.z, &l_MaxHSV.x, &l_MaxHSV.y, &l_MaxHSV.z);
 
-	return HSVtoRGB(l_HSVResult);
+	CColor l_HSVLerp;
+
+	l_HSVLerp.x = mathUtils::Lerp(l_MinHSV.x, l_MaxHSV.x, l_a1);
+	l_HSVLerp.y = mathUtils::Lerp(l_MinHSV.y, l_MaxHSV.y, l_a2);
+	l_HSVLerp.z = mathUtils::Lerp(l_MinHSV.z, l_MaxHSV.z, l_a3);
+	l_HSVLerp.w = mathUtils::Lerp(Min.w, Max.w, l_a4);
+
+	CColor l_RGBInterpolated = CColor(v4fZERO);
+	l_RGBInterpolated.w = l_HSVLerp.w;
+
+	HSVtoRGB(&l_RGBInterpolated.x, &l_RGBInterpolated.y, &l_RGBInterpolated.z, l_HSVLerp.x, l_HSVLerp.y, l_HSVLerp.z);
+	return l_RGBInterpolated;
 }
 
 float CParticleSystemInstance::GetRandomValue(Vect2f Value)
@@ -262,42 +296,155 @@ float CParticleSystemInstance::GetRandomValue(Vect2f Value)
 	return GetRandomValue(Value.x, Value.y);
 }
 
-CColor CParticleSystemInstance::RGBtoHSV(CColor RGB)
+//CColor CParticleSystemInstance::RGBtoHSV(CColor RGB)
+//{
+//	CColor HCV = RGBtoHCV(RGB);
+//	float l_S = HCV.y / (HCV.z + s_epsilon);
+//	return CColor(HCV.x, l_S, HCV.z, HCV.w);
+//	return RGB;
+//}
+
+//CColor CParticleSystemInstance::RGB2HSV(Vect4f RGB) {
+//	
+//	
+//	float l_Hue = 0.0f;
+//	float l_Saturation = 0.0f;
+//	float l_Value = 0.0f;
+//
+//	float r = RGB.x;
+//	float g = RGB.y;
+//	float b = RGB.z;
+//
+//	if (r<0 || g<0 || b<0 || r>255 || g>255 || b>255) 
+//	{
+//		assert(false);
+//		return CColor(0.0,0.0,0.0,0.0);
+//	}
+//	
+//	float minRGB = min(r, min(g, b));
+//	float maxRGB = max(r, max(g, b));
+//
+//	if (minRGB == maxRGB) 
+//	{
+//		l_Value = minRGB;
+//		return CColor(0, 0, l_Value);
+//	}
+//
+//	float d = (r == minRGB) ? g - b : ((b == minRGB) ? r - g : b - r);
+//	float h = (r == minRGB) ? 3 : ((b == minRGB) ? 1 : 5);
+//	l_Hue = 60 * (h - d / (maxRGB - minRGB));
+//	l_Saturation = (maxRGB - minRGB) / maxRGB;
+//	l_Value = maxRGB;
+//
+//	return CColor(l_Hue, l_Saturation, l_Value);
+//}
+
+void CParticleSystemInstance::RGBtoHSV(float r, float g, float b, float *h, float *s, float *v)
 {
-	CColor HCV = RGBtoHCV(RGB);
-	float l_S = HCV.y / (HCV.z + s_epsilon);
-	return CColor(HCV.x, l_S, HCV.z, HCV.w);
-	return RGB;
+	float l_Min, l_Max, delta;
+	l_Min = min(r, g);
+	l_Min = min(l_Min, b);
+
+	l_Max = max(r, g);
+	l_Max = max(l_Max, b);
+	*v = l_Max;				// v
+	delta = l_Max - l_Min;
+	if (l_Max != 0)
+		*s = delta / l_Max;		// s
+	else {
+		// r = g = b = 0		// s = 0, v is undefined
+		*s = 0;
+		*h = -1;
+		return;
+	}
+	if (r == l_Max)
+		*h = (g - b) / delta;		// between yellow & magenta
+	else if (g == l_Max)
+		*h = 2 + (b - r) / delta;	// between cyan & yellow
+	else
+		*h = 4 + (r - g) / delta;	// between magenta & cyan
+	*h *= 60;				// degrees
+	if (*h < 0)
+		*h += 360;
 }
 
-CColor CParticleSystemInstance::RGBtoHCV(CColor RGB)
+void CParticleSystemInstance::HSVtoRGB(float *r, float *g, float *b, float h, float s, float v)
 {
-	CColor P = (RGB.y < RGB.z) ? CColor(RGB.z, RGB.y, -1.0f, 2.0f / 3.0f) : CColor(RGB.y, RGB.z, 0.0, -1.0f / 3.0f);
-	CColor Q = (RGB.x < P.x) ? CColor(P.x,P.y,P.w,RGB.x) : CColor(RGB.x, P.y,P.z,P.x);
-	float C = Q.x - fmin(Q.w, Q.y);
-	float H = abs((Q.w - Q.y) / (6 * C + s_epsilon) + Q.z);
-	return CColor(H, C, Q.x, RGB.w);
-	return RGB;
+	int i;
+	float f, p, q, t;
+	if (s == 0) {
+		// achromatic (grey)
+		*r = *g = *b = v;
+		return;
+	}
+	h /= 60;			// sector 0 to 5
+	i = floor(h);
+	f = h - i;			// factorial part of h
+	p = v * (1 - s);
+	q = v * (1 - s * f);
+	t = v * (1 - s * (1 - f));
+	switch (i) {
+	case 0:
+		*r = v;
+		*g = t;
+		*b = p;
+		break;
+	case 1:
+		*r = q;
+		*g = v;
+		*b = p;
+		break;
+	case 2:
+		*r = p;
+		*g = v;
+		*b = t;
+		break;
+	case 3:
+		*r = p;
+		*g = q;
+		*b = v;
+		break;
+	case 4:
+		*r = t;
+		*g = p;
+		*b = v;
+		break;
+	default:		// case 5:
+		*r = v;
+		*g = p;
+		*b = q;
+		break;
+	}
 }
 
-CColor CParticleSystemInstance::HSVtoRGB(CColor HSV)
-{
-	CColor RGB = HUEtoRGB(HSV.x);
+//CColor CParticleSystemInstance::RGBtoHCV(CColor RGB)
+//{
+//	CColor P = (RGB.y < RGB.z) ? CColor(RGB.z, RGB.y, -1.0f, 2.0f / 3.0f) : CColor(RGB.y, RGB.z, 0.0, -1.0f / 3.0f);
+//	CColor Q = (RGB.x < P.x) ? CColor(P.x,P.y,P.w,RGB.x) : CColor(RGB.x, P.y,P.z,P.x);
+//	float C = Q.x - fmin(Q.w, Q.y);
+//	float H = abs((Q.w - Q.y) / (6 * C + s_epsilon) + Q.z);
+//	return CColor(H, C, Q.x, RGB.w);
+//	return RGB;
+//}
 
-	CColor l_v = CColor(RGB.x - 1, RGB.y - 1, RGB.z - 1, RGB.w);
-	l_v*=HSV.y;
-	l_v = CColor(l_v.x + 1, l_v.y + 1, l_v.z + 1, l_v.w);
-	return l_v*HSV.z;
-}
+//CColor CParticleSystemInstance::HSVtoRGB(CColor HSV)
+//{
+//	CColor RGB = HUEtoRGB(HSV.x);
+//
+//	CColor l_v = CColor(RGB.x - 1, RGB.y - 1, RGB.z - 1, RGB.w);
+//	l_v*=HSV.y;
+//	l_v = CColor(l_v.x + 1, l_v.y + 1, l_v.z + 1, l_v.w);
+//	return l_v*HSV.z;
+//}
 
 
-CColor CParticleSystemInstance::HUEtoRGB(float H)
-{
-	float R = abs(H * 6 - 3) - 1;
-	float G = 2 - abs(H * 6 - 2);
-	float B = 2 - abs(H * 6 - 4);
-	return CColor(R, G, B, 1.0).Clamp();
-}
+//CColor CParticleSystemInstance::HUEtoRGB(float H)
+//{
+//	float R = abs(H * 6 - 3) - 1;
+//	float G = 2 - abs(H * 6 - 2);
+//	float B = 2 - abs(H * 6 - 4);
+//	return CColor(R, G, B, 1.0).Clamp();
+//}
 
 void CParticleSystemInstance::InsertSort()
 {
@@ -320,7 +467,4 @@ void CParticleSystemInstance::InsertSort()
 	}
 }
 
-CEmptyPointerClass* CParticleSystemInstance::GetEmissionBoxHalfSizeLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_EmissionBoxHalfSize); }
-CEmptyPointerClass* CParticleSystemInstance::GetYawLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Yaw); }
-CEmptyPointerClass* CParticleSystemInstance::GetPitchLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Pitch); }
-CEmptyPointerClass* CParticleSystemInstance::GetRollLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Roll); }
+CEmptyPointerClass* CParticleSystemInstance::GetEmissionBoxHalfSizeLuaAddress(int Index) { return (CEmptyPointerClass *)&m_EmissionBoxHalfSize[Index]; }

@@ -129,6 +129,7 @@ float4 PS( PS_INPUT IN) : SV_Target
 		l_PixelColor.xyz*=l_Pct;
 	//l_PixelColor.xyz=float3(0,0,0);
 	//return float4(IN.UV.y, 0.0, 0.0, 1.0);
+	return float4(0.0,1.0,0.0,1.0);
 	return float4(l_PixelColor,l_Diffuse.a);
 }
 

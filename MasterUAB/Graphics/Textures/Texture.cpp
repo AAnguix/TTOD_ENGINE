@@ -76,15 +76,13 @@ bool CTexture::LoadFile()
 	}
 	else assert(false);
 
-	if (l_Hresult == ERROR_FILE_NOT_FOUND)
-	{
-		CEngine::GetSingleton().GetLogManager()->Log("File " + m_Name + " not found.");
-	}
-
+	#ifdef _DEBUG
 	if (FAILED(l_Hresult))
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("Error loading texture " + m_Name);
 		assert(false);
 	}
+	#endif
 
 	D3D11_SAMPLER_DESC l_SampDesc;
 	ZeroMemory(&l_SampDesc, sizeof(l_SampDesc));
@@ -109,7 +107,6 @@ bool CTexture::LoadFile()
 		l_SampDesc.MinLOD = 0;
 		l_SampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-		
 		//1 No genere Bitmaping.
 		//2. Cargarlo al tamaño real.
 		//3. Que no haga filtro de puntos, lineal o isotropico.
@@ -138,6 +135,4 @@ bool CTexture::Reload()
 {  
 	Unload();
 	return LoadFile();
-} 
-
-
+}

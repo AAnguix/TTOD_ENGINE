@@ -2,12 +2,11 @@
 #include "functions.fxh"
 #include "samplers.fxh"
 
-// static float m_NoisePct=0.5;
-// static float m_VignettingPct=1.0;
-// static float m_NoiseAmount=1.0;
+
 static float m_NoisePct=m_RawDataValues[0];
 static float m_VignettingPct=m_RawDataValues[1];
 static float m_NoiseAmount=m_RawDataValues[2];
+static float m_Active=m_RawDataValues[3];
 
 struct VS_INPUT
 {
@@ -38,6 +37,5 @@ float4 PS( PS_INPUT IN) : SV_Target
 	float2 l_DistortUV=float2(l_DistortX, l_DistortY);
 	float4 l_Noise=T0Texture.Sample(S0Sampler, IN.UV+l_DistortUV)*m_NoisePct;
 	float4 l_Vignetting=T1Texture.Sample(S1Sampler, IN.UV)*m_VignettingPct;
-
 	return l_Noise+l_Vignetting;
 }

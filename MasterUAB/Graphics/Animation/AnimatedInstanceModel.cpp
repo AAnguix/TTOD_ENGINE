@@ -17,6 +17,7 @@
 #include "Animation\tick.h"
 #include "Textures\TextureManager.h"
 #include "RenderableObjects\RenderableObjectTechnique.h"
+#include "Log\Log.h"
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(CGameObject* Owner, const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 :CRenderableObject(Owner, Name, Position, Yaw, Pitch, Roll)
@@ -25,7 +26,15 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CGameObject* Owner, const std::st
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
 {
-	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(ModelName));
+	CAnimatedCoreModel* l_AnimatedCoreModel = CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(ModelName);
+	if (l_AnimatedCoreModel == nullptr)
+	{
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("The animated core model " + ModelName + " doesn't exists");
+		#endif
+		assert(false);
+	}
+	Initialize(l_AnimatedCoreModel);
 }
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
@@ -35,7 +44,16 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
 {
-	Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(TreeNode.GetPszProperty("model_name")));
+	std::string l_ModelName = TreeNode.GetPszProperty("model_name");
+	CAnimatedCoreModel* l_AnimatedCoreModel = CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(l_ModelName);
+	if (l_AnimatedCoreModel == nullptr)
+	{
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("The animated core model " + l_ModelName + " doesn't exists");
+		#endif
+		assert(false);
+	}
+	Initialize(l_AnimatedCoreModel);
 }
 
 CAnimatedInstanceModel::~CAnimatedInstanceModel()
@@ -55,9 +73,7 @@ bool s_Update = true;
 
 void CAnimatedInstanceModel::Initialize(CAnimatedCoreModel *AnimatedCoreModel)
 {
-	//onCreate
 	m_AnimatedCoreModel=AnimatedCoreModel;
-
 	LoadMaterials();
 
 	int materialId;
@@ -125,7 +141,7 @@ void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 
 	//l_BoundingBox.computePoints(l_CalVector[0]);
 
-	if (m_Visible) //&& (RenderManager->GetFrustum().BoxVisible(l_Max, l_Min))
+	if (m_Enabled) //&& (RenderManager->GetFrustum().BoxVisible(l_Max, l_Min))
 	{
 		CEffectManager::m_SceneEffectParameters.m_World = GetTransform();
 		int l_HardwareMeshCount = m_CalHardwareModel->getHardwareMeshCount();

@@ -22,7 +22,12 @@ protected:
 	
 	virtual void Destroy();
 	void CreateShaderMacro();
-	bool LoadShader(const std::string &FileName, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
+	bool LoadShaderExtended(const std::string &ShaderName, const std::string &FileName, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
+	bool LoadShader(const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
+
+	void WriteCompiledShaderDataToFile(const std::string &BinaryFilename, void *Data, unsigned int DataSize);
+	void ReadShaderDataFromFile(const std::string &BinaryFilename, void **Data, unsigned int &DataSize);
+
 	//bool LoadShader(const std::string &FileName,const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
 	bool CreateConstantBuffer(int IdBuffer, unsigned int BufferSize);
 	bool CreateConstantBuffer();

@@ -19,6 +19,7 @@
 #include "Utils\3DElement.h"
 #include "Utils\Named.h"
 #include "Utils\GameObjectManager.h"
+#include "Utils\GameObject.h"
 #include "Math\Vector2.h"
 #include "Math\Vector3.h"
 #include "Math\Vector4.h"
@@ -28,7 +29,7 @@
 #include "Math\Matrix44.h"
 #include "Utils\EmptyPointerClass.h"
 #include "Utils\TTODMathUtils.h"
-#include "Utils\TTODFileUtils.h"
+#include "Utils\FileUtils.h"
 #include "Utils\TTODXMLWriter.h"
 
 #include <cmath>
@@ -61,10 +62,11 @@ void CLuabindManager::RegisterBase()
 
 	module(LUA_STATE)
 	[
-		class_<CTTODFileUtils>("CTTODFileUtils")
+		class_<CFileUtils>("CFileUtils")
 		.scope
 		[
-			def("SelectTextureFile", &CTTODFileUtils::SelectTextureFile)
+			def("SelectTextureFile", &CFileUtils::SelectTextureFile)
+			,def("ShowDialog", &CFileUtils::ShowDialog)
 		]
 	];
 
@@ -121,8 +123,8 @@ void CLuabindManager::RegisterBase()
 		.def("GetPrevPosition", &C3DElement::GetPrevPosition)
 		.def("GetScale", &C3DElement::GetScale)
 		.def("SetScale", &C3DElement::SetScale)
-		.def("GetVisible", &C3DElement::GetVisible)
-		.def("SetVisible", &C3DElement::SetVisible)
+		/*.def("GetVisible", &C3DElement::GetVisible)
+		.def("SetVisible", &C3DElement::SetVisible)*/
 		.def("GetTransform", &C3DElement::GetTransform)
 		.def("GetRight", &C3DElement::GetRight)
 		.def("GetUp", &C3DElement::GetUp)
@@ -181,6 +183,9 @@ void CLuabindManager::RegisterBase()
 		class_< CGameObjectManager, CTemplatedVectorMapManager<CGameObject>>("CGameObjectManager")
 		.def("GetPlayer", &CGameObjectManager::GetPlayer)
 		.def("SetPlayer", &CGameObjectManager::SetPlayer)
+		/*.def("AddGameObject", (CGameObject*(CGameObjectManager::*)(CXMLTreeNode&))&CGameObjectManager::AddGameObject)
+		.def("AddGameObject", (CGameObject*(CGameObjectManager::*)(const std::string&))&CGameObjectManager::AddGameObject)*/
+		//.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)
 	];
 	
 	module(LUA_STATE)

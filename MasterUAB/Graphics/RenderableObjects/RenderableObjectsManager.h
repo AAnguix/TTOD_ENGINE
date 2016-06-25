@@ -4,6 +4,7 @@
 #include "RenderableObjects\RenderableObject.h"
 #include "Utils\TemplatedVectorMapManager.h"
 class CRenderManager;
+class CGameObject;
 
 class CRenderableObjectsManager : public CTemplatedVectorMapManager<CRenderableObject>, public CNamed
 {
@@ -17,6 +18,8 @@ public:
 	//void Reload();
 	void Update(float ElapsedTime);
 	void Render(CRenderManager *RM);
+
+	void AddParticleSystemInstance(const std::string &ParticleSystemTypeName, const std::string &ParticleSystemInstanceName, CGameObject* GameObject, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	
 };
 

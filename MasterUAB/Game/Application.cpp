@@ -92,8 +92,10 @@ void CApplication::Initialize(HWND Hwnd)
 
 	m_RenderManager.InitializeDebugRender();
 
-	CEngine::GetSingleton().GetSceneRendererCommandManager()->Load("./Data/scene_renderer_commands.xml");
+	/*CEngine::GetSingleton().GetSceneRendererCommandManager()->Load("./Data/scene_renderer_commands.xml");*/
 	l_Engine.GetLuabindManager()->RunLuaMain();
+
+	CEngine::GetSingleton().GetLogManager()->Log("Application initialized properly.");
 }
 
 void CApplication::SwitchCamera()

@@ -5,14 +5,13 @@
 #include "Utils\GameObjectManager.h"
 #include "Engine.h"
 
-CDirectionalLight::CDirectionalLight()
-:CLight()
+CDirectionalLight::CDirectionalLight(const std::string &Name)
+:CLight(Name)
 ,m_Direction(v3fZERO)
 ,m_OrthoShadowMapSize(v2fZERO)
 ,m_PlayerOffset(v3fZERO)
 {
 	m_Type = DIRECTIONAL;
-	
 }
 
 CDirectionalLight::CDirectionalLight(CXMLTreeNode &TreeNode)

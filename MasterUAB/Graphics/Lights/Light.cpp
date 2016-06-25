@@ -76,8 +76,8 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 	//memcpy(address,(void*)&m_Intensity,sizeof(float));
 }
 
-CLight::CLight() 
-:CNamed("")
+CLight::CLight(const std::string &Name)
+:CNamed(Name)
 ,m_GenerateShadowMap(false)
 ,m_ShadowMap(nullptr)
 ,m_ShadowMaskTexture(nullptr)

@@ -31,6 +31,20 @@ void CLuabindManager::RegisterGUI()
 		.def_readwrite("width", &CGUIManager::SGUIPosition::width)
 		.def_readwrite("height", &CGUIManager::SGUIPosition::height)
 	];
+
+
+	module(LUA_STATE)
+	[
+		class_<CGUIManager::SSpriteMapInfo>("SSpriteMapInfo")
+		.def(constructor<const std::string&, int, int , int >())
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CGUIManager::SSpriteInfo>("SSpriteInfo")
+		.def(constructor<CGUIManager::SSpriteMapInfo*, float, float, float, float>())
+	];
+
 	module(LUA_STATE)
 	[
 		class_<CGUIManager::SSliderResult>("SSliderResult")

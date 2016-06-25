@@ -5,6 +5,7 @@ function InitializeGUI()
 	g_GUIManager:AddButton("exit_button","exit_button_normal","exit_button_highlight","exit_button_pressed")	
 	g_GUIManager:AddImage("background_image","background_sprite")	
 	g_GUIManager:AddFont("fontTest","Data/GUI/Fonts/fontTest.fnt")
+	StartLevelOne()
 end
 
 g_TextBoxResult = ""
@@ -24,7 +25,7 @@ function UpdateGUI(ElapsedTime)
 	
 	if g_Loading then
 		ShowLoadScreen()
-		StartLevelOne()
+		--StartLevelOne()
 	end
 	
 	local l_OptionsPos = SGUIPosition(xOffset,0.22,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)

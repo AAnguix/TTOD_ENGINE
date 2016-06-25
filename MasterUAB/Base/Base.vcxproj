@@ -24,13 +24,13 @@
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Utils\3DElement.h" />
     <ClInclude Include="Utils\EmptyPointerClass.h" />
+    <ClInclude Include="Utils\FileUtils.h" />
     <ClInclude Include="Utils\GameObject.h" />
     <ClInclude Include="Utils\GameObjectManager.h" />
     <ClInclude Include="Utils\Named.h" />
     <ClInclude Include="Utils\SingletonPattern.h" />
     <ClInclude Include="Utils\TemplatedMapManager.h" />
     <ClInclude Include="Utils\TemplatedVectorMapManager.h" />
-    <ClInclude Include="Utils\TTODFileUtils.h" />
     <ClInclude Include="Utils\TTODMathUtils.h" />
     <ClInclude Include="Utils\TTODXMLWriter.h" />
     <ClInclude Include="Utils\Types.h" />
@@ -40,10 +40,10 @@
   <ItemGroup>
     <ClCompile Include="Math\MathConstants.cpp" />
     <ClCompile Include="Utils\3DElement.cpp" />
+    <ClCompile Include="Utils\FileUtils.cpp" />
     <ClCompile Include="Utils\GameObject.cpp" />
     <ClCompile Include="Utils\GameObjectManager.cpp" />
     <ClCompile Include="Utils\Named.cpp" />
-    <ClCompile Include="Utils\TTODFileUtils.cpp" />
     <ClCompile Include="Utils\TTODMathUtils.cpp" />
     <ClCompile Include="Utils\TTODXMLWriter.cpp" />
     <ClCompile Include="XML\Example.cpp">

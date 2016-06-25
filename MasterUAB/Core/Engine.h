@@ -59,6 +59,7 @@ class CInputManagerImplementation;
 class CGraphicsStats;
 class CEmptyPointerClass;
 class CLevel;
+class CProfiler;
 
 class CEngine : public CSingleton<CEngine>
 {
@@ -89,6 +90,7 @@ private:
 	CParticleManager* m_ParticleSystemManager;
 	CInputManagerImplementation* m_InputManager;
 	CGraphicsStats* m_GraphicsStats;
+	CProfiler* m_Profiler;
 
 	std::string m_CurrentLevel;
 	float m_TimeScale;
@@ -98,11 +100,16 @@ private:
 	bool m_LoadingLevel;
 	bool m_GuiLoaded;
 
+	float m_SecsPerCnt;
+	__int64 m_PrevTimeStamp;
+	float m_TimeSinceStart;
+
 	CEngine();
 
 public:
 	virtual ~CEngine();
 
+	float GetRealTimeSinceStartup();
 	void SetTimeScale(float TimeScale);
 	void Pause(){ m_Paused = true; };
 	bool IsPaused() const { return m_Paused; };
@@ -144,6 +151,7 @@ public:
 	CGraphicsStats* GetGraphicsStats() const;
 	CAnimatorControllerManager* GetAnimatorControllerManager() const;
 	CScriptManager* GetScriptManager() const;
+	CProfiler* GetProfiler() const;
 
 	void SetRenderManager(CRenderManager *RenderManager) {m_RenderManager=RenderManager;}
 };

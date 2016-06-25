@@ -18,6 +18,8 @@ private:
 	std::string m_Filename; 
 	//void Destroy();
 
+	size_t m_EffectsStateCode; //Tells if the file exists/has been modified.
+
 public:  
 	static CSceneEffectParameters m_SceneEffectParameters;  //Parámetros necesarios para renderizar una geometria
 	static CAnimatedModelEffectParameters m_AnimatedModelEffectParameters;

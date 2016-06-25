@@ -6,7 +6,7 @@
 class COmniLight : public CLight 
 { 
 public:  
-	COmniLight();
+	COmniLight(const std::string &Name);
 	COmniLight(CXMLTreeNode &TreeNode);
 	void Render(CRenderManager *RenderManager); 
 	void SetShadowMap(CRenderManager &RenderManager);

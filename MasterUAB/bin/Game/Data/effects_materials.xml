@@ -11,12 +11,12 @@
 		<parameter type="float" name="HDAOShowNormals" value="0.000000" description="min=0.0 max=1.0 step=1.0"/>
 		<parameter type="float" name="HDAOShowAO" value="0.000000" description="min=0.0 max=1.0 step=1.0"/>
 		<parameter type="float" name="HDAOUseNormals" value="1.000000" description="min=0.0 max=1.0 step=1.0"/>
-		<parameter type="vect2f" name="RTSize" RTSize="0.000000 0.000000" description=""/>
+		<parameter type="vect2f" name="RTSize" value="1280.000000 720.000000" description=""/>
 		<parameter type="float" name="AcceptAngle" value="0.500000" description="min=0.0 max=1.5 step=0.001"/>
-		<parameter type="float" name="HDAOIntensity" value="2.140000" description="min=0.0 max=5.0 step=0.05"/>
-		<parameter type="float" name="NormalScale" value="0.400000" description="min=0.0 max=1.0 step=0.001"/>
-		<parameter type="float" name="HDAORejectRadius" value="0.430000" description="min=0.0 max=1.0 step=0.001"/>
-		<parameter type="float" name="HDAOAcceptRadius" value="0.003120" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="HDAOIntensity" value="0.300000" description="min=0.0 max=5.0 step=0.05"/>
+		<parameter type="float" name="NormalScale" value="0.393000" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="HDAORejectRadius" value="0.424000" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="HDAOAcceptRadius" value="0.050000" description="min=0.0 max=1.0 step=0.001"/>
 </material>
 	<material name="GUIMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
 	<material name="GaussianFilterMaterial" renderable_object_technique="gaussian_filter_renderable_object_technique">
@@ -28,18 +28,18 @@
 </material>
 	<material name="BloomMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<parameter type="float" name="BloomActive" value="1.000000" description="min=0.0 max=1.0 step=1.0"/>
-		<parameter type="float" name="BloomIntensity" value="0.750000" description="min=0.0 max=1.0 step=0.01"/>
-		<parameter type="float" name="OriginalIntensity" value="0.900000" description="min=0.0 max=1.0 step=0.01"/>
-		<parameter type="float" name="BloomSaturation" value="0.700000" description="min=0.0 max=1.0 step=0.01"/>
+		<parameter type="float" name="BloomIntensity" value="0.720000" description="min=0.0 max=1.0 step=0.01"/>
+		<parameter type="float" name="OriginalIntensity" value="0.850000" description="min=0.0 max=1.0 step=0.01"/>
+		<parameter type="float" name="BloomSaturation" value="0.800000" description="min=0.0 max=1.0 step=0.01"/>
 		<parameter type="float" name="OriginalSaturation" value="1.000000" description="min=0.0 max=1.0 step=0.01"/>
 </material>
-	<material name="ZBlurMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<material name="ZBlurMaterial" renderable_object_technique="zblur_renderable_object_technique">
 		<parameter type="float" name="ZBlurActive" value="1.000000" description="min=0.0 max=1.0 step=1.0"/>
 		<parameter type="float" name="ZBlurShowDepths" value="1.000000" description="min=0.0 max=1.0 step=0.01"/>
-		<parameter type="float" name="ZBlurConstantBlur" value="0.400000" description="min=0.0 max=1.0 step=0.01"/>
-		<parameter type="float" name="ZBlurFocalStart" value="1.000000" description="min=0.0 max=20.0 step=0.01"/>
-		<parameter type="float" name="ZBlurFocalEnd" value="12.000000" description="min=5.0 max=100.0 step=0.01"/>
-		<parameter type="float" name="ZBlurEnd" value="15.000000" description="min=5.0 max=150.0 step=0.01"/>
+		<parameter type="float" name="ZBlurConstantBlur" value="0.650000" description="min=0.0 max=1.0 step=0.01"/>
+		<parameter type="float" name="ZBlurFocalStart" value="2.000000" description="min=0.0 max=20.0 step=0.01"/>
+		<parameter type="float" name="ZBlurFocalEnd" value="6.510000" description="min=5.0 max=100.0 step=0.01"/>
+		<parameter type="float" name="ZBlurEnd" value="16.610001" description="min=5.0 max=150.0 step=0.01"/>
 </material>
 	<material name="LightScatteringMaterial" renderable_object_technique="light_scattering_renderable_object_technique">
 		<parameter type="float" name="active" value="1.000000" description="min=0.0 max=1.0 step=1.0"/>
@@ -48,7 +48,7 @@
 		<parameter type="float" name="density" value="0.890000" description="min=0.0 max=3.0 step=0.005"/>
 		<parameter type="float" name="weight" value="1.000000" description="min=0.0 max=3.0 step=0.005"/>
 		<parameter type="float" name="num_samples" value="20.000000" description=""/>
-		<parameter type="vect2f" name="light_position" light_position="0.000000 0.000000" description=""/>
+		<parameter type="vect2f" name="light_position" value="0.000000 0.000000" description=""/>
 </material>
 	<material name="SSRMaterial" renderable_object_technique="ssr_renderable_object_technique">
 		<parameter type="float" name="enabled" value="1.000000" description="min=0.0 max=1.0 step=1.0"/>
@@ -56,15 +56,15 @@
 		<parameter type="float" name="ssr_opacity" value="0.300000" description="min=0.0 max=1.0 step=0.05"/>
 		<parameter type="float" name="ssr_increment_multiplier" value="1.300000" description="min=0.0 max=3.0 step=0.01"/>
 		<parameter type="float" name="ssr_offset_screen" value="0.050000" description="min=0.0 max=1.0 step=0.01"/>
-		<parameter type="vect2f" name="screen_resolution" screen_resolution="0.000000 0.000000" description=""/>
+		<parameter type="vect2f" name="screen_resolution" value="0.000000 0.000000" description=""/>
 </material>
 	<material name="ColorGradingMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
-		<parameter type="float" name="ColorGradingActive" value="1.000000" description="min=0.0 max=1.0 step=1.0"/>
-		<parameter type="float" name="ColorColorGrading" value="1.000000" description="min=0.0 max=1.0 step=0.001"/>
-		<parameter type="float" name="BrownSepiaColorGrading" value="0.500000" description="min=0.0 max=1.0 step=0.001"/>
-		<parameter type="float" name="GreenSepiaColorGrading" value="0.300000" description="min=0.0 max=1.0 step=0.001"/>
-		<parameter type="float" name="BlueSepiaColorGrading" value="0.300000" description="min=0.0 max=1.0 step=0.001"/>
-		<parameter type="float" name="MonochromeColorGrading" value="0.500000" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="ColorGradingActive" value="0.000000" description="min=0.0 max=1.0 step=1.0"/>
+		<parameter type="float" name="ColorColorGrading" value="0.485000" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="BrownSepiaColorGrading" value="0.000000" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="GreenSepiaColorGrading" value="0.000000" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="BlueSepiaColorGrading" value="0.083000" description="min=0.0 max=1.0 step=0.001"/>
+		<parameter type="float" name="MonochromeColorGrading" value="0.564000" description="min=0.0 max=1.0 step=0.001"/>
 		<parameter type="float" name="ContrastColorGrading" value="0.400000" description="min=0.0 max=1.0 step=0.001"/>
 		<parameter type="float" name="BrightnessColorGrading" value="0.050000" description="min=0.0 max=1.0 step=0.001"/>
 </material>

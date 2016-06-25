@@ -253,12 +253,14 @@ bool CSoundManager::Init()
 	AKRESULT l_EResult = AK::SOUNDENGINE_DLL::Init(&l_MemSettings, &l_StmSettings, &l_DeviceSettings, &l_InitSettings, &l_PlatformInitSettings, &l_MusicInit);
 	if (l_EResult != AK_Success)
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("Error initializing WWise.");
 		//Return game without sound
 		AK::SOUNDENGINE_DLL::Term();
 		return false;
 	}
 	else
 	{
+		CEngine::GetSingleton().GetLogManager()->Log("WWise initialized properly.");
 		m_InitOk = true;
 	}
 

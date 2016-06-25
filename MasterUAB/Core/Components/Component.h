@@ -3,6 +3,7 @@
 
 class CGameObject;
 class CRenderManager;
+class CEmptyPointerClass;
 #include "Utils\Named.h"
 
 class CComponent : public CNamed
@@ -13,10 +14,10 @@ protected:
 	bool m_Enabled;
 
 public:
-	CComponent(const std::string &Name, CGameObject *Owner)
+	CComponent(const std::string &Name, CGameObject *Owner, bool Enabled = true)
 	:CNamed(Name)
 	,m_Owner(Owner)
-	,m_Enabled(true){};
+	,m_Enabled(Enabled){};
 
 	virtual ~CComponent() {}
 	virtual void Update(float ElapsedTime) = 0;
@@ -26,6 +27,8 @@ public:
 	void Enable(){ m_Enabled = true; };
 	void Disable(){ m_Enabled = false;};
 	bool IsEnabled(){ return m_Enabled; };
+
+	CEmptyPointerClass* GetEnabledLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Enabled); }
 };
 
 #endif

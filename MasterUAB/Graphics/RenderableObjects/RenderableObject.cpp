@@ -5,7 +5,7 @@
 #include "Engine.h"
 
 CRenderableObject::CRenderableObject(const CXMLTreeNode &XMLTreeNode) 
-:CComponent(XMLTreeNode.GetPszProperty("name"), CEngine::GetSingleton().GetGameObjectManager()->GetResource(XMLTreeNode.GetPszProperty("name")))
+:CComponent(XMLTreeNode.GetPszProperty("name"), CEngine::GetSingleton().GetGameObjectManager()->GetResource(XMLTreeNode.GetPszProperty("name")), XMLTreeNode.GetBoolProperty("visible", true))
 ,C3DElement(XMLTreeNode)
 {
 	

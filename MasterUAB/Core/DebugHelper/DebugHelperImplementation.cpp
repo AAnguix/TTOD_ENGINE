@@ -35,27 +35,27 @@ void CDebugHelperImplementation::Initialize(void *device)
 
 		TwStructMember l_v2fStruct[] =
 		{
-			{ "x", TW_TYPE_FLOAT, offsetof(Vect2f, x), "step=0.01 precision=1" },
-			{ "y", TW_TYPE_FLOAT, offsetof(Vect2f, y), "step=0.01 precision=1" },
+			{ "x", TW_TYPE_FLOAT, offsetof(Vect2f, x), "step=0.01" },
+			{ "y", TW_TYPE_FLOAT, offsetof(Vect2f, y), "step=0.01" },
 		};
 
 		m_Vector2f = TwDefineStruct("VECTOR2F", l_v2fStruct, 2, sizeof(Vect2f), nullptr, nullptr);
 
 		TwStructMember l_v3fStruct[] =
 		{
-			{ "x", TW_TYPE_FLOAT, offsetof(Vect3f, x), "step=0.01 precision=1" },
-			{ "y", TW_TYPE_FLOAT, offsetof(Vect3f, y), "step=0.01 precision=1" },
-			{ "z", TW_TYPE_FLOAT, offsetof(Vect3f, z), "step=0.01 precision=1" },
+			{ "x", TW_TYPE_FLOAT, offsetof(Vect3f, x), "step=0.01" },
+			{ "y", TW_TYPE_FLOAT, offsetof(Vect3f, y), "step=0.01" },
+			{ "z", TW_TYPE_FLOAT, offsetof(Vect3f, z), "step=0.01" },
 		};
 
 		m_Vector3f = TwDefineStruct("VECTOR3F", l_v3fStruct, 3, sizeof(Vect3f), nullptr, nullptr);
 
 		TwStructMember l_v4fStruct[] =
 		{
-			{ "x", TW_TYPE_FLOAT, offsetof(Vect4f, x), "step=0.01 precision=1" },
-			{ "y", TW_TYPE_FLOAT, offsetof(Vect4f, y), "step=0.01 precision=1" },
-			{ "z", TW_TYPE_FLOAT, offsetof(Vect4f, z), "step=0.01 precision=1" },
-			{ "w", TW_TYPE_FLOAT, offsetof(Vect4f, w), "step=0.01 precision=1" },
+			{ "x", TW_TYPE_FLOAT, offsetof(Vect4f, x), "step=0.01" },
+			{ "y", TW_TYPE_FLOAT, offsetof(Vect4f, y), "step=0.01" },
+			{ "z", TW_TYPE_FLOAT, offsetof(Vect4f, z), "step=0.01" },
+			{ "w", TW_TYPE_FLOAT, offsetof(Vect4f, w), "step=0.01" },
 		};
 
 		m_Vector4f = TwDefineStruct("VECTOR4F", l_v4fStruct, 4, sizeof(Vect4f), nullptr, nullptr);
@@ -101,8 +101,9 @@ void CDebugHelperImplementation::RegisterBar(const SDebugBar& bar)
 		assert(status);
 	}
 
+
 	TwBar* twBar = TwNewBar(bar.name.c_str());
-	
+
 	for (size_t i = 0; i < bar.variables.size(); ++i)
 	{
 		if (bar.variables[i].type == BUTTON)
@@ -201,6 +202,9 @@ void CDebugHelperImplementation::CreateBar(const std::string BarName)
 	TwBar* twBar = TwNewBar(BarName.c_str());
 	TwCopyStdStringToClientFunc(CopyStdStringToClient);
 
+	int l_Size[2] = { 300, 300 };
+	int l_Result = TwSetParam(twBar, NULL, "size", TW_PARAM_INT32, 2, l_Size);
+
 	m_Bars[BarName] = twBar;
 	m_CurrentBarName=BarName;
 }
@@ -231,7 +235,7 @@ void TW_CALL CDebugHelperImplementation::CallLuaExtendedFunction(void *ClientDat
 	
 	std::string l_ObjectType = l_ClientData->m_ObjectType.c_str();
 
-	if (l_ObjectType == "partycle")
+	if (l_ObjectType == "particle")
 	{
 		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_ClientData->m_Function.c_str(), (CParticleSystemType*)l_ClientData->m_Object);
 	}
@@ -370,7 +374,14 @@ void CDebugHelperImplementation::RegisterLUAButton(const std::string &ButtonName
 {
 	m_LuaParameters.push_back(new std::string(Script));
 
-	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaFunction,(void*)m_LuaParameters[m_LuaParameters.size() - 1],NULL);
+	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaFunction, (void*)m_LuaParameters[m_LuaParameters.size() - 1],NULL);
+	assert(l_Return == 1);
+}
+void CDebugHelperImplementation::RegisterLUAButton(const std::string &ButtonName, const std::string &Script, const std::string &Definition)
+{
+	m_LuaParameters.push_back(new std::string(Script));
+
+	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaFunction, (void*)m_LuaParameters[m_LuaParameters.size() - 1], Definition.c_str());
 	assert(l_Return == 1);
 }
 
@@ -382,10 +393,30 @@ void CDebugHelperImplementation::RegisterLUAExtendedButton(const std::string &Bu
 	assert(l_Return == 1);
 }
 
+void CDebugHelperImplementation::RegisterLUAExtendedButton(const std::string &ButtonName, const std::string &Function, CEmptyPointerClass* Object, const std::string &ObjectType, const std::string &Definition)
+{
+	m_LuaExtendedParameters.push_back(new ClientData(Function, Object, ObjectType));
+
+	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaExtendedFunction, (void*)(m_LuaExtendedParameters[m_LuaExtendedParameters.size() - 1]), Definition.c_str());
+	assert(l_Return == 1);
+}
+
 void CDebugHelperImplementation::RegisterLUAChangeTextureButton(const std::string &ButtonName, const std::string &Function, CMaterial* Material, CEmptyPointerClass* NewTexture, unsigned int Index)
 {
 	m_LuaChangeTextureParameters.push_back(new ChangeTextureClientData(Function, Material, NewTexture, Index));
 
 	int l_Return = TwAddButton(m_Bars[m_CurrentBarName], ButtonName.c_str(), &CDebugHelperImplementation::CallLuaFunctionChangeTexture, (void*)(m_LuaChangeTextureParameters[m_LuaChangeTextureParameters.size() - 1]), NULL);
 	assert(l_Return == 1);
+}
+
+void CDebugHelperImplementation::InsertGroupIntoGroup(const std::string &Group, const std::string &ParentGroup)
+{
+	std::string l_Definition = "";
+	l_Definition = " "+m_CurrentBarName+"/" + Group + "  group='" + ParentGroup+"' ";
+	int l_Result = TwDefine(l_Definition.c_str());
+}
+
+void CDebugHelperImplementation::Define(const std::string& Define)
+{
+	TwDefine(Define.c_str());
 }

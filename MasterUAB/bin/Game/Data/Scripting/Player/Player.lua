@@ -39,6 +39,7 @@ function CPlayerComponent:__init(CGameObject)
 	self.m_Backwards = false
 	self.m_Right = false
 	self.m_Left = false
+	self.m_E = false
 	
 	self.m_RotationVelocity = 4.0
 	
@@ -86,8 +87,8 @@ function CPlayerComponent:Initialize()
 	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.0, 0.1, 0.2)
 	l_IdleToWalk:AddBoolCondition("Walk", true)
 	
-	-- local l_IdleToRotate = l_Idle:AddTransition("IdleToRotate", l_Rotate, false, 0.0, 0.1, 0.2)
-	-- l_IdleToRotate:AddBoolCondition("Rotate",true)
+	local l_IdleToRotate = l_Idle:AddTransition("IdleToRotate", l_Rotate, false, 0.0, 0.1, 0.2)
+	l_IdleToRotate:AddBoolCondition("Rotate",true)
 	
 	-- local l_RotateToIdle = l_Rotate:AddTransition("RotateToIdle", l_Idle, true, 0.0, 0.1, 0.2)
 	-- l_RotateToIdle:AddBoolCondition("Rotate",false)

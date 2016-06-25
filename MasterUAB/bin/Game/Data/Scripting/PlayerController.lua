@@ -10,6 +10,7 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 	self.m_Backwards = false
 	self.m_Right = false
 	self.m_Left = false
+	self.m_E = false
 	
 	local l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 	
@@ -24,9 +25,10 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 	if (self:IsLocked() == false) then
 		if CInputManager.GetInputManager():IsActionActive("PLAYER_ATTACKS") then	
 			g_Player:GetAnimatorController():SetTrigger("Attack")
+			-- self.m_Rotate = true
 		end
 		if CInputManager.GetInputManager():IsActionActive("PLAYER_BLOCKS") then	
-			StartLevelTwo()
+			-- StartLevelTwo()
 			--g_Player:GetAnimatorController():SetTrigger("Block")
 		end
 		
@@ -36,7 +38,6 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		(CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT")))  then
 			local l_Position = g_Player:GetRenderableObject():GetPosition()
 			self.m_Walk = true
-			self.m_Rotate = true
 		end
 
 		l_CCVelocity.x = 0
@@ -44,6 +45,10 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		
 		l_Speed = 3
 		
+		if CInputManager.GetInputManager():IsActionActive("E_PRESSED") then			
+			self.m_E = true
+		end
+	
 		if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then			
 			self.m_Forward = true
 			-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)				

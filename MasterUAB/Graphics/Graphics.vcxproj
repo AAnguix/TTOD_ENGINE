@@ -77,6 +77,12 @@
     <ClInclude Include="SceneRendererCommands\ApplyFiltersSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\CaptureFrameBufferSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\CaptureFrameBufferTexture.h" />
+    <ClInclude Include="SceneRendererCommands\CaptureStencilBufferSceneRendererCommand.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="SceneRendererCommands\CaptureStencilBufferTexture.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SceneRendererCommands\ClearSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\DeferredShadingSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\DisableAlphaBlendSceneRendererCommand.h" />
@@ -171,6 +177,12 @@
     <ClCompile Include="SceneRendererCommands\ApplyFiltersSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\CaptureFrameBufferSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\CaptureFrameBufferTexture.cpp" />
+    <ClCompile Include="SceneRendererCommands\CaptureStencilBufferSceneRendererCommand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="SceneRendererCommands\CaptureStencilBufferTexture.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SceneRendererCommands\ClearSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\DeferredShadingSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\DisableAlphaBlendSceneRendererCommand.cpp" />

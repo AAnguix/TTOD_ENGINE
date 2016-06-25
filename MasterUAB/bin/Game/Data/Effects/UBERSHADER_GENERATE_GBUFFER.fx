@@ -26,7 +26,12 @@ struct VS_INPUT
 	#endif
 	
 	float2 UV : TEXCOORD0;
-	#ifdef HAS_LIGHTMAP 
+	#ifdef HAS_LIGHTMAP
+		float2 UV2: TEXCOORD1;
+	#endif
+	
+	//RNM
+	#ifdef HAS_RNM 
 		float2 UV2: TEXCOORD1;
 	#endif
 };
@@ -40,6 +45,11 @@ struct PS_INPUT
 		float3 Normal : TEXCOORD2;
 		float4 HPos : TEXCOORD3;
 		float3 WorldPos : TEXCOORD4;
+	#elif HAS_RNM
+		float2 UV2: TEXCOORD1;
+		float3 Normal : TEXCOORD2;
+		float4 HPos : TEXCOORD3;
+		float3 WorldPos : TEXCOORD4;	
 	#else
 		float3 Normal : TEXCOORD1;
 		float4 HPos : TEXCOORD2;
@@ -47,7 +57,11 @@ struct PS_INPUT
 	#endif
 	
 	#ifdef HAS_NORMAL
-		#ifdef HAS_LIGHTMAP 
+		//RNM
+		#ifdef HAS_RNM 
+			float3 WorldTangent : TEXCOORD5;
+			float3 WorldBinormal : TEXCOORD6;
+		#elif HAS_LIGHTMAP 
 			float3 WorldTangent : TEXCOORD5;
 			float3 WorldBinormal : TEXCOORD6;
 		#else
@@ -116,7 +130,11 @@ PS_INPUT VS( VS_INPUT IN )
 	#endif
 	
 	l_Output.UV = IN.UV;
-	#ifdef HAS_LIGHTMAP 
+	#ifdef HAS_LIGHTMAP
+		l_Output.UV2 = IN.UV2;
+	#endif
+	
+	#ifdef HAS_RNM 
 		l_Output.UV2 = IN.UV2;
 	#endif
 	
@@ -188,7 +206,12 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 			l_Target1 = m_LightAmbient.xyz*l_Output.Target0.xyz; 
 			#ifdef HAS_NORMAL
 				
-				float4 l_NormalMapTexture = T1Texture.Sample(S1Sampler, IN.UV);
+				#ifdef HAS_RNM
+					float4 l_NormalMapTexture = T4Texture.Sample(S4Sampler, IN.UV);
+				#else
+					float4 l_NormalMapTexture = T1Texture.Sample(S1Sampler, IN.UV);
+				#endif
+				
 				l_Spec = l_NormalMapTexture.a;
 				float3 l_TangentNormalized=normalize(IN.WorldTangent);
 				float3 l_BinormalNormalized=normalize(IN.WorldBinormal); 
@@ -196,6 +219,12 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 				float3 Nn = normalize(IN.Normal);
 				Nn = Nn + (l_Bump.x*l_TangentNormalized) + (l_Bump.y*l_BinormalNormalized);
 				l_Output.Target2 = float4(Normal2Texture(Nn), 1.0f); 
+				#ifdef HAS_RNM 
+					//Nn=CalcNormalMap(Nn, Tn, Bn, l_NormalMap);
+					float3 L_RNM = GetRadiosityNormalMap(Nn, IN.UV2, T1Texture, S1Sampler,  T2Texture, S2Sampler, T3Texture, S3Sampler);
+					L_RNM=T1Texture.Sample(S1Sampler, IN.UV2).xyz;
+					l_Target1 = L_RNM*l_Output.Target0.xyz;
+				#endif
 			#else 
 				l_Output.Target2 = float4(Normal2Texture(IN.Normal.xyz), 1.0f);
 			#endif

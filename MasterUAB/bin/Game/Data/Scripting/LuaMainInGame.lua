@@ -12,6 +12,7 @@ end
 
 function DefineFunctions()
 	dofile("./Data/Scripting/Globals/GlobalsInGame.lua")
+	dofile("./Data/Scripting/Triggers/PhysXTrigger.lua")
 	dofile("./Data/Scripting/Globals/AIGlobals.lua")
 	dofile("./Data/Scripting/GUI/GUIInGame.lua")
 	dofile("./Data/Scripting/CameraControllers/CameraControllerFunctions.lua")

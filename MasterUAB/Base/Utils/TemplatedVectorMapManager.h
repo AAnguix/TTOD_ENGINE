@@ -39,27 +39,19 @@ protected:
 
 		bool RemoveResource(const std::string &Name)
 		{
-			std::map<std::string, CMapResourceValue>::iterator itMap;
-			itMap=m_ResourcesMap.find(Name);
-
-			if(itMap != m_ResourcesMap.end())
+			CMapResourceValue l_ResourceValue = m_ResourcesMap[Name];
+			size_t l_Index = l_ResourceValue.m_Id;
+			delete m_ResourcesVector[l_Index];
+			m_ResourcesMap.erase(Name);
+			m_ResourcesVector.erase(m_ResourcesVector.begin() + l_Index);
+			for (TMapResources::iterator l_It = m_ResourcesMap.begin(); l_It != m_ResourcesMap.end(); l_It++)
 			{
-				size_t id=itMap->second.m_Id;
-
-				m_ResourcesVector.erase(m_ResourcesVector.begin()+id);
-				delete itMap->second.m_Value;
-				m_ResourcesMap.erase(Name);
-
-				for (itMap = m_ResourcesMap.find(Name); itMap != m_ResourcesMap.end(); ++itMap)
+				if (l_It->second.m_Id>l_Index)
 				{
-					if(itMap->second.m_Id > id)
-						itMap->second.m_Id--;
+					l_It->second.m_Id--;
 				}
-
-				return true;
 			}
-			
-			return false;
+			return true;
 		}
 
 		virtual T * GetResourceById(size_t Id){return m_ResourcesVector[Id];}

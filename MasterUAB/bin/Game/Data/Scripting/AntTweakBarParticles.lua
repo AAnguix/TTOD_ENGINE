@@ -1,136 +1,170 @@
 ------------------------------ PARTICLES -------------------------------------------------------------------------
 
 function OpenParticles()
-	ClickOnElement("Particles")
-	local l_ParticleManager=CEngine.GetSingleton():GetLayerManager():GetResource("particles")
-	local l_Particles = l_ParticleManager:GetResourcesVector():size()
-	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
-	
-	for i=0,l_Particles-1 do
-		local l_Particle=l_ParticleManager:GetResourceById(i)
-		l_DebugHelper:RegisterButton(l_Particle:GetName(),"OpenParticle('"..l_Particle:GetName().."')")
+	ClickOnElement("Particle Emitters Types","InitializeDebugBar()")
+	g_DebugHelper:RegisterButton("Reload","ReloadParticleSystems()")
+	local l_ParticleSystemTypes = g_ParticleSystemManager:GetLUAParticles()
+	for l_ParticleSystemType in l_ParticleSystemTypes do
+		--g_DebugHelper:RegisterExtendedButton(l_ParticleSystemType:GetName(),"OpenParticle",l_ParticleSystemType:GetThisLuaAddress(),"particle")
+		g_DebugHelper:RegisterButton(l_ParticleSystemType:GetName(),"OpenParticle('"..l_ParticleSystemType:GetName().."')")
 	end
 end
 
-function OpenParticle(ParticleName)
-	ClickOnElement(ParticleName)
-	local l_ParticleSystem = CEngine.GetSingleton():GetLayerManager():GetResource("particles"):GetResource(ParticleName)
-	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
-	
-	local l_Type = l_ParticleSystem:GetType()
-	local l_Material = l_Type:GetMaterial()
-	
-	l_DebugHelper:RegisterButton("Material ("..l_Material:GetName()..")","OpenMaterial('"..l_Material:GetName().."')")
-	
-	l_DebugHelper:RegisterVect3fParameter("EmissionBoxHalfSize",l_ParticleSystem:GetEmissionBoxHalfSizeLuaAddress(),"")
-	l_DebugHelper:RegisterFloatParameter("Yaw",l_ParticleSystem:GetYawLuaAddress(),"min=0.0 max=3.14 step=0.01")
-	l_DebugHelper:RegisterFloatParameter("Pitch",l_ParticleSystem:GetPitchLuaAddress(),"min=0.0 max=3.14 step=0.01")
-	l_DebugHelper:RegisterFloatParameter("Roll",l_ParticleSystem:GetRollLuaAddress(),"min=0.0 max=3.14 step=0.01")
-	
-	l_DebugHelper:RegisterInt32Parameter("Num.Frames",l_Type:GetNumFramesLuaAddress(),"min=0 max=100 step=1")
-	l_DebugHelper:RegisterFloatParameter("Time/frame",l_Type:GetTimePerFrameLuaAddress(),"min=0.0 max=5.0 step=0.01")
-	l_DebugHelper:RegisterBoolParameter("Loop",l_Type:GetLoopLuaAddress(),"")
-	l_DebugHelper:RegisterBoolParameter("Emit absolute",l_Type:GetEmitAbsoluteLuaAddress(),"")
-	
-	l_DebugHelper:RegisterFloatParameter("Starting direction angle",l_Type:GetStartingDirectionAngleLuaAddress(),"min=0 max=100 step=1")
-	l_DebugHelper:RegisterFloatParameter("Starting acceleration angle ",l_Type:GetStartingAccelerationAngleLuaAddress(),"min=0 max=100 step=1")
-	l_DebugHelper:RegisterVect2fParameter("Size",l_Type:GetSizeLuaAddress(),"")
-	
-	l_DebugHelper:RegisterVect2fParameter("Emit rate",l_ParticleSystem:GetType():GetEmitRateLuaAddress(),"")
-	l_DebugHelper:RegisterVect2fParameter("Awake time",l_ParticleSystem:GetType():GetAwakeTimeLuaAddress(),"")
-	l_DebugHelper:RegisterVect2fParameter("Sleep time",l_ParticleSystem:GetType():GetSleepTimeLuaAddress(),"")
-	l_DebugHelper:RegisterVect2fParameter("Life",l_ParticleSystem:GetType():GetLifeLuaAddress(),"")
-	
-	l_DebugHelper:RegisterVect2fParameter("Starting angle",l_ParticleSystem:GetType():GetStartingAngleLuaAddress(),"")
-	l_DebugHelper:RegisterVect2fParameter("Starting angular speed",l_ParticleSystem:GetType():GetStartingAngularSpeedLuaAddress(),"")
-	l_DebugHelper:RegisterVect2fParameter("Angular acceleration",l_ParticleSystem:GetType():GetAngularAccelerationLuaAddress(),"")
-	
-	l_DebugHelper:RegisterVect3fParameter("Starting speed 1",l_ParticleSystem:GetType():GetStartingSpeed1LuaAddress(),"")
-	l_DebugHelper:RegisterVect3fParameter("Starting speed 2",l_ParticleSystem:GetType():GetStartingSpeed2LuaAddress(),"")
-	l_DebugHelper:RegisterVect3fParameter("Starting Acceleration 1",l_ParticleSystem:GetType():GetStartingAcceleration1LuaAddress(),"")
-	l_DebugHelper:RegisterVect3fParameter("Starting Acceleration 2",l_ParticleSystem:GetType():GetStartingAcceleration2LuaAddress(),"")
-	l_DebugHelper:RegisterColorParameter("Color1",l_ParticleSystem:GetType():GetColor1LuaAddress(),"")
-	l_DebugHelper:RegisterColorParameter("Color2",l_ParticleSystem:GetType():GetColor2LuaAddress(),"")
+function ReloadParticleSystems()
+	-- g_MaterialManager:Reload()
+	g_ParticleSystemManager:Reload()
+end
 
-	l_DebugHelper:RegisterButton("SizeCP","OpenSizeCP('"..l_Type:GetName().."')")
-	l_DebugHelper:RegisterButton("ColorCP","OpenColorCP('"..l_Type:GetName().."')")
+function OpenParticle(ParticleSystemTypeName)
+	ParticleSystemType = g_ParticleSystemManager:GetResource(ParticleSystemTypeName)
+	ClickOnElement(ParticleSystemTypeName,"OpenParticles()")
+	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
+	local l_Material = ParticleSystemType:GetMaterial()
+
+	local l_FunctionToCall = "OpenMaterial('"..l_Material:GetName().."','OpenParticles()')"
+	g_DebugHelper:RegisterButton(l_Material:GetName(),l_FunctionToCall)
+	l_DebugHelper:RegisterButton("Export[XML]","WriteParticleInfoToXml()")
 	
-	l_DebugHelper:RegisterButton("Export[XML]","WriteParticleInfoToXml('"..l_Type:GetName().."')")
+	l_DebugHelper:RegisterInt32Parameter("Num.Frames",ParticleSystemType:GetNumFramesLuaAddress(),"min=1 max=100 step=1")
+	l_DebugHelper:RegisterFloatParameter("Time/frame",ParticleSystemType:GetTimePerFrameLuaAddress(),"min=0.0 max=5.0 step=0.01")
+	l_DebugHelper:RegisterBoolParameter("Loop",ParticleSystemType:GetLoopLuaAddress(),"")
+	l_DebugHelper:RegisterBoolParameter("Emit absolute",ParticleSystemType:GetEmitAbsoluteLuaAddress(),"")
+	
+	l_DebugHelper:RegisterFloatParameter("Starting direction angle",ParticleSystemType:GetStartingDirectionAngleLuaAddress(),"min=0 max=100 step=1")
+	l_DebugHelper:RegisterFloatParameter("Starting acceleration angle ",ParticleSystemType:GetStartingAccelerationAngleLuaAddress(),"min=0 max=100 step=1")
+	
+	l_DebugHelper:RegisterFloatParameter("Size.x",ParticleSystemType:GetSizeLuaAddress(0),"step=0.01 group=\"Size\"")
+	l_DebugHelper:RegisterFloatParameter("Size.y",ParticleSystemType:GetSizeLuaAddress(1),"step=0.01 group=\"Size\"")
+	
+	l_DebugHelper:RegisterFloatParameter("EmitRate.x",ParticleSystemType:GetEmitRateLuaAddress(0),"step=0.01 group=\"Emit rate\"")
+	l_DebugHelper:RegisterFloatParameter("EmitRate.y",ParticleSystemType:GetEmitRateLuaAddress(1),"step=0.01 group=\"Emit rate\"")
+	
+	l_DebugHelper:RegisterFloatParameter("AwakeTime.x",ParticleSystemType:GetAwakeTimeLuaAddress(0),"step=0.01 group=\"Awake time\"")
+	l_DebugHelper:RegisterFloatParameter("AwakeTime.y",ParticleSystemType:GetAwakeTimeLuaAddress(1),"step=0.01 group=\"Awake time\"")
+	
+	l_DebugHelper:RegisterFloatParameter("SleepTime.x",ParticleSystemType:GetSleepTimeLuaAddress(0),"step=0.01 group=\"Sleep time\"")
+	l_DebugHelper:RegisterFloatParameter("SleepTime.y",ParticleSystemType:GetSleepTimeLuaAddress(1),"step=0.01 group=\"Sleep time\"")
+	
+	l_DebugHelper:RegisterFloatParameter("Life.x",ParticleSystemType:GetLifeLuaAddress(0),"step=0.01 group=\"Life\"")
+	l_DebugHelper:RegisterFloatParameter("Life.y",ParticleSystemType:GetLifeLuaAddress(1),"step=0.01 group=\"Life\"")
+	
+	l_DebugHelper:RegisterFloatParameter("StartingAngle.x",ParticleSystemType:GetStartingAngleLuaAddress(0),"step=0.01 group=\"Starting Angle\"")
+	l_DebugHelper:RegisterFloatParameter("StartingAngle.y",ParticleSystemType:GetStartingAngleLuaAddress(1),"step=0.01 group=\"Starting Angle\"")
+	
+	l_DebugHelper:RegisterFloatParameter("StartingAngularSpeed.x",ParticleSystemType:GetStartingAngularSpeedLuaAddress(0),"step=0.01 group=\"Starting Angular Speed\"")
+	l_DebugHelper:RegisterFloatParameter("StartingAngularSpeed.y",ParticleSystemType:GetStartingAngularSpeedLuaAddress(1),"step=0.01 group=\"Starting Angular Speed\"")
+	
+	l_DebugHelper:RegisterFloatParameter("AngularAcceleration.x",ParticleSystemType:GetAngularAccelerationLuaAddress(0),"step=0.01 group=\"Angular Acceleration\"")
+	l_DebugHelper:RegisterFloatParameter("AngularAcceleration.y",ParticleSystemType:GetAngularAccelerationLuaAddress(1),"step=0.01 group=\"Angular Acceleration\"")
+	
+	l_DebugHelper:RegisterFloatParameter("StartingSpeed1.x",ParticleSystemType:GetStartingSpeed1LuaAddress(0),"step=0.01 group=\"Starting Speed 1\"")
+	l_DebugHelper:RegisterFloatParameter("StartingSpeed1.y",ParticleSystemType:GetStartingSpeed1LuaAddress(1),"step=0.01 group=\"Starting Speed 1\"")
+	l_DebugHelper:RegisterFloatParameter("StartingSpeed1.z",ParticleSystemType:GetStartingSpeed1LuaAddress(2),"step=0.01 group=\"Starting Speed 1\"")
+
+	l_DebugHelper:RegisterFloatParameter("StartingSpeed2.x",ParticleSystemType:GetStartingSpeed2LuaAddress(0),"step=0.01 group=\"Starting Speed 2\"")
+	l_DebugHelper:RegisterFloatParameter("StartingSpeed2.y",ParticleSystemType:GetStartingSpeed2LuaAddress(1),"step=0.01 group=\"Starting Speed 2\"")
+	l_DebugHelper:RegisterFloatParameter("StartingSpeed2.z",ParticleSystemType:GetStartingSpeed2LuaAddress(2),"step=0.01 group=\"Starting Speed 2\"")
+	
+	l_DebugHelper:RegisterFloatParameter("StartingAcceleration1.x",ParticleSystemType:GetStartingAcceleration1LuaAddress(0),"step=0.01 group=\"Starting Acceleration 1\"")
+	l_DebugHelper:RegisterFloatParameter("StartingAcceleration1.y",ParticleSystemType:GetStartingAcceleration1LuaAddress(1),"step=0.01 group=\"Starting Acceleration 1\"")
+	l_DebugHelper:RegisterFloatParameter("StartingAcceleration1.z",ParticleSystemType:GetStartingAcceleration1LuaAddress(2),"step=0.01 group=\"Starting Acceleration 1\"")
+	
+	l_DebugHelper:RegisterFloatParameter("StartingAcceleration2.x",ParticleSystemType:GetStartingAcceleration2LuaAddress(0),"step=0.01 group=\"Starting Acceleration 2\"")
+	l_DebugHelper:RegisterFloatParameter("StartingAcceleration2.y",ParticleSystemType:GetStartingAcceleration2LuaAddress(1),"step=0.01 group=\"Starting Acceleration 2\"")
+	l_DebugHelper:RegisterFloatParameter("StartingAcceleration2.z",ParticleSystemType:GetStartingAcceleration2LuaAddress(2),"step=0.01 group=\"Starting Acceleration 2\"")
+	
+	l_DebugHelper:RegisterColorParameter("Color1",ParticleSystemType:GetColor1LuaAddress(),"")
+	l_DebugHelper:RegisterColorParameter("Color2",ParticleSystemType:GetColor2LuaAddress(),"")
+
+	l_DebugHelper:RegisterButton("SizeCP","OpenSizeCP('"..ParticleSystemType:GetName().."')")
+	l_DebugHelper:RegisterButton("ColorCP","OpenColorCP('"..ParticleSystemType:GetName().."')")
 	
 end
 
 function OpenSizeCP(ParticleSystemTypeName)
-	ClickOnElement("Size Control Points")
+	ClickOnElement("Size Control Points","OpenParticles()")
 	local l_ParticleSystemType = g_ParticleSystemManager:GetResource(ParticleSystemTypeName)
 	local l_ControlPointsSize=l_ParticleSystemType:GetLUAControlPointsSizeSize()	
 	
 	for i=0,l_ControlPointsSize-1 do
 		g_DebugHelper:RegisterVect2fParameter(i..". Size_",l_ParticleSystemType:GetControlPointSizeSizeLuaAddress(i),"")
 		g_DebugHelper:RegisterVect2fParameter(i..". Time_",l_ParticleSystemType:GetControlPointSizeTimeLuaAddress(i),"")
+		g_DebugHelper:RegisterButton(i..". Remove","RemoveControlPointSize('"..l_ParticleSystemType:GetName().."',"..i..")")
 	end
-	g_DebugHelper:RegisterExtendedButton("Add","AddControlPointSize",l_ParticleSystemType:GetThisLuaAddress(),"partycle")
+	g_DebugHelper:RegisterExtendedButton("Add","AddControlPointSize",l_ParticleSystemType:GetThisLuaAddress(),"particle")
+	
+end
+function OpenColorCP(ParticleSystemTypeName)
+	ClickOnElement("Color Control Points","OpenParticles()")
+	
+	local l_ParticleSystemType = g_ParticleSystemManager:GetResource(ParticleSystemTypeName)
+	local l_ControlPointsColor = l_ParticleSystemType:GetLUAControlPointsColorSize()
+	
+	for i=0,l_ControlPointsColor-1 do
+		g_DebugHelper:RegisterColorParameter(i..". Color1",l_ParticleSystemType:GetControlPointColorColor1LuaAddress(i),"")
+		g_DebugHelper:RegisterColorParameter(i..". Color2",l_ParticleSystemType:GetControlPointColorColor2LuaAddress(i),"")
+		g_DebugHelper:RegisterVect2fParameter(i..". Time",l_ParticleSystemType:GetControlPointColorTimeLuaAddress(i),"")
+		g_DebugHelper:RegisterButton(i..". Remove","RemoveControlPointColor('"..l_ParticleSystemType:GetName().."',"..i..")")
+	end
+	g_DebugHelper:RegisterExtendedButton("Add","AddControlPointColor",l_ParticleSystemType:GetThisLuaAddress(),"particle")
 end
 
 function AddControlPointSize(ParticleSystemType)
 	ParticleSystemType:AddControlPointSize(Vect2f(0.0,0.0),Vect2f(0.0,0.0))
 	OpenSizeCP(ParticleSystemType:GetName())
 end
+function AddControlPointColor(ParticleSystemType)
+	ParticleSystemType:AddControlPointColor(CColor(0.0,0.0,0.0,1.0),CColor(0.0,0.0,0.0,1.0),Vect2f(0.0,0.0))
+	OpenColorCP(ParticleSystemType:GetName())
+end
 
-function OpenColorCP(ParticleSystemTypeName)
-	ClickOnElement("Color Control Points")
-	
+function RemoveControlPointSize(ParticleSystemTypeName, Index)
+	local l_ParticleSystemType = g_ParticleSystemManager:GetResource(ParticleSystemTypeName)
+	local l_ControlPointsSize=l_ParticleSystemType:GetLUAControlPointsSizeSize()	
+	if l_ControlPointsSize > 1 then
+		l_ParticleSystemType:RemoveControlPointSize(Index)
+		OpenSizeCP(ParticleSystemTypeName)
+	end
+end
+function RemoveControlPointColor(ParticleSystemTypeName, Index)
 	local l_ParticleSystemType = g_ParticleSystemManager:GetResource(ParticleSystemTypeName)
 	local l_ControlPointsColor = l_ParticleSystemType:GetLUAControlPointsColorSize()
-	
-	for i=0,l_ControlPointsColor-1 do
-		g_DebugHelper:RegisterVect4fParameter(i..". Color1",l_ParticleSystemType:GetControlPointColorColor1LuaAddress(i),"")
-		g_DebugHelper:RegisterVect4fParameter(i..". Color2",l_ParticleSystemType:GetControlPointColorColor2LuaAddress(i),"")
-		g_DebugHelper:RegisterVect2fParameter(i..". Time",l_ParticleSystemType:GetControlPointColorTimeLuaAddress(i),"")
-		i = i+1
+	if l_ControlPointsColor > 1 then
+		l_ParticleSystemType:RemoveControlPointColor(Index)
+		OpenColorCP(ParticleSystemTypeName)
 	end
-	g_DebugHelper:RegisterExtendedButton("Add","AddControlPointColor",l_ParticleSystemType:GetThisLuaAddress(),"partycle")
 end
 
-function AddControlPointColor(ParticleSystemType)
-	ParticleSystemType:AddControlPointColor(Vect2f(0.0,0.0),CColor(0.0,0.0,0.0,1.0),CColor(0.0,0.0,0.0,1.0))
-	OpenColorCP(ParticleSystemType)
+function WriteParticleInfoToXml()
+
+	local l_Export = CFileUtils.ShowDialog()
+	if l_Export then
+		WriteParticleMaterialInfoToXml()
+		local Filename = "Data\\Level"..g_Engine:GetCurrentLevel().."\\particles_systems.xml"
+		--local Filename = "Data/Level1/particles_systems.xml"
+		local l_Writer = CTTODXMLWriter()
+		l_Writer:StartFile(Filename)
+		l_Writer:StartElement("particle_systems", false)
+		local l_ParticleSystems=g_ParticleSystemManager:GetLUAParticles()
+		for l_ParticleSystem in l_ParticleSystems do
+			WriteParticleSystemInfo(l_Writer, l_ParticleSystem)
+		end
+		l_Writer:EndElement()
+		l_Writer:EndFile()
+	end
 end
 
-function WriteParticleInfoToXml(Type)
-	
-	local Filename = "Data/Level"..g_CurrentLevel.."/particles_systems_WRITTING.xml"
-	--local Filename = "Data/Level1/particles_systems.xml"
-	
-	local l_Writer = CTTODXMLWriter()
-	l_Writer:StartFile(Filename)
-	l_Writer:StartElement("particle_systems", false)
-	local l_ParticleSystems=g_ParticleSystemManager:GetLUAParticles()
-	for l_ParticleSystem in l_ParticleSystems do
-		WriteParticleSystemInfo(l_Writer, l_ParticleSystem)
-	end
-	l_Writer:EndElement()
-	l_Writer:EndFile()
-	
-	-- local l_XMLTreeNode=CXMLTreeNode()
-	-- local l_Created = l_XMLTreeNode:StartNewFile(Filename)
-		-- if l_Created then
-			-- l_XMLTreeNode:StartElement("particle_systems")
-				-- local l_ParticleSystems=g_ParticleSystemManager:GetLUAParticles()
-				-- for l_ParticleSystem in l_ParticleSystems do
-					-- WriteParticleSystemInfo(l_XMLTreeNode, l_ParticleSystem)
-				-- end
-			-- l_XMLTreeNode:EndElement()
-		-- l_XMLTreeNode:EndNewFile()
-		-- else
-			-- print("File '"..Filename.."'not correctly loaded")
-		-- end
+function WriteParticleMaterialInfoToXml()
+	local l_MaterialsFilename = "Data/Level"..g_Engine:GetCurrentLevel().."/materials.xml"
+	WriteMaterialsVectorToXml(l_MaterialsFilename)
 end
 
 function WriteParticleSystemInfo(Writer, l_Type)
 	Writer:StartElement("particle_system", true)
-		
+		g_LogManager:Log("Writting particle system info")
 		Writer:WriteStringProperty("name", l_Type:GetName())
-		Writer:WriteStringProperty("material", l_Type:GetMaterial():GetName())
+		local l_MaterialName = l_Type:GetMaterial():GetName()
+		Writer:WriteStringProperty("material",l_MaterialName)
 	
 		-- if g_ParticleSystemManager:GetDefaultType():GetName() == l_Type:GetName() then
 			-- Writer:WriteStringProperty("default", "true")
@@ -171,10 +205,10 @@ function WriteParticleSystemInfo(Writer, l_Type)
 	Writer:EndElement()	
 end
 
-function WriteControlPoints(Writer,PartycleSystemType)
+function WriteControlPoints(Writer,ParticleSystemType)
 
-	local l_ControlPointsSize = PartycleSystemType:GetLUAControlPointsSize()
-	local l_ControlPointsColor = PartycleSystemType:GetLUAControlPointsColor()
+	local l_ControlPointsSize = ParticleSystemType:GetLUAControlPointsSize()
+	local l_ControlPointsColor = ParticleSystemType:GetLUAControlPointsColor()
 
 	for l_CPS in l_ControlPointsSize do
 		Writer:StartElement("control_point_size", true)

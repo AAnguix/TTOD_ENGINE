@@ -259,6 +259,12 @@
     <ClInclude Include="Animation\AnimatorControllerManager.h">
       <Filter>Animation</Filter>
     </ClInclude>
+    <ClInclude Include="SceneRendererCommands\CaptureStencilBufferSceneRendererCommand.h">
+      <Filter>SceneRendererCommands</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneRendererCommands\CaptureStencilBufferTexture.h">
+      <Filter>SceneRendererCommands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -503,6 +509,12 @@
     </ClCompile>
     <ClCompile Include="Animation\AnimatorControllerManager.cpp">
       <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRendererCommands\CaptureStencilBufferSceneRendererCommand.cpp">
+      <Filter>SceneRendererCommands</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRendererCommands\CaptureStencilBufferTexture.cpp">
+      <Filter>SceneRendererCommands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

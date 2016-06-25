@@ -5,6 +5,7 @@
 #include "Engine.h"
 
 #include <cassert>
+#include <vld.h> //Visual Leak Detector
 
 // TODO: Activar AntTeakBar
 #include <AntTweakBar.h>
@@ -88,7 +89,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				// TODO: Resetear el AntTeakBar
 				 TwWindowSize(0, 0);
-				s_Context.Resize(hWnd, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
+				s_Context.ResizeBuffers(hWnd, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
 				// TODO: Resetear el AntTeakBar
 				TwWindowSize((UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
 			}
@@ -131,11 +132,11 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					case VK_RETURN:
 						if (Alt)
 						{
-							WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
+							/*WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
 							GetWindowPlacement(hWnd, &windowPosition);
 
 							ToggleFullscreen(hWnd, windowPosition);
-							consumed = true;
+							consumed = true;*/
 						}
 						break;
 					case VK_F4:
@@ -184,8 +185,8 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void CheckMemoryLeaks()
 {
-	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_CrtSetBreakAlloc(28829); //26598 29214 30923 32011
+	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_CrtSetBreakAlloc(21892); 
 }
 
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
@@ -193,18 +194,32 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 	CheckMemoryLeaks();
 
 	//Register the window class
-	WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, APPLICATION_NAME, NULL };
-
-	RegisterClassEx(&wc);
+	WNDCLASSEX l_Wc;
+	ZeroMemory(&l_Wc, sizeof(WNDCLASSEX));
+	l_Wc.cbSize = sizeof(WNDCLASSEX);
+	l_Wc.style = CS_CLASSDC;
+	l_Wc.lpfnWndProc = MsgProc;
+	l_Wc.cbClsExtra = 0L;
+	l_Wc.cbWndExtra = 0L;
+	l_Wc.hInstance = GetModuleHandle(NULL);
+	l_Wc.hIcon = NULL;
+	l_Wc.hCursor = NULL;
+	//l_Wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	l_Wc.hbrBackground = NULL;
+	//l_Wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	l_Wc.lpszMenuName = NULL;
+	l_Wc.lpszClassName = APPLICATION_NAME;
+	l_Wc.hIconSm = NULL;
+	//WNDCLASSEX l_Wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, APPLICATION_NAME, NULL };
+	RegisterClassEx(&l_Wc);
 
 	RECT rc = {0, 0, APPLICATTION_WIDTH, APPLICATTION_HEIGHT};
-
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
 	//Create the application's window
-	HWND hWnd = CreateWindow(APPLICATION_NAME, APPLICATION_NAME, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, wc.hInstance, NULL);
+	HWND hWnd = CreateWindow(APPLICATION_NAME, APPLICATION_NAME, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, l_Wc.hInstance, NULL);
 
-	s_Context.CreateContext(hWnd, APPLICATTION_WIDTH, APPLICATTION_HEIGHT);
+	s_Context.CreateContext(hWnd, APPLICATTION_WIDTH, APPLICATTION_HEIGHT,false);
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
@@ -263,7 +278,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 			}
 		}
 
-		UnregisterClass(APPLICATION_NAME, wc.hInstance);
+		UnregisterClass(APPLICATION_NAME, l_Wc.hInstance);
 	}
 	delete CEngine::GetSingletonPtr();
 	

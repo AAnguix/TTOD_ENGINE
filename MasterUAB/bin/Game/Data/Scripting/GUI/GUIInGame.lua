@@ -37,14 +37,17 @@ g_ShowGraphicsStats = true
 
 function UpdateGUI(ElapsedTime)
 	
+	local l_Pos = SGUIPosition(0.4,0.7,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("DorrPedestalText","felix_font",l_Pos,"","Press E to activate")
+	
 	--local l_HealthBarPos = SGUIPosition(50,50,512,128)
 	local l_HealthBarPos = SGUIPosition(0.83,0.05,0.3,0.075,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, g_PlayerComponent:GetMaxHealth(), g_PlayerComponent:GetHealth()) 
 	
-	ShowGraphicsStats()
+	--ShowGraphicsStats()
+	--ShowProfilerStats()
 	-- local l_Pos = SGUIPosition(0.1,0.1,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	-- g_GUIManager:DoText("textoDePrueba","felix_font",l_Pos,"","Game is paused!")
-	--void DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text);
 	
 	UpdateMenu()
 end
@@ -70,6 +73,11 @@ function ShowGraphicsStats()
 		local l_MaxMillisecondsPerFramePos = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*5),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 		g_GUIManager:DoText("MaxMillisecondsPerFrame","calibri_font",l_MaxMillisecondsPerFramePos,"","Max "..Round(g_GraphicsStats:GetMaxMillisecondsPerFrame(),2))
 	end
+end
+
+function ShowProfilerStats()
+	local l_TimeSinceStartPosition = SGUIPosition(GRAPHICS_STATS_X_DISPLACEMENT,GRAPHICS_STATS_Y_DISPLACEMENT+(GRAPHICS_STATS_Y_OFFSET*6),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("TimeSinceStart","calibri_font",l_TimeSinceStartPosition,"","Time "..Round(g_Engine:GetRealTimeSinceStartup(),2))
 end
 
 function CheckMenu()

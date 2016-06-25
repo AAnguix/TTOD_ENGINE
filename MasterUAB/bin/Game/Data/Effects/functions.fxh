@@ -43,3 +43,19 @@ float3 GetPositionFromZDepthView(float ZDepthView, float2 UV, float4x4 InverseVi
 	float3 l_PositionView=GetPositionFromZDepthViewInViewCoordinates(ZDepthView, UV, InverseProjection);
 	return mul(float4(l_PositionView,1.0), InverseView).xyz;
 }
+
+float3 GetRadiosityNormalMap(float3 Nn, float2 UV, Texture2D LightmapXTexture, SamplerState
+LightmapXSampler, Texture2D LightmapYTexture, SamplerState LightmapYSampler, Texture2D
+LightmapZTexture, SamplerState LightmapZSampler)
+{
+	float3 l_LightmapX=LightmapXTexture.Sample(LightmapXSampler, UV)*2;
+	float3 l_LightmapY=LightmapYTexture.Sample(LightmapYSampler, UV)*2;
+	float3 l_LightmapZ=LightmapZTexture.Sample(LightmapZSampler, UV)*2;
+	float3 l_BumpBasisX=normalize(float3(0.816496580927726, 0.5773502691896258, 0 ));
+	float3 l_BumpBasisY=normalize(float3(-0.408248290463863,  0.5773502691896258,0.7071067811865475 ));
+	float3 l_BumpBasisZ=normalize(float3(-0.408248290463863, 0.5773502691896258, -0.7071067811865475));
+	float3 l_RNMLighting=saturate(dot(Nn, l_BumpBasisX))*l_LightmapX+
+	saturate(dot(Nn, l_BumpBasisY))*l_LightmapY+
+	saturate(dot(Nn, l_BumpBasisZ))*l_LightmapZ;
+	return l_RNMLighting;
+}

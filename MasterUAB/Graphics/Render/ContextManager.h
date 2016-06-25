@@ -19,7 +19,7 @@ public:
 	{
 		RS_WIREFRAME,
 		RS_SOLID,
-		RS_CULL_FRONT, 
+		RS_CULL_FRONT,
 		RS_CULL_BACK,
 		RS_COUNT
 	};
@@ -38,7 +38,8 @@ public:
 		BLEND_SOLID,
 		BLEND_CLASSIC,
 		BLEND_PREMULT,
-		
+		BLEND_DEFERRED_SHADING,
+
 		BLEND_COUNT
 	};
 
@@ -48,9 +49,9 @@ public:
 
 	void Dispose();
 
-	void Resize(HWND hWnd, unsigned int Width, unsigned int Height);
+	void ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height);
 
-	HRESULT CreateContext(HWND hWnd, unsigned int Width, unsigned int Height);
+	HRESULT CreateContext(HWND hWnd, unsigned int Width, unsigned int Height, bool FullScreen);
 	HRESULT CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height);
 	void InitStates();
 
@@ -78,10 +79,10 @@ public:
 	void SetTimes(float ElapsedTime);
 	D3D11_VIEWPORT GetViewPort();
 	void SetDefaultViewPort();
-	
-	unsigned int GetFrameBufferWidth(){return m_Width;};
+
+	unsigned int GetFrameBufferWidth(){ return m_Width; };
 	unsigned int GetFrameBufferHeight(){ return m_Height; };
-	
+
 	void SetRenderTargets(int NumViews, ID3D11RenderTargetView *const*RenderTargetViews, ID3D11DepthStencilView *DepthStencilView);
 	void UnsetRenderTargets();
 
@@ -89,14 +90,15 @@ public:
 	void EnableAlphaBlendState();
 	void EnableAdditiveAlphaBlendState();
 	void DisableAlphaBlendState();
+	void EnableDeferredShadingBlendState();
 
 	void SetRasterizerState(ERasterizedState RasterizerState);
 	void SetDepthStencilState(EDepthStencilState DepthStencilState);
 
-	IDXGISwapChain* GetSwapChain(){return m_SwapChain;};
+	IDXGISwapChain* GetSwapChain(){ return m_SwapChain; };
 
-	ID3D11RenderTargetView * GetRenderTargetView() const {return m_RenderTargetView;}
-	ID3D11DepthStencilView * GetDepthStencilView() const {return m_DepthStencilView;}
+	ID3D11RenderTargetView * GetRenderTargetView() const { return m_RenderTargetView; }
+	ID3D11DepthStencilView * GetDepthStencilView() const { return m_DepthStencilView; }
 
 private:
 

@@ -9,13 +9,14 @@
 #include "XML\XMLTreeNode.h"
 #include "Vertex\VertexTypes.h"
 #include "Log\Log.h"
+#include "Utils\FileUtils.h"
 
 CEffectShader::CEffectShader(const CXMLTreeNode &TreeNode)
-: CNamed(TreeNode)
-, m_PreprocessorMacros(NULL)
-, m_ShaderMacros(0)
-, m_Preprocessor(TreeNode.GetPszProperty("macro", ""))
-, m_Filename(TreeNode.GetPszProperty("file", ""))
+:CNamed(TreeNode)
+,m_PreprocessorMacros(NULL)
+,m_ShaderMacros(0)
+,m_Preprocessor(TreeNode.GetPszProperty("macro", ""))
+,m_Filename(TreeNode.GetPszProperty("file", ""))
 {
 }
 
@@ -129,6 +130,63 @@ bool CEffectShader::Reload()
 }
 
 
+bool CEffectShader::LoadShaderExtended(const std::string &ShaderName, const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut)
+{
+	//bool l_ShaderCompiled = CFileUtils::CompiledShaderExists(Filename, l_CompiledShaderFilename, EntryPoint);
+	bool l_ShaderCompiled = CFileUtils::CompiledShaderExists(ShaderName);
+	
+	std::string l_CompiledName = "Data\\Effects\\compiled\\" + ShaderName;
+
+	if ((l_ShaderCompiled && CFileUtils::ShaderFileModified(Filename, l_CompiledName)) || (!l_ShaderCompiled))
+	{
+		HRESULT l_Hr = S_OK;
+		ID3DBlob* l_ErrorBlob = nullptr;
+
+		DWORD l_ShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+
+		#if defined( DEBUG ) || defined( _DEBUG )  
+			l_ShaderFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_PREFER_FLOW_CONTROL | D3DCOMPILE_SKIP_OPTIMIZATION;
+		#endif  
+
+		std::wstring ws;
+		ws.assign(Filename.begin(), Filename.end());
+		l_Hr = D3DCompileFromFile(ws.c_str(), m_ShaderMacros, D3D_COMPILE_STANDARD_FILE_INCLUDE, EntryPoint.c_str(), ShaderModel.c_str(), l_ShaderFlags, 0, BlobOut, &l_ErrorBlob);
+		
+		if (FAILED(l_Hr))
+		{ 
+			std::wstring l_ErrorsFile;
+			std::string l_Erros = "Data/ShaderErrors";
+			l_ErrorsFile.assign(l_Erros.begin(), l_Erros.end());
+			D3DWriteBlobToFile(l_ErrorBlob, l_ErrorsFile.c_str(), true);
+			//CEngine::GetSingleton().GetLogManager()->Log(static_cast<char>(l_ErrorBlob->GetBufferPointer()));
+			assert(false);
+		}
+
+		std::wstring l_WCompiledName;
+		l_WCompiledName.assign(l_CompiledName.begin(), l_CompiledName.end());
+		D3DWriteBlobToFile(*BlobOut, l_WCompiledName.c_str(), true);
+
+		if (FAILED(l_Hr))
+		{
+			if (l_ErrorBlob != NULL)
+				OutputDebugStringA((char*)l_ErrorBlob->GetBufferPointer());
+			if (l_ErrorBlob)
+				l_ErrorBlob->Release();
+			return false;
+		}
+
+		if (l_ErrorBlob)
+			l_ErrorBlob->Release();
+	}
+	else
+	{
+		std::wstring l_Str;
+		l_Str.assign(l_CompiledName.begin(), l_CompiledName.end());
+		HRESULT l_H = D3DReadFileToBlob(l_Str.c_str(), BlobOut);
+	}
+	return true;
+}
+
 bool CEffectShader::LoadShader(const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut)
 {
 	HRESULT hr = S_OK;
@@ -141,7 +199,7 @@ bool CEffectShader::LoadShader(const std::string &Filename, const std::string &E
 	#if defined( DEBUG ) || defined( _DEBUG )  
 		dwShaderFlags |= D3DCOMPILE_DEBUG;
 	#endif  
-	
+
 	std::wstring ws;
 	ws.assign(Filename.begin(), Filename.end());
 
@@ -161,6 +219,35 @@ bool CEffectShader::LoadShader(const std::string &Filename, const std::string &E
 		pErrorBlob->Release();
 
 	return true;
+}
+
+void CEffectShader::WriteCompiledShaderDataToFile(const std::string &BinaryFilename, void *Data, unsigned int DataSize)
+{
+	FILE *l_File;
+	errno_t l_Error;
+	l_Error = fopen_s(&l_File, BinaryFilename.c_str(), "wb");
+	assert(l_Error == 0);
+	if (l_Error == 0)
+	{
+		fwrite(&DataSize, sizeof(unsigned int), 1, l_File);
+		fwrite(Data, sizeof(unsigned char), DataSize, l_File);
+	}
+	fclose(l_File);
+}
+
+void CEffectShader::ReadShaderDataFromFile(const std::string &BinaryFilename, void **Data, unsigned int &DataSize)
+{
+	FILE *l_File;
+	errno_t l_Error;
+	l_Error = fopen_s(&l_File, BinaryFilename.c_str(), "rb");
+	assert(l_Error == 0);
+	if (l_Error == 0)
+	{
+		fread(&DataSize, sizeof(unsigned int), 1, l_File);
+		*Data = malloc(DataSize);
+		fread(*Data, sizeof(unsigned char), DataSize, l_File);
+	}
+	fclose(l_File);
 }
 
 

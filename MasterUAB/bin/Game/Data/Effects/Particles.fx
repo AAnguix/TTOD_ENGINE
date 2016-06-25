@@ -134,13 +134,8 @@ float4 PS( PS_INPUT IN) : SV_Target
 	float4 t2 = T0Texture.Sample( S0Sampler, IN.UV2 );
 	float a = IN.TextureBlendFactor;
 	
-	
-	//return IN.Color * lerp(t1, t2, float4(a, a, a, a));
-	//return float4(IN.Color * lerp(t1, t2, float4(a, a, a, a)));
-	
-	return float4(t2);
-	//return float4(IN.Color * lerp(t1,t2,float4(a,a,a,a)));
-	
+	//return IN.Color * t2;
+	return float4(IN.Color*lerp(t1,t2,float4(a,a,a,a)));
 	
 	//return float4(1,0,0,1) * 0.99 + 0.01 * saturate(IN.Color * lerp(t1, t2, float4(a, a, a, a)));
 	

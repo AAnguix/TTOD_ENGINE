@@ -203,29 +203,30 @@ void CGUIManager::Load(const std::string &Filename)
 			l_Found = true;
 	}
 	if (!l_Found)
-		m_Filenames.push_back(Filename);
-
-	CXMLTreeNode l_XML;
-
-	if (l_XML.LoadFile(Filename.c_str()))
 	{
-		CXMLTreeNode l_GuiElements = l_XML["gui_elements"];
+		m_Filenames.push_back(Filename);
+		CXMLTreeNode l_XML;
 
-		if (l_GuiElements.Exists())
+		if (l_XML.LoadFile(Filename.c_str()))
 		{
-			for (int i = 0; i < l_GuiElements.GetNumChildren(); ++i)
-			{
-				CXMLTreeNode l_Element = l_GuiElements(i);
+			CXMLTreeNode l_GuiElements = l_XML["gui_elements"];
 
-				if (l_Element.GetName() == std::string("gui_spritemap"))
+			if (l_GuiElements.Exists())
+			{
+				for (int i = 0; i < l_GuiElements.GetNumChildren(); ++i)
 				{
-					AddSpriteMap(l_Element);
+					CXMLTreeNode l_Element = l_GuiElements(i);
+
+					if (l_Element.GetName() == std::string("gui_spritemap"))
+					{
+						AddSpriteMap(l_Element);
+					}
 				}
 			}
+			else { assert(false); }
 		}
 		else { assert(false); }
-	} 
-	else { assert(false); }
+	}
 }
 
 void CGUIManager::AddSpriteMap(CXMLTreeNode &TreeNode)
@@ -249,6 +250,13 @@ void CGUIManager::AddSpriteMap(CXMLTreeNode &TreeNode)
 		m_Materials.push_back(l_Material);
 
 		SSpriteMapInfo* l_SpriteMapInfo = new SSpriteMapInfo(l_SpriteMapName, m_Materials.size() - 1, l_Width, l_Height);
+		
+		#ifdef _DEBUG
+			std::map<std::string, CGUIManager::SSpriteMapInfo*>::iterator l_It=m_SpriteMaps.find(l_SpriteMapName);
+			assert(l_It == m_SpriteMaps.end());
+		#endif
+		
+		m_SpriteMaps[l_SpriteMapName] = l_SpriteMapInfo;
 
 		for (int i = 0; i < TreeNode.GetNumChildren(); ++i)
 		{
@@ -268,11 +276,10 @@ void CGUIManager::AddSpriteMap(CXMLTreeNode &TreeNode)
 				float l_v2 = (l_y + l_h) / (float)l_Height;
 
 				SSpriteInfo* l_Sprite = new SSpriteInfo(l_SpriteMapInfo, l_u1, l_u2, l_v1, l_v2);
-				m_Sprites.insert(std::pair<std::string, SSpriteInfo*>(l_SpriteName, l_Sprite));
+				m_Sprites[l_SpriteName] = l_Sprite;
 			}
 		}
-
-		m_SpriteMaps.insert(std::pair<std::string, SSpriteMapInfo*>(l_SpriteMapName, l_SpriteMapInfo));
+		
 		CRenderableVertexs *l_RV = new CTrianglesListRenderableVertexs<MV_POSITION4_COLOR_TEXTURE_VERTEX>(m_CurrentBufferData, s_MaxVerticesPerCall, 10, true);
 		m_VertexBuffers.push_back(l_RV);
 	}
@@ -308,42 +315,42 @@ void CGUIManager::Destroy()
 	std::map<std::string, SSliderInfo*>::iterator itSlider;
 	for (itSlider = m_Sliders.begin(); itSlider != m_Sliders.end(); ++itSlider)
 	{
-		CHECKED_DELETE(itSlider->second);
+		delete(itSlider->second); itSlider->second = NULL;
 	}
 	m_Sliders.clear();
 
 	std::map<std::string, SHealthBarInfo*>::iterator itHealthBar;
 	for (itHealthBar = m_HealthBars.begin(); itHealthBar != m_HealthBars.end(); ++itHealthBar)
 	{
-		CHECKED_DELETE(itHealthBar->second);
+		delete(itHealthBar->second); itHealthBar->second = NULL;
 	}
 	m_HealthBars.clear();
 
 	std::map<std::string, SImageInfo*>::iterator itImage;
 	for (itImage = m_Images.begin(); itImage != m_Images.end(); ++itImage)
 	{
-		CHECKED_DELETE(itImage->second);
+		delete(itImage->second); itImage->second = NULL;
 	}
 	m_Images.clear();
 
 	std::map<std::string, SButtonInfo*>::iterator itButton;
 	for (itButton = m_Buttons.begin(); itButton != m_Buttons.end(); ++itButton)
 	{
-		CHECKED_DELETE(itButton->second);
+		delete(itButton->second); itButton->second = NULL;
 	}
 	m_Buttons.clear();
 
 	std::map<std::string, SSpriteMapInfo*>::iterator itMap;
 	for (itMap = m_SpriteMaps.begin(); itMap != m_SpriteMaps.end(); ++itMap)
 	{
-		CHECKED_DELETE(itMap->second);
+		delete(itMap->second); itMap->second = NULL;
 	}
 	m_SpriteMaps.clear();
 
 	std::map<std::string, SSpriteInfo*>::iterator itSprite;
 	for (itSprite = m_Sprites.begin(); itSprite != m_Sprites.end(); ++itSprite)
 	{
-		CHECKED_DELETE(itSprite->second);
+		delete(itSprite->second); itSprite->second = NULL;
 	}
 	m_Sprites.clear();
 
@@ -430,9 +437,8 @@ void CGUIManager::AddImage(const std::string& ImageID, const std::string& Sprite
 	SSpriteInfo* l_Sprite = GetSprite(Sprite);
 	assert(l_Sprite != nullptr);
 
-
 	SImageInfo* l_Image = new SImageInfo(l_Sprite);
-	m_Images.insert(std::pair<std::string, SImageInfo*>(ImageID, l_Image));
+	m_Images[ImageID] = l_Image;
 }
 
 void CGUIManager::AddButton(const std::string& ButtonID, const std::string& Normal, const std::string& Highlight, const std::string& Pressed)
@@ -445,7 +451,7 @@ void CGUIManager::AddButton(const std::string& ButtonID, const std::string& Norm
 	assert(l_Pressed != nullptr); 
 
 	SButtonInfo* l_Button = new SButtonInfo(l_Normal, l_Highlight, l_Pressed);
-	m_Buttons.insert(std::pair<std::string, SButtonInfo*>(ButtonID, l_Button));
+	m_Buttons[ButtonID] = l_Button;
 }
 
 void CGUIManager::AddSlider(const std::string& SliderID, const std::string& Base, const std::string& Top, const std::string& Handle, const std::string& PressedHandle)
@@ -461,7 +467,7 @@ void CGUIManager::AddSlider(const std::string& SliderID, const std::string& Base
 	assert(l_PressedHandle != nullptr);
 
 	SSliderInfo* l_Slider = new SSliderInfo(l_Base, l_Top, l_Handle, l_PressedHandle);
-	m_Sliders.insert(std::pair<std::string, SSliderInfo*>(SliderID, l_Slider));
+	m_Sliders[SliderID] = l_Slider;
 }
 
 void CGUIManager::AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top, const std::string& Background)
@@ -475,7 +481,7 @@ void CGUIManager::AddHealthBar(const std::string& HealthBarID, const std::string
 	assert(l_Background != nullptr);
 
 	SHealthBarInfo* l_HealthBar = new SHealthBarInfo(l_Base, l_Top, l_Background);
-	m_HealthBars.insert(std::pair<std::string, SHealthBarInfo*>(HealthBarID, l_HealthBar));
+	m_HealthBars[HealthBarID] = l_HealthBar;
 }
 
 void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position)
@@ -943,6 +949,10 @@ CGUIManager::SFontChar::SFontChar(uint16 X, uint16 Y, uint16 Width, uint16 Heigh
 	chnl = Chnl;
 }
 
+CGUIManager::SFontChar::SFontChar():x(0), y(0), width(0), height(0), xoffset(0), yoffset(0), xadvance(0), page(0), chnl(0)
+{
+}
+
 void CGUIManager::AddFont(const std::string& FontName, const std::string& FontPath)
 {
 	CXMLTreeNode l_XML;
@@ -969,8 +979,11 @@ void CGUIManager::AddFont(const std::string& FontName, const std::string& FontPa
 					l_H = l_Element.GetIntProperty("scaleH");
 					int l_LineHeight = l_Element.GetIntProperty("lineHeight");
 					int l_Base = l_Element.GetIntProperty("base");
-					m_LineHeightPerFont.insert(std::pair<std::string, int16>(FontName, l_LineHeight));
-					m_BasePerFont.insert(std::pair<std::string, int16>(FontName, l_Base));
+
+					//m_LineHeightPerFont.insert(std::pair<std::string, int16>(FontName, l_LineHeight));
+					m_LineHeightPerFont[FontName] = l_LineHeight;
+					//m_BasePerFont.insert(std::pair<std::string, int16>(FontName, l_Base));
+					m_BasePerFont[FontName] = l_Base;
 				}
 				else if (l_Element.GetName() == std::string("pages"))
 				{
@@ -1011,9 +1024,9 @@ void CGUIManager::AddFont(const std::string& FontName, const std::string& FontPa
 							int l_Page = l_Char.GetIntProperty("page");
 							int l_Chnl = l_Char.GetIntProperty("chnl");
 
-							SFontChar l_FontChar(l_X,l_Y,l_Width,l_Height,l_Xoffset,l_Yoffset,l_Xadvance,l_Page,l_Chnl);
-						
-							l_CharacterMap.insert(std::pair<wchar_t, CGUIManager::SFontChar>(l_ID, l_FontChar));
+							CGUIManager::SFontChar l_FontChar(l_X, l_Y, l_Width, l_Height, l_Xoffset, l_Yoffset, l_Xadvance, l_Page, l_Chnl);
+							//l_CharacterMap.insert(std::pair<wchar_t, CGUIManager::SFontChar>(l_ID, l_FontChar));
+							l_CharacterMap[l_ID] = l_FontChar;
 						}
 					}
 				}
@@ -1030,9 +1043,11 @@ void CGUIManager::AddFont(const std::string& FontName, const std::string& FontPa
 							int l_Amount = l_Element.GetIntProperty("amount");
 
 							std::unordered_map<wchar_t, int> l_UM;
-							l_UM.insert(std::pair<wchar_t, int>(l_Second, l_Amount));
+							//l_UM.insert(std::pair<wchar_t, int>(l_Second, l_Amount));
+							l_UM[l_Second] = l_Amount;
 
-							l_Kernings.insert(std::pair<wchar_t, std::unordered_map<wchar_t, int>>(l_First, l_UM));
+							//l_Kernings.insert(std::pair<wchar_t, std::unordered_map<wchar_t, int>>(l_First, l_UM));
+							l_Kernings[l_First] = l_UM;
 						}
 					}
 				}

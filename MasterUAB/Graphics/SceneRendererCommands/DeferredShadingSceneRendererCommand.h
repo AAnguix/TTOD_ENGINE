@@ -8,21 +8,25 @@ class COmniLight;
 
 class CDeferredShadingSceneRendererCommand : public CStagedTexturedSceneRendererCommand 
 { 
-	private:  
-		CRenderableObjectTechnique *m_RenderableObjectTechnique; 
-		ID3D11BlendState *m_EnabledAlphaBlendState; 
-		bool m_UseLightVolumes;
+private:  
+	CRenderableObjectTechnique *m_RenderableObjectTechnique; 
+	bool m_UseLightVolumes;
+	ID3D11DepthStencilState *m_DepthStencilState;
 
-		CStaticMesh* m_Sphere; /*Used to optimize deferred shading*/
-		bool IsCameraInsideLight(CRenderManager &RenderManager, COmniLight* Light);
+	CStaticMesh* m_SphereFirstPass; /*Used to optimize deferred shading*/
+	CStaticMesh* m_SphereSecondPass;
 
-		void ExecuteDeferredShading(CRenderManager &RenderManager);
-		void ExecuteDeferredShadingUsingLightVolumes(CRenderManager &RenderManager);
+	bool IsCameraInsideLight(CRenderManager &RenderManager, COmniLight* Light);
 
-	public:  
-		CDeferredShadingSceneRendererCommand(CXMLTreeNode &TreeNode);  
-		virtual ~CDeferredShadingSceneRendererCommand();  
-		void Execute(CRenderManager &RenderManager); 
+	void ExecuteDeferredShading(CRenderManager &RenderManager);
+	void ExecuteDeferredShadingUsingLightVolumes(CRenderManager &RenderManager);
+	void FirstPast(CRenderManager &RenderManager);
+	void SecondPass(CRenderManager &RenderManager);
+
+public:  
+	CDeferredShadingSceneRendererCommand(CXMLTreeNode &TreeNode);  
+	virtual ~CDeferredShadingSceneRendererCommand();  
+	void Execute(CRenderManager &RenderManager); 
 };
 
 #endif

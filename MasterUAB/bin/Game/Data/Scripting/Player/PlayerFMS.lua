@@ -78,14 +78,35 @@ function OnUpdate_Walk_Player(Player, ElapsedTime)
 	
 	local l_PlayerForward = Vect3f(0.0,0.0,0.0)
 	
-	if Player.m_Right then
-		l_PlayerForward = Player.m_RObject:GetRight()
-	elseif Player.m_Left then 
-		l_PlayerForward = Player.m_RObject:GetRight()*(-1.0)
-	elseif Player.m_Forward then 
-		l_PlayerForward = Player.m_RObject:GetForward()
-	elseif Player.m_Backwards then 
-		l_PlayerForward = Player.m_RObject:GetForward()*(-1.0)
+	local l_Forward = Player.m_RObject:GetForward()
+	local l_Backwards = Player.m_RObject:GetForward()*(-1.0)
+	local l_Right = Player.m_RObject:GetRight()
+	local l_Left = Player.m_RObject:GetRight()*(-1.0)
+	
+	if (Player.m_Forward and Player.m_Right) then
+		l_PlayerForward =  l_Forward + l_Right
+		l_PlayerForward:Normalize(1)
+	elseif (Player.m_Forward and Player.m_Left) then
+		l_PlayerForward =  l_Forward + l_Left
+		l_PlayerForward:Normalize(1)
+	elseif (Player.m_Backwards and Player.m_Right) then
+		l_PlayerForward =  l_Backwards + l_Right
+		l_PlayerForward:Normalize(1)
+	elseif (Player.m_Backwards and Player.m_Left) then
+		l_PlayerForward =  l_Backwards + l_Left
+		l_PlayerForward:Normalize(1)	
+	elseif (Player.m_Forward) then
+		l_PlayerForward =  l_Forward
+		l_PlayerForward:Normalize(1)
+	elseif (Player.m_Backwards) then
+		l_PlayerForward =  l_Backwards
+		l_PlayerForward:Normalize(1)
+	elseif (Player.m_Right) then
+		l_PlayerForward =  l_Right
+		l_PlayerForward:Normalize(1)
+	elseif (Player.m_Left) then
+		l_PlayerForward =  l_Left
+		l_PlayerForward:Normalize(1)
 	end
 	
 	local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()

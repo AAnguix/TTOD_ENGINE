@@ -8,8 +8,7 @@ m_PrevPos(v3fZERO),
 m_Yaw(0.0f),
 m_Pitch(0.0f),
 m_Roll(0.0f),
-m_Scale(Vect3f(1.0,1.0,1.0)),
-m_Visible(true)
+m_Scale(Vect3f(1.0,1.0,1.0))
 {
 }
 
@@ -19,8 +18,7 @@ m_PrevPos(v3fZERO),
 m_Yaw(0.0f),
 m_Pitch(0.0f),
 m_Roll(0.0f),
-m_Scale(Vect3f(1.0, 1.0, 1.0)),
-m_Visible(true)
+m_Scale(Vect3f(1.0, 1.0, 1.0))
 {
 }
 
@@ -51,7 +49,6 @@ m_Position(XMLTreeNode.GetVect3fProperty("pos", v3fZERO))
 ,m_Pitch(XMLTreeNode.GetFloatProperty("pitch", 0.0f))
 ,m_Roll(XMLTreeNode.GetFloatProperty("roll", 0.0f))
 ,m_Scale(Vect3f(1.0, 1.0, 1.0))
-,m_Visible(XMLTreeNode.GetBoolProperty("visible", true))
 {
 } 
 
@@ -183,18 +180,18 @@ const Mat44f & C3DElement::ChildGetTransform(float Yaw, float Pitch, float Roll)
 	return m_TransformMatrix;
 }
 
-bool C3DElement::GetVisible() const
-{
-	return m_Visible;
-}
-
-void C3DElement::SetVisible(bool Visible)
-{
-	m_Visible=Visible;
-}
+//bool C3DElement::GetVisible() const
+//{
+//	return m_Visible;
+//}
+//
+//void C3DElement::SetVisible(bool Visible)
+//{
+//	m_Visible=Visible;
+//}
 
 CEmptyPointerClass* C3DElement::GetYawLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Yaw); }
 CEmptyPointerClass* C3DElement::GetPitchLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Pitch); }
 CEmptyPointerClass* C3DElement::GetRollLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Roll); }
-CEmptyPointerClass* C3DElement::GetPositionLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Position); }
-CEmptyPointerClass* C3DElement::GetScaleLuaAddress() const { return (CEmptyPointerClass *)((void*)&m_Scale); }
+CEmptyPointerClass* C3DElement::GetPositionLuaAddress(int Index) { return (CEmptyPointerClass *)&m_Position[Index]; }
+CEmptyPointerClass* C3DElement::GetScaleLuaAddress(int Index) { return (CEmptyPointerClass *)&m_Scale[Index]; }

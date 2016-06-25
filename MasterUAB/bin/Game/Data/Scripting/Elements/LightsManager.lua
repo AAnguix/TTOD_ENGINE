@@ -23,9 +23,18 @@ function Lerp(a,b,k)
 	return (a + (b - a)*k)
 end
 
-function CLightManager:EnableLights(ElapsedTime)
-	local l_Intensity = Lerp(0.0,1.0,ElapsedTime)
+function CLightManager:DisableLights()
 	for i=1, (#self.m_Lights) do
+		self.m_Lights[i]:SetIntensity(0.1) 
+	end	
+end
+
+function CLightManager:EnableLights(ElapsedTime)
+	local l_Intensity = 0.0
+	-- local l_Intensity = Lerp(0.0,1.0,ElapsedTime)
+	for i=1, (#self.m_Lights) do
+		local l_LightIntensity = self.m_Lights[i]:GetIntensity()
+		local l_Intensity = Lerp(l_LightIntensity,1.0,ElapsedTime*0.25)
 		self.m_Lights[i]:SetIntensity(l_Intensity) 
 	end	
 	

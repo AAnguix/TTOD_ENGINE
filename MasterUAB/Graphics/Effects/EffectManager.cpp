@@ -7,6 +7,7 @@
 #include "Lights\Light.h"
 #include "Textures\DynamicTexture.h"
 #include "XML\XMLTreeNode.h"
+#include "Utils\FileUtils.h"
 
 CSceneEffectParameters CEffectManager::m_SceneEffectParameters;
 CLightEffectParameters CEffectManager::m_LightEffectParameters;
@@ -16,6 +17,7 @@ CMaterialEffectParameters CEffectManager::m_MaterialEffectParameters;
 #define UAB_ID_SHADOW_MAP 6
 
 CEffectManager::CEffectManager()
+:m_EffectsStateCode(0)
 {
 
 }
@@ -58,6 +60,8 @@ void CEffectManager::Load(const std::string &Filename)
 
 		if (l_Effects.Exists())
 		{
+			m_EffectsStateCode = CFileUtils::GetEffectsFileStateCode();
+
 			for (int i = 0; i < l_Effects.GetNumChildren(); ++i)
 			{
 				CXMLTreeNode l_Element = l_Effects(i);

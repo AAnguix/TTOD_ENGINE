@@ -53,12 +53,12 @@ end
 
 function CPedestalComponent:Update(ElapsedTime)
 	if self.m_Active == true then
-		self:AddTime()
+		self:AddTime(ElapsedTime)
 		if(self:GetTimer() <= self.m_TimeActive) then
-			if self.m_SoundPlayed == false then
-				self.m_GameObject:GetAudioSource():PlayEvent("pedestal_sound")
-				self.m_SoundPlayed = true
-			end
+			-- if self.m_SoundPlayed == false then
+				-- self.m_GameObject:GetAudioSource():PlayEvent("pedestal_sound")
+				-- self.m_SoundPlayed = true
+			-- end
 			--Show GUI message telling player that he has reach and objetive
 		else
 			self.m_Active = false
@@ -72,12 +72,20 @@ end
 
 function CPedestalComponent:ShowGuiMessage()
 	
-	local l_Center = SGUIPosition(0.4,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	local l_Pressed = g_GUIManager:DoButton("pedestal01_button","pedestal01_button", l_Center)
+	-- local l_Center = SGUIPosition(0.4,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	-- local l_Pressed = g_GUIManager:DoButton("pedestal01_button","pedestal01_button", l_Center)
 	--local l_Pressed = g_GUIManager:DoButton(self.m_Button.m_GuiID, self.m_Button.m_ButtonID, l_Center)
-	if l_Pressed then
+	
+	local l_Pos = SGUIPosition(0.4,0.7,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("DorrPedestalText","felix_font",l_Pos,"","Press E to activate")
+	
+	if g_PlayerComponent.m_E then
 		self.m_Active = true
-	end
+	end	
+
+	-- if l_Pressed then
+		-- self.m_Active = true
+	-- end
 end
 
 function CPedestalComponent:IsActive()

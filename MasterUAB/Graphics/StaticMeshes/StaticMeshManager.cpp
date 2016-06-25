@@ -3,6 +3,7 @@
 #include "XML\XMLTreeNode.h"
 #include "Engine.h"
 #include "Log\Log.h"
+#include "PhysXManager.h"
 
 CStaticMeshManager::CStaticMeshManager()
 :m_FileName("")
@@ -42,6 +43,14 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 						if (l_Load)
 							l_StaticMesh->LoadShape(l_Element.GetPszProperty("shape_type", ""), l_Element.GetPszProperty("group", ""), l_Element.GetBoolProperty("is_exclusive", false));
 					}
+				}
+				if (l_Element.GetName() == std::string("physx_shape"))
+				{
+					std::string l_Name = l_Element.GetPszProperty("name");
+					std::string l_Group = l_Element.GetPszProperty("group");
+					std::string l_Filename = l_Element.GetPszProperty("filename");
+					//CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group)
+					CEngine::GetSingleton().GetPhysXManager()->CreateTriangleMeshFromFile(l_Name, l_Filename, "PhXMesh", 10.0f, 10.0f, 0.5f, l_Group);
 				}
 			}
 		}

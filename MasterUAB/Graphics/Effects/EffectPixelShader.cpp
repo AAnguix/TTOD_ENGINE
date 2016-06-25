@@ -32,7 +32,7 @@ bool CEffectPixelShader::Load()
 	CreateShaderMacro(); 
 
 	ID3DBlob *l_PSBlob=NULL;  
-	bool l_Loaded=LoadShader(m_Filename.c_str(), m_EntryPoint.c_str(), m_ShaderModel.c_str(), &l_PSBlob);
+	bool l_Loaded = LoadShaderExtended(m_Name, m_Filename.c_str(), m_EntryPoint.c_str(), m_ShaderModel.c_str(), &l_PSBlob);
 	
 	if(!l_Loaded)  
 	{

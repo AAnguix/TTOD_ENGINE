@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <materials>
-
 	<material name="background_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\information.dds"/>
 </material>
 	<material name="slider_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\slider.dds"/>
 </material>
-	<material name="console_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<!-- <material name="console_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\console.png"/>
-</material>
+</material> -->
 	<material name="textbox_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\textBox.png"/>
 </material>

@@ -18,16 +18,16 @@
 #include <cmath>
 
 CContextManager::CContextManager()
-:m_D3DDevice(nullptr)
-,m_DeviceContext(nullptr)
-,m_SwapChain(nullptr)
-,m_RenderTargetView(nullptr)
-,m_DepthStencil(nullptr)
-,m_DepthStencilView(nullptr)
-,m_D3DDebug(nullptr)
-,m_Height(0)
-,m_Width(0)
-,m_NumViews(0)
+	:m_D3DDevice(nullptr)
+	, m_DeviceContext(nullptr)
+	, m_SwapChain(nullptr)
+	, m_RenderTargetView(nullptr)
+	, m_DepthStencil(nullptr)
+	, m_DepthStencilView(nullptr)
+	, m_D3DDebug(nullptr)
+	, m_Height(0)
+	, m_Width(0)
+	, m_NumViews(0)
 {
 
 	for (int i = 0; i < RS_COUNT; ++i)
@@ -41,7 +41,7 @@ CContextManager::CContextManager()
 	/*
 	for (int i = 0; i < BLEND_COUNT; ++i)
 	{
-		m_BlendStates[i] = nullptr;
+	m_BlendStates[i] = nullptr;
 	}*/
 	m_AlphaBlendState = nullptr;
 
@@ -60,7 +60,7 @@ void CContextManager::Dispose()
 	/*
 	for (int i = 0; i < BLEND_COUNT; ++i)
 	{
-		CHECKED_RELEASE(m_BlendStates[i]);
+	CHECKED_RELEASE(m_BlendStates[i]);
 	}*/
 	CHECKED_RELEASE(m_AlphaBlendState);
 
@@ -71,7 +71,7 @@ void CContextManager::Dispose()
 	if (m_SwapChain)
 	{
 		m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-		m_SwapChain->SetFullscreenState(false, nullptr); 
+		m_SwapChain->SetFullscreenState(false, nullptr);
 	}
 
 	if (m_D3DDebug)
@@ -84,7 +84,7 @@ void CContextManager::Dispose()
 	CHECKED_RELEASE(m_SwapChain);
 }
 
-HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned int Height)
+HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned int Height, bool FullScreen)
 {
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
@@ -115,20 +115,20 @@ HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned i
 	#else
 	int flags = 0;
 	#endif*/
-	
+
 	if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, featureLevels, numFeatureLevels,
 		D3D11_SDK_VERSION, &sd, &m_SwapChain, &m_D3DDevice, NULL, &m_DeviceContext)))
 	{
 		return S_FALSE;
 	}
 
-	m_SwapChain->SetFullscreenState(false, nullptr); //FullScreen
+	m_SwapChain->SetFullscreenState(FullScreen, nullptr); //FullScreen
 
 	/*
 	#if _DEBUG
 	HRESULT hr = m_D3DDevice->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&m_D3DDebug));
 	if (FAILED(hr))
-		return hr;
+	return hr;
 	#endif*/
 
 	//Alt+Enter
@@ -343,34 +343,34 @@ void CContextManager::InitRasterizerStates()
 	l_WireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
 	l_WireframeDesc.CullMode = D3D11_CULL_NONE;
 	l_WireframeDesc.FrontCounterClockwise = true;
-	
+
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_WireframeDesc, &m_RasterizerSates[RS_WIREFRAME]);
 	assert(l_HR == S_OK);
-	
+
 	D3D11_RASTERIZER_DESC l_SolidDesc;
 	ZeroMemory(&l_SolidDesc, sizeof(D3D11_RASTERIZER_DESC));
 	l_SolidDesc.FillMode = D3D11_FILL_SOLID;
 	l_SolidDesc.CullMode = D3D11_CULL_NONE;
 	l_SolidDesc.FrontCounterClockwise = true;
-	
+
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_SolidDesc, &m_RasterizerSates[RS_SOLID]);
 	assert(l_HR == S_OK);
-	
+
 	D3D11_RASTERIZER_DESC l_FrontalCulling;
 	ZeroMemory(&l_FrontalCulling, sizeof(D3D11_RASTERIZER_DESC));
 	l_FrontalCulling.FillMode = D3D11_FILL_SOLID;
 	l_FrontalCulling.CullMode = D3D11_CULL_FRONT;
 	l_FrontalCulling.FrontCounterClockwise = true;
-	
+
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_FrontalCulling, &m_RasterizerSates[RS_CULL_FRONT]);
 	assert(l_HR == S_OK);
-	
+
 	D3D11_RASTERIZER_DESC l_BackCulling;
 	ZeroMemory(&l_BackCulling, sizeof(D3D11_RASTERIZER_DESC));
 	l_BackCulling.FillMode = D3D11_FILL_SOLID;
 	l_BackCulling.CullMode = D3D11_CULL_BACK;
 	l_BackCulling.FrontCounterClockwise = true;
-	
+
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_BackCulling, &m_RasterizerSates[RS_CULL_BACK]);
 	assert(l_HR == S_OK);
 }
@@ -383,7 +383,7 @@ void CContextManager::InitDepthStencilStates()
 	l_DepthOnDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	l_HR = m_D3DDevice->CreateDepthStencilState(&l_DepthOnDesc, &m_DepthStencilStates[DSS_DEPTH_ON]);
 	assert(l_HR == S_OK);
-	
+
 	D3D11_DEPTH_STENCIL_DESC l_DepthOffDesc = {};
 	l_DepthOffDesc.DepthEnable = false;
 	l_DepthOffDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -404,15 +404,15 @@ void CContextManager::InitBlendingStates()
 {
 	HRESULT l_HR;
 	D3D11_BLEND_DESC l_AlphablendDesc;
-	ZeroMemory(&l_AlphablendDesc, sizeof(D3D11_BLEND_DESC)); 
-	l_AlphablendDesc.RenderTarget[0].BlendEnable=true;
-	l_AlphablendDesc.RenderTarget[0].SrcBlend=D3D11_BLEND_SRC_ALPHA;
-	l_AlphablendDesc.RenderTarget[0].DestBlend=D3D11_BLEND_INV_SRC_ALPHA;
-	l_AlphablendDesc.RenderTarget[0].BlendOp=D3D11_BLEND_OP_ADD;
-	l_AlphablendDesc.RenderTarget[0].SrcBlendAlpha=D3D11_BLEND_ONE;
-	l_AlphablendDesc.RenderTarget[0].DestBlendAlpha=D3D11_BLEND_ONE;
-	l_AlphablendDesc.RenderTarget[0].BlendOpAlpha=D3D11_BLEND_OP_ADD;
-	l_AlphablendDesc.RenderTarget[0].RenderTargetWriteMask=D3D11_COLOR_WRITE_ENABLE_ALL;
+	ZeroMemory(&l_AlphablendDesc, sizeof(D3D11_BLEND_DESC));
+	l_AlphablendDesc.RenderTarget[0].BlendEnable = true;
+	l_AlphablendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	l_AlphablendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	l_AlphablendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	l_AlphablendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	l_AlphablendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	l_AlphablendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	l_AlphablendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	l_HR = m_D3DDevice->CreateBlendState(&l_AlphablendDesc, &m_AlphaBlendState);
 	assert(l_HR == S_OK);
 
@@ -436,7 +436,7 @@ void CContextManager::InitBlendingStates()
 	l_AdditiveAlphablendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	l_HR = m_D3DDevice->CreateBlendState(&l_AdditiveAlphablendDesc, &m_AdditiveAlphaBlendState);
 	assert(l_HR == S_OK);
-	
+
 	D3D11_BLEND_DESC l_SolidBlending = {};
 	l_SolidBlending.RenderTarget[0].BlendEnable = false;
 	l_SolidBlending.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
@@ -448,7 +448,7 @@ void CContextManager::InitBlendingStates()
 	l_SolidBlending.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	l_HR = m_D3DDevice->CreateBlendState(&l_SolidBlending, &m_BlendStates[BLEND_SOLID]);
 	assert(l_HR == S_OK);
-	
+
 	D3D11_BLEND_DESC l_ClassicBlending = {};
 	l_ClassicBlending.RenderTarget[0].BlendEnable = true;
 	l_ClassicBlending.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -460,7 +460,7 @@ void CContextManager::InitBlendingStates()
 	l_ClassicBlending.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	l_HR = m_D3DDevice->CreateBlendState(&l_ClassicBlending, &m_BlendStates[BLEND_CLASSIC]);
 	assert(l_HR == S_OK);
-	
+
 	D3D11_BLEND_DESC l_PremultBlending = {};
 	l_PremultBlending.RenderTarget[0].BlendEnable = true;
 	l_PremultBlending.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
@@ -472,16 +472,29 @@ void CContextManager::InitBlendingStates()
 	l_PremultBlending.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	l_HR = m_D3DDevice->CreateBlendState(&l_PremultBlending, &m_BlendStates[BLEND_PREMULT]);
 	assert(l_HR == S_OK);
+
+	D3D11_BLEND_DESC l_DeferredShadingBlendState;
+	ZeroMemory(&l_DeferredShadingBlendState, sizeof(D3D11_BLEND_DESC));
+	l_DeferredShadingBlendState.RenderTarget[0].BlendEnable = true;
+	l_DeferredShadingBlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	l_DeferredShadingBlendState.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	l_DeferredShadingBlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	l_DeferredShadingBlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	l_DeferredShadingBlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	l_DeferredShadingBlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	l_DeferredShadingBlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	l_HR = m_D3DDevice->CreateBlendState(&l_DeferredShadingBlendState, &m_BlendStates[BLEND_DEFERRED_SHADING]);
+	assert(l_HR == S_OK);
 }
 
-void CContextManager::Resize(HWND hWnd, unsigned int Width, unsigned int Height)
+void CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height)
 {
 	if (m_D3DDevice != nullptr)
 	{
 		m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 		/*for(int i=0;i<MAX_RENDER_TARGETS;++i)
-			CHECKED_RELEASE(m_CurrentRenderTargetViews[i]);*/
+		CHECKED_RELEASE(m_CurrentRenderTargetViews[i]);*/
 		CHECKED_RELEASE(m_DepthStencil);
 		CHECKED_RELEASE(m_DepthStencilView);
 
@@ -493,33 +506,33 @@ void CContextManager::Resize(HWND hWnd, unsigned int Width, unsigned int Height)
 
 void CContextManager::Draw(CRenderableVertexs* _VerticesToRender, ERasterizedState _RS, EDepthStencilState _DSS, EBlendState _BS)
 {
-    m_DeviceContext->RSSetState(m_RasterizerSates[RS_SOLID]); //m_DeviceContext->RSSetState(m_RasterizerSates[_RS]);
-    m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[_DSS], 0);
-    Vect4f v(1, 1, 1, 1);
-    m_DeviceContext->OMSetBlendState(m_BlendStates[_BS], &v.x, 0xffffffff);
+	m_DeviceContext->RSSetState(m_RasterizerSates[RS_SOLID]); //m_DeviceContext->RSSetState(m_RasterizerSates[_RS]);
+	m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[_DSS], 0);
+	Vect4f v(1, 1, 1, 1);
+	m_DeviceContext->OMSetBlendState(m_BlendStates[_BS], &v.x, 0xffffffff);
 
-    s_DebugEffect->UpdateParameters(m_DeviceContext, &CEffectManager::m_SceneEffectParameters);
-    s_DebugEffect->SetActive(m_DeviceContext);
-	
+	s_DebugEffect->UpdateParameters(m_DeviceContext, &CEffectManager::m_SceneEffectParameters);
+	s_DebugEffect->SetActive(m_DeviceContext);
+
 	CRenderManager* l_RenderManager = CEngine::GetSingleton().GetRenderManager();
 	CEffectTechnique* l_ETechnique = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("MV_POSITION_COLOR_VERTEX")->GetEffectTechnique();
-	_VerticesToRender->Render(l_RenderManager,l_ETechnique,(void *)&CEffectManager::m_SceneEffectParameters);
+	_VerticesToRender->Render(l_RenderManager, l_ETechnique, (void *)&CEffectManager::m_SceneEffectParameters);
 }
 
 void CContextManager::DrawIndexed(CRenderableVertexs* _VerticesToRender, ERasterizedState _RS, EDepthStencilState _DSS, EBlendState _BS)
 {
 	m_DeviceContext->RSSetState(m_RasterizerSates[RS_SOLID]); //m_DeviceContext->RSSetState(m_RasterizerSates[_RS]);
-    m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[_DSS], 0);
-    Vect4f v(1, 1, 1, 1);
-    m_DeviceContext->OMSetBlendState(m_BlendStates[_BS], &v.x, 0xffffffff);
+	m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[_DSS], 0);
+	Vect4f v(1, 1, 1, 1);
+	m_DeviceContext->OMSetBlendState(m_BlendStates[_BS], &v.x, 0xffffffff);
 
-    s_DebugEffect->UpdateParameters(m_DeviceContext, &CEffectManager::m_SceneEffectParameters);
-    s_DebugEffect->SetActive(m_DeviceContext);
-	
+	s_DebugEffect->UpdateParameters(m_DeviceContext, &CEffectManager::m_SceneEffectParameters);
+	s_DebugEffect->SetActive(m_DeviceContext);
+
 	CRenderManager* l_RenderManager = CEngine::GetSingleton().GetRenderManager();
 	CEffectTechnique* l_ETechnique = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("MV_POSITION_COLOR_VERTEX")->GetEffectTechnique();
 
-	_VerticesToRender->RenderIndexed(l_RenderManager,l_ETechnique,(void *)&CEffectManager::m_SceneEffectParameters);
+	_VerticesToRender->RenderIndexed(l_RenderManager, l_ETechnique, (void *)&CEffectManager::m_SceneEffectParameters);
 }
 
 
@@ -537,11 +550,11 @@ void CContextManager::BeginRender(CColor backgroundColor)
 	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	m_DeviceContext->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
-	
+
 	//Set Render States
 	m_DeviceContext->RSSetState(m_RasterizerSates[RS_SOLID]); //m_DeviceContext->RSSetState(m_RasterizerSates[_RS]);
 	m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[DSS_DEPTH_ON], 0);
-	float v=1;
+	float v = 1;
 	m_DeviceContext->OMSetBlendState(m_AlphaBlendState, &v, 0xffffffff);
 }
 
@@ -555,17 +568,17 @@ void CContextManager::EndRender()
 void CContextManager::Clear(bool RenderTarget, bool DepthStencil)
 {
 	float color[4];
-	color[0]=1.0;
-	color[1]=1.0;
-	color[2]=1.0;
-	color[3]=1.0;
+	color[0] = 1.0;
+	color[1] = 1.0;
+	color[2] = 1.0;
+	color[3] = 1.0;
 
-	if(RenderTarget)
+	if (RenderTarget)
 	{
-		for(int i=0;i<m_NumViews;++i)
+		for (int i = 0; i<m_NumViews; ++i)
 			m_DeviceContext->ClearRenderTargetView(m_CurrentRenderTargetViews[i], color);
 	}
-	if(DepthStencil)
+	if (DepthStencil)
 		m_DeviceContext->ClearDepthStencilView(m_CurrentDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
@@ -576,16 +589,16 @@ void CContextManager::Present()
 
 void CContextManager::SetMatrices(const CCamera& Camera)
 {
-	CEffectManager::m_SceneEffectParameters.m_View = Camera.GetView(); 
+	CEffectManager::m_SceneEffectParameters.m_View = Camera.GetView();
 	CEffectManager::m_SceneEffectParameters.m_Projection = Camera.GetProjection();
 
-	CEffectManager::m_SceneEffectParameters.m_InverseView =  Camera.GetView();
+	CEffectManager::m_SceneEffectParameters.m_InverseView = Camera.GetView();
 	CEffectManager::m_SceneEffectParameters.m_InverseView.Invert();
-	CEffectManager::m_SceneEffectParameters.m_InverseProjection =  Camera.GetProjection();
+	CEffectManager::m_SceneEffectParameters.m_InverseProjection = Camera.GetProjection();
 	CEffectManager::m_SceneEffectParameters.m_InverseProjection.Invert();
-	CEffectManager::m_SceneEffectParameters.m_CameraPosition=Camera.GetPosition();
+	CEffectManager::m_SceneEffectParameters.m_CameraPosition = Camera.GetPosition();
 
-	CEffectManager::m_SceneEffectParameters.m_CameraProjectionInfo=Vect4f(Camera.GetZNear(),Camera.GetZFar(),Camera.GetFOV(),Camera.GetAspectRatio());
+	CEffectManager::m_SceneEffectParameters.m_CameraProjectionInfo = Vect4f(Camera.GetZNear(), Camera.GetZFar(), Camera.GetFOV(), Camera.GetAspectRatio());
 }
 
 void CContextManager::SetTimes(float ElapsedTime)
@@ -604,8 +617,8 @@ D3D11_VIEWPORT CContextManager::GetViewPort()
 void CContextManager::SetDefaultViewPort()
 {
 	D3D11_VIEWPORT l_Viewport;
-	l_Viewport.Width=m_Viewport.Width;
-	l_Viewport.Height=m_Viewport.Height;
+	l_Viewport.Width = m_Viewport.Width;
+	l_Viewport.Height = m_Viewport.Height;
 	l_Viewport.MinDepth = 0.0f;
 	l_Viewport.MaxDepth = 1.0f;
 	l_Viewport.TopLeftX = 0.0f;
@@ -615,9 +628,9 @@ void CContextManager::SetDefaultViewPort()
 
 void CContextManager::SetRenderTargets(int NumViews, ID3D11RenderTargetView *const*RenderTargetViews, ID3D11DepthStencilView *DepthStencilView)
 {
-	m_NumViews=NumViews;
-	m_CurrentRenderTargetViews=RenderTargetViews;
-	m_CurrentDepthStencilView=DepthStencilView;
+	m_NumViews = NumViews;
+	m_CurrentRenderTargetViews = RenderTargetViews;
+	m_CurrentDepthStencilView = DepthStencilView;
 	m_DeviceContext->OMSetRenderTargets(m_NumViews, RenderTargetViews, DepthStencilView);
 }
 
@@ -632,9 +645,14 @@ void CContextManager::SetAlphaBlendState(ID3D11BlendState* AlphaBlendState)
 	m_DeviceContext->OMSetBlendState(AlphaBlendState, &l_BlendFactors.x, 0xffffffff);
 }
 
+void CContextManager::EnableDeferredShadingBlendState()
+{
+	m_DeviceContext->OMSetBlendState(m_BlendStates[BLEND_DEFERRED_SHADING], NULL, 0xffffffff);
+}
+
 void CContextManager::EnableAlphaBlendState()
 {
-	m_DeviceContext->OMSetBlendState(m_AlphaBlendState, NULL, 0xffffffff); 
+	m_DeviceContext->OMSetBlendState(m_AlphaBlendState, NULL, 0xffffffff);
 }
 
 void CContextManager::EnableAdditiveAlphaBlendState()

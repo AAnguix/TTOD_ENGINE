@@ -3,10 +3,10 @@
 #include "XML\XMLTreeNode.h"
 #include "Render\RenderManager.h"
 
-CSpotLight::CSpotLight() 
+CSpotLight::CSpotLight(const std::string &Name)
 :m_Angle(0.0f)
 ,m_FallOff(0.0f)
-,CDirectionalLight()
+,CDirectionalLight(Name)
 {
 	m_Type = SPOT;
 }

@@ -60,10 +60,7 @@ PS_INPUT VS( VS_INPUT IN )
 float4 PS( PS_INPUT IN) : SV_Target
 {
 	float4 l_FinalColor = T0Texture.Sample(S0Sampler, IN.UV);
-	
 	float l_Depth = T1Texture.Sample(S1Sampler, IN.UV).r;
-	
-	//return float4(l_Depth,l_Depth,l_Depth,1);
 	
 	float3 l_WorldPos=GetPositionFromZDepthView(l_Depth, IN.UV,m_InverseView, m_InverseProjection);
 	

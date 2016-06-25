@@ -9,7 +9,7 @@ class CMaterialManager : public CTemplatedMapManager<CMaterial>
 
 private: 
 	std::string m_Filename; 
-	std::vector<CMaterial*> l_MaterialsVector;
+	std::vector<CMaterial*> m_LuaMaterialsVector;
 	std::map<const std::string, std::vector<CMaterial*>> m_MaterialsPerFileName;
 
 public: 

@@ -10,7 +10,7 @@
 CMaterial::CMaterial(CXMLTreeNode &TreeNode)
 :m_Textures(NULL)
 ,m_RenderableObjectTechnique(NULL)
-,CNamed(TreeNode.GetPszProperty("name", "defaultMaterial"))
+,CNamed(TreeNode.GetPszProperty("name", ""))
 ,m_CurrentParameterData(0)
 ,m_Offset(0)
 ,m_StaticFriction(0.0f)

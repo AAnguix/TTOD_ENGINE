@@ -21,11 +21,12 @@
 #include "GUIManager.h"
 #include "ISoundManager.h"
 #include "Render\GraphicsStats.h"
+#include "Profiler\Profiler.h"
 #include "Animation\AnimatorControllerManager.h"
 #include "ScriptManager.h"
 #include "Render\DebugRender.h"
 #include "Level\Level.h"
-#include "FileUtils.h" 
+#include "Utils\FileUtils.h"
 #include <sstream>
 
 CEngine::CEngine()
@@ -34,6 +35,9 @@ CEngine::CEngine()
 ,m_Paused(false)
 ,m_LoadingLevel(false)
 ,m_GuiLoaded(false)
+,m_PrevTimeStamp(0)
+,m_SecsPerCnt(0.0f)
+,m_TimeSinceStart(0.0f)
 {
 	m_CurrentLevel = "0";
 	m_GameObjectManager = new CGameObjectManager();
@@ -53,11 +57,12 @@ CEngine::CEngine()
 	m_DebugHelper = new CDebugHelperImplementation;
 	m_ParticleSystemManager = new CParticleManager;
 	m_InputManager = new CInputManagerImplementation;
-	m_GUIManager = new CGUIManager;
+	m_GUIManager = new CGUIManager();
 	m_SoundManager = ISoundManager::CreateSoundManager();
 	m_GraphicsStats = new CGraphicsStats;
 	m_AnimatorControllerManager = new CAnimatorControllerManager;
 	m_ScriptManager = new CScriptManager;
+	m_Profiler = new CProfiler;
 }
 
 CEngine::~CEngine()
@@ -67,7 +72,7 @@ CEngine::~CEngine()
 		delete m_Levels[i];
 		m_Levels[i] = NULL;
 	}
-
+	{CHECKED_DELETE(m_Profiler); }
 	{CHECKED_DELETE(m_ScriptManager); }
 	{CHECKED_DELETE(m_AnimatorControllerManager); }
 	{CHECKED_DELETE(m_GraphicsStats); }
@@ -95,6 +100,14 @@ CEngine::~CEngine()
 
 void CEngine::Initialize()
 {
+	__int64 l_CntsPerSec = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&l_CntsPerSec);
+	m_SecsPerCnt = 1.0f / (float)l_CntsPerSec;
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&m_PrevTimeStamp);
+
+	m_Profiler->Initialize();
+
 	CInputManager::SetCurrentInputManager(m_InputManager);
 
 	CContextManager* l_ContextManager = m_RenderManager->GetContextManager();
@@ -104,25 +117,44 @@ void CEngine::Initialize()
 	m_GUIManager->Initialize((float)l_ContextManager->GetFrameBufferWidth(), (float)l_ContextManager->GetFrameBufferHeight());
 	m_Log->Initialize(true);
 
-	m_LuabindManager->Initialize();
-
+	m_Profiler->Begin("Load Effects");
+	CFileUtils::CheckEffectsFolders();
 	m_EffectManager->Load("./Data/effects.xml");
 	m_RenderableObjectTechniqueManager->Load("Data/renderable_objects_techniques.xml");
+	m_Profiler->End("Load Effects");
+
+	m_Profiler->Begin("LoadMaterials");
+		m_MaterialManager->Load("./Data/gui_materials.xml");
+		m_GUIManager->Load("./Data/gui_start_screen.xml");
+		m_GUIManager->Load("./Data/gui_in_game.xml");
+	m_Profiler->End("LoadMaterials");
+
+	m_LuabindManager->Initialize();
 
 	m_SoundManager->SetPath("./Data/Audio/Soundbanks/");
 	m_SoundManager->Init();
 
+	m_SceneRendererCommandManager->Load("./Data/basic_scene_renderer_commands.xml");
+
+	CEngine::GetSingleton().GetLogManager()->Log("Engine initialized.");
+}
+
+float CEngine::GetRealTimeSinceStartup()
+{
+	__int64 currTimeStamp = 0;
+	QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
+	float l_ElapsedTime = (currTimeStamp - m_PrevTimeStamp)*m_SecsPerCnt;
+	m_TimeSinceStart += l_ElapsedTime;
+
+	m_PrevTimeStamp = currTimeStamp;
+
+	return m_TimeSinceStart;
 }
 
 /*Data taht needs to be loaded before load evert level*/
 void CEngine::LoadLevelsCommonData()
 {
 	m_MaterialManager->Load("./Data/effects_materials.xml");
-	m_MaterialManager->Load("./Data/gui_materials.xml");
-	
-	m_GUIManager->Load("./Data/gui_start_screen.xml");
-	m_GUIManager->Load("./Data/gui_in_game.xml");
-	
 	m_CameraControllerManager->Load("./Data/cameras.xml");
 }
 
@@ -166,6 +198,8 @@ void CEngine::Update(float ElapsedTime)
 	m_SoundManager->Update(&l_Camera, ElapsedTime);
 
 	m_GraphicsStats->Update(ElapsedTime);
+
+	m_Profiler->Update();
 }
 
 bool CEngine::AddLevel(const std::string &Level)
@@ -205,7 +239,7 @@ bool CEngine::LoadLevel(const std::string &Level)
 	else
 		m_Log->Log("Can't load level " + Level);
 	#endif
-	
+
 	return l_Loaded;
 }
 
@@ -271,6 +305,8 @@ CInputManagerImplementation* CEngine::GetInputManager() const { return m_InputMa
 CRenderManager* CEngine::GetRenderManager() const { return m_RenderManager; }
 
 CGraphicsStats* CEngine::GetGraphicsStats() const { return m_GraphicsStats; }
+
+CProfiler* CEngine::GetProfiler() const { return m_Profiler; }
 
 CPhysXManager* CEngine::GetPhysXManager() const { return m_PhysXManager; }
 

@@ -83,6 +83,12 @@
     <ClCompile Include="Level\Level.cpp">
       <Filter>Level</Filter>
     </ClCompile>
+    <ClCompile Include="Profiler\Profiler.cpp">
+      <Filter>Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler\ProfilerRecord.cpp">
+      <Filter>Profiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h" />
@@ -158,6 +164,12 @@
     <ClInclude Include="Level\Level.h">
       <Filter>Level</Filter>
     </ClInclude>
+    <ClInclude Include="Profiler\Profiler.h">
+      <Filter>Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Profiler\ProfilerRecord.h">
+      <Filter>Profiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Input">
@@ -180,6 +192,9 @@
     </Filter>
     <Filter Include="Level">
       <UniqueIdentifier>{d84add22-f121-44eb-8285-58d493bc35f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Profiler">
+      <UniqueIdentifier>{6758ef5e-a423-446e-a17a-b2bd8b80988c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

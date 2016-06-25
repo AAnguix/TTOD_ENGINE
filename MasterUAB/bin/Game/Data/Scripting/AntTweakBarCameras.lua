@@ -1,5 +1,5 @@
 function OpenCameras()
-	ClickOnElement("Cameras")
+	ClickOnElement("Cameras","InitializeDebugBar()")
 	g_DebugHelper:RegisterButton("Reload cameras","ReloadCameras()")
 	
 	local l_CameraControllers=g_CameraControllerManager:GetLUACameraControllers()
@@ -9,14 +9,14 @@ function OpenCameras()
 end
 
 function OpenCamera(CameraController)
-	ClickOnElement(CameraController:GetName())
+	ClickOnElement(CameraController:GetName(),"OpenCameras()")
 	if CameraController:GetType() == CCameraController.THIRD_PERSON then
 		g_DebugHelper:RegisterFloatParameter("Zoom", CameraController:GetZoomLuaAddress(), "step=0.01")
 		g_DebugHelper:RegisterFloatParameter("Zoom speed", CameraController:GetZoomSpeedLuaAddress(), "step=0.01")
 		g_DebugHelper:RegisterFloatParameter("Max. zoom", CameraController:GetMaxZoomLuaAddress(), "step=0.01")
 		g_DebugHelper:RegisterFloatParameter("Min. zoom", CameraController:GetMinZoomLuaAddress(), "step=0.01")
 		
-		g_DebugHelper:RegisterFloatParamebter("Speed", CameraController:GetSpeedLuaAddress(), "step=0.01")
+		g_DebugHelper:RegisterFloatParameter("Speed", CameraController:GetSpeedLuaAddress(), "step=0.01")
 		g_DebugHelper:RegisterFloatParameter("Fast speed", CameraController:GetFastSpeedLuaAddress(), "step=0.01")
 		
 		g_DebugHelper:RegisterFloatParameter("Yaw speed", CameraController:GetYawSpeedLuaAddress(), "step=0.01")

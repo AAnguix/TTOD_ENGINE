@@ -2,7 +2,7 @@
 #include <PxPhysicsAPI.h>
 
 #include <sstream>
-#include "FileUtils.h"
+#include "Utils\FileUtils.h"
 #include "Utils\GameObject.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
@@ -1077,7 +1077,7 @@ physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &Sha
 
 		if (l_NumVertexs > 0)
 		{
-			unsigned int l_NumBytes = sizeof(float) * 3 * l_NumVertexs;
+			unsigned int l_NumBytes = sizeof(float)*3*l_NumVertexs;
 
 			l_VtxsData = malloc(l_NumBytes);
 			fread(l_VtxsData, l_NumBytes, 1, l_File);
@@ -1085,14 +1085,17 @@ physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &Sha
 
 			size_t l_LastNumberOfVertices = l_ShapeVertex.size();
 			l_ShapeVertex.resize(l_LastNumberOfVertices + l_NumVertexs);
+			void* l_ReadVtx = l_VtxsData;
 
 			for (size_t i = 0; i < l_NumVertexs; ++i)
 			{
-				Vect3f* l_Vertex = static_cast<Vect3f*>(l_VtxsData);
+				Vect3f* l_Vertex = static_cast<Vect3f*>(l_ReadVtx);
 				l_ShapeVertex[i + l_LastNumberOfVertices] = *l_Vertex;
 
-				l_VtxsData = static_cast<char*>(l_VtxsData)+offset;
+				l_ReadVtx = static_cast<char*>(l_ReadVtx)+offset;
 			}
+
+			free(l_VtxsData);
 
 			unsigned short m_NumIndexs;
 			unsigned short l_NumIndexsFile;
@@ -1104,19 +1107,27 @@ physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &Sha
 
 			size_t l_LastNumberOfIndexs = l_ShapeIndex.size();
 			l_ShapeIndex.resize(l_LastNumberOfIndexs + m_NumIndexs);
+			void* l_ReadIndex = l_IdxData;
 
 			for (size_t i = 0; i < m_NumIndexs; ++i)
 			{
-				unsigned short* l_Index = static_cast<unsigned short*>(l_IdxData);
+				unsigned short* l_Index = static_cast<unsigned short*>(l_ReadIndex);
 				l_ShapeIndex[i + l_LastNumberOfIndexs] = *l_Index + l_LastNumberOfVertices;
-				l_IdxData = static_cast<char*>(l_IdxData)+sizeof(unsigned short);
+				l_ReadIndex = static_cast<char*>(l_ReadIndex)+sizeof(unsigned short);
 			}
+
+			free(l_IdxData);
 		}
 		unsigned short l_Footer = 0;
 		fread(&l_Footer, sizeof(unsigned short), 1, l_File);
 		if (l_Footer == l_DefaultFooter)
-		{ 
+		{
 			l_Shape = CreateTriangleMesh(ShapeName, l_ShapeVertex, l_ShapeIndex, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
+
+			//SUPER HARDCODEADO PARA LA SALA 3
+			Quatf l_Rot = Quatf(0.0, 0.0, 0.0, 1.0);
+			Vect3f l_PositionQ = Vect3f(10.8045f, -2.90423f, 16.0195f);
+			CreateStaticActor(ShapeName, ShapeName, l_PositionQ, l_Rot);
 		}
 		else
 		{

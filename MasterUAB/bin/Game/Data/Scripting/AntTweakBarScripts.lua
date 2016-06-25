@@ -1,5 +1,5 @@
 function OpenScripts()
-	ClickOnElement("Scripts")
+	ClickOnElement("Scripts","InitializeDebugBar()")
 	local l_Scripts = g_GameController:GetScripts()
 	for i=1, (#l_Scripts) do
 		g_DebugHelper:RegisterBoolParameter(l_Scripts[i]:GetName(),l_Scripts[i]:GetEnabledLuaAddress(),"")

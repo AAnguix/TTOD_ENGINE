@@ -72,20 +72,24 @@ public:
 		SHealthBarResult(){};
 	};
 
-private:
 	struct SSpriteMapInfo
 	{
 		std::string name;
 		int materialIndex;
 		int w, h;
 		SSpriteMapInfo(const std::string& Name, int MaterialIndex, int W, int H) : materialIndex(MaterialIndex), w(W), h(H), name(Name){};
+		virtual ~SSpriteMapInfo(){};
 	};
+
 	struct SSpriteInfo
 	{
 		SSpriteMapInfo *spriteMap;
 		float u1, u2, v1, v2;
 		SSpriteInfo(SSpriteMapInfo* SpriteMap, float U1, float U2, float V1, float V2) : spriteMap(SpriteMap), u1(U1), u2(U2), v1(V1), v2(V2){};
+		virtual ~SSpriteInfo(){};
 	};
+
+private:
 	struct SGUICommand
 	{
 		SSpriteInfo *sprite;
@@ -151,6 +155,7 @@ private:
 		uint16 x, y, width, height;
 		int16 xoffset, yoffset, xadvance;
 		uint8 page, chnl;
+		SFontChar();
 		SFontChar(uint16 X, uint16 Y, uint16 Width, uint16 Height, int16 XOffset, int16 YOffset, int16 XAdvance, uint8 Page, uint8 Chnl);
 	};
 	std::unordered_map<std::string, int16> m_LineHeightPerFont;

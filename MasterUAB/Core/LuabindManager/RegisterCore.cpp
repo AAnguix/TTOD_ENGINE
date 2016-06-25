@@ -44,6 +44,7 @@
 #include "Particles\ParticleManager.h"
 #include "ISoundManager.h"
 #include "Render\GraphicsStats.h"
+#include "Profiler\Profiler.h"
 //#include "AStar.h"
 
 using namespace luabind;
@@ -114,6 +115,8 @@ void CLuabindManager::RegisterCore()
 		.def("GetScriptManager", &CEngine::GetScriptManager)
 		.def("GetLayerManager", &CEngine::GetLayerManager)
 
+		.def("GetRealTimeSinceStartup", &CEngine::GetRealTimeSinceStartup)
+		.def("GetProfiler", &CEngine::GetProfiler)
 		.def("GetGraphicsStats", &CEngine::GetGraphicsStats)
 		.def("GetTextureManager", &CEngine::GetTextureManager)
 		.def("GetRenderManager", &CEngine::GetRenderManager)
@@ -140,6 +143,27 @@ void CLuabindManager::RegisterCore()
 		.def("AddNode", &CAStar::AddNode)
 		.def("AddNeighbours", &CAStar::AddNeighbours)
 	];*/
+
+	module(LUA_STATE)
+	[
+		class_<CProfilerRecord>("CProfilerRecord")
+		.def(constructor<const std::string&>())
+		.def("Start", &CProfilerRecord::Start)
+		.def("Stop", &CProfilerRecord::Stop)
+		.def("Reset", &CProfilerRecord::Reset)
+		.def("RaiseError", &CProfilerRecord::RaiseError)
+		.def("Seconds", &CProfilerRecord::Seconds)
+		.def("Count", &CProfilerRecord::Count)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CProfiler>("CProfiler")
+		.def(constructor<>())
+		.def("Initialize", &CProfiler::Initialize)
+		.def("Begin", &CProfiler::Begin)
+		.def("End", &CProfiler::End)
+	];
 
 	module(LUA_STATE) 
 	[
@@ -255,13 +279,17 @@ void CLuabindManager::RegisterCore()
 		.def_readwrite("variables", &CDebugHelper::SDebugBar::variables)
 	];*/
 
+
+	
 	module(LUA_STATE) 
 	[  
 		class_<CDebugHelperImplementation>("CDebugHelperImplementation")   
 		.def("CreateBar", & CDebugHelperImplementation::CreateBar)   
 		.def("RemoveBar", & CDebugHelperImplementation::RemoveBar)   
-		.def("RegisterButton", & CDebugHelperImplementation::RegisterLUAButton) 
-		.def("RegisterExtendedButton", &CDebugHelperImplementation::RegisterLUAExtendedButton)
+		.def("RegisterButton", (void(CDebugHelperImplementation::*)(const std::string&, const std::string&, const std::string&))&CDebugHelperImplementation::RegisterLUAButton)
+		.def("RegisterButton", (void(CDebugHelperImplementation::*)(const std::string&, const std::string&))&CDebugHelperImplementation::RegisterLUAButton)
+		.def("RegisterExtendedButton", (void(CDebugHelperImplementation::*)(const std::string&, const std::string&, CEmptyPointerClass*, const std::string&))&CDebugHelperImplementation::RegisterLUAExtendedButton)
+		.def("RegisterExtendedButton", (void(CDebugHelperImplementation::*)(const std::string&, const std::string&, CEmptyPointerClass*, const std::string&, const std::string&))&CDebugHelperImplementation::RegisterLUAExtendedButton)
 		.def("RegisterChangeTextureButton", &CDebugHelperImplementation::RegisterLUAChangeTextureButton)
 		.def("ResetButtons", & CDebugHelperImplementation::ResetButtons) 
 		.def("RegisterBoolParameter", & CDebugHelperImplementation::RegisterBoolParameter)
@@ -274,6 +302,8 @@ void CLuabindManager::RegisterCore()
 		.def("RegisterColor32Parameter", & CDebugHelperImplementation::RegisterColor32Parameter)
 		.def("RegisterStringParameter", & CDebugHelperImplementation::RegisterStringParameter)
 		.def("RegisterPositionOrientationParameter", & CDebugHelperImplementation::RegisterPositionOrientationParameter)
+		.def("InsertGroupIntoGroup", &CDebugHelperImplementation::InsertGroupIntoGroup)
+		.def("Define", &CDebugHelperImplementation::Define)
 	];
 
 	module(LUA_STATE)
@@ -358,6 +388,7 @@ void CLuabindManager::RegisterComponents()
 		.def("Render", &CComponent::Render)
 		.def("RenderDebug", &CComponent::RenderDebug)
 		.def("GetOwner", &CComponent::GetOwner)
+		.def("GetEnabledLuaAddress", &CComponent::GetEnabledLuaAddress)
 	];
 
 	module(LUA_STATE)

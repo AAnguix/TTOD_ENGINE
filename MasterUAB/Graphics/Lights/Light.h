@@ -40,7 +40,7 @@ protected:
 public:   
 	
 	CLight(CXMLTreeNode &TreeNode);   
-	CLight();   
+	CLight(const std::string &Name);   
 	virtual ~CLight();  
 	
 	UAB_GET_SET_PROPERTY_REFERENCE(CColor, Color);  

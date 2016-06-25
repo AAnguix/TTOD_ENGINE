@@ -39,7 +39,12 @@ CLayerManager::CLayerManager()
 
 }
 
-CMeshInstance* CLayerManager::AddMeshComponent(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+CLayerManager::~CLayerManager()
+{
+
+}
+
+void CLayerManager::AddMeshComponent(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 {
 	CMeshInstance* l_RObject = new CMeshInstance(Owner, InstanceMeshName, CoreMeshName, Position, Yaw, Pitch, Roll);
 	if (!AddElementToLayer(Layer, l_RObject))
@@ -51,11 +56,9 @@ CMeshInstance* CLayerManager::AddMeshComponent(const std::string &Layer, std::st
 	{
 		Owner->SetRenderableObject(l_RObject);
 	}
-
-	return l_RObject;
 }
 
-CAnimatedInstanceModel* CLayerManager::AddAnimatedComponent(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
+void CLayerManager::AddAnimatedComponent(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 {
 	CAnimatedInstanceModel* l_RObject = new CAnimatedInstanceModel(Owner, InstanceModelName, CoreModelName, Position, Yaw, Pitch, Roll);
 	if (!AddElementToLayer(Layer, l_RObject))
@@ -67,81 +70,24 @@ CAnimatedInstanceModel* CLayerManager::AddAnimatedComponent(const std::string &L
 	{
 		Owner->SetRenderableObject(l_RObject);
 	}
-
-	return l_RObject;
 }
 
-CLayerManager::~CLayerManager()
+/*Creates a GameObject and attachs it a ParticleSystemInstance*/
+void CLayerManager::AddParticleSystemInstance(const std::string &Layer, const std::string &ParticleSystemTypeName, const std::string &ParticleSystemInstanceName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 {
+	CGameObject* l_GameObject = CEngine::GetSingleton().GetGameObjectManager()->AddGameObject(ParticleSystemInstanceName);
+	m_ResourcesMap[Layer].m_Value->AddParticleSystemInstance(ParticleSystemTypeName, ParticleSystemInstanceName, l_GameObject, Position, Yaw, Pitch, Roll);
 	
+	/*if (!AddElementToLayer(Layer, l_ParticleSystemInstance))
+	{
+		assert(false);
+		delete(l_ParticleSystemInstance); l_ParticleSystemInstance = NULL;
+	}*/
+	/*else
+	{
+		l_GameObject->SetRenderableObject(l_ParticleSystemInstance);
+	}*/
 }
-
-//CRenderableObject * CLayerManager::AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
-//{
-//	CMeshInstance *l_MeshInstance = nullptr;
-//	l_MeshInstance = new CMeshInstance(InstanceMeshName, CoreMeshName, Position, Yaw, Pitch, Roll);
-//	
-//	if(AddElementToLayer(Layer, l_MeshInstance))
-//		return l_MeshInstance;
-//	return nullptr;
-//}
-//
-//CRenderableObject * CLayerManager::AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
-//{
-//	CAnimatedInstanceModel *l_AnimatedInstanceModel;
-//	l_AnimatedInstanceModel = new CAnimatedInstanceModel(InstanceModelName, CoreModelName,Position,Yaw,Pitch,Roll);
-//
-//	if (AddElementToLayer(Layer, l_AnimatedInstanceModel))
-//	{
-//		l_AnimatedInstanceModel->Initialize(CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(CoreModelName));
-//		return l_AnimatedInstanceModel;
-//	}
-//	return nullptr;
-//}
-
-
-/*
-void CLayerManager::Destroy()
-{
-	
-}*/
-//
-//void CLayerManager::RemoveLayerLuaComponents(const std::string &LayerName)
-//{
-//	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsLuaComponents();
-//}
-//void CLayerManager::RemoveLuaComponents()
-//{
-//	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
-//	{
-//		m_ResourcesVector[i]->RemoveRenderableObjectsLuaComponents();
-//	}
-//}
-//
-//void CLayerManager::RemoveComponent(const std::string &ComponentName)
-//{
-//	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
-//	{
-//		m_ResourcesVector[i]->RemoveRenderableObjectsComponent(ComponentName);
-//	}
-//}
-//void CLayerManager::RemoveComponents()
-//{
-//	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
-//	{
-//		m_ResourcesVector[i]->RemoveRenderableObjectsComponents();
-//	}
-//}
-//
-//void CLayerManager::RemoveLayerComponent(const std::string &LayerName, const std::string &ComponentName)
-//{
-//	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponent(ComponentName);
-//}
-//void CLayerManager::RemoveLayerComponents(const std::string &LayerName)
-//{
-//	m_ResourcesMap[LayerName].m_Value->RemoveRenderableObjectsComponents();
-//}
-
 
 void CLayerManager::Load(const std::string &Filename)
 {
@@ -164,16 +110,14 @@ void CLayerManager::Load(const std::string &Filename)
 				{
 					AddLayer(l_Element);
 				}
-
+				else if (l_Element.GetName() == std::string("game_object"))
+				{
+					CGameObject* l_GameObject = l_GOManager->AddGameObject(l_Element);
+				}
 				else if (l_Element.GetName() == std::string("mesh_instance"))
 				{
-					CGameObject* l_GameObject = new CGameObject(l_Element);
-
-					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
-					{
-						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
-					}
-					else
+					CGameObject* l_GameObject = l_GOManager->AddGameObject(l_Element);
+					if (l_GameObject!=NULL)
 					{
 						CMeshInstance *l_MeshInstance = new CMeshInstance(l_Element);
 						CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
@@ -193,14 +137,8 @@ void CLayerManager::Load(const std::string &Filename)
 				}
 				else if (l_Element.GetName() == std::string("animated_model"))
 				{
-
-					CGameObject* l_GameObject = new CGameObject(l_Element);
-
-					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
-					{
-						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
-					}
-					else
+					CGameObject* l_GameObject = l_GOManager->AddGameObject(l_Element);
+					if (l_GameObject != NULL)
 					{
 						CAnimatedInstanceModel* l_AnimatedInstance = new CAnimatedInstanceModel(l_Element);
 						CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
@@ -223,12 +161,8 @@ void CLayerManager::Load(const std::string &Filename)
 				else if (l_Element.GetName() == std::string("cinematic"))
 				{
 
-					CGameObject* l_GameObject = new CGameObject(l_Element);
-					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
-					{
-						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
-					}
-					else
+					CGameObject* l_GameObject = l_GOManager->AddGameObject(l_Element);
+					if (l_GameObject != NULL)
 					{
 						CRenderableObjectsManager* l_Layer = GetLayer(l_Element);
 						if (!l_Layer) l_Layer = m_DefaultLayer;
@@ -248,12 +182,8 @@ void CLayerManager::Load(const std::string &Filename)
 				}
 				else if (l_Element.GetName() == std::string("particle_emiter"))
 				{
-					CGameObject* l_GameObject = new CGameObject(l_Element);
-					if (!l_GOManager->AddResource(l_GameObject->GetName(), l_GameObject))
-					{
-						if (l_GameObject != NULL) delete(l_GameObject); l_GameObject = NULL;
-					}
-					else
+					CGameObject* l_GameObject = l_GOManager->AddGameObject(l_Element);
+					if (l_GameObject != NULL)
 					{
 						CParticleSystemInstance* l_ParticleSystemInstance = new CParticleSystemInstance(l_Element);
 

@@ -100,14 +100,14 @@ void CLuabindManager::RegisterRender()
 		class_<CContextManager>("CContextManager")
 		.def(constructor<>())
 
-		.def("Resize", &CContextManager::Resize)
+		/*.def("ResizeBuffers", &CContextManager::ResizeBuffers)*/
 		.def("GetAspectRatio", &CContextManager::GetAspectRatio)
 		
 		.def("Draw", &CContextManager::Draw)
 		.def("DrawIndexed", &CContextManager::DrawIndexed)
 		
-		.def("GetDevice", &CContextManager::Resize)
-		.def("GetDeviceContext", &CContextManager::Resize)
+		.def("GetDevice", &CContextManager::GetDevice)
+		.def("GetDeviceContext", &CContextManager::GetDeviceContext)
 
 		.def("SetBaseColor", &CContextManager::SetBaseColor)
 		.def("SetWorldMatrix", &CContextManager::SetWorldMatrix)
@@ -115,6 +115,7 @@ void CLuabindManager::RegisterRender()
 	
 		.def("GetFrameBufferWidth", &CContextManager::GetFrameBufferWidth)
 		.def("GetFrameBufferHeight", &CContextManager::GetFrameBufferHeight)
+		/*.def("CaptureStencilBuffer", &CContextManager::CaptureStencilBuffer)*/
 	];
 
 	module(LUA_STATE)
@@ -461,9 +462,9 @@ void CLuabindManager::RegisterLights()
 		class_<CLight, bases<C3DElement, CNamed>>("CLight")
 		.enum_("t_light_type")
 		[
-			value("omni", 0),
-			value("directional", 1),
-			value("spot", 2)
+			value("OMNI", 0),
+			value("DIRECTIONAL", 1),
+			value("SPOT", 2)
 		]
 		.def("GetIntensity", &CLight::GetIntensity)
 		.def("SetIntensity", &CLight::SetIntensity)
@@ -492,7 +493,7 @@ void CLuabindManager::RegisterLights()
 	module(LUA_STATE)
 	[
 		class_<CDirectionalLight, CLight>("CDirectionalLight")
-		.def(constructor<>())
+		.def(constructor<const std::string&>())
 		.def(constructor<CXMLTreeNode>())
 		.def("GetDirection", &CDirectionalLight::GetDirection)
 		.def("SetDirection", &CDirectionalLight::SetDirection)
@@ -503,7 +504,7 @@ void CLuabindManager::RegisterLights()
 	module(LUA_STATE)
 	[
 		class_<COmniLight, CLight>("COmniLight")
-		.def(constructor<>())
+		.def(constructor<const std::string&>())
 		.def(constructor<CXMLTreeNode>())
 		.def("render", &COmniLight::Render)
 	];
@@ -511,7 +512,7 @@ void CLuabindManager::RegisterLights()
 	module(LUA_STATE)
 	[
 		class_<CSpotLight, CDirectionalLight>("CSpotLight")
-		.def(constructor<>())
+		.def(constructor<const std::string&>())
 		.def(constructor<CXMLTreeNode>())
 		.def("GetAngle", &CSpotLight::GetAngle)
 		.def("GetFallOff", &CSpotLight::GetFallOff)
@@ -544,10 +545,14 @@ void CLuabindManager::RegisterLights()
 		.def("Load", &CLightManager::Load)
 		.def("Reload", &CLightManager::Reload)
 		.def("GetFogColorAddress", &CLightManager::GetFogColorAddress)
-		//.def("GetFogParametersAddress", &CLightManager::GetFogParametersAddress)
+		.def("GetAmbientLightAddress", &CLightManager::GetAmbientLightAddress)
 		.def("GetFogStartAddress", &CLightManager::GetFogStartAddress)
 		.def("GetFogEndAddress", &CLightManager::GetFogEndAddress)
 		.def("GetFogDensityAddress", &CLightManager::GetFogDensityAddress)
+		.def("AddLight", &CLightManager::AddLight)
+		.def("GetAmbientLight", &CLightManager::GetAmbientLight)
+		.def("GetFogParameters", &CLightManager::GetFogParameters)
+		.def("GetFogColor", &CLightManager::GetFogColor)
 	];
 }
 
@@ -715,15 +720,21 @@ void CLuabindManager::RegisterParticles()
 	[
 		class_<CParticleSystemType, CNamed>("CParticleSystemType")
 		.def(constructor<CXMLTreeNode>())
-		.def("GetMaterial", &CParticleSystemType::GetMaterial)
+
 		.def("GetLUAControlPointsSize", &CParticleSystemType::GetLUAControlPointsSize, return_stl_iterator)
 		.def("GetLUAControlPointsColor", &CParticleSystemType::GetLUAControlPointsColor, return_stl_iterator)
-		
+
 		.def("GetLUAControlPointsSizeSize", &CParticleSystemType::GetLUAControlPointsSizeSize)
 		.def("GetLUAControlPointsColorSize", &CParticleSystemType::GetLUAControlPointsColorSize)
 
+		.def("GetMaterial", &CParticleSystemType::GetMaterial)
+
 		//.def("size", &CTemplatedMapManager<CParticleSystemType>::TMapResource::size)
 		.def("AddControlPointSize", &CParticleSystemType::AddControlPointSize)
+		.def("AddControlPointColor", &CParticleSystemType::AddControlPointColor)
+
+		.def("RemoveControlPointSize", &CParticleSystemType::RemoveControlPointSize)
+		.def("RemoveControlPointColor", &CParticleSystemType::RemoveControlPointColor)
 
 		.def("GetNumFramesLuaAddress", &CParticleSystemType::GetNumFramesLuaAddress)
 		.def("GetTimePerFrameLuaAddress", &CParticleSystemType::GetTimePerFrameLuaAddress)
@@ -751,7 +762,7 @@ void CLuabindManager::RegisterParticles()
 		.def("GetColor2LuaAddress", &CParticleSystemType::GetColor2LuaAddress)
 
 		.def("GetThisLuaAddress", &CParticleSystemType::GetThisLuaAddress)
-		
+
 		.def_readonly("m_NumFrames", &CParticleSystemType::m_NumFrames)
 		.def_readonly("m_TimerPerFrame", &CParticleSystemType::m_TimerPerFrame)
 		.def_readonly("m_LoopFrames", &CParticleSystemType::m_LoopFrames)
@@ -819,9 +830,6 @@ void CLuabindManager::RegisterParticles()
 		.def("GetType", &CParticleSystemInstance::GetType)
 
 		.def("GetEmissionBoxHalfSizeLuaAddress", &CParticleSystemInstance::GetEmissionBoxHalfSizeLuaAddress)
-		.def("GetYawLuaAddress", &CParticleSystemInstance::GetYawLuaAddress)
-		.def("GetPitchLuaAddress", &CParticleSystemInstance::GetPitchLuaAddress)
-		.def("GetRollLuaAddress", &CParticleSystemInstance::GetRollLuaAddress)
 	];
 
 
@@ -883,6 +891,7 @@ void CLuabindManager::RegisterRenderableObjects()
 		.def("Destroy", &CLayerManager::Destroy)
 		.def("Load", &CLayerManager::Load)
 		.def("Reload", &CLayerManager::Reload)
+		.def("AddParticleSystemInstance", &CLayerManager::AddParticleSystemInstance)
 		/*.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
 		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)*/
 		

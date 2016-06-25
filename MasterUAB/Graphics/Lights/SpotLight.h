@@ -11,7 +11,7 @@ protected:
 	float m_FallOff; 
 
 public:   
-	CSpotLight();
+	CSpotLight(const std::string &Name);
 	CSpotLight(CXMLTreeNode &TreeNode); 
 	UAB_GET_SET_STANDARD_PROPERTY(float, Angle);  
 	UAB_GET_SET_STANDARD_PROPERTY(float, FallOff);

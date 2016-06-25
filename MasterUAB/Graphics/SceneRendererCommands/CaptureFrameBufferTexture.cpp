@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Render\RenderManager.h"
 #include "XML\XMLTreeNode.h"
+#include <ScreenGrab.h>
 
 void CCaptureFrameBufferTexture::Init(const std::string &Name, unsigned int Width, unsigned int Height)
 {
@@ -106,6 +107,17 @@ bool CCaptureFrameBufferTexture::Capture(unsigned int StageId)
 	l_RenderManager->GetContextManager()->GetDeviceContext()->CopyResource(m_DataTexture, l_Surface);
 		return true;
 }
+
+bool CCaptureFrameBufferTexture::SaveToFile(std::string& Path)
+{
+	ID3D11DeviceContext *l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
+	std::wstring l_WStr(Path.begin(), Path.end());
+	HRESULT l_Result = DirectX::SaveDDSTextureToFile(l_DeviceContext, m_DataTexture, l_WStr.c_str());
+	if (FAILED(l_Result))
+		return false;
+	return true;
+}
+
 
 
 

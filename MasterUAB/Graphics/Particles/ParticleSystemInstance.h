@@ -65,11 +65,15 @@ private:
 
 	ParticleData AddParticle();
 
-	CColor RGBtoHSV(CColor RGB);
-	CColor RGBtoHCV(CColor RGB);
+	void RGBtoHSV(float r, float g, float b, float *h, float *s, float *v);
+	void HSVtoRGB(float *r, float *g, float *b, float h, float s, float v);
 
-	CColor HSVtoRGB(CColor HSV);
-	CColor HUEtoRGB(float H);
+	//CColor RGB2HSV(Vect4f RGB);
+	//CColor RGBtoHSV(CColor RGB);
+	//CColor RGBtoHCV(CColor RGB);
+
+	//CColor HSVtoRGB(CColor HSV);
+	//CColor HUEtoRGB(float H);
 
 	float ComputeTimeToNextParticle();
 	void GenerateNewParticles(float ElapsedTime);
@@ -82,6 +86,7 @@ private:
 public:
 
 	CParticleSystemInstance(CXMLTreeNode &TreeNode);
+	CParticleSystemInstance(const std::string &Name, const std::string &TypeName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	virtual ~CParticleSystemInstance();
 
 	void SetEmissionScaler(float EmissionScaler){ m_EmissionScaler = EmissionScaler; };
@@ -101,11 +106,7 @@ private:
 	void* m_RollAdress;
 
 public:
-	virtual CEmptyPointerClass* GetEmissionBoxHalfSizeLuaAddress() const;
-	virtual CEmptyPointerClass* GetYawLuaAddress() const;
-	virtual CEmptyPointerClass* GetPitchLuaAddress() const;
-	virtual CEmptyPointerClass* GetRollLuaAddress() const;
-
+	virtual CEmptyPointerClass* GetEmissionBoxHalfSizeLuaAddress(int Index);
 };
 
 #endif

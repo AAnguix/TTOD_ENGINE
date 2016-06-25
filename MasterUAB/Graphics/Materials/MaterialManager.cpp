@@ -11,19 +11,26 @@ CMaterialManager::CMaterialManager() : m_Filename("")
 
 CMaterialManager::~CMaterialManager()
 {
-	Destroy();
+	CTemplatedMapManager::Destroy();
 }
 
 void CMaterialManager::Destroy()
 {
 	std::map<const std::string, std::vector<CMaterial*>>::iterator itMap;
-
 	for (itMap = m_MaterialsPerFileName.begin(); itMap != m_MaterialsPerFileName.end(); ++itMap)
 	{
-		itMap->second.clear();
-	}
+		if (itMap->first != ".Data/gui_materials.xml")
+		{
+			std::vector<CMaterial*> l_MaterialsVector = itMap->second;
 
-	CTemplatedMapManager::Destroy();
+			for (size_t i = 0; i < l_MaterialsVector.size(); ++i)
+			{
+				delete(l_MaterialsVector[i]);
+				l_MaterialsVector[i] = NULL;
+			}
+			itMap->second.clear();
+		}
+	}
 }
 
 void CMaterialManager::Load(const std::string &Filename)
@@ -91,12 +98,12 @@ void CMaterialManager::Reload()
  
 const std::vector<CMaterial *> & CMaterialManager::GetLUAMaterials()
 {
-	l_MaterialsVector.clear();
+	m_LuaMaterialsVector.clear();
 	CTemplatedMapManager<CMaterial>::TMapResource &l_MaterialsMap = GetResourcesMap();
 	for (CTemplatedMapManager<CMaterial>::TMapResource::iterator it = l_MaterialsMap.begin(); it != l_MaterialsMap.end(); ++it)
-		l_MaterialsVector.push_back(it->second);
+		m_LuaMaterialsVector.push_back(it->second);
 
-	return l_MaterialsVector;
+	return m_LuaMaterialsVector;
 }
 
 const std::vector<CMaterial *> & CMaterialManager::GetLUAFileNameMaterials(const std::string &Filename)

@@ -56,8 +56,16 @@ public:
 	static void TW_CALL CopyStdStringToClient(std::string& DestinationClientString, const std::string& SourceLibraryString);
 
 	void RegisterLUAButton(const std::string &ButtonName, const std::string &Script);
+	void RegisterLUAButton(const std::string &ButtonName, const std::string &Script, const std::string &Definition);
+	void InsertGroupIntoGroup(const std::string &Group, const std::string &ParentGroup);
+
+
 	void RegisterLUAExtendedButton(const std::string &ButtonName, const std::string &Function, CEmptyPointerClass* Object, const std::string &ObjectType);
+	void RegisterLUAExtendedButton(const std::string &ButtonName, const std::string &Function, CEmptyPointerClass* Object, const std::string &ObjectType, const std::string &Definition);
+
 	void RegisterLUAChangeTextureButton(const std::string &ButtonName, const std::string &Function, CMaterial* Material, CEmptyPointerClass* NewTexture, unsigned int Index);
+
+	void Define(const std::string& Define);
 
 	void RegisterBoolParameter(const std::string &ParameterName, CEmptyPointerClass *Data, const std::string &Description);
 	void RegisterInt32Parameter(const std::string &ParameterName, CEmptyPointerClass *Data, const std::string &Description);

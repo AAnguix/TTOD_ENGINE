@@ -4,7 +4,7 @@ function CBasicEnemyComponent:__init(CGameObject)
 	self.m_Health=100.0
 	self.m_Speed=1.2
 	self.m_AttackDelay=1.5
-	self.m_AttackRange=0.65
+	self.m_AttackRange=1.3
 	self.m_VisionRange=5.0
 	self.m_DelayToPatrol = 3.0
 	
@@ -22,7 +22,7 @@ function CBasicEnemyComponent:Initialize()
 	local l_AnimatorController = CEnemyComponent.GetGameObject(self):GetAnimatorController()
 	
 	local l_Idle = l_AnimatorController:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_BasicEnemy", "OnUpdate_Idle_BasicEnemy", "OnExit_Idle_BasicEnemy")
-	local l_MoveToAttack = l_AnimatorController:AddState("MoveToAttack_State", "run", 1.0, "OnEnter_MoveToAttack_BasicEnemy", "OnUpdate_MoveToAttack_BasicEnemy", "OnExit_MoveToAttack_BasicEnemy")
+	local l_MoveToAttack = l_AnimatorController:AddState("MoveToAttack_State", "walk", 1.0, "OnEnter_MoveToAttack_BasicEnemy", "OnUpdate_MoveToAttack_BasicEnemy", "OnExit_MoveToAttack_BasicEnemy")
 	local l_Attack = l_AnimatorController:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_BasicEnemy", "OnUpdate_Attack_BasicEnemy", "OnExit_Attack_BasicEnemy")
 	local l_Patrol = l_AnimatorController:AddState("Patrol_State", "walk", 1.0, "OnEnter_Patrol_BasicEnemy", "OnUpdate_Patrol_BasicEnemy", "OnExit_Patrol_BasicEnemy")
                                                    

@@ -8,6 +8,7 @@
 class CRenderableVertexs;
 class CRenderManager;
 class CMaterial;
+class CRenderableObjectTechnique;
 namespace physx
 {
 	class PxShape;
@@ -55,7 +56,7 @@ public:
 	bool LoadShape(const std::string &ShapeType, const std::string &Group, bool IsExclusive);
 
 	bool Reload();
-	void Render(CRenderManager *RM) const;
+	void Render(CRenderManager *RM, CRenderableObjectTechnique* Technique = NULL) const;
 
 	CMaterial* GetPhysxMaterial();
 	

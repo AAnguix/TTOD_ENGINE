@@ -376,14 +376,21 @@ bool CStaticMesh::Reload()
 	return Load(m_Filename);
 }
 
-void CStaticMesh::Render(CRenderManager *RM) const
+void CStaticMesh::Render(CRenderManager *RM, CRenderableObjectTechnique* Technique) const
 {
 	for (size_t i = 0; i<m_RVs.size(); ++i)
 	{
 		if (m_Materials[i] != NULL)
 		{
-			m_Materials[i]->Apply();
-			m_RVs[i]->RenderIndexed(RM, m_Materials[i]->GetRenderableObjectTechnique()->GetEffectTechnique(), (void *)&CEffectManager::m_SceneEffectParameters);
+			if (Technique == NULL)
+			{
+				m_Materials[i]->Apply();
+				m_RVs[i]->RenderIndexed(RM, m_Materials[i]->GetRenderableObjectTechnique()->GetEffectTechnique(), (void *)&CEffectManager::m_SceneEffectParameters);
+			}
+			else
+			{
+				m_RVs[i]->RenderIndexed(RM, Technique->GetEffectTechnique(), (void *)&CEffectManager::m_SceneEffectParameters);
+			}
 		}
 	}
 }

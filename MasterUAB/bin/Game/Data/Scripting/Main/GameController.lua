@@ -125,6 +125,7 @@ function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
 			end
 		end
 	end
+	-- l_LightManager:DisableLights()
 end
 
 function CGameController:LoadEnemy(XMLTreeNode)

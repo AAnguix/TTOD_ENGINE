@@ -1,18 +1,18 @@
-function AddBackButton()
-	g_DebugHelper:RegisterButton("..","BackButtonPressed()")
+function AddBackButton(ReturnFunctionCall)
+	g_DebugHelper:RegisterButton("..","BackButtonPressed('"..ReturnFunctionCall.."')")
 end
 
-function BackButtonPressed()
+function BackButtonPressed(ReturnFunctionCall)
 	g_DebugHelper:RemoveBar()
 	g_DebugHelper:ResetButtons()
-	InitializeDebugBar()
+	g_LuabindManager:RunCode(ReturnFunctionCall)
 end
 
-function ClickOnElement(NewBarName)
+function ClickOnElement(NewBarName, ReturnFunctionCall)
 	g_DebugHelper:RemoveBar()
 	g_DebugHelper:ResetButtons()
 	g_DebugHelper:CreateBar(NewBarName)
-	AddBackButton()
+	AddBackButton(ReturnFunctionCall)
 end
 
 function InitializeDebugBar()
@@ -33,7 +33,7 @@ function InitializeDebugBar()
 end
 
 function OpenEffects()
-	ClickOnElement("Effects")
+	ClickOnElement("Effects","InitializeDebugBar()")
 	local l_Effects=g_EffectManager:GetLUAEffects()
 	for l_Effect in l_Effects do
 		g_DebugHelper:RegisterButton(l_Effect:GetName(),"ReloadEffectTechnique('"..l_Effect:GetName().."')")
@@ -41,7 +41,7 @@ function OpenEffects()
 end
 
 function OpenRenderableObjectTechniques()
-	ClickOnElement("ROTechniques")
+	ClickOnElement("ROTechniques","InitializeDebugBar()")
 end
 
 ------------------------------ MATERIALS -------------------------------------------------------------------------
@@ -54,7 +54,7 @@ dofile("./Data/Scripting/AntTweakBarCameras.lua")
 dofile("./Data/Scripting/AntTweakBarEngine.lua")
 
 function OpenAnimatedModels()
-	ClickOnElement("Animated Models")
+	ClickOnElement("Animated Models","InitializeDebugBar()")
 	local l_Models=g_AnimatedModelManager:GetLUAAnimatedModels()
 	for l_Model in l_Models do
 		g_DebugHelper:RegisterButton(l_Model:GetName(),"")
@@ -62,7 +62,7 @@ function OpenAnimatedModels()
 end
 
 function OpenStaticMeshes()
-	ClickOnElement("Static Meshes")
+	ClickOnElement("Static Meshes","InitializeDebugBar()")
 	local l_SMeshes=g_StaticMeshManager:GetLUAStaticMeshes()
 	for l_SMesh in l_SMeshes do
 		g_DebugHelper:RegisterExtendedButton(l_SMesh:GetName(),"ReloadStaticMesh",l_SMesh:GetThisLuaAddress(),"static_mesh")
@@ -72,7 +72,7 @@ end
 function ReloadStaticMesh(CStaticMesh) CStaticMesh:Reload() end
 
 function OpenLayers()
-	ClickOnElement("Layers")
+	ClickOnElement("Layers","InitializeDebugBar()")
 	--CEngine.GetSingleton():GetDebugHelper():RegisterButton("Reload All","ReloadLayers()")
 	local l_ROManagers = g_LayerManager:GetResourcesVector():size()
 	for i=0,l_ROManagers-1 do
@@ -86,9 +86,19 @@ function AddROManagerButton(ROManager)
 end
 
 function OpenRenderableObjectManager(ROManagerName)
-	ClickOnElement(ROManagerName)
+	ClickOnElement(ROManagerName, "OpenLayers()")
 	g_DebugHelper:RegisterButton("Reload","ReloadRenderableObjectManager('"..ROManagerName.."')")
-	local l_ROManager=g_LayerManager:GetResource(ROManagerName)	
+	local l_ROManager=g_LayerManager:GetResource(ROManagerName)
+
+	if(l_ROManager:GetName()=="particles") then
+		l_ParticlesSize = l_ROManager:GetResourcesVector():size()
+		local l_ParticleSystemTypes = g_ParticleSystemManager:GetLUAParticles()
+		for l_ParticleSystemType in l_ParticleSystemTypes do
+			local l_ParticleSystemTypeName = l_ParticleSystemType:GetName()
+			local l_ParticleSystemInstanceName = l_ParticleSystemTypeName.."_particle_"..l_ParticlesSize
+			g_DebugHelper:RegisterButton("Add Particle ["..l_ParticleSystemTypeName.."]","AddParticleSystem('"..l_ParticleSystemInstanceName.."' ,'"..l_ParticleSystemTypeName.."')","group=\"Add Particles\"")
+		end
+	end
 	local l_RObjects = l_ROManager:GetResourcesVector():size()
 	for i=0,l_RObjects-1 do
 		local l_RObject=l_ROManager:GetResourceById(i)
@@ -96,10 +106,17 @@ function OpenRenderableObjectManager(ROManagerName)
 	end
 end
 
+function AddParticleSystem(ParticleSystemInstanceName, ParticleSystemTypeName)
+	local l_LayerManager = CEngine.GetSingleton():GetLayerManager()
+	l_LayerManager:AddParticleSystemInstance("particles", ParticleSystemTypeName, ParticleSystemInstanceName, Vect3f(0.0,0.0,0.0), 0.0, 0.0, 0.0)
+	OpenRenderableObjectManager("particles")
+end
+
+
 function AddRenderableObjectButton(RenderableObject)
 	local l_DebugHelper=CEngine.GetSingleton():GetDebugHelper()
 	local l_Name = RenderableObject:GetName()
-	g_DebugHelper:RegisterExtendedButton(l_Name,"OpenRenderableObject",RenderableObject:GetThisLuaAddress(),"renderable_object")
+	g_DebugHelper:RegisterExtendedButton(l_Name,"OpenRenderableObject",RenderableObject:GetThisLuaAddress(),"renderable_object", "group=\"Renderable Object\"")
 end
 
 function ReloadRenderableObjectManager(Name)
@@ -107,12 +124,23 @@ function ReloadRenderableObjectManager(Name)
 end
 
 function OpenRenderableObject(RenderableObject)
-	ClickOnElement(RenderableObject:GetName())
+	ClickOnElement(RenderableObject:GetName(),"OpenLayers()")
+	g_DebugHelper:RegisterBoolParameter("Active", RenderableObject:GetEnabledLuaAddress(),"")
 	g_DebugHelper:RegisterFloatParameter("Yaw", RenderableObject:GetYawLuaAddress(),"step=0.01") --min=-3.14 max=3.14 step=0.01
 	g_DebugHelper:RegisterFloatParameter("Pitch", RenderableObject:GetPitchLuaAddress(),"step=0.01")
 	g_DebugHelper:RegisterFloatParameter("Roll", RenderableObject:GetRollLuaAddress(),"step=0.01")
-	g_DebugHelper:RegisterVect3fParameter("Position", RenderableObject:GetPositionLuaAddress(),"")
-	g_DebugHelper:RegisterVect3fParameter("Scale", RenderableObject:GetScaleLuaAddress(),"")
+	g_DebugHelper:RegisterFloatParameter("Position.x", RenderableObject:GetPositionLuaAddress(0),"step=0.01 group=\"Position\"")
+	g_DebugHelper:RegisterFloatParameter("Position.y", RenderableObject:GetPositionLuaAddress(1),"step=0.01 group=\"Position\"")
+	g_DebugHelper:RegisterFloatParameter("Position.z", RenderableObject:GetPositionLuaAddress(2),"step=0.01 group=\"Position\"")
+	g_DebugHelper:RegisterFloatParameter("Scale.x", RenderableObject:GetScaleLuaAddress(0),"step=0.01 group=\"Scale\"")
+	g_DebugHelper:RegisterFloatParameter("Scale.y", RenderableObject:GetScaleLuaAddress(1),"step=0.01 group=\"Scale\"")
+	g_DebugHelper:RegisterFloatParameter("Scale.z", RenderableObject:GetScaleLuaAddress(2),"step=0.01 group=\"Scale\"")
+
+	if RenderableObject:GetClassType() == CRenderableObject.PARTICLE_EMITER then
+		g_DebugHelper:RegisterFloatParameter("EmissionBoxHalfSize.x",RenderableObject:GetEmissionBoxHalfSizeLuaAddress(0),"step=0.01 group=\"Emission Box Half Size\"")
+		g_DebugHelper:RegisterFloatParameter("EmissionBoxHalfSize.y",RenderableObject:GetEmissionBoxHalfSizeLuaAddress(1),"step=0.01 group=\"Emission Box Half Size\"")
+		g_DebugHelper:RegisterFloatParameter("EmissionBoxHalfSize.z",RenderableObject:GetEmissionBoxHalfSizeLuaAddress(2),"step=0.01 group=\"Emission Box Half Size\"")
+	end
 end
 
 ------------------------------ LIGHTS -------------------------------------------------------------------------
@@ -122,7 +150,7 @@ dofile("./Data/Scripting/AntTweakBarLights.lua")
 dofile("./Data/Scripting/AntTweakBarScripts.lua")
  
  function OpenSceneRendererCommands()
-	ClickOnElement("Commands")
+	ClickOnElement("Commands","InitializeDebugBar()")
 	local l_SceneRendererCommands = g_SceneRendererCommandManager:GetLUASceneRendererCommands()
 	local l_i = 1
 	for l_SRCommand in l_SceneRendererCommands do
@@ -132,7 +160,7 @@ dofile("./Data/Scripting/AntTweakBarScripts.lua")
  end
  
  function OpenSceneRendererCommand(SceneRendererCommand)
-	ClickOnElement(SceneRendererCommand:GetName())
+	ClickOnElement(SceneRendererCommand:GetName(),"OpenSceneRendererCommands()")
 	g_DebugHelper:RegisterBoolParameter("Active", SceneRendererCommand:GetActiveLuaAddress(),"")
 end
 

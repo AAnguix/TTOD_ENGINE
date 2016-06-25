@@ -26,13 +26,18 @@ CEffectTechnique::~CEffectTechnique()
 
 void CEffectTechnique::Refresh()
 {
-	m_VertexShader->Load();
-	m_PixelShader->Load();
+	/*std::string l_VertexShaderName = m_VertexShader->GetName();
+	std::string l_PixelShaderName = m_PixelShader->GetName();
+	std::string l_GeometryShaderName = m_GeometryShader->GetName();*/
+
+	m_VertexShader->Reload();
+	m_PixelShader->Reload();
 	if (m_GeometryShader != nullptr)
-		m_GeometryShader->Load();
-	
-	//m_VertexShader = CEngine::GetSingleton().GetEffectManager()->GetVertexShader(m_VertexShaderName);
-	//m_PixelShader = CEngine::GetSingleton().GetEffectManager()->GetPixelShader(m_PixelShaderName);
+		m_GeometryShader->Reload();
+
+	/*m_VertexShader = CEngine::GetSingleton().GetEffectManager()->GetVertexShader(m_VertexShaderName);
+	m_PixelShader = CEngine::GetSingleton().GetEffectManager()->GetPixelShader(m_PixelShaderName);
+	m_GeometryShader = CEngine::GetSingleton().GetEffectManager()->GetGeometryShader(m_GeometryShaderName);*/
 }
 
 void CEffectTechnique::SetConstantBuffer(unsigned int IdBuffer, void *ConstantBuffer)

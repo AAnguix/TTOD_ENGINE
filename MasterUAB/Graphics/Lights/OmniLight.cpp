@@ -1,9 +1,10 @@
 #include "Lights\OmniLight.h"
 
-COmniLight::COmniLight() 
-:CLight()
+COmniLight::COmniLight(const std::string &Name)
+:CLight(Name)
 {
 	m_Type = OMNI;
+	m_GenerateShadowMap = false;
 }
 
 COmniLight::COmniLight(CXMLTreeNode &TreeNode) 

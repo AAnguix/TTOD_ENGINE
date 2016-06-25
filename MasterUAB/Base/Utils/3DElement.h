@@ -14,7 +14,7 @@ protected:
 	bool m_TranslationUpdate, m_RotationUpdate, m_ScaleUpdate;  
 	Mat44f m_TransformMatrix, m_RotationMatrix, m_TranslationMatrix, m_ScaleMatrix;  
 	Vect3f m_Scale; 
-	bool m_Visible;
+	/*bool m_Visible;*/
 
 public:  
 
@@ -47,14 +47,14 @@ public:
 	const Mat44f & GetTransform(); //Scale x Rotation x Translation
 	const Mat44f & ChildGetTransform(float Yaw, float Pitch, float Roll); /*Used for child objects (weapons, etc), in order to match 3DMax rotation order*/
 
-	bool GetVisible() const;
-	virtual void SetVisible(bool Visible);
+	/*bool GetVisible() const;
+	virtual void SetVisible(bool Visible);*/
 
 	CEmptyPointerClass* GetYawLuaAddress() const;
 	CEmptyPointerClass* GetPitchLuaAddress() const;
 	CEmptyPointerClass* GetRollLuaAddress() const;
-	CEmptyPointerClass* GetPositionLuaAddress() const;
-	CEmptyPointerClass* GetScaleLuaAddress() const;
+	CEmptyPointerClass* GetPositionLuaAddress(int Index);
+	CEmptyPointerClass* GetScaleLuaAddress(int Index);
 };
 
 #endif

@@ -27,6 +27,10 @@ function CEnemyComponent:__init(CGameObject,EnemyType)
 	--Components
 	self.m_Animator = nil 
 	self.m_AudioSource = nil
+	
+	--Movements
+	self.M_FollowWaypoints = false
+	self.M_AttackMovement = false
 end
 
 function CEnemyComponent:Initialize()
@@ -48,6 +52,7 @@ function CEnemyComponent:Initialize()
 end
 
 function CEnemyComponent:Update(ElapsedTime)
+	self:MovementController(ElapsedTime)
 end
 
 function CEnemyComponent:GetAnimator() return self.m_Animator end
@@ -127,6 +132,80 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 		end
 	--else g_LogManager:Log(self.m_RObject:GetName().." doesn't have waypoints")
 	end
+end
+
+function CEnemyComponent:MovementController(ElapsedTime)
+	local l_Name = self.m_GameObject:GetName()
+	self.m_Velocity.x = 0.0
+	self.m_Velocity.z = 0.0
+	
+	if self.M_FollowWaypoints then
+		self:FTWP(ElapsedTime)
+	elseif self.M_AttackMovement then
+		self:MTPNP(ElapsedTime)
+	end
+	
+	self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
+	if ElapsedTime>0.0 then
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, (self.m_Velocity * ElapsedTime), ElapsedTime)
+	else 
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, (self.m_Velocity), ElapsedTime)
+	end 
+end
+function CEnemyComponent:SetFTWP(Value) self.M_FollowWaypoints = Value end
+function CEnemyComponent:SetMAM(Value) self.M_AttackMovement = Value end
+
+function CEnemyComponent:FTWP(ElapsedTime)
+	m_Position = self.m_RObject:GetPosition()
+	local l_Name = self.m_GameObject:GetName()
+	
+	if (#self.m_WayPoints)>0 then
+		local l_Destiny = Vect3f(0.0,0.0,0.0)
+		l_Destiny = self.m_WayPoints[self.m_CurrentWayPoint]
+		local l_Vector =  l_Destiny - m_Position
+		
+		if CTTODMathUtils.PointInsideCircle(l_Destiny, m_Position, 0.2) == false then
+			l_Vector:Normalize(1)
+			self.m_Velocity = self.m_Velocity + (l_Vector*self:GetSpeed())
+			--self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
+			--self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name,(self.m_Velocity * ElapsedTime * self.m_Speed), ElapsedTime)
+			self:LookAtPoint(l_Destiny, ElapsedTime)
+		else
+			self.m_CurrentWayPoint = self.m_CurrentWayPoint+1
+		end
+		
+		if self.m_CurrentWayPoint > (#self.m_WayPoints) then
+			self.m_CurrentWayPoint = 1
+		end
+	--else g_LogManager:Log(self.m_RObject:GetName().." doesn't have waypoints")
+	end
+end
+
+function CEnemyComponent:MTPNP(ElapsedTime)
+	
+	local l_Enemy = self.m_RObject
+	local l_EnemyPos = l_Enemy:GetPosition()
+	local l_PlayerPos = g_Player:GetRenderableObject():GetPosition()
+	
+	local l_VectorToPlayer = l_PlayerPos - l_EnemyPos
+	l_VectorToPlayer:Normalize(1.0)
+	
+	local l_Forward = l_Enemy:GetForward()
+	l_Forward.y = 0.0
+	
+	local l_NewAngle = 0.0 
+	
+	self.m_Velocity.x = 0.0
+	self.m_Velocity.z = 0.0
+	self.m_Velocity = self.m_Velocity + (l_VectorToPlayer*self:GetSpeed())
+	--self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
+	if ElapsedTime>0.0 then
+		--self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity * ElapsedTime), ElapsedTime)
+		self:LookAtPoint(l_PlayerPos,ElapsedTime)
+	else 
+		--self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity), ElapsedTime)
+		self:LookAtPoint(l_PlayerPos,0.0)
+	end 
 end
 
 

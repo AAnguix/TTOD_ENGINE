@@ -12,6 +12,7 @@ g_CurrentLuaMainFile = "./Data/Scripting/LuaMainStartScreen.lua"
 g_Engine = CEngine.GetSingleton()
 g_RenderManager = g_Engine:GetRenderManager()
 g_ContextManager = g_RenderManager:GetContextManager()
+g_LuabindManager = g_Engine:GetLuabindManager()
 
 g_GameObjectManager = g_Engine:GetGameObjectManager()
 g_StaticMeshManager = g_Engine:GetStaticMeshManager()
@@ -36,6 +37,7 @@ g_DebugHelper = g_Engine:GetDebugHelper()
 g_InputManager = g_Engine:GetInputManager()
 g_LogManager = g_Engine:GetLogManager()
 g_GraphicsStats = g_Engine:GetGraphicsStats()
+g_Profiler = g_Engine:GetProfiler()
 
 g_GameController = CGameController()
 g_DamageCalculator = CDamageCalculator()

@@ -91,58 +91,61 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 	if (m_StaticMesh == NULL)
 		return;
 
-	bool l_IsOutsideFrustum = false;
-
-	#if ENABLE_FRUSTUM
-	//if (!RenderManager->GetFrustum().BoxVisible(m_StaticMesh->GetBoundingBoxMax(), m_StaticMesh->GetBoundingBoxMin()))
-	if (!RenderManager->GetFrustum().SphereVisible(GetTransform()*m_StaticMesh->GetBoundingSphereCenter(), m_StaticMesh->GetBoundingSphereRadius()))
-		l_IsOutsideFrustum = true;
-	#endif
-	
-	if (m_Visible && !l_IsOutsideFrustum)
+	if (m_Enabled)
 	{
-		if (m_Parent != nullptr && m_ParentBoneId != -1)
-		{
-			Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
-			//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
-			Mat44f l_ParentTransform = m_Parent->GetTransform();
-			CContextManager* l_ContextManager = RenderManager->GetContextManager();
-			
-			l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
-			l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
-			/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
-			Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
-			l_Translation.SetIdentity();
-			l_Translation.Translate(m_Position);
-			l_RotX.SetIdentity();
-			l_RotX.RotByAngleX(m_Pitch);
-			l_RotY.SetIdentity();
-			l_RotY.RotByAngleY(m_Yaw);
-			l_RotZ.SetIdentity();
-			l_RotZ.RotByAngleZ(m_Roll);
+		bool l_IsOutsideFrustum = false;
 
-			Mat44f l_Tranform;
-			l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
-			/*if (b_Test==0)
-				l_Tranform = l_RotZ*l_RotY*l_RotX*l_Translation;
-			else if (b_Test == 1)
-				l_Tranform = l_RotZ*l_RotX*l_RotY*l_Translation;
-			else if (b_Test == 2)*/
-				
-			/*else if (b_Test == 3)
-				l_Tranform = l_RotX*l_RotZ*l_RotY*l_Translation;
-			else if (b_Test == 4)
-				l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
-			else if (b_Test == 5)
-				l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
+		#if ENABLE_FRUSTUM
+				//if (!RenderManager->GetFrustum().BoxVisible(m_StaticMesh->GetBoundingBoxMax(), m_StaticMesh->GetBoundingBoxMin()))
+				if (!RenderManager->GetFrustum().SphereVisible(GetTransform()*m_StaticMesh->GetBoundingSphereCenter(), m_StaticMesh->GetBoundingSphereRadius()))
+					l_IsOutsideFrustum = true;
+		#endif
 
-			l_ContextManager->SetWorldMatrix(l_Tranform*l_BoneTransform*l_ParentTransform);
-		}
-		else
+		if (!l_IsOutsideFrustum)
 		{
-			RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
+			if (m_Parent != nullptr && m_ParentBoneId != -1)
+			{
+				Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
+				//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
+				Mat44f l_ParentTransform = m_Parent->GetTransform();
+				CContextManager* l_ContextManager = RenderManager->GetContextManager();
+
+				/*l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
+				l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());*/
+				/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
+				Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
+				l_Translation.SetIdentity();
+				l_Translation.Translate(m_Position);
+				l_RotX.SetIdentity();
+				l_RotX.RotByAngleX(m_Pitch);
+				l_RotY.SetIdentity();
+				l_RotY.RotByAngleY(m_Yaw);
+				l_RotZ.SetIdentity();
+				l_RotZ.RotByAngleZ(m_Roll);
+
+				Mat44f l_Tranform;
+				l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
+				/*if (b_Test==0)
+					l_Tranform = l_RotZ*l_RotY*l_RotX*l_Translation;
+					else if (b_Test == 1)
+					l_Tranform = l_RotZ*l_RotX*l_RotY*l_Translation;
+					else if (b_Test == 2)*/
+
+				/*else if (b_Test == 3)
+					l_Tranform = l_RotX*l_RotZ*l_RotY*l_Translation;
+					else if (b_Test == 4)
+					l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
+					else if (b_Test == 5)
+					l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
+
+				l_ContextManager->SetWorldMatrix(l_Tranform*l_BoneTransform*l_ParentTransform);
+			}
+			else
+			{
+				RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
+			}
+			m_StaticMesh->Render(RenderManager);
 		}
-		m_StaticMesh->Render(RenderManager);
 	}
 }
 
