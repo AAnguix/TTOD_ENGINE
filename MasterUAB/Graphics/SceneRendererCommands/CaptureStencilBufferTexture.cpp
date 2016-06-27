@@ -1,10 +1,10 @@
-#include "CaptureFrameBufferTexture.h"
+#include "CaptureStencilBufferTexture.h"
 #include "Engine\Engine.h"
 #include "Render\RenderManager.h"
 #include "XML\XMLTreeNode.h"
 #include <ScreenGrab.h>
 
-void CCaptureFrameBufferTexture::Init(const std::string &Name, unsigned int Width, unsigned int Height)
+void CCaptureStencilBufferTexture::Init(const std::string &Name, unsigned int Width, unsigned int Height)
 {
 	m_Width=Width;
 	m_Height=Height;
@@ -18,28 +18,27 @@ void CCaptureFrameBufferTexture::Init(const std::string &Name, unsigned int Widt
 	
 	D3D11_TEXTURE2D_DESC l_Texture2DDescription;
 	ZeroMemory(&l_Texture2DDescription, sizeof(l_Texture2DDescription));
-	l_Texture2DDescription.Width=Width;
-	l_Texture2DDescription.Height=Height;
-	l_Texture2DDescription.BindFlags=D3D11_BIND_RENDER_TARGET |D3D11_BIND_SHADER_RESOURCE;
-	l_Texture2DDescription.ArraySize=1;
-	l_Texture2DDescription.MiscFlags=0;
-	l_Texture2DDescription.MipLevels=1;
-	l_Texture2DDescription.CPUAccessFlags=0;
-	l_Texture2DDescription.Format=DXGI_FORMAT_R8G8B8A8_UNORM;
-	l_Texture2DDescription.SampleDesc.Count=1;
-	l_Texture2DDescription.SampleDesc.Quality=0;
-	l_Texture2DDescription.Usage=D3D11_USAGE_DEFAULT;
+	l_Texture2DDescription.Width = Width;
+	l_Texture2DDescription.Height = Height;
+	l_Texture2DDescription.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	l_Texture2DDescription.ArraySize = 1;
+	l_Texture2DDescription.MiscFlags = 0;
+	l_Texture2DDescription.MipLevels = 1;
+	l_Texture2DDescription.CPUAccessFlags = 0;
+	l_Texture2DDescription.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	l_Texture2DDescription.SampleDesc.Count = 1;
+	l_Texture2DDescription.SampleDesc.Quality = 0;
+	l_Texture2DDescription.Usage = D3D11_USAGE_DEFAULT;
 	
-	HRESULT l_HR=l_Device->CreateTexture2D(&l_Texture2DDescription, NULL,&m_DataTexture);
-
-	if(FAILED(l_HR))
-		return;
+	HRESULT l_HR = l_Device->CreateTexture2D(&l_Texture2DDescription, NULL, &m_DataTexture);
+	if (FAILED(l_HR))
+		assert(false);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC DescRV;
 	ZeroMemory(&DescRV, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	DescRV.Format=l_Texture2DDescription.Format;
+	DescRV.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 	DescRV.ViewDimension=D3D11_SRV_DIMENSION_TEXTURE2D;
-	DescRV.Texture2D.MipLevels=l_Texture2DDescription.MipLevels;
+	DescRV.Texture2D.MipLevels = l_Texture2DDescription.MipLevels;
 	DescRV.Texture2D.MostDetailedMip=0;
 	l_HR=l_Device->CreateShaderResourceView(m_DataTexture, &DescRV, &m_Texture);
 	
@@ -48,7 +47,7 @@ void CCaptureFrameBufferTexture::Init(const std::string &Name, unsigned int Widt
 	CreateSamplerState();
 }
 
-void CCaptureFrameBufferTexture::Unload()
+void CCaptureStencilBufferTexture::Unload()
 {
 	m_DataTexture->Release();
 	m_DataTexture = 0;
@@ -56,7 +55,7 @@ void CCaptureFrameBufferTexture::Unload()
 	CTexture::Unload();
 }
 
-bool CCaptureFrameBufferTexture::CreateSamplerState()
+bool CCaptureStencilBufferTexture::CreateSamplerState()
 {
 	ID3D11Device *l_Device=CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDevice();
 	D3D11_SAMPLER_DESC l_SampDesc;
@@ -72,30 +71,30 @@ bool CCaptureFrameBufferTexture::CreateSamplerState()
 	return !FAILED(l_HR);
 }
 
-bool CCaptureFrameBufferTexture::Reload()
+bool CCaptureStencilBufferTexture::Reload()
 {
 	Unload();
 	Init(m_Name,m_Width,m_Height);
 	return true;
 }
 
-CCaptureFrameBufferTexture::CCaptureFrameBufferTexture(const CXMLTreeNode &TreeNode) 
+CCaptureStencilBufferTexture::CCaptureStencilBufferTexture(const CXMLTreeNode &TreeNode)
 {
 	Init(TreeNode.GetPszProperty("name"),TreeNode.GetIntProperty("width"),TreeNode.GetIntProperty("height"));
 }
 
-CCaptureFrameBufferTexture::CCaptureFrameBufferTexture(const std::string &Name, unsigned int Width, unsigned int Height)
+CCaptureStencilBufferTexture::CCaptureStencilBufferTexture(const std::string &Name, unsigned int Width, unsigned int Height)
 {
 	Init(Name,Width,Height);
 }
 
-CCaptureFrameBufferTexture::~CCaptureFrameBufferTexture()
+CCaptureStencilBufferTexture::~CCaptureStencilBufferTexture()
 {
 	m_DataTexture->Release();
 	m_DataTexture = 0;
 }
 
-bool CCaptureFrameBufferTexture::Capture(unsigned int StageId)
+bool CCaptureStencilBufferTexture::Capture(unsigned int StageId)
 {
 	CRenderManager* l_RenderManager=CEngine::GetSingleton().GetRenderManager();
 	ID3D11Texture2D *l_Surface=NULL;
@@ -105,10 +104,12 @@ bool CCaptureFrameBufferTexture::Capture(unsigned int StageId)
 		return false;
 
 	l_RenderManager->GetContextManager()->GetDeviceContext()->CopyResource(m_DataTexture, l_Surface);
+	/*std::string l_Path = "./Data/StencilBufferTexture.dds";
+	SaveToFile(l_Path);*/
 	return true;
 }
 
-bool CCaptureFrameBufferTexture::SaveToFile(std::string& Path)
+bool CCaptureStencilBufferTexture::SaveToFile(std::string& Path)
 {
 	ID3D11DeviceContext *l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
 	std::wstring l_WStr(Path.begin(), Path.end());

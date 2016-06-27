@@ -6,7 +6,7 @@
 #include <luabind/iterator_policy.hpp>
 
 
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "PhysXManager.h"
 
 #include "Components\Collider.h"

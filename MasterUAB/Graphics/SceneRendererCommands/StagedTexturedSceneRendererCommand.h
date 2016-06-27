@@ -7,7 +7,7 @@
 #include "Textures\Texture.h"
 #include "Materials\MaterialManager.h"
 #include "Textures\DynamicTexture.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 //class CDynamicTexture;
 
 class CStagedTexturedSceneRendererCommand : public CSceneRendererCommand 

@@ -5,7 +5,7 @@
 #include <luabind/operator.hpp>
 //#include <luabind/iterator_policy.hpp>
 
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "ISoundManager.h"
 #include "Components\AudioSource.h"
 

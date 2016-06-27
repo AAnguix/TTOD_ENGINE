@@ -1,5 +1,5 @@
 #include "DeferredShadingSceneRendererCommand.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Render\RenderManager.h"
 #include "Lights\LightManager.h"
@@ -45,16 +45,19 @@ void CDeferredShadingSceneRendererCommand::Execute(CRenderManager &RenderManager
 	else ExecuteDeferredShading(RenderManager);
 }
 
+static int flag = 0;
+
 void CDeferredShadingSceneRendererCommand::ExecuteDeferredShading(CRenderManager &RenderManager)
 {
-	CEngine::GetSingleton().GetRenderManager()->GetContextManager()->EnableDeferredShadingBlendState();
+	CContextManager* l_ContextManager = RenderManager.GetContextManager();
+	l_ContextManager->EnableDeferredShadingBlendState();
 
 	CLightManager* l_LightManager = CEngine::GetSingleton().GetLightManager();
 	std::vector<CLight*> l_Lights = l_LightManager->GetResourcesVector();
 	size_t l_Size = l_Lights.size();
 
-	int l_Width = RenderManager.GetContextManager()->GetFrameBufferWidth();
-	int l_Height = RenderManager.GetContextManager()->GetFrameBufferHeight();
+	int l_Width = l_ContextManager->GetFrameBufferWidth();
+	int l_Height = l_ContextManager->GetFrameBufferHeight();
 
 	ActivateTextures();
 
@@ -122,32 +125,34 @@ void CDeferredShadingSceneRendererCommand::ExecuteDeferredShadingUsingLightVolum
 
 void CDeferredShadingSceneRendererCommand::FirstPast(CRenderManager &RenderManager)
 {
-	RenderManager.GetContextManager()->EnableDeferredShadingBlendState();
-	RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_CULL_BACK); //Front (near) faces only
+	CContextManager* l_ContextManager = RenderManager.GetContextManager();
+	l_ContextManager->Clear(false, true);
+	l_ContextManager->EnableDeferredShadingBlendState();
+	l_ContextManager->SetRasterizerState(CContextManager::RS_CULL_BACK); //Front (near) faces only
 
-	D3D11_DEPTH_STENCIL_DESC l_DepthStencilStateDescription;
-	ZeroMemory(&l_DepthStencilStateDescription, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	D3D11_DEPTH_STENCIL_DESC depthstencil_desc;
+	depthstencil_desc.DepthEnable = TRUE;
+	depthstencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	depthstencil_desc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthstencil_desc.StencilEnable = TRUE;
+	depthstencil_desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	depthstencil_desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+
+	depthstencil_desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthstencil_desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INVERT;
+	depthstencil_desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthstencil_desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+
+	depthstencil_desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthstencil_desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INVERT;
+	depthstencil_desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthstencil_desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	
-	l_DepthStencilStateDescription.DepthEnable = true; /*Enable Z-Test*/
-	l_DepthStencilStateDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO; //Z-write is disabled
-	l_DepthStencilStateDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; //Z function is 'Less/Equal'
-	
-	l_DepthStencilStateDescription.StencilEnable = true;
-	l_DepthStencilStateDescription.StencilWriteMask = 0xff; //Stencil test result does not modify Stencil buffer
-
-	l_DepthStencilStateDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	l_DepthStencilStateDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR_SAT; //Z-Fail writes non-zero value to Stencil buffer (for example, 'Increment-Saturate')
-	l_DepthStencilStateDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	HRESULT l_Result = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDevice()->CreateDepthStencilState(&l_DepthStencilStateDescription, &m_DepthStencilState);
+	HRESULT l_Result = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDevice()->CreateDepthStencilState(&depthstencil_desc, &m_DepthStencilState);
 	UINT l_StencilRef = 0;
-	RenderManager.GetContextManager()->GetDeviceContext()->OMSetDepthStencilState(m_DepthStencilState, l_StencilRef);
+	l_ContextManager->UnsetColorRenderTarget();
+	l_ContextManager->GetDeviceContext()->OMSetDepthStencilState(m_DepthStencilState, l_StencilRef);
 }
 
 void CDeferredShadingSceneRendererCommand::SecondPass(CRenderManager &RenderManager)
@@ -155,28 +160,30 @@ void CDeferredShadingSceneRendererCommand::SecondPass(CRenderManager &RenderMana
 	RenderManager.GetContextManager()->EnableDeferredShadingBlendState();
 	RenderManager.GetContextManager()->SetRasterizerState(CContextManager::RS_CULL_FRONT); //Back(far) faces only
 
-	D3D11_DEPTH_STENCIL_DESC l_DepthStencilStateDescription;
-	ZeroMemory(&l_DepthStencilStateDescription, sizeof(D3D11_DEPTH_STENCIL_DESC));
-	l_DepthStencilStateDescription.DepthEnable = true;
-	l_DepthStencilStateDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO; //Z - write is disabled
-	l_DepthStencilStateDescription.StencilReadMask = 0xff;
-	l_DepthStencilStateDescription.StencilWriteMask = 0xff;
-	l_DepthStencilStateDescription.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; //Z function is 'Greater/Equal'
-	l_DepthStencilStateDescription.StencilEnable = true;
+	D3D11_DEPTH_STENCIL_DESC depthstencil_desc;
+	depthstencil_desc.DepthEnable = FALSE;
+	depthstencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	depthstencil_desc.DepthFunc = D3D11_COMPARISON_LESS;
 
-	l_DepthStencilStateDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_ZERO;
-	l_DepthStencilStateDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_ZERO;
-	l_DepthStencilStateDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_ZERO;
-	l_DepthStencilStateDescription.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+	depthstencil_desc.StencilEnable = TRUE;
+	depthstencil_desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	depthstencil_desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
 
-	l_DepthStencilStateDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	l_DepthStencilStateDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthstencil_desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthstencil_desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	depthstencil_desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INVERT;
+	depthstencil_desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+
+	depthstencil_desc.BackFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
+	depthstencil_desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	depthstencil_desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_ZERO;
+	depthstencil_desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 
 	//Stencil function is 'Equal' (Stencil ref = zero)
 
-	HRESULT l_Result = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDevice()->CreateDepthStencilState(&l_DepthStencilStateDescription, &m_DepthStencilState);
+	HRESULT l_Result = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDevice()->CreateDepthStencilState(&depthstencil_desc, &m_DepthStencilState);
+
+	RenderManager.GetContextManager()->UnsetRenderTargets();
 
 	UINT l_StencilRef = 0;
 	RenderManager.GetContextManager()->GetDeviceContext()->OMSetDepthStencilState(m_DepthStencilState, l_StencilRef);

@@ -1,7 +1,7 @@
 #include "Particles\ParticleSystemType.h"
 #include "XML\XMLTreeNode.h"
 #include "Materials\MaterialManager.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Utils\EmptyPointerClass.h"
 #include "Materials\Material.h"
 #include "Log\Log.h"

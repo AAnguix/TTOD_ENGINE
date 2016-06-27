@@ -2,7 +2,7 @@
 #include "Render\RenderManager.h"
 #include "Materials\MaterialManager.h"
 #include "Vertex\VertexTypes.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Vertex\RenderableVertexs.h"
 #include "RenderableObjects\RenderableObjectTechnique.h"
 #include "PhysXManager.h"
@@ -25,7 +25,7 @@ CStaticMesh::~CStaticMesh()
 	{
 		delete m_RVs[i];
 	}
-
+	
 	m_RVs.clear();
 	m_Materials.clear();
 	m_MeshVertex.clear();

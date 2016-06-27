@@ -1,9 +1,10 @@
 #include "StagedTexturedSceneRendererCommand.h"
 //#include "Textures\DynamicTexture.h"
-//#include "Engine.h"
+//#include "Engine\Engine.h"
 #include "Textures\TextureManager.h"
 #include "Render\RenderManager.h"
 #include "CaptureFrameBufferTexture.h"
+#include "CaptureStencilBufferTexture.h"
 #include "XML\XMLTreeNode.h"
 
 CStagedTexturedSceneRendererCommand::CStagedTexturedSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode)
@@ -89,6 +90,35 @@ CStagedTexturedSceneRendererCommand::CStagedTexturedSceneRendererCommand(CXMLTre
 			} else {CStageTexture l_StagedTexture(0,l_CaptureFrameBufferTexture); m_StageTextures.push_back(l_StagedTexture);}
 			
 		}
+		else if (l_Node.GetName() == std::string("capture_stencil_texture"))
+		{
+			std::string l_Name = l_Node.GetPszProperty("name");
+			CCaptureStencilBufferTexture* l_CaptureStencilBufferTexture = (CCaptureStencilBufferTexture*)CEngine::GetSingleton().GetTextureManager()->GetResource(l_Name);
+
+			if (l_CaptureStencilBufferTexture == NULL)
+			{
+				bool l_AsFrameBuffer = l_Node.GetBoolProperty("texture_width_as_frame_buffer", true);
+				if (l_AsFrameBuffer)
+				{
+					CContextManager* l_C = CEngine::GetSingleton().GetRenderManager()->GetContextManager();
+					l_CaptureStencilBufferTexture = new CCaptureStencilBufferTexture(l_Name, l_C->GetFrameBufferWidth(), l_C->GetFrameBufferHeight());
+				}
+				else
+				{
+					l_CaptureStencilBufferTexture = new CCaptureStencilBufferTexture(l_Node);
+				}
+
+				if (CEngine::GetSingleton().GetTextureManager()->AddResource(l_Name, l_CaptureStencilBufferTexture))
+				{
+					CStageTexture l_StagedTexture(0, l_CaptureStencilBufferTexture);
+					m_StageTextures.push_back(l_StagedTexture);
+				}
+
+			}
+			else { CStageTexture l_StagedTexture(0, l_CaptureStencilBufferTexture); m_StageTextures.push_back(l_StagedTexture); }
+
+		}
+
 	}
 
 	CreateRenderTargetViewVector();

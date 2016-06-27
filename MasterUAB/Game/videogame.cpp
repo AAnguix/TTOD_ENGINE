@@ -2,7 +2,7 @@
 #include <D3DCommon.h>
 #include <Windows.h>
 #include <Windowsx.h>
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 #include <cassert>
 #include <vld.h> //Visual Leak Detector
@@ -33,11 +33,11 @@
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
 
+#include "Engine\EngineSettings.h"
+
 #pragma comment(lib, "Winmm.lib")
 
 #define APPLICATION_NAME	"The Tale Of Degann"
-#define APPLICATTION_WIDTH  1280 //1280
-#define APPLICATTION_HEIGHT 720 //720
 
 CContextManager s_Context;
 
@@ -193,7 +193,6 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 {
 	CheckMemoryLeaks();
 
-	//Register the window class
 	WNDCLASSEX l_Wc;
 	ZeroMemory(&l_Wc, sizeof(WNDCLASSEX));
 	l_Wc.cbSize = sizeof(WNDCLASSEX);
@@ -202,7 +201,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 	l_Wc.cbClsExtra = 0L;
 	l_Wc.cbWndExtra = 0L;
 	l_Wc.hInstance = GetModuleHandle(NULL);
-	l_Wc.hIcon = NULL;
+	l_Wc.hIcon = NULL; //LoadIcon(NULL, IDI_ASTERISK);
 	l_Wc.hCursor = NULL;
 	//l_Wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	l_Wc.hbrBackground = NULL;
@@ -213,17 +212,23 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 	//WNDCLASSEX l_Wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, APPLICATION_NAME, NULL };
 	RegisterClassEx(&l_Wc);
 
-	RECT rc = {0, 0, APPLICATTION_WIDTH, APPLICATTION_HEIGHT};
+	CEngineSettings* l_EngineSettings = new CEngineSettings();
+	l_EngineSettings->LoadSettings("Data/engine_settings.xml");
+	
+	Vect2i l_ScreenSize =  l_EngineSettings->GetScreenSize();
+	Vect2i l_ScreenPosition = l_EngineSettings->GetScreenPosition();
+	Vect2i l_ScreenResolution = l_EngineSettings->GetScreenResolution();
+
+	RECT rc = { 0, 0, l_ScreenResolution.x, l_ScreenResolution.y};
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-	//Create the application's window
 	HWND hWnd = CreateWindow(APPLICATION_NAME, APPLICATION_NAME, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, l_Wc.hInstance, NULL);
-
-	s_Context.CreateContext(hWnd, APPLICATTION_WIDTH, APPLICATTION_HEIGHT,false);
+	
+	s_Context.Initialize(hWnd, l_ScreenResolution.x, l_ScreenResolution.y, false, l_EngineSettings->VSyncEnabled());
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
-	s_Context.CreateBackBuffer(hWnd, APPLICATTION_WIDTH, APPLICATTION_HEIGHT);
+	s_Context.CreateBackBuffer(hWnd, l_ScreenSize.x, l_ScreenSize.y);
 	s_Context.InitStates();
 
 	{
@@ -280,10 +285,13 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 
 		UnregisterClass(APPLICATION_NAME, l_Wc.hInstance);
 	}
+	delete l_EngineSettings;
+	l_EngineSettings = nullptr;
+
 	delete CEngine::GetSingletonPtr();
 	
-	//Release application memory
-	s_Context.Dispose();
+	//Release directx memory
+	s_Context.Shutdown();
 
 	return 0;
 }

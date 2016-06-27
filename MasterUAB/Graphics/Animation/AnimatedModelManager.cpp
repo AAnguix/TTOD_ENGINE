@@ -3,7 +3,7 @@
 #include "Utils\Utils.h"
 #include "cal3d\loader.h"
 #include "Log\Log.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 CAnimatedModelManager::CAnimatedModelManager()
 {

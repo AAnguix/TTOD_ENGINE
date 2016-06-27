@@ -1,6 +1,6 @@
 #include "SetPoolRenderableObjectsTechniqueSceneRendererCommand.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "XML\XMLTreeNode.h"
 
 CSetPoolRenderableObjectsTechniqueSceneRendererCommand::CSetPoolRenderableObjectsTechniqueSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode) 

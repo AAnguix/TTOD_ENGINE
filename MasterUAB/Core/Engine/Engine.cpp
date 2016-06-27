@@ -1,4 +1,4 @@
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Utils\GameObjectManager.h"
 #include "Materials\MaterialManager.h"
 #include "Effects\EffectManager.h"
@@ -134,7 +134,7 @@ void CEngine::Initialize()
 	m_SoundManager->SetPath("./Data/Audio/Soundbanks/");
 	m_SoundManager->Init();
 
-	m_SceneRendererCommandManager->Load("./Data/basic_scene_renderer_commands.xml");
+	m_SceneRendererCommandManager->Load("./Data/start_screen_scene_renderer_commands.xml");
 
 	CEngine::GetSingleton().GetLogManager()->Log("Engine initialized.");
 }

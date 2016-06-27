@@ -1,7 +1,7 @@
 #include "Camera\ThirdPersonCameraController.h"
 #include "Camera\Camera.h"
 #include "XML\XMLTreeNode.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Utils\GameObjectManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "PhysXManager.h"

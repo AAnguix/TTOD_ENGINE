@@ -13,7 +13,7 @@
 #include "Components\Script.h"
 #include "Components\AudioSource.h"
 #include "RenderableObjects\RenderableObject.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 #include "XML\XMLTreeNode.h"
 #include "Utils\3DElement.h"

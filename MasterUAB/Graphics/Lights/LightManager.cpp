@@ -5,7 +5,7 @@
 #include "Utils\Utils.h"
 #include "XML\XMLTreeNode.h"
 #include "Log\Log.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 CLightManager::CLightManager() 
 :m_AmbientLight(Vect4f(0.1f,0.1f,0.1f,1.0f))

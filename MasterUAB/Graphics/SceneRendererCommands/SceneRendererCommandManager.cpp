@@ -1,31 +1,32 @@
-#include "SceneRendererCommandManager.h"
+#include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "XML\XMLTreeNode.h"
 #include <sstream>
 
 /*Commands*/
-#include "DrawQuadRendererCommand.h"
-#include "ClearSceneRendererCommand.h"
-#include "SetMatricesSceneRendererCommand.h"
-#include "SetDepthStencilStateSceneRendererCommand.h"
-#include "RenderLayerSceneRendererCommand.h"
-#include "RenderDebugLayerSceneRendererCommand.h"
-#include "CaptureFrameBufferSceneRendererCommand.h"
-#include "SetRenderTargetSceneRendererCommand.h"
-#include "UnsetRenderTargetSceneRendererCommand.h"
-#include "SetPoolRenderableObjectsTechniqueSceneRendererCommand.h"
-#include "DeferredShadingSceneRendererCommand.h"
-#include "EnableAlphaBlendSceneRendererCommand.h"
-#include "DisableAlphaBlendSceneRendererCommand.h"
-#include "EnableAdditiveAlphaBlendSceneRendererCommand.h"
-#include "SetLightConstantsSceneRendererCommand.h"
-#include "PresentSceneRendererCommand.h"
-#include "RenderGUISceneRendererCommand.h"
-#include "RenderDebugGUISceneRendererCommand.h"
-#include "RenderDebugLightsSceneRendererCommand.h"
-#include "RenderDebugGridSceneRendererCommand.h"
-#include "RenderDebugShadowMapsSceneRendererCommand.h"
-#include "GenerateShadowMapsSceneRendererCommand.h"
-#include "ApplyFiltersSceneRendererCommand.h"
+#include "SceneRendererCommands\DrawQuadRendererCommand.h"
+#include "SceneRendererCommands\ClearSceneRendererCommand.h"
+#include "SceneRendererCommands\SetMatricesSceneRendererCommand.h"
+#include "SceneRendererCommands\SetDepthStencilStateSceneRendererCommand.h"
+#include "SceneRendererCommands\RenderLayerSceneRendererCommand.h"
+#include "SceneRendererCommands\RenderDebugLayerSceneRendererCommand.h"
+#include "SceneRendererCommands\CaptureFrameBufferSceneRendererCommand.h"
+#include "SceneRendererCommands\CaptureStencilBufferSceneRendererCommand.h"
+#include "SceneRendererCommands\SetRenderTargetSceneRendererCommand.h"
+#include "SceneRendererCommands\UnsetRenderTargetSceneRendererCommand.h"
+#include "SceneRendererCommands\SetPoolRenderableObjectsTechniqueSceneRendererCommand.h"
+#include "SceneRendererCommands\DeferredShadingSceneRendererCommand.h"
+#include "SceneRendererCommands\EnableAlphaBlendSceneRendererCommand.h"
+#include "SceneRendererCommands\DisableAlphaBlendSceneRendererCommand.h"
+#include "SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.h"
+#include "SceneRendererCommands\SetLightConstantsSceneRendererCommand.h"
+#include "SceneRendererCommands\PresentSceneRendererCommand.h"
+#include "SceneRendererCommands\RenderGUISceneRendererCommand.h"
+#include "SceneRendererCommands\RenderDebugGUISceneRendererCommand.h"
+#include "SceneRendererCommands\RenderDebugLightsSceneRendererCommand.h"
+#include "SceneRendererCommands\RenderDebugGridSceneRendererCommand.h"
+#include "SceneRendererCommands\RenderDebugShadowMapsSceneRendererCommand.h"
+#include "SceneRendererCommands\GenerateShadowMapsSceneRendererCommand.h"
+#include "SceneRendererCommands\ApplyFiltersSceneRendererCommand.h"
 #include "Utils.h"
 #include "Log\Log.h"
 
@@ -217,6 +218,14 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 					if (!AddResource(l_CaptureFrameCommand->GetName() + l_S, l_CaptureFrameCommand))
 					{
 						CHECKED_DELETE(l_CaptureFrameCommand);
+					}
+				}
+				else if (l_Element.GetName() == std::string("capture_stencil_buffer"))
+				{
+					CCaptureStencilBufferSceneRendererCommand* l_CaptureStencilBufferCommand = new CCaptureStencilBufferSceneRendererCommand(l_Element);
+					if (!AddResource(l_CaptureStencilBufferCommand->GetName() + l_S, l_CaptureStencilBufferCommand))
+					{
+						CHECKED_DELETE(l_CaptureStencilBufferCommand);
 					}
 				}
 				else if (l_Element.GetName() == std::string("set_light_constants"))

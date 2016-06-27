@@ -1,7 +1,7 @@
 #include "GUIManager.h"
 #include "XML\XMLTreeNode.h"
 #include <assert.h>
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Render\RenderManager.h"
 #include "Input\InputManagerImplementation.h"
 #include "Input\MouseInput.h"
@@ -10,7 +10,7 @@
 #include <iterator>
 #include <sstream>
 #include "RenderableObjects\RenderableObjectTechnique.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "LuabindManager\LuabindManager.h"
 #include "Input\KeyBoardInput.h"
 

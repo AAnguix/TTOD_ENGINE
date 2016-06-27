@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Input\InputManager.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -89,9 +88,14 @@
     <ClCompile Include="Profiler\ProfilerRecord.cpp">
       <Filter>Profiler</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\EngineSettings.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine.h" />
     <ClInclude Include="Input\InputManager.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -170,6 +174,12 @@
     <ClInclude Include="Profiler\ProfilerRecord.h">
       <Filter>Profiler</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\EngineSettings.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Input">
@@ -195,6 +205,9 @@
     </Filter>
     <Filter Include="Profiler">
       <UniqueIdentifier>{6758ef5e-a423-446e-a17a-b2bd8b80988c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{4fbf7e96-f8a1-492c-a078-1fb4bd4d8d46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

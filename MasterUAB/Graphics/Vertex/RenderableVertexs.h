@@ -284,7 +284,7 @@ public:
 		CEffectGeometryShader *l_EffectGeometryShader = EffectTechnique->GetGeometryShader();
 		ID3D11Buffer *l_ConstantBufferVS=l_EffectVertexShader->GetConstantBuffer(0);
 		
-		if (l_EffectPixelShader == NULL || l_EffectVertexShader == NULL || l_ConstantBufferVS == NULL)
+		if (l_EffectVertexShader == NULL || l_ConstantBufferVS == NULL) //l_EffectPixelShader == NULL || 
 		{
 			assert(false);
 			return false;
@@ -301,11 +301,19 @@ public:
 		l_DeviceContext->UpdateSubresource(l_ConstantBufferVS, 0, NULL,Parameters, 0, 0 );
 		l_DeviceContext->VSSetConstantBuffers(0, 1, &l_ConstantBufferVS);
 		
-		l_DeviceContext->PSSetShader(l_EffectPixelShader->GetPixelShader(),NULL, 0);
-		ID3D11Buffer *l_ConstantBufferPS=l_EffectPixelShader->GetConstantBuffer(0);
-		l_DeviceContext->UpdateSubresource(l_ConstantBufferPS, 0, NULL,Parameters, 0, 0 );
-		l_DeviceContext->PSSetConstantBuffers(0, 1, &l_ConstantBufferPS);
-		
+		ID3D11PixelShader* l_PixelShader = NULL;
+		ID3D11Buffer *l_ConstantBufferPS = NULL;
+		if (l_EffectPixelShader)
+		{
+			l_PixelShader = l_EffectPixelShader->GetPixelShader();
+			l_ConstantBufferPS = l_EffectPixelShader->GetConstantBuffer(0);
+		}
+		l_DeviceContext->PSSetShader(l_PixelShader, NULL, 0);
+		if (l_ConstantBufferPS)
+		{
+			l_DeviceContext->UpdateSubresource(l_ConstantBufferPS, 0, NULL, Parameters, 0, 0);
+			l_DeviceContext->PSSetConstantBuffers(0, 1, &l_ConstantBufferPS);
+		}
 		if (l_EffectGeometryShader)
 		{
 			ID3D11Buffer *l_ConstantBufferGS = l_EffectGeometryShader->GetConstantBuffer(0);

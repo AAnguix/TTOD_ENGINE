@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "XML\XMLTreeNode.h"
 #include "Utils\GameObjectManager.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 CRenderableObject::CRenderableObject(const CXMLTreeNode &XMLTreeNode) 
 :CComponent(XMLTreeNode.GetPszProperty("name"), CEngine::GetSingleton().GetGameObjectManager()->GetResource(XMLTreeNode.GetPszProperty("name")), XMLTreeNode.GetBoolProperty("visible", true))

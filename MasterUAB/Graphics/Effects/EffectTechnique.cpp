@@ -1,6 +1,6 @@
 #include "Effects\EffectTechnique.h"
 #include "Effects\EffectManager.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "XML\XMLTreeNode.h"
 
 CEffectTechnique::CEffectTechnique(CXMLTreeNode &TreeNode)

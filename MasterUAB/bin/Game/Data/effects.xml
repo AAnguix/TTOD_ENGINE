@@ -6,8 +6,7 @@
 	<effect_technique name="lava_technique" vertex_shader="lava_vs" pixel_shader="lava_ps"/>
 
 	<vertex_shader name="ds_sphere_vs" file="./Data/Effects/DeferredShadingOmniLightSphere.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
-	<pixel_shader name="ds_sphere_ps" file="./Data/Effects/DeferredShadingOmniLightSphere.fx" shader_model="ps_5_0" entry_point="PS"/>
-	<effect_technique name="ds_omnilight_sphere_technique" vertex_shader="ds_sphere_vs" pixel_shader="ds_sphere_ps"/>
+	<effect_technique name="ds_omnilight_sphere_technique" vertex_shader="ds_sphere_vs"/>
 	
 	<!--Glow-->
 	<vertex_shader name="glow_vs" file="./Data/Effects/Glow.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>

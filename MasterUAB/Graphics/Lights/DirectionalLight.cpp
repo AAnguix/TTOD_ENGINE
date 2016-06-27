@@ -3,7 +3,7 @@
 #include "Textures\DynamicTexture.h"
 #include "XML\XMLTreeNode.h"
 #include "Utils\GameObjectManager.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 CDirectionalLight::CDirectionalLight(const std::string &Name)
 :CLight(Name)

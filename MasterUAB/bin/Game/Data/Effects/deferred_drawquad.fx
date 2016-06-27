@@ -28,7 +28,6 @@ float4 PS(PS_INPUT IN) : SV_Target
 {
 	//if(IN.UV.x<0.5)
 	//	clip(-1);
-
 	float4 l_DiffuseMap = T0Texture.Sample(S0Sampler, IN.UV);
 	
 	float4 l_NormalMap = T1Texture.Sample(S1Sampler, IN.UV);

@@ -1,7 +1,7 @@
 #include "Materials\MaterialManager.h"
 #include "Utils\Utils.h"
 #include "XML\XMLTreeNode.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Log\Log.h"
 
 CMaterialManager::CMaterialManager() : m_Filename("")

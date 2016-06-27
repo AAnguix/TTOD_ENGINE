@@ -45,14 +45,15 @@ public:
 
 public:
 	CContextManager();
+	CContextManager(const CContextManager&);
 	~CContextManager();
-
-	void Dispose();
 
 	void ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height);
 
-	HRESULT CreateContext(HWND hWnd, unsigned int Width, unsigned int Height, bool FullScreen);
-	HRESULT CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height);
+	bool Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned int ScreenHeight, bool FullScreen, bool VSync);
+	void Shutdown();
+	
+	bool CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height);
 	void InitStates();
 
 	float GetAspectRatio() const { return (float)m_Width / (float)m_Height; }
@@ -84,6 +85,8 @@ public:
 	unsigned int GetFrameBufferHeight(){ return m_Height; };
 
 	void SetRenderTargets(int NumViews, ID3D11RenderTargetView *const*RenderTargetViews, ID3D11DepthStencilView *DepthStencilView);
+	
+	void UnsetColorRenderTarget();
 	void UnsetRenderTargets();
 
 	void SetAlphaBlendState(ID3D11BlendState* AlphaBlendState);
@@ -100,20 +103,30 @@ public:
 	ID3D11RenderTargetView * GetRenderTargetView() const { return m_RenderTargetView; }
 	ID3D11DepthStencilView * GetDepthStencilView() const { return m_DepthStencilView; }
 
+	bool SaveStencilBufferToFile();
+
+	void GetVideoCardInfo(char*, int&);
+
 private:
 
 	void InitRasterizerStates();
 	void InitDepthStencilStates();
 	void InitBlendingStates();
 
-	ID3D11Device*			m_D3DDevice;
-	ID3D11DeviceContext*	m_DeviceContext;
-	ID3D11Debug*			m_D3DDebug;
-	IDXGISwapChain*			m_SwapChain;
-	ID3D11RenderTargetView*	m_RenderTargetView;
-	ID3D11Texture2D*		m_DepthStencil;
-	ID3D11DepthStencilView*	m_DepthStencilView;
+	DXGI_FORMAT GetDepthResourceFormat(DXGI_FORMAT DepthFormat);
+	DXGI_FORMAT GetDepthShaderResourceViewFormat(DXGI_FORMAT Depthformat);
 
+	ID3D11ShaderResourceView* m_StencilTexture;
+	
+	
+	ID3D11Debug* m_D3DDebug;
+	IDXGISwapChain* m_SwapChain;
+	ID3D11Device* m_D3DDevice;
+	ID3D11DeviceContext* m_DeviceContext;
+
+	ID3D11RenderTargetView*	m_RenderTargetView;
+	ID3D11Texture2D* m_DepthStencil;
+	ID3D11DepthStencilView*	m_DepthStencilView;
 	ID3D11RenderTargetView *const *m_CurrentRenderTargetViews;
 	ID3D11DepthStencilView *m_CurrentDepthStencilView;
 
@@ -126,6 +139,10 @@ private:
 	ID3D11BlendState* m_AlphaBlendState;
 	ID3D11BlendState* m_AdditiveAlphaBlendState;
 	D3D11_VIEWPORT m_Viewport;
+
+	int m_VideoCardMemory;
+	char m_VideoCardDescription[128];
+	bool m_VSyncEnabled;
 };
 
 #endif

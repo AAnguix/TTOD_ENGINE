@@ -1,6 +1,6 @@
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "XML\XMLTreeNode.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Effects\EffectManager.h"
 
 CRenderableObjectTechniqueManager::CRenderableObjectTechniqueManager()

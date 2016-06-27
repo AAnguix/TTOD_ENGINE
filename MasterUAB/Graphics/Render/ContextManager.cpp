@@ -8,14 +8,16 @@
 #include "Math\Matrix44.h"
 
 #include "Render\DebugRender.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Effects\EffectManager.h"
 
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
+#include <ScreenGrab.h>
 
 #pragma comment(lib,"d3d11.lib")
 #include <random>
 #include <cmath>
+#include <wchar.h>
 
 CContextManager::CContextManager()
 	:m_D3DDevice(nullptr)
@@ -28,6 +30,7 @@ CContextManager::CContextManager()
 	, m_Height(0)
 	, m_Width(0)
 	, m_NumViews(0)
+	, m_StencilTexture(nullptr)
 {
 
 	for (int i = 0; i < RS_COUNT; ++i)
@@ -47,16 +50,28 @@ CContextManager::CContextManager()
 
 }
 
-void CContextManager::Dispose()
+void CContextManager::Shutdown()
 {
+	if (m_SwapChain)
+	{
+		m_SwapChain->SetFullscreenState(false, nullptr);
+	}
+
+	CHECKED_RELEASE(m_StencilTexture);
+
 	for (int i = 0; i < RS_COUNT; ++i)
 	{
 		CHECKED_RELEASE(m_RasterizerSates[i]);
 	}
+
+	CHECKED_RELEASE(m_DepthStencilView);
 	for (int i = 0; i < DSS_COUNT; ++i)
 	{
 		CHECKED_RELEASE(m_DepthStencilStates[i]);
 	}
+	CHECKED_RELEASE(m_DepthStencil);
+
+	CHECKED_RELEASE(m_DeviceContext);
 	/*
 	for (int i = 0; i < BLEND_COUNT; ++i)
 	{
@@ -65,13 +80,10 @@ void CContextManager::Dispose()
 	CHECKED_RELEASE(m_AlphaBlendState);
 
 	CHECKED_RELEASE(m_RenderTargetView);
-	CHECKED_RELEASE(m_DepthStencil);
-	CHECKED_RELEASE(m_DepthStencilView);
 
-	if (m_SwapChain)
+	if (m_DeviceContext)
 	{
 		m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-		m_SwapChain->SetFullscreenState(false, nullptr);
 	}
 
 	if (m_D3DDebug)
@@ -80,47 +92,124 @@ void CContextManager::Dispose()
 	CHECKED_RELEASE(m_D3DDebug);
 
 	CHECKED_RELEASE(m_D3DDevice);
-	CHECKED_RELEASE(m_DeviceContext);
+	
 	CHECKED_RELEASE(m_SwapChain);
 }
 
-HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned int Height, bool FullScreen)
+bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned int ScreenHeight, bool FullScreen, bool VSync)
 {
-	D3D_FEATURE_LEVEL featureLevels[] =
+	m_VSyncEnabled = VSync;
+
+	HRESULT l_Result;
+
+	IDXGIFactory* l_Factory;
+	IDXGIAdapter* l_Adapter;
+	IDXGIOutput* l_AdapterOutput;
+
+	unsigned int l_NumModes, l_Numerator=0, l_Denominator=0;
+	DXGI_MODE_DESC* l_DisplayModeList;
+	DXGI_ADAPTER_DESC l_AdapterDesc;
+	
+	l_Result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&l_Factory);
+	if (FAILED(l_Result)){return false;}
+
+	l_Result = l_Factory->EnumAdapters(0, &l_Adapter);
+	if (FAILED(l_Result)){ return false; }
+	
+	l_Result = l_Adapter->EnumOutputs(0, &l_AdapterOutput);
+	if (FAILED(l_Result)){ return false; }
+
+	l_Result = l_AdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &l_NumModes, NULL);
+	if (FAILED(l_Result)){ return false; }
+
+	l_DisplayModeList = new DXGI_MODE_DESC[l_NumModes];
+	if (!l_DisplayModeList){return false;}
+
+	l_Result = l_AdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &l_NumModes, l_DisplayModeList);
+	if (FAILED(l_Result)){ return false; }
+
+	for (unsigned int i = 0; i<l_NumModes; ++i)
+	{
+		if (l_DisplayModeList[i].Width == (unsigned int)ScreenWidth)
+		{
+			if (l_DisplayModeList[i].Height == (unsigned int)ScreenHeight)
+			{
+				l_Numerator = l_DisplayModeList[i].RefreshRate.Numerator;
+				l_Denominator = l_DisplayModeList[i].RefreshRate.Denominator;
+				l_Result = S_OK;
+			}
+		}
+	}
+	if (FAILED(l_Result)){ return false; }
+
+
+	l_Result = l_Adapter->GetDesc(&l_AdapterDesc);
+	if (FAILED(l_Result)){ return false; }
+
+	m_VideoCardMemory = (int)(l_AdapterDesc.DedicatedVideoMemory / 1024 / 1024);
+
+	size_t l_StringLength;
+	
+	int l_Error = wcstombs_s(&l_StringLength, m_VideoCardDescription, 128, l_AdapterDesc.Description, 128);
+	if (l_Error != 0) {	return false; }
+
+	delete[] l_DisplayModeList;
+	l_DisplayModeList = 0;
+
+	l_AdapterOutput->Release();
+	l_AdapterOutput = 0;
+	l_Adapter->Release();
+	l_Adapter = 0;
+	
+	DXGI_SWAP_CHAIN_DESC l_SwapChainDesc;
+	ZeroMemory(&l_SwapChainDesc, sizeof(l_SwapChainDesc));
+	l_SwapChainDesc.BufferCount = 1;
+	l_SwapChainDesc.BufferDesc.Width = ScreenWidth;
+	l_SwapChainDesc.BufferDesc.Height = ScreenHeight;
+	l_SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	if (VSync)
+	{
+		l_SwapChainDesc.BufferDesc.RefreshRate.Numerator = l_Numerator;
+		l_SwapChainDesc.BufferDesc.RefreshRate.Denominator = l_Denominator;
+	}
+	else
+	{
+		l_SwapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
+		l_SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+	}
+	l_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	l_SwapChainDesc.OutputWindow = Hwnd;
+	l_SwapChainDesc.SampleDesc.Count = 1;
+	l_SwapChainDesc.SampleDesc.Quality = 0;
+	if (FullScreen)
+		l_SwapChainDesc.Windowed = false;
+	else l_SwapChainDesc.Windowed = true;
+
+	//l_SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	//l_SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	//l_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+	l_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+	D3D_FEATURE_LEVEL l_FeatureLevels[] =
 	{
 		D3D_FEATURE_LEVEL_11_0,
 		D3D_FEATURE_LEVEL_10_1,
 		D3D_FEATURE_LEVEL_10_0,
 	};
-	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
+	UINT l_NumFeatureLevels = ARRAYSIZE(l_FeatureLevels);
 
-	DXGI_SWAP_CHAIN_DESC sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount = 1;
-	sd.BufferDesc.Width = Width;
-	sd.BufferDesc.Height = Height;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = hWnd;
-	sd.SampleDesc.Count = 1;
-	sd.SampleDesc.Quality = 0;
-	sd.Windowed = TRUE;
-	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	/*
+	int l_Flags = 0;
 	#if _DEBUG
-	int flags = D3D11_CREATE_DEVICE_DEBUG;
+		l_Flags = D3D11_CREATE_DEVICE_DEBUG;
 	#else
-	int flags = 0;
-	#endif*/
+		l_Flags = 0;
+	#endif
 
-	if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, featureLevels, numFeatureLevels,
-		D3D11_SDK_VERSION, &sd, &m_SwapChain, &m_D3DDevice, NULL, &m_DeviceContext)))
-	{
-		return S_FALSE;
-	}
+	l_Result = (D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, l_Flags, l_FeatureLevels, l_NumFeatureLevels,
+	D3D11_SDK_VERSION, &l_SwapChainDesc, &m_SwapChain, &m_D3DDevice, NULL, &m_DeviceContext));
+	if (FAILED(l_Result)){ return false; }
 
 	m_SwapChain->SetFullscreenState(FullScreen, nullptr); //FullScreen
 
@@ -132,21 +221,18 @@ HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned i
 	#endif*/
 
 	//Alt+Enter
-	IDXGIFactory* dxgiFactory;
-	HRESULT hr = m_SwapChain->GetParent(__uuidof(IDXGIFactory), (void **)&dxgiFactory);
-	assert(hr == S_OK);
+	/*l_Result = m_SwapChain->GetParent(__uuidof(IDXGIFactory), (void **)&l_Factory);
+	if (FAILED(l_Result)){return false;}*/
 
-	hr = dxgiFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
-	assert(hr == S_OK);
+	//l_Result = l_Factory->MakeWindowAssociation(Hwnd, DXGI_MWA_NO_ALT_ENTER);
+	// Prevent DXGI from responding to an alt-enter sequence.
+	//if (FAILED(l_Result)){ return false; }
 
-	dxgiFactory->Release();
+	l_Factory->Release();
+	l_Factory = 0;
 
-
-
-
-	//
-	m_Viewport.Width = (FLOAT)Width;
-	m_Viewport.Height = (FLOAT)Height;
+	m_Viewport.Width = (FLOAT)ScreenWidth;
+	m_Viewport.Height = (FLOAT)ScreenHeight;
 	m_Viewport.MinDepth = 0.0f;
 	m_Viewport.MaxDepth = 1.0f;
 	m_Viewport.TopLeftX = 0;
@@ -156,23 +242,81 @@ HRESULT CContextManager::CreateContext(HWND hWnd, unsigned int Width, unsigned i
 	return S_OK;
 }
 
-HRESULT CContextManager::CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height)
+/*Returns by reference the video card name/memory*/
+void CContextManager::GetVideoCardInfo(char* cardName, int& memory)
+{
+	strcpy_s(cardName, 128, m_VideoCardDescription);
+	memory = m_VideoCardMemory;
+	return;
+}
+
+DXGI_FORMAT CContextManager::GetDepthResourceFormat(DXGI_FORMAT DepthFormat)
+{
+	DXGI_FORMAT l_Resformat;
+	switch (DepthFormat)
+	{
+	case DXGI_FORMAT::DXGI_FORMAT_D16_UNORM:
+		l_Resformat = DXGI_FORMAT::DXGI_FORMAT_R16_TYPELESS;
+		break;
+	case DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT:
+		l_Resformat = DXGI_FORMAT::DXGI_FORMAT_R24G8_TYPELESS;
+		break;
+	case DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT:
+		l_Resformat = DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS;
+		break;
+	case DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
+		l_Resformat = DXGI_FORMAT::DXGI_FORMAT_R32G8X24_TYPELESS;
+		break;
+	}
+
+	return l_Resformat;
+}
+
+DXGI_FORMAT CContextManager::GetDepthShaderResourceViewFormat(DXGI_FORMAT Depthformat)
+{
+	DXGI_FORMAT l_Srvformat;
+	switch (Depthformat)
+	{
+	case DXGI_FORMAT::DXGI_FORMAT_D16_UNORM:
+		l_Srvformat = DXGI_FORMAT::DXGI_FORMAT_R16_FLOAT;
+		break;
+	case DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT:
+		l_Srvformat = DXGI_FORMAT::DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		break;
+	case DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT:
+		l_Srvformat = DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+		break;
+	case DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
+		l_Srvformat = DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
+		break;
+	}
+	return l_Srvformat;
+}
+
+bool CContextManager::CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height)
 {
 	CHECKED_RELEASE(m_RenderTargetView);
 	CHECKED_RELEASE(m_DepthStencil);
 	CHECKED_RELEASE(m_DepthStencilView);
+	CHECKED_RELEASE(m_StencilTexture);
+
+	HRESULT l_Result;
 
 	m_Width = Width;
 	m_Height = Height;
 
 	ID3D11Texture2D *pBackBuffer;
-	if (FAILED(m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer)))
-		return FALSE;
-	HRESULT hr = m_D3DDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_RenderTargetView);
+	l_Result = m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+	if (FAILED(l_Result)){ return false; }
+		
+	l_Result = m_D3DDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_RenderTargetView);
+	if (FAILED(l_Result)){ return false; }
 	pBackBuffer->Release();
-	if (FAILED(hr))
-		return FALSE;
+	pBackBuffer = 0;
 
+	DXGI_FORMAT l_Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	DXGI_FORMAT l_Resformat = GetDepthResourceFormat(l_Format);
+	DXGI_FORMAT l_Srvformat = GetDepthShaderResourceViewFormat(l_Format);
 
 	D3D11_TEXTURE2D_DESC descDepth;
 	ZeroMemory(&descDepth, sizeof(descDepth));
@@ -180,37 +324,49 @@ HRESULT CContextManager::CreateBackBuffer(HWND hWnd, unsigned int Width, unsigne
 	descDepth.Height = Height;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.Format = l_Resformat;
 	descDepth.SampleDesc.Count = 1;
 	descDepth.SampleDesc.Quality = 0;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	hr = m_D3DDevice->CreateTexture2D(&descDepth, NULL, &m_DepthStencil);
-	if (FAILED(hr))
-		return hr;
+	l_Result = m_D3DDevice->CreateTexture2D(&descDepth, NULL, &m_DepthStencil);
+	if (FAILED(l_Result)){ return false; }
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
 	ZeroMemory(&descDSV, sizeof(descDSV));
-	descDSV.Format = descDepth.Format;
+	descDSV.Format = l_Format;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0;
-	hr = m_D3DDevice->CreateDepthStencilView(m_DepthStencil, &descDSV, &m_DepthStencilView);
-	if (FAILED(hr))
-		return hr;
+	l_Result = m_D3DDevice->CreateDepthStencilView(m_DepthStencil, &descDSV, &m_DepthStencilView);
+	if (FAILED(l_Result)){ return false; }
 
-	//Set Render States
-	//m_DeviceContext->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
 	SetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
-	//m_DeviceContext->RSSetState(m_RasterizerSates[RS_SOLID]);
-	//m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[DSS_DEPTH_ON], 0);
-	//float v=1;
-	//m_DeviceContext->OMSetBlendState(m_AlphaBlendState, &v, 0xffffffff);
-	//
+	
+	/*D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
+	ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+	srvd.Format = l_Srvformat;
+	srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvd.Texture2D.MipLevels = descDepth.MipLevels;
+	srvd.Texture2D.MostDetailedMip = 0;
+	
+	hr = m_D3DDevice->CreateShaderResourceView(m_DepthStencil, &srvd, &m_StencilTexture);*/
 
-	return S_OK;
+	return true;
 }
+
+bool CContextManager::SaveStencilBufferToFile()
+{
+	std::string Path = "./Data/StencilBuffer.dds";
+	std::wstring l_WStr(Path.begin(), Path.end());
+
+	HRESULT l_Result = DirectX::SaveDDSTextureToFile(m_DeviceContext, m_DepthStencil, l_WStr.c_str());
+	if (FAILED(l_Result))
+		return false;
+	return true;
+}
+
 
 class CDebugCEffect : public CEffect
 {
@@ -318,7 +474,7 @@ CEffect *s_DebugEffect;
 CContextManager::~CContextManager()
 {
 	CHECKED_DELETE(s_DebugEffect);
-	Dispose();
+	Shutdown();
 }
 
 void CContextManager::InitStates()
@@ -342,7 +498,7 @@ void CContextManager::InitRasterizerStates()
 	ZeroMemory(&l_WireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
 	l_WireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
 	l_WireframeDesc.CullMode = D3D11_CULL_NONE;
-	l_WireframeDesc.FrontCounterClockwise = true;
+	l_WireframeDesc.FrontCounterClockwise = false;
 
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_WireframeDesc, &m_RasterizerSates[RS_WIREFRAME]);
 	assert(l_HR == S_OK);
@@ -351,7 +507,7 @@ void CContextManager::InitRasterizerStates()
 	ZeroMemory(&l_SolidDesc, sizeof(D3D11_RASTERIZER_DESC));
 	l_SolidDesc.FillMode = D3D11_FILL_SOLID;
 	l_SolidDesc.CullMode = D3D11_CULL_NONE;
-	l_SolidDesc.FrontCounterClockwise = true;
+	l_SolidDesc.FrontCounterClockwise = false;
 
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_SolidDesc, &m_RasterizerSates[RS_SOLID]);
 	assert(l_HR == S_OK);
@@ -360,7 +516,7 @@ void CContextManager::InitRasterizerStates()
 	ZeroMemory(&l_FrontalCulling, sizeof(D3D11_RASTERIZER_DESC));
 	l_FrontalCulling.FillMode = D3D11_FILL_SOLID;
 	l_FrontalCulling.CullMode = D3D11_CULL_FRONT;
-	l_FrontalCulling.FrontCounterClockwise = true;
+	l_FrontalCulling.FrontCounterClockwise = false;
 
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_FrontalCulling, &m_RasterizerSates[RS_CULL_FRONT]);
 	assert(l_HR == S_OK);
@@ -369,7 +525,7 @@ void CContextManager::InitRasterizerStates()
 	ZeroMemory(&l_BackCulling, sizeof(D3D11_RASTERIZER_DESC));
 	l_BackCulling.FillMode = D3D11_FILL_SOLID;
 	l_BackCulling.CullMode = D3D11_CULL_BACK;
-	l_BackCulling.FrontCounterClockwise = true;
+	l_BackCulling.FrontCounterClockwise = false;
 
 	l_HR = m_D3DDevice->CreateRasterizerState(&l_BackCulling, &m_RasterizerSates[RS_CULL_BACK]);
 	assert(l_HR == S_OK);
@@ -489,7 +645,7 @@ void CContextManager::InitBlendingStates()
 
 void CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height)
 {
-	if (m_D3DDevice != nullptr)
+	if (false && m_D3DDevice && m_DeviceContext)
 	{
 		m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
@@ -572,14 +728,14 @@ void CContextManager::Clear(bool RenderTarget, bool DepthStencil)
 	color[1] = 1.0;
 	color[2] = 1.0;
 	color[3] = 1.0;
-
+	
 	if (RenderTarget)
 	{
 		for (int i = 0; i<m_NumViews; ++i)
 			m_DeviceContext->ClearRenderTargetView(m_CurrentRenderTargetViews[i], color);
 	}
 	if (DepthStencil)
-		m_DeviceContext->ClearDepthStencilView(m_CurrentDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		m_DeviceContext->ClearDepthStencilView(m_CurrentDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void CContextManager::Present()
@@ -637,6 +793,11 @@ void CContextManager::SetRenderTargets(int NumViews, ID3D11RenderTargetView *con
 void CContextManager::UnsetRenderTargets()
 {
 	SetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+}
+
+void CContextManager::UnsetColorRenderTarget()
+{
+	SetRenderTargets(0, NULL, m_DepthStencilView);
 }
 
 void CContextManager::SetAlphaBlendState(ID3D11BlendState* AlphaBlendState)

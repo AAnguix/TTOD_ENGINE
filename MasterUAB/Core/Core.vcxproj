@@ -25,7 +25,8 @@
     <ClCompile Include="Components\Script.cpp" />
     <ClCompile Include="DebugHelper\DebugHelper.cpp" />
     <ClCompile Include="DebugHelper\DebugHelperImplementation.cpp" />
-    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\EngineSettings.cpp" />
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="Input\InputManagerImplementation.cpp" />
     <ClCompile Include="Input\KeyBoardInput.cpp" />
@@ -60,7 +61,8 @@
     <ClInclude Include="Components\Script.h" />
     <ClInclude Include="DebugHelper\DebugHelper.h" />
     <ClInclude Include="DebugHelper\DebugHelperImplementation.h" />
-    <ClInclude Include="Engine.h" />
+    <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Engine\EngineSettings.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Input\InputManagerImplementation.h" />
     <ClInclude Include="Input\KeyBoardInput.h" />

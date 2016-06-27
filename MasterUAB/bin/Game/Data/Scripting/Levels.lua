@@ -1,10 +1,10 @@
 function StartLevelOne()
 	dofile("./Data/Scripting/LuaMainInGame.lua")
 	LoadGamePlayScripts() --LuaMainInGame.lua
-	g_Engine:AddLevel("3")
-	g_Engine:LoadLevel("3")
+	g_Engine:AddLevel("Test")
+	g_Engine:LoadLevel("Test")
 	g_DamageCalculator:LoadXML("Data/damage_reduction_percentages.xml")
-	g_GameController:LoadXML("Data/Level3/game_entities.xml")
+	g_GameController:LoadXML("Data/LevelTest/game_entities.xml")
 	
 	LuaMain() --Load new LUA behavior (per frame)
 

@@ -2,7 +2,7 @@
 #include "XML\XMLTreeNode.h"
 #include "Render\RenderManager.h"
 #include "RenderableObjects\LayerManager.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 CRenderLayerSceneRendererCommand::CRenderLayerSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode),m_Layer(nullptr)
 {

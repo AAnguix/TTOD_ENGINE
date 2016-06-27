@@ -1,11 +1,11 @@
 #include "Cinematics\CinematicObject.h"
 #include "Utils\Utils.h"
 #include "XML\XMLTreeNode.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "RenderableObjects\LayerManager.h"
 #include "Log\Log.h"
 #include "Math\MathUtils.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "PhysXManager.h"
 
 CCinematicObject::CCinematicObject(CXMLTreeNode &TreeNode)

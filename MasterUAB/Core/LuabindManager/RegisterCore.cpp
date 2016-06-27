@@ -6,7 +6,7 @@
 #include <luabind/iterator_policy.hpp>
 
 #include "Application.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Log\Log.h"
 #include "Input\InputManagerImplementation.h"
 #include "DebugHelper\DebugHelperImplementation.h"

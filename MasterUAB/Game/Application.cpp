@@ -9,7 +9,7 @@
 #include "Input\InputManagerImplementation.h"
 #include "DebugHelper\DebugHelperImplementation.h"
 #include "Log\Log.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "LuabindManager\LuabindManager.h"
 #include "Render\DebugRender.h"
 
@@ -79,7 +79,7 @@ CApplication::~CApplication()
 void CApplication::Initialize(HWND Hwnd)
 {
 	CEngine &l_Engine = CEngine::GetSingleton();
-
+	
 	l_Engine.GetInputManager()->Initialize(Hwnd);
 	l_Engine.GetInputManager()->LoadCommandsFromFile("./Data/input.xml");
 

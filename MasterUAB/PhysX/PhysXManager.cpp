@@ -8,7 +8,7 @@
 #include "Components\CharacterCollider.h"
 #include "RenderableObjects\MeshInstance.h"
 #include "Animation\AnimatedInstanceModel.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Log\Log.h"
 
 class CPhysxManagerImplementation;

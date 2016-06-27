@@ -5,7 +5,7 @@
 #include "XML\XMLTreeNode.h"
 #include "Cinematics\Cinematic.h"
 #include "Particles\ParticleSystemInstance.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Utils\GameObjectManager.h"
 
 CRenderableObjectsManager* CLayerManager::GetLayer(CXMLTreeNode &Node)

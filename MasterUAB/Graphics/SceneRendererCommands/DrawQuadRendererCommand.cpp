@@ -2,7 +2,7 @@
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Render\RenderManager.h"
 #include "Materials\Material.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 
 CDrawQuadRendererCommand::CDrawQuadRendererCommand(CXMLTreeNode &TreeNode): CStagedTexturedSceneRendererCommand(TreeNode),m_RenderableObjectTechnique(0)
 {

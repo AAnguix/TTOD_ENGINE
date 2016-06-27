@@ -1,6 +1,6 @@
 #include "Particles\ParticleManager.h"
 #include "XML\XMLTreeNode.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "Particles\ParticleSystemInstance.h"

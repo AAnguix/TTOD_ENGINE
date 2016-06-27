@@ -1,5 +1,5 @@
 #include "SetLightConstantsSceneRendererCommand.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Effects\EffectManager.h"
 #include "XML\XMLTreeNode.h"
 

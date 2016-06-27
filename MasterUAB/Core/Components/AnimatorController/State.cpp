@@ -2,7 +2,7 @@
 #include "Components\AnimatorController\AnimatorController.h"
 #include "Utils\GameObject.h"
 #include <luabind/luabind.hpp>
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "LuabindManager\LuabindManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "Components\LuaComponent.h"

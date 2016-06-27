@@ -1,6 +1,6 @@
 #include "EffectManager.h"
 #include "Lights\Light.h"
-#include "Engine.h"
+#include "Engine\Engine.h"
 #include "Lights\LightManager.h"
 #include "Lights\SpotLight.h"
 #include "Lights\OmniLight.h"
@@ -233,8 +233,11 @@ void CEffectManager::SetLightsConstants(unsigned int MaxLights)
 	for ( itMap = m_Resources.begin(); itMap != m_Resources.end(); ++itMap)
 	{
 		//CSceneEffectParameters,0. CLightEffectParameters,1. CAnimatedModelEffectParameters,2.
-		itMap->second->GetPixelShader()->SetConstantBuffer(1,&m_LightEffectParameters);
-		itMap->second->GetVertexShader()->SetConstantBuffer(1,&m_LightEffectParameters);
+		CEffectPixelShader* l_PShader = itMap->second->GetPixelShader();
+		if (l_PShader) l_PShader->SetConstantBuffer(1, &m_LightEffectParameters);
+
+		CEffectVertexShader* l_VShader = itMap->second->GetVertexShader();
+		if (l_VShader)  itMap->second->GetVertexShader()->SetConstantBuffer(1, &m_LightEffectParameters);
 
 		//CEffectGeometryShader* l_GShader = itMap->second->GetGeometryShader();
 		/*if (l_GShader!=nullptr)
