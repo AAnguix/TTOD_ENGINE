@@ -11,18 +11,30 @@
 #include "Lights\SpotLight.h"
 
 CRenderManager::CRenderManager(CContextManager *ContextManager)
-: m_ContextManager(ContextManager)
-, m_UseDebugCamera(false)
-, m_CurrentRenderlistLength(0)
-, m_DebugRender(NULL)
+:m_ContextManager(ContextManager)
+,m_UseDebugCamera(false)
+,m_CurrentRenderlistLength(0)
+,m_DebugRender(0)
+,m_DrawQuadRV(0)
 {
 	
 }
 
+void CRenderManager::Shutdown()
+{
+	if (m_DebugRender)
+	{
+		m_DebugRender->Shutdown();
+		delete m_DebugRender;
+		m_DebugRender = 0;
+	}
+
+	CHECKED_DELETE(m_DrawQuadRV);
+}
+
 CRenderManager::~CRenderManager()
 {
-	CHECKED_DELETE(m_DebugRender);
-	CHECKED_DELETE(m_DrawQuadRV);
+	
 }
 
 void CRenderManager::InitializeDebugRender()

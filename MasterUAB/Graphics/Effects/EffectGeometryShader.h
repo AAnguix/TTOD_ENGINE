@@ -16,7 +16,7 @@ public:
 
 	CEffectGeometryShader(const CXMLTreeNode &TreeNode);
 	virtual ~CEffectGeometryShader();
-	bool Load();
+	bool Load(size_t EffectsStateCode);
 	void SetConstantBuffer(unsigned int IdBuffer, void *ConstantBuffer);
 
 	UAB_GET_PROPERTY_POINTER(ID3D11GeometryShader, GeometryShader);

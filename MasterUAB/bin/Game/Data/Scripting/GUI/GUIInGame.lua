@@ -44,8 +44,8 @@ function UpdateGUI(ElapsedTime)
 	local l_HealthBarPos = SGUIPosition(0.83,0.05,0.3,0.075,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, g_PlayerComponent:GetMaxHealth(), g_PlayerComponent:GetHealth()) 
 	
-	--ShowGraphicsStats()
-	--ShowProfilerStats()
+	ShowGraphicsStats()
+	ShowProfilerStats()
 	-- local l_Pos = SGUIPosition(0.1,0.1,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	-- g_GUIManager:DoText("textoDePrueba","felix_font",l_Pos,"","Game is paused!")
 	

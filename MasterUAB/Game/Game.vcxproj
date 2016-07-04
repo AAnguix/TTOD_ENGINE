@@ -123,13 +123,26 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="videogame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Resources\resource.h" />
+    <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="ScriptManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cursor_default.cur" />
+    <None Include="Resources\cursor_special.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\Game.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\game_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

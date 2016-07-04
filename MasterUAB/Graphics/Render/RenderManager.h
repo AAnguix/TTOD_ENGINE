@@ -19,6 +19,7 @@ class CRenderManager
 public:
 	CRenderManager(CContextManager *ContextManager);
 	~CRenderManager();
+	void Shutdown();
 
 	void InitializeDebugRender();
 

@@ -23,6 +23,7 @@
     <ClInclude Include="Camera\FPSCameraController.h" />
     <ClInclude Include="Camera\SphericalCameraController.h" />
     <ClInclude Include="Camera\ThirdPersonCameraController.h" />
+    <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Cinematics\CameraInfo.h" />
     <ClInclude Include="Cinematics\CameraKey.h" />
     <ClInclude Include="Cinematics\CameraKeyController.h" />
@@ -128,6 +129,7 @@
     <ClCompile Include="Camera\FPSCameraController.cpp" />
     <ClCompile Include="Camera\SphericalCameraController.cpp" />
     <ClCompile Include="Camera\ThirdPersonCameraController.cpp" />
+    <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Cinematics\CameraInfo.cpp" />
     <ClCompile Include="Cinematics\CameraKey.cpp" />
     <ClCompile Include="Cinematics\CameraKeyController.cpp" />

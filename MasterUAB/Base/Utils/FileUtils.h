@@ -9,7 +9,7 @@ class CFileUtils
 
 private:
 	static std::string GetMeshFileName(const std::string &Name, unsigned int CurrentLevel);
-	static _int64 Delta(const SYSTEMTIME st1, const SYSTEMTIME st2);
+	static _int64 TimeDifference(const SYSTEMTIME st1, const SYSTEMTIME st2);
 	static SYSTEMTIME GetFileCreationDate(const std::string &FileName);
 	static SYSTEMTIME GetFileLastModificationDate(const std::string &FileName);
 
@@ -18,11 +18,12 @@ private:
 
 	static bool FileExists(const std::string &Filename);
 
+	static bool WriteEffectsFileStateCode(const std::string &EffectsDateFile, SYSTEMTIME* Date);
+
 public:
 	static void CheckEffectsFolders();
 	static void RemoveFileExtension(std::string &Filename);
 	
-	//static bool CompiledShaderExists(const std::string &ShaderFileName, std::string &PrecompiledShaderFilename, const std::string &Extension);
 	static bool CompiledShaderExists(const std::string &ShaderName);
 	static size_t GetEffectsFileStateCode();
 

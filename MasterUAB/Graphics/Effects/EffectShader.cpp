@@ -5,7 +5,6 @@
 #include "Engine\Engine.h"
 #include <assert.h>
 #include <d3dcompiler.h>
-//#include <D3DX11async.h>
 #include "XML\XMLTreeNode.h"
 #include "Vertex\VertexTypes.h"
 #include "Log\Log.h"
@@ -126,18 +125,19 @@ void CEffectShader::CreateShaderMacro()
 bool CEffectShader::Reload()
 {
 	Destroy();
-	return Load();
+	size_t l_EffectsStateCode = CEngine::GetSingleton().GetEffectManager()->GetEffectsStateCode();
+	return Load(l_EffectsStateCode);
 }
 
 
-bool CEffectShader::LoadShaderExtended(const std::string &ShaderName, const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut)
+bool CEffectShader::LoadShaderExtended(const std::string &ShaderName, const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut, size_t EffectsStateCode)
 {
 	//bool l_ShaderCompiled = CFileUtils::CompiledShaderExists(Filename, l_CompiledShaderFilename, EntryPoint);
 	bool l_ShaderCompiled = CFileUtils::CompiledShaderExists(ShaderName);
 	
 	std::string l_CompiledName = "Data\\Effects\\compiled\\" + ShaderName;
 
-	if ((l_ShaderCompiled && CFileUtils::ShaderFileModified(Filename, l_CompiledName)) || (!l_ShaderCompiled))
+	if ((l_ShaderCompiled && (CFileUtils::ShaderFileModified(Filename, l_CompiledName)) || EffectsStateCode==2) || (!l_ShaderCompiled))
 	{
 		HRESULT l_Hr = S_OK;
 		ID3DBlob* l_ErrorBlob = nullptr;
@@ -203,7 +203,6 @@ bool CEffectShader::LoadShader(const std::string &Filename, const std::string &E
 	std::wstring ws;
 	ws.assign(Filename.begin(), Filename.end());
 
-	//const wchar_t* l_Name = CTools::CharToWChar(Filename.c_str());
 	hr = D3DCompileFromFile(ws.c_str(), m_ShaderMacros, D3D_COMPILE_STANDARD_FILE_INCLUDE, EntryPoint.c_str(), ShaderModel.c_str(), dwShaderFlags, 0, BlobOut, &pErrorBlob);
 
 	if (FAILED(hr))
@@ -220,64 +219,6 @@ bool CEffectShader::LoadShader(const std::string &Filename, const std::string &E
 
 	return true;
 }
-
-void CEffectShader::WriteCompiledShaderDataToFile(const std::string &BinaryFilename, void *Data, unsigned int DataSize)
-{
-	FILE *l_File;
-	errno_t l_Error;
-	l_Error = fopen_s(&l_File, BinaryFilename.c_str(), "wb");
-	assert(l_Error == 0);
-	if (l_Error == 0)
-	{
-		fwrite(&DataSize, sizeof(unsigned int), 1, l_File);
-		fwrite(Data, sizeof(unsigned char), DataSize, l_File);
-	}
-	fclose(l_File);
-}
-
-void CEffectShader::ReadShaderDataFromFile(const std::string &BinaryFilename, void **Data, unsigned int &DataSize)
-{
-	FILE *l_File;
-	errno_t l_Error;
-	l_Error = fopen_s(&l_File, BinaryFilename.c_str(), "rb");
-	assert(l_Error == 0);
-	if (l_Error == 0)
-	{
-		fread(&DataSize, sizeof(unsigned int), 1, l_File);
-		*Data = malloc(DataSize);
-		fread(*Data, sizeof(unsigned char), DataSize, l_File);
-	}
-	fclose(l_File);
-}
-
-
-/*
-bool CEffectShader::LoadShader(const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut) 
-{  
-	HRESULT hr = S_OK;
-
-	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
-	#if defined( DEBUG ) || defined( _DEBUG )  
-		dwShaderFlags |= D3DCOMPILE_DEBUG; 
-	#endif  
-
-	ID3DBlob* pErrorBlob;  hr=D3DX11CompileFromFile(Filename.c_str(), m_ShaderMacros, NULL, EntryPoint.c_str(), ShaderModel.c_str(), dwShaderFlags, 0, NULL, BlobOut, &pErrorBlob, NULL );  
- 
-	 if( FAILED(hr) )  
-	 {   
-		 if( pErrorBlob != NULL )    
-			 OutputDebugStringA( (char*)pErrorBlob->GetBufferPointer() );  
-		 if( pErrorBlob )     
-			 pErrorBlob->Release();   
-		 return false;  
-	 }  
- 
-	 if( pErrorBlob )    
-		 pErrorBlob->Release();  
-
-	return true;
-}*/
 
 /*Copy from RAM to VRAM*/
 bool CEffectShader::CreateConstantBuffer(int IdBuffer, unsigned int BufferSize)
@@ -311,7 +252,6 @@ bool CEffectShader::CreateConstantBuffer()
 		return true;
 
 	return false;
-	//CSceneEffectParameters,CLightEffectParameters,CAnimatedEffectParameters
 }
 
 ID3D11Buffer* CEffectShader::GetConstantBuffer(unsigned int IdBuffer)

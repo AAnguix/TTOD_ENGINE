@@ -35,18 +35,13 @@ CEffectManager::~CEffectManager()
 	//Check memory leaks
 }*/
 
-void CEffectManager::ReloadFile()
+void CEffectManager::Reload()
 {
 	m_VertexShaders.Destroy();
 	m_PixelShaders.Destroy();
 	m_GeometryShaders.Destroy();
 	Destroy();
 	Load(m_Filename);
-}
-
-void CEffectManager::Reload()
-{
-	//¿?
 }
 
 void CEffectManager::Load(const std::string &Filename)
@@ -71,7 +66,7 @@ void CEffectManager::Load(const std::string &Filename)
 					std::string l_Name = l_Element.GetPszProperty("name","");
 
 					CEffectVertexShader *l_VertexShader = new CEffectVertexShader(l_Element);
-					l_VertexShader->Load();
+					l_VertexShader->Load(m_EffectsStateCode);
 					if(!m_VertexShaders.AddResource(l_Name,l_VertexShader))
 					{
 						CHECKED_DELETE(l_VertexShader);
@@ -82,7 +77,7 @@ void CEffectManager::Load(const std::string &Filename)
 					std::string l_Name = l_Element.GetPszProperty("name","");
 					
 					CEffectPixelShader *l_PixelShader = new CEffectPixelShader(l_Element);
-					l_PixelShader->Load();
+					l_PixelShader->Load(m_EffectsStateCode);
 					if(!m_PixelShaders.AddResource(l_Name,l_PixelShader))
 					{
 						CHECKED_DELETE(l_PixelShader);
@@ -93,7 +88,7 @@ void CEffectManager::Load(const std::string &Filename)
 					std::string l_Name = l_Element.GetPszProperty("name", "");
 
 					CEffectGeometryShader *l_GeometryShader = new CEffectGeometryShader(l_Element);
-					l_GeometryShader->Load();
+					l_GeometryShader->Load(m_EffectsStateCode);
 					if (!m_GeometryShaders.AddResource(l_Name, l_GeometryShader))
 					{
 						CHECKED_DELETE(l_GeometryShader);
@@ -110,6 +105,8 @@ void CEffectManager::Load(const std::string &Filename)
 					}
 				}
 			}
+
+
 		}
 		else { assert(false); }
 	}

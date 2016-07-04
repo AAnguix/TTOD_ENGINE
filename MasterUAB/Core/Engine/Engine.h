@@ -64,6 +64,17 @@ class CGraphicsStats;
 class CEmptyPointerClass;
 class CLevel;
 class CProfiler;
+class CResourceManager;
+
+#ifndef _WINDEF_
+	struct HINSTANCE__; 
+	typedef HINSTANCE__* HINSTANCE;
+#endif
+
+//#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+//	struct HWND__;
+//	typedef struct HWND__* HWND;
+//#endif /* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) */
 
 class CEngine : public CSingleton<CEngine>
 {
@@ -95,6 +106,7 @@ private:
 	CInputManagerImplementation* m_InputManager;
 	CGraphicsStats* m_GraphicsStats;
 	CProfiler* m_Profiler;
+	CResourceManager* m_ResourceManager;
 
 	std::string m_CurrentLevel;
 	float m_TimeScale;
@@ -107,6 +119,8 @@ private:
 	float m_SecsPerCnt;
 	__int64 m_PrevTimeStamp;
 	float m_TimeSinceStart;
+
+	HINSTANCE* m_HInstance;
 
 	CEngine();
 
@@ -121,7 +135,8 @@ public:
 	CEmptyPointerClass* GetPausedLuaAddress() const;
 	void Update(float ElapsedTime);
 	
-	void Initialize();
+	void Initialize(HINSTANCE* HInstance);
+	HINSTANCE* GetHInstance() const { return m_HInstance; }
 	void LoadLevelsCommonData();
 	bool AddLevel(const std::string &Level);
 	bool LoadLevel(const std::string &Level);
@@ -156,6 +171,7 @@ public:
 	CAnimatorControllerManager* GetAnimatorControllerManager() const;
 	CScriptManager* GetScriptManager() const;
 	CProfiler* GetProfiler() const;
+	CResourceManager* GetResourceManager() const;
 
 	void SetRenderManager(CRenderManager *RenderManager) {m_RenderManager=RenderManager;}
 };

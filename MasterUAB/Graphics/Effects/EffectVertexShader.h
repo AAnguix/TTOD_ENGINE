@@ -18,7 +18,7 @@ public:
 
 	CEffectVertexShader(const CXMLTreeNode &TreeNode);
 	virtual ~CEffectVertexShader();
-	bool Load();
+	bool Load(size_t EffectsStateCode);
 	void SetConstantBuffer(unsigned int IdBuffer, void *ConstantBuffer);
 	
 	UAB_GET_PROPERTY_POINTER(ID3D11VertexShader, VertexShader); 

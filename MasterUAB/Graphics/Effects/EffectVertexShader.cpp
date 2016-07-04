@@ -36,14 +36,14 @@ CEffectVertexShader::CEffectVertexShader(const CXMLTreeNode &TreeNode)
 	m_VertexType = TreeNode.GetPszProperty("vertex_type", "");
 }
 
-bool CEffectVertexShader::Load()
+bool CEffectVertexShader::Load(size_t EffectsStateCode)
 {  
 	assert(m_VertexType != "");
 	
 	CreateShaderMacro();
 
 	ID3DBlob *l_VSBlob=NULL;  
-	bool l_Loaded = LoadShaderExtended(m_Name, m_Filename, m_EntryPoint, m_ShaderModel, &l_VSBlob);
+	bool l_Loaded = LoadShaderExtended(m_Name, m_Filename, m_EntryPoint, m_ShaderModel, &l_VSBlob, EffectsStateCode);
 	if(!l_Loaded) 
 	{
 		CEngine::GetSingleton().GetLogManager()->Log("Unable to load vertex shader "+m_Filename);

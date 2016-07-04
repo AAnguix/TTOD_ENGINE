@@ -423,7 +423,7 @@ void CLuabindManager::RegisterEffects()
 	[
 		class_< CEffectManager, CTemplatedMapManager<CEffectTechnique>>("CEffectManager")
 		.def("Load", &CEffectManager::Load)
-		.def("ReloadFile", &CEffectManager::ReloadFile)
+		.def("Reload", &CEffectManager::Reload)
 		.def("GetLUAEffects", &CEffectManager::GetLUAEffects, return_stl_iterator)
 	];
 

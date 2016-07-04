@@ -70,7 +70,7 @@ bool CFileUtils::MeshFileModified(bool TriangleMesh, const std::string &Name, co
 	SYSTEMTIME l_MeshTime = GetFileCreationDate(l_MeshFileName);
 	SYSTEMTIME l_CookedMeshTime = GetFileCreationDate(l_CookedMeshFileName);
 
-	_int64 l_Difference = Delta(l_MeshTime, l_CookedMeshTime);
+	_int64 l_Difference = TimeDifference(l_MeshTime, l_CookedMeshTime);
 
 	if (l_Difference < 0) /*Mesh is newest than cooked mesh*/
 	{
@@ -86,53 +86,55 @@ void CFileUtils::RemoveFileExtension(std::string &Filename)
 	Filename = Filename.substr(0, l_Pos);
 }
 
+/*Returns a code that tells if the effects.xml file has been modified */
 size_t CFileUtils::GetEffectsFileStateCode()
 {
-	FILE *l_File;
-	errno_t l_Error;
 	std::string l_Effects = "Data\\effects.xml";
 	std::string l_EffectsData = "Data\\EffectsDate";
 	
-	
 	SYSTEMTIME l_EffectsDate;
 	SYSTEMTIME l_EffectsDataDate;
+	l_EffectsDate = GetFileLastModificationDate(l_Effects);
+
 
 	if (FileExists(l_EffectsData))
 	{
-		l_EffectsDate = GetFileLastModificationDate(l_Effects);
-		//Leer la fecha contenida en el fichero
 		l_EffectsDataDate = GetFileLastModificationDate(l_EffectsData);
 
-		_int64 l_Difference = Delta(l_EffectsDate, l_EffectsDataDate);
+		_int64 l_Difference = TimeDifference(l_EffectsDate, l_EffectsDataDate);
 
-		if (l_Difference < 0) /*Effects is newest than effects-data file*/
+		if (l_Difference < 0) /*Effects is newest than EffectsData file*/
 		{
+			WriteEffectsFileStateCode(l_EffectsData, &l_EffectsDate);
 			return 2;
 		}
 		return 1;
 	}
 	else
 	{
-		l_Error = fopen_s(&l_File, l_EffectsData.c_str(), "wb");
-		assert(l_Error == 0);
-
-		unsigned int l_DataSize = 0;
-		l_EffectsDate = GetFileCreationDate(l_Effects);
-		l_DataSize = sizeof(l_EffectsDate);
-		void* l_Data;
-
-		if (l_Error == 0)
-		{
-			l_Data = malloc(l_DataSize);
-			fwrite(&l_DataSize, sizeof(unsigned int), 1, l_File);
-			fwrite(l_Data, sizeof(unsigned char), l_DataSize, l_File);
-		}
-
-		free(l_Data);
-		fclose(l_File);
-
+		WriteEffectsFileStateCode(l_EffectsData, &l_EffectsDate);
 		return 0;
 	}
+}
+
+bool CFileUtils::WriteEffectsFileStateCode(const std::string &EffectsDateFile, SYSTEMTIME* Date)
+{
+	FILE *l_File;
+	errno_t l_Error;
+
+	l_Error = fopen_s(&l_File, EffectsDateFile.c_str(), "wb");
+	assert(l_Error == 0);
+
+	unsigned int l_DataSize = sizeof(Date);
+
+	if (l_Error == 0)
+	{
+		fwrite(&l_DataSize, sizeof(unsigned int), 1, l_File);
+	}
+
+	fclose(l_File);
+
+	return 0;
 }
 
 bool CFileUtils::CompiledShaderExists(const std::string &ShaderName)
@@ -155,7 +157,7 @@ bool CFileUtils::ShaderFileModified(const std::string &ShaderFilename, const std
 	SYSTEMTIME l_ShaderLastDate = GetFileLastModificationDate(ShaderFilename);
 	SYSTEMTIME l_CompiledShaderLastDate = GetFileLastModificationDate(CompiledShaderFilename);
 
-	_int64 l_Difference = Delta(l_ShaderLastDate, l_CompiledShaderLastDate);
+	_int64 l_Difference = TimeDifference(l_ShaderLastDate, l_CompiledShaderLastDate);
 
 	if (l_Difference < 0) /*Shader is newest than pre-compiled shader*/
 	{
@@ -170,7 +172,6 @@ bool CFileUtils::CookedMeshExists(bool TriangleMesh, const std::string &Name, un
 	
 	std::stringstream l_StringStream;
 	l_StringStream << "Data\\Level" << CurrentLevel << "\\cooked\\";
-	bool b = FolderExists("Data\\Level1\\cooked\\");
 
 	if (TriangleMesh)
 		l_StringStream << "triangle";
@@ -228,7 +229,7 @@ SYSTEMTIME CFileUtils::GetFileLastModificationDate(const std::string &FileName)
 	return l_StLocal;
 }
 
-_int64 CFileUtils::Delta(const SYSTEMTIME st1, const SYSTEMTIME st2)
+_int64 CFileUtils::TimeDifference(const SYSTEMTIME st1, const SYSTEMTIME st2)
 {
 	union timeunion
 	{
@@ -277,7 +278,7 @@ std::string CFileUtils::SelectTextureFile(HWND Hwnd, const std::string  &InFile)
 		}
 		else
 		{	
-			CEngine::GetSingleton().GetLogManager()->Log("The texture should be at the Data\LevelX\meshes folder");
+			CEngine::GetSingleton().GetLogManager()->Log("The texture should be at the Data\\LevelX\\meshes folder");
 			l_Result = "";
 		}
 		free(l_CurrentWorkingDirectory);

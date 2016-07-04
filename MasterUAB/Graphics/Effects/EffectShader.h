@@ -22,23 +22,18 @@ protected:
 	
 	virtual void Destroy();
 	void CreateShaderMacro();
-	bool LoadShaderExtended(const std::string &ShaderName, const std::string &FileName, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
+	bool LoadShaderExtended(const std::string &ShaderName, const std::string &FileName, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut, size_t EffectsStateCode);
 	bool LoadShader(const std::string &Filename, const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
 
-	void WriteCompiledShaderDataToFile(const std::string &BinaryFilename, void *Data, unsigned int DataSize);
-	void ReadShaderDataFromFile(const std::string &BinaryFilename, void **Data, unsigned int &DataSize);
-
-	//bool LoadShader(const std::string &FileName,const std::string &EntryPoint, const std::string &ShaderModel, ID3DBlob **BlobOut);
 	bool CreateConstantBuffer(int IdBuffer, unsigned int BufferSize);
 	bool CreateConstantBuffer();
 
-	/*Copy from RAM to VRAM*/
 	virtual void SetConstantBuffer(unsigned int IdBuffer, void *ConstantBuffer) = 0;
 public:
 
 	CEffectShader(const CXMLTreeNode &TreeNode);
 	virtual ~CEffectShader();
-	virtual bool Load() = 0;
+	virtual bool Load(size_t EffectsStateCode) = 0;
 	virtual bool Reload();
 
 	ID3D11Buffer * GetConstantBuffer(unsigned int IdBuffer);

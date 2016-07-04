@@ -143,6 +143,7 @@
       <OutputFile>$(SolutionDir)\bin\lib\cal3d_d.dll</OutputFile>
       <ImportLibrary>$(SolutionDir)\bin\lib\cal3d_d.lib</ImportLibrary>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -48,13 +48,13 @@ public:
 	CContextManager(const CContextManager&);
 	~CContextManager();
 
-	void ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height);
+	bool ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height);
 
-	bool Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned int ScreenHeight, bool FullScreen, bool VSync);
+	bool Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned int ScreenHeight, bool FullScreen, bool VSync, bool DebugMode);
 	void Shutdown();
 	
 	bool CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height);
-	void InitStates();
+	bool InitStates();
 
 	float GetAspectRatio() const { return (float)m_Width / (float)m_Height; }
 
@@ -109,9 +109,9 @@ public:
 
 private:
 
-	void InitRasterizerStates();
-	void InitDepthStencilStates();
-	void InitBlendingStates();
+	bool InitRasterizerStates();
+	bool InitDepthStencilStates();
+	bool InitBlendingStates();
 
 	DXGI_FORMAT GetDepthResourceFormat(DXGI_FORMAT DepthFormat);
 	DXGI_FORMAT GetDepthShaderResourceViewFormat(DXGI_FORMAT Depthformat);

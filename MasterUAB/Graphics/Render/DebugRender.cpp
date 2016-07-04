@@ -287,6 +287,11 @@ void CDebugRender::InitializeASTarDebug(std::vector<Vect3f> WayPoints)
 
 CDebugRender::~CDebugRender()
 {
+	
+}
+
+void CDebugRender::Shutdown()
+{
 	CHECKED_DELETE(m_SimpleTriangle);
 	CHECKED_DELETE(m_ClassicBlendTriangle);
 	CHECKED_DELETE(m_PremultBlendTriangle);
@@ -295,17 +300,17 @@ CDebugRender::~CDebugRender()
 	CHECKED_DELETE(m_Axis);
 	CHECKED_DELETE(m_LongAxis);
 
-	for(size_t i=0;i<m_DebugLights.size();++i)
+	for (size_t i = 0; i<m_DebugLights.size(); ++i)
 	{
 		CHECKED_DELETE(m_DebugLights[i]);
 	}
 
-	for(size_t i=0;i<m_DebugIndexedLights.size();++i)
+	for (size_t i = 0; i<m_DebugIndexedLights.size(); ++i)
 	{
 		CHECKED_DELETE(m_DebugIndexedLights[i]);
 	}
 
-	for(size_t i=0;i<m_DebugWayPoints.size();++i)
+	for (size_t i = 0; i<m_DebugWayPoints.size(); ++i)
 	{
 		CHECKED_DELETE(m_DebugWayPoints[i]);
 	}
@@ -397,19 +402,3 @@ void CDebugRender::RenderDebugAStar(CContextManager* ContextManager)
 		ContextManager->DrawIndexed(m_DebugWayPoints[i]);
 	}
 }
-
-/*
-	world.SetIdentity();
-	m_ContextManager->SetWorldMatrix(world);
-	m_ContextManager->DrawIndexed(m_DebugRender->¡GetAxis());
-	
-	world.SetIdentity();
-	world.SetFromPos(10, 0, 0);
-	m_ContextManager->SetWorldMatrix(world);
-	m_ContextManager->Draw(m_DebugRender->GetClassicBlendTriangle(), CContextManager::RS_SOLID, CContextManager::DSS_OFF, CContextManager::BLEND_CLASSIC);
-	
-	world.SetIdentity();
-	world.SetFromPos(0, 0, -10);
-	m_ContextManager->SetWorldMatrix(world);
-	m_ContextManager->Draw(m_DebugRender->GetPremultBlendTriangle(), CContextManager::RS_SOLID, CContextManager::DSS_OFF, CContextManager::BLEND_PREMULT);
-	*/

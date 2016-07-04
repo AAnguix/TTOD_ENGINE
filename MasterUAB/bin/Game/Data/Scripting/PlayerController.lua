@@ -15,7 +15,7 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 	local l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 	
 	if CInputManager.GetInputManager():IsActionActive("LOCK_CHARACTER") then
-		if (self:IsLocked()) then		
+		if (self:IsLocked()) then	
 			self:Unlock()
 		else
 			self:Lock()

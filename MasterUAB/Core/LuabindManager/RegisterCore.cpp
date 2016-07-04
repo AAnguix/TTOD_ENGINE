@@ -45,6 +45,7 @@
 #include "ISoundManager.h"
 #include "Render\GraphicsStats.h"
 #include "Profiler\Profiler.h"
+#include "Resources\ResourceManager.h"
 //#include "AStar.h"
 
 using namespace luabind;
@@ -87,6 +88,13 @@ void CLuabindManager::RegisterCore()
 		]
 	];
 
+	module(LUA_STATE)
+	[
+		class_<CResourceManager>("CResourceManager")
+		.def(constructor<>())
+		.def("SetCurrentCursor", &CResourceManager::SetCurrentCursor)
+	];
+
 	module(LUA_STATE) 
 	[
 		class_<CEngine, CSingleton<CEngine>>("CEngine")
@@ -127,6 +135,7 @@ void CLuabindManager::RegisterCore()
 		.def("Pause", &CEngine::Pause)
 		.def("GetPausedLuaAddress", &CEngine::GetPausedLuaAddress)
 		.def("GetTimeScaleLuaAddress", &CEngine::GetTimeScaleLuaAddress)
+		.def("GetResourceManager", &CEngine::GetResourceManager)
 		
 		.def("LoadingLevel", &CEngine::LoadingLevel)
 		.def("AddLevel", &CEngine::AddLevel)

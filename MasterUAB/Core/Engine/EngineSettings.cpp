@@ -11,6 +11,7 @@ CEngineSettings::CEngineSettings()
 ,m_ScreenResolution(Vect2i(1280, 720))
 ,m_ScreenPosition(Vect2i(0, 0))
 ,m_DataPath("")
+,m_D3DDebug(false)
 {
 
 }
@@ -47,6 +48,10 @@ bool CEngineSettings::LoadSettings(const std::string &SettingsFile)
 					m_Fps = l_Element.GetIntProperty("value", 30);
 				}
 				else if (l_Element.GetName() == std::string("vsync"))
+				{
+					m_Fps = l_Element.GetBoolProperty("value", false);
+				}
+				else if (l_Element.GetName() == std::string("d3d_debug"))
 				{
 					m_Fps = l_Element.GetBoolProperty("value", false);
 				}

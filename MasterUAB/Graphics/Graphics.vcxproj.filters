@@ -265,6 +265,7 @@
     <ClInclude Include="SceneRendererCommands\CaptureStencilBufferTexture.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -516,6 +517,7 @@
     <ClCompile Include="SceneRendererCommands\CaptureStencilBufferTexture.cpp">
       <Filter>SceneRendererCommands</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Textures">

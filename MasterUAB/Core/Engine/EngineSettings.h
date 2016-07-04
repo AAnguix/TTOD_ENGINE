@@ -21,6 +21,7 @@ private:
 	Vect2i m_ScreenPosition;
 
 	std::string m_DataPath;
+	bool m_D3DDebug;
 
 public:
 	CEngineSettings();

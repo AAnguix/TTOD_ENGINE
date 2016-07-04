@@ -14,6 +14,7 @@ class CDebugRender
 public:
 	CDebugRender();
 	~CDebugRender();
+	void Shutdown();
 
 	CRenderableVertexs* GetSimpleTriangle() const { return m_SimpleTriangle; }
 	CRenderableVertexs* GetClassicBlendTriangle() const { return m_ClassicBlendTriangle; }

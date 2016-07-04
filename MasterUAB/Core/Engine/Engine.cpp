@@ -27,6 +27,8 @@
 #include "Render\DebugRender.h"
 #include "Level\Level.h"
 #include "Utils\FileUtils.h"
+#include <windef.h>
+#include "Resources\ResourceManager.h"
 #include <sstream>
 
 CEngine::CEngine()
@@ -38,8 +40,10 @@ CEngine::CEngine()
 ,m_PrevTimeStamp(0)
 ,m_SecsPerCnt(0.0f)
 ,m_TimeSinceStart(0.0f)
+,m_HInstance(nullptr)
 {
 	m_CurrentLevel = "0";
+	m_InputManager = new CInputManagerImplementation;
 	m_GameObjectManager = new CGameObjectManager();
 	m_CameraControllerManager = new CCameraControllerManager;
 	m_EffectManager = new CEffectManager;
@@ -56,13 +60,13 @@ CEngine::CEngine()
 	m_SceneRendererCommandManager = new CSceneRendererCommandManager;
 	m_DebugHelper = new CDebugHelperImplementation;
 	m_ParticleSystemManager = new CParticleManager;
-	m_InputManager = new CInputManagerImplementation;
 	m_GUIManager = new CGUIManager();
 	m_SoundManager = ISoundManager::CreateSoundManager();
 	m_GraphicsStats = new CGraphicsStats;
 	m_AnimatorControllerManager = new CAnimatorControllerManager;
 	m_ScriptManager = new CScriptManager;
 	m_Profiler = new CProfiler;
+	m_ResourceManager = new CResourceManager;
 }
 
 CEngine::~CEngine()
@@ -72,13 +76,13 @@ CEngine::~CEngine()
 		delete m_Levels[i];
 		m_Levels[i] = NULL;
 	}
+	{CHECKED_DELETE(m_ResourceManager); }
 	{CHECKED_DELETE(m_Profiler); }
 	{CHECKED_DELETE(m_ScriptManager); }
 	{CHECKED_DELETE(m_AnimatorControllerManager); }
 	{CHECKED_DELETE(m_GraphicsStats); }
 	{CHECKED_DELETE(m_SoundManager); }
 	{CHECKED_DELETE(m_GUIManager);}
-	{CHECKED_DELETE(m_InputManager); }
 	{CHECKED_DELETE(m_ParticleSystemManager); }
 	{CHECKED_DELETE(m_DebugHelper);}
 	{CHECKED_DELETE(m_SceneRendererCommandManager);}
@@ -96,10 +100,14 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_EffectManager);}
 	{CHECKED_DELETE(m_CameraControllerManager);}
 	{CHECKED_DELETE(m_GameObjectManager); }
+	{CHECKED_DELETE(m_InputManager); }
+	m_HInstance = nullptr;
 }
 
-void CEngine::Initialize()
+void CEngine::Initialize(HINSTANCE* HInstance)
 {
+	m_HInstance = HInstance;
+
 	__int64 l_CntsPerSec = 0;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&l_CntsPerSec);
 	m_SecsPerCnt = 1.0f / (float)l_CntsPerSec;
@@ -107,6 +115,8 @@ void CEngine::Initialize()
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_PrevTimeStamp);
 
 	m_Profiler->Initialize();
+
+	m_ResourceManager->Initialize();
 
 	CInputManager::SetCurrentInputManager(m_InputManager);
 
@@ -316,6 +326,8 @@ ISoundManager* CEngine::GetSoundManager() const { return m_SoundManager; }
 CAnimatorControllerManager* CEngine::GetAnimatorControllerManager() const { return m_AnimatorControllerManager;}
 CCameraControllerManager* CEngine::GetCameraControllerManager() const { return m_CameraControllerManager; }
 CScriptManager* CEngine::GetScriptManager() const { return m_ScriptManager; }
+
+CResourceManager* CEngine::GetResourceManager() const { return m_ResourceManager; }
 
 void CEngine::TerminateApplication()
 {
