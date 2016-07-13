@@ -4,8 +4,9 @@ function InitializeGUI()
 	g_GUIManager:AddButton("credits_button","credits_button_normal","credits_button_highlight","credits_button_pressed")
 	g_GUIManager:AddButton("exit_button","exit_button_normal","exit_button_highlight","exit_button_pressed")	
 	g_GUIManager:AddImage("background_image","background_sprite")	
-	g_GUIManager:AddFont("fontTest","Data/GUI/Fonts/fontTest.fnt")
-	StartLevelOne()
+	g_GUIManager:AddFont("freestyle_script_64_font","Data/GUI/Fonts/FreestyleScript64.fnt")
+	g_GUIManager:AddFont("calibri_font", "Data\\GUI\\Fonts\\calibri.fnt")
+	--StartLevelOne()
 end
 
 g_TextBoxResult = ""
@@ -24,8 +25,7 @@ function UpdateGUI(ElapsedTime)
 	end
 	
 	if g_Loading then
-		ShowLoadScreen()
-		--StartLevelOne()
+		StartLevelOne()
 	end
 	
 	local l_OptionsPos = SGUIPosition(xOffset,0.22,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
@@ -45,15 +45,6 @@ function UpdateGUI(ElapsedTime)
 	if l_Pressed then
 		ExitGame()
 	end
-	
-	-- local l_TBPos = SGUIPosition(350,350,256,64)
-	-- g_TextBoxResult = g_GUIManager:DoTextBox("textBox1","fontTest",l_TBPos,"textBox",g_TextBoxResult, ElapsedTime)
-end
-
-function ShowLoadScreen()
-	local l_BackgroundPos = SGUIPosition(0.0,0.0,1280.0,720.0)
-	--local l_BackgroundPos = SGUIPosition(0.0,0.0,1.0,1.0,CGUIManager.TOP_CENTER,CGUIManager.GUI_ABSOLUTE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoImage("background_image_0","background_image",l_BackgroundPos)
 end
 
 ------------------------------ LEVELS -------------------------------------------------------------------------
@@ -64,7 +55,8 @@ function OptionsMenu()
 end
 
 function CreditsMenu()
-
+	dofile("./Data/Scripting/GUI/GUICredits.lua")
+	InitializeGUI()
 end
 
 function ExitGame()

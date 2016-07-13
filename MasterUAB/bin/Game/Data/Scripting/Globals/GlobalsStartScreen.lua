@@ -15,6 +15,7 @@ g_ContextManager = g_RenderManager:GetContextManager()
 g_LuabindManager = g_Engine:GetLuabindManager()
 
 g_GameObjectManager = g_Engine:GetGameObjectManager()
+g_LuaGameObjectHandleManager = g_Engine:GetLuaGameObjectHandleManager()
 g_StaticMeshManager = g_Engine:GetStaticMeshManager()
 g_AnimatedModelManager = g_Engine:GetAnimatedModelManager()
 g_TextureManager = g_Engine:GetTextureManager()
@@ -39,6 +40,7 @@ g_LogManager = g_Engine:GetLogManager()
 g_GraphicsStats = g_Engine:GetGraphicsStats()
 g_Profiler = g_Engine:GetProfiler()
 
+g_EventManager = CEventManager()
 g_GameController = CGameController()
 g_DamageCalculator = CDamageCalculator()
 

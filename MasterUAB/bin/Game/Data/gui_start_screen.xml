@@ -20,9 +20,17 @@
 		<sprite name="exit_button_highlight" x="0" y="0" w="200" h="200" />
 		<sprite name="exit_button_pressed" x="0" y="0" w="100" h="100" />
 	</gui_spritemap>	
-	<gui_spritemap name="background_image" width="512" height="512" material="background_material">
-		<sprite name="background_sprite" x="0" y="0" w="512" h="512" />
+	<gui_spritemap name="background_image" width="1280" height="720" material="background_material">
+		<sprite name="background_sprite" x="0" y="0" w="1280" h="720" />
 	</gui_spritemap>
+	
+	<gui_spritemap name="level_percentage_loaded_slider" width="512" height="512" material="start_screen_level_percentage_loaded_slider_material">
+		<sprite name="level_percentage_loaded_slider_base" x="0" y="0" w="512" h="150" />
+		<sprite name="level_percentage_loaded_slider_top" x="0" y="150" w="512" h="150" />
+		<sprite name="level_percentage_loaded_slider_handle" x="0" y="400" w="64" h="64" />
+		<sprite name="level_percentage_loaded_slider_pressed_handle" x="400" y="400" w="64" h="64" />
+	</gui_spritemap>
+	
 	
 	<gui_spritemap name="slider" width="512" height="512" material="slider_material">
 		<sprite name="base" x="0" y="0" w="512" h="150" />
@@ -35,8 +43,13 @@
 	</gui_spritemap> -->
 	<gui_spritemap name="textBox" width="512" height="128" material="textbox_material">
 		<sprite name="textBox" x="0" y="0" w="512" h="128" />
-	</gui_spritemap>	
-	<gui_spritemap name="fontTest" width="256" height="256" material="fontTest">
-		<sprite name="fontTest_0.png" x="0" y="0" w="256" h="256" />
+	</gui_spritemap>
+
+	<!-- FONTS -->
+	<gui_spritemap name="freestyle_script_64_spritemap" width="512" height="512" material="freestyle_script_64_font_material">
+		<sprite name="FreestyleScript64_0.png" x="0" y="0" w="512" h="512" />
+	</gui_spritemap>
+	<gui_spritemap name="Nirmala_48_Spritemap" width="512" height="512" material="nirmala_48_font_material">
+		<sprite name="Nirmala48_0.png" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>
 </gui_elements>

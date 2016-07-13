@@ -137,7 +137,7 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 					l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
 					else if (b_Test == 5)
 					l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
-
+				
 				l_ContextManager->SetWorldMatrix(l_Tranform*l_BoneTransform*l_ParentTransform);
 			}
 			else

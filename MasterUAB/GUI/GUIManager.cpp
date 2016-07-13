@@ -501,6 +501,57 @@ void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, 
 
 bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position)
 {
+	CheckInput();
+
+	SButtonInfo* l_Button = GetButton(ButtonID);
+	SSpriteInfo* l_Sprite = l_Button->normal;
+
+	bool l_Result = false;
+
+	if (m_ActiveItem == GuiID)
+	{
+		l_Sprite = l_Button->pressed;
+
+		if (m_MouseWentReleased)
+		{
+			if (m_HotItem == GuiID)
+			{
+				l_Result = true;
+			}
+			SetNotActive(GuiID);
+		}
+	}
+	else if (m_HotItem == GuiID)
+	{
+		l_Sprite = l_Button->highlight;
+
+		if (m_MouseWentPressed)
+		{
+			SetActive(GuiID);
+		}
+	}
+
+	if (IsMouseInside(m_MouseX, m_MouseY, Position.x, Position.y, Position.width, Position.height))
+	{
+		SetHot(GuiID);
+	}
+	else
+	{
+		SetNotHot(GuiID);
+	}
+
+	{
+		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
+			, 0.0f, 0.0f, 1.0f, 1.0f,
+			CColor(1.0f, 1.0f, 1.0f, 1.0f) };
+		m_Commands.push_back(l_Command);
+	}
+
+	return l_Result;
+}
+
+bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color)
+{
 	CheckInput(); 
 
 	SButtonInfo* l_Button = GetButton(ButtonID);
@@ -543,7 +594,7 @@ bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID
 	{
 		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
 		,0.0f,0.0f,1.0f,1.0f,
-		CColor(1.0f,1.0f,1.0f,1.0f) };
+		Color };
 		m_Commands.push_back(l_Command);
 	}
 
@@ -700,6 +751,25 @@ void CGUIManager::DoHealthBar(const std::string& GuiID, const std::string& Healt
 	}
 }
 
+void CGUIManager::DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text, const CColor &Color)
+{
+	CheckInput();
+
+	SSpriteInfo* l_Sprite = nullptr;
+	std::map<std::string, SSpriteInfo*>::iterator itMap;
+	itMap = m_Sprites.find(Sprite);
+	if (itMap != m_Sprites.end())
+		l_Sprite = itMap->second;
+
+
+	SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
+	, 0, 0, 1, 1,
+	Color };
+	m_Commands.push_back(l_Command);
+
+	FillCommandQueueWithText(Font, Text, Vect2f(Position.x + Position.width * 0.05f, Position.y + Position.height * 0.75f), GUIAnchor::BASE_LEFT);
+}
+
 void CGUIManager::DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text)
 {
 	CheckInput();
@@ -718,6 +788,7 @@ void CGUIManager::DoText(const std::string& GuiID, const std::string& Font, cons
 
 	FillCommandQueueWithText(Font, Text, Vect2f(Position.x + Position.width * 0.05f, Position.y + Position.height * 0.75f), GUIAnchor::BASE_LEFT);
 }
+
 
 std::string CGUIManager::DoTextBox(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& CurrentText, float ElapsedTime)
 {

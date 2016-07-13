@@ -1,19 +1,14 @@
 #include "LuabindManager\LuabindManager.h"
-
+#include "LuabindManager\LuabindMacros.h"
 #include <luabind/luabind.hpp>
 
 #include <luabind/operator.hpp>
-//#include <luabind/iterator_policy.hpp>
 
 #include "Engine\Engine.h"
 #include "ISoundManager.h"
 #include "Components\AudioSource.h"
 
 using namespace luabind;
-
-#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
-#define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
-
 
 void CLuabindManager::RegisterSound()
 {

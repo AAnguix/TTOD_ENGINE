@@ -1,5 +1,5 @@
 #include "LuabindManager\LuabindManager.h"
-
+#include "LuabindManager\LuabindMacros.h"
 #include <luabind/luabind.hpp>
 
 #include <luabind/operator.hpp>
@@ -13,10 +13,6 @@
 #include "Components\CharacterCollider.h"
 
 using namespace luabind;
-
-#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
-#define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
-
 
 void CLuabindManager::RegisterPhysics()
 {

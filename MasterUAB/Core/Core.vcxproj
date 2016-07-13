@@ -27,6 +27,8 @@
     <ClCompile Include="DebugHelper\DebugHelperImplementation.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\EngineSettings.cpp" />
+    <ClCompile Include="GameObject\LuaGameObjectHandle.cpp" />
+    <ClCompile Include="GameObject\LuaGameObjectHandleManager.cpp" />
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="Input\InputManagerImplementation.cpp" />
     <ClCompile Include="Input\KeyBoardInput.cpp" />
@@ -42,6 +44,7 @@
     <ClCompile Include="LuabindManager\RegisterSound.cpp" />
     <ClCompile Include="Profiler\Profiler.cpp" />
     <ClCompile Include="Profiler\ProfilerRecord.cpp" />
+    <ClCompile Include="Thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Components\AnimatorController\Animation.h" />
@@ -63,15 +66,19 @@
     <ClInclude Include="DebugHelper\DebugHelperImplementation.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\EngineSettings.h" />
+    <ClInclude Include="GameObject\LuaGameObjectHandle.h" />
+    <ClInclude Include="GameObject\LuaGameObjectHandleManager.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Input\InputManagerImplementation.h" />
     <ClInclude Include="Input\KeyBoardInput.h" />
     <ClInclude Include="Input\MouseInput.h" />
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Log\Log.h" />
+    <ClInclude Include="LuabindManager\LuabindMacros.h" />
     <ClInclude Include="LuabindManager\LuabindManager.h" />
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ProfilerRecord.h" />
+    <ClInclude Include="Thread.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\3rdParty\AntTweakBar\AntTweakBar.vcxproj">

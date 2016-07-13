@@ -68,4 +68,13 @@
 		<parameter type="float" name="ContrastColorGrading" value="0.400000" description="min=0.0 max=1.0 step=0.001"/>
 		<parameter type="float" name="BrightnessColorGrading" value="0.050000" description="min=0.0 max=1.0 step=0.001"/>
 </material>
+<material name="HeatVisionMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+		<parameter type="float" name="HeatVisionActive" value="1.0" description="min=0.0 max=1.0 step=1.0"/>
+		<parameter type="float" name="LuminanceType" value="0.0" description="min=0.0 max=1.0 step=1.0"/>
+</material>
+<material name="OutlinesMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+		<parameter type="float" name="OutlinesActive" value="1.0" description="min=0.0 max=1.0 step=1.0"/>
+		<parameter type="vect4f" name="OutlinesColor" value="0.0 0.0 1.0 0.5" description=""/>
+		<parameter type="float" name="OutlinesLineWidth" value="0.5" description="min=0.0 max=1.0 step=0.01"/>
+</material>
 </materials>

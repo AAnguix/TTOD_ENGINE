@@ -38,6 +38,7 @@ public:
 template<class T> T* CSingleton<T>::ms_Singleton = 0;
 
 class CGameObjectManager;
+class CLuaGameObjectHandleManager;
 class CCameraControllerManager;
 class CPhysXManager;
 class CLayerManager;
@@ -91,6 +92,7 @@ private:
 	CScriptManager* m_ScriptManager;
 
 	CGameObjectManager* m_GameObjectManager;
+	CLuaGameObjectHandleManager* m_LuaGameObjectHandleManager;
 	CMaterialManager* m_MaterialManager;
 	CEffectManager* m_EffectManager;
 	CTextureManager* m_TextureManager;
@@ -130,6 +132,7 @@ public:
 	float GetRealTimeSinceStartup();
 	void SetTimeScale(float TimeScale);
 	void Pause(){ m_Paused = true; };
+	void Resume(){ m_Paused = false; };
 	bool IsPaused() const { return m_Paused; };
 	CEmptyPointerClass* GetTimeScaleLuaAddress() const;
 	CEmptyPointerClass* GetPausedLuaAddress() const;
@@ -143,10 +146,14 @@ public:
 	bool UnloadLevel(const std::string &Level);
 	bool LoadingLevel() const { return m_LoadingLevel; };
 	std::string GetCurrentLevel() const { return m_CurrentLevel; };
+	void SetCurrentLevel(const std::string &Level) { m_CurrentLevel=Level; };
+
+	std::vector<CLevel*> GetLevels() const { return m_Levels; };
 
 	static void TerminateApplication(); /*Called from LUA when exit button is pressed*/
 
 	CGameObjectManager* GetGameObjectManager() const;
+	CLuaGameObjectHandleManager* GetLuaGameObjectHandleManager() const;
 	CMaterialManager* GetMaterialManager() const;
 	CEffectManager* GetEffectManager() const;
 	CTextureManager* GetTextureManager() const;

@@ -1,15 +1,14 @@
 function InitializeGUI()
 	g_GUIManager:AddHealthBar("player_health_bar","player_health_bar_base","player_health_bar_top","player_health_bar_background")
+	g_GUIManager:AddImage("map_image_1270_720","map_sprite_1280_720")
 	
 	g_GUIManager:AddFont("felix_font", "Data\\GUI\\Fonts\\Felix.fnt")
-	g_GUIManager:AddFont("calibri_font", "Data\\GUI\\Fonts\\calibri.fnt")
-	
 	
 	g_GUIManager:AddButton("menu_button","menu_button_normal","menu_button_highlight","menu_button_pressed")
 		g_GUIManager:AddButton("pause_button","pause_button_normal","pause_button_highlight","pause_button_pressed")
 		g_GUIManager:AddButton("open_audio_submenu_button","open_audio_submenu_normal","open_audio_submenu_highlight","open_audio_submenu_pressed")	
 			g_GUIManager:AddSlider("modify_fx_volume_slider","modify_fx_volume_slider_base","modify_fx_volume_slider_top","modify_fx_volume_slider_handle","modify_fx_volume_slider_pressed_handle")
-			g_GUIManager:AddSlider("modify_music_volume_slider","modify_music_volume_slider_base","modify_music_volume_slider_top","modify_music_volume_slider_handle","modify_music_volume_slider_pressed_handle")
+			g_GUIManager:AddSlider("modify_music_volume_slider","modify_music_volume_slider_base","modify_music_volume_slider_top","modify_music_volume_slider_handle","modify_music_volume_slider_pressed_handle")		
 end
 
 g_IsMenuActive = false
@@ -37,10 +36,6 @@ g_ShowGraphicsStats = true
 
 function UpdateGUI(ElapsedTime)
 	
-	local l_Pos = SGUIPosition(0.4,0.7,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("DorrPedestalText","felix_font",l_Pos,"","Press E to activate")
-	
-	--local l_HealthBarPos = SGUIPosition(50,50,512,128)
 	local l_HealthBarPos = SGUIPosition(0.83,0.05,0.3,0.075,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, g_PlayerComponent:GetMaxHealth(), g_PlayerComponent:GetHealth()) 
 	
@@ -49,7 +44,19 @@ function UpdateGUI(ElapsedTime)
 	-- local l_Pos = SGUIPosition(0.1,0.1,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	-- g_GUIManager:DoText("textoDePrueba","felix_font",l_Pos,"","Game is paused!")
 	
+	local l_TextPos = SGUIPosition(0.5, 0.8, 0.1, 0.1, CGUIManager.BOTTOM_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+	g_GUIManager:DoText("LoadingText", "freestyle_script_64_font", l_TextPos, "", "Loading...", CColor(0.0,1.0,0.0,1.0))
+
 	UpdateMenu()
+	
+	if g_PlayerComponent:IsMapOpened() then
+		ShowMap()
+	end
+end
+
+function ShowMap()
+	local l_MapPosition = SGUIPosition(0.0, 0.0, 1.0, 1.0, CGUIManager.BOTTOM_LEFT, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE)
+	g_GUIManager:DoImage("map_0", "map_image_1270_720", l_MapPosition)
 end
 
 function ShowGraphicsStats()
@@ -90,7 +97,7 @@ end
 
 function UpdateMenu()
 	
-	local l_MenuButtonPosition = SGUIPosition(0.95,0.85,0.05,0.05,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	local l_MenuButtonPosition = SGUIPosition(0.95,0.75,0.05,0.05,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	local l_Pressed = g_GUIManager:DoButton("menu_button_0","menu_button",l_MenuButtonPosition)
 	if l_Pressed then 
 		CheckMenu() 

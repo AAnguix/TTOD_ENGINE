@@ -6,6 +6,7 @@
 #include "XML\XMLTreeNode.h"
 #include "Log\Log.h"
 #include "Engine\Engine.h"
+#include <direct.h>
 
 CLightManager::CLightManager() 
 :m_AmbientLight(Vect4f(0.1f,0.1f,0.1f,1.0f))
@@ -52,6 +53,9 @@ bool CLightManager::Load(const std::string &FileName)
 {
 	m_FileName=FileName;
 	CXMLTreeNode l_XML;
+
+	char* l_CurrentWorkingDirectory;
+	l_CurrentWorkingDirectory = _getcwd(NULL, 0);
 
 	if (l_XML.LoadFile(FileName.c_str()))
 	{

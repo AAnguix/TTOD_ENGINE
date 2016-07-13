@@ -1,5 +1,6 @@
 #include "Engine\Engine.h"
 #include "Utils\GameObjectManager.h"
+#include "GameObject\LuaGameObjectHandleManager.h"
 #include "Materials\MaterialManager.h"
 #include "Effects\EffectManager.h"
 #include "Textures\TextureManager.h"
@@ -44,6 +45,7 @@ CEngine::CEngine()
 {
 	m_CurrentLevel = "0";
 	m_InputManager = new CInputManagerImplementation;
+	m_LuaGameObjectHandleManager = new CLuaGameObjectHandleManager();
 	m_GameObjectManager = new CGameObjectManager();
 	m_CameraControllerManager = new CCameraControllerManager;
 	m_EffectManager = new CEffectManager;
@@ -100,6 +102,7 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_EffectManager);}
 	{CHECKED_DELETE(m_CameraControllerManager);}
 	{CHECKED_DELETE(m_GameObjectManager); }
+	{CHECKED_DELETE(m_LuaGameObjectHandleManager); }
 	{CHECKED_DELETE(m_InputManager); }
 	m_HInstance = nullptr;
 }
@@ -236,18 +239,18 @@ bool CEngine::LoadLevel(const std::string &Level)
 		if (m_Levels[i]->GetID() == Level)
 		{
 			m_LoadingLevel = true;
-				LoadLevelsCommonData();
-				l_Loaded = m_Levels[i]->Load(*this);
-				m_CurrentLevel = Level;
+			LoadLevelsCommonData();
+			l_Loaded = m_Levels[i]->Load(*this);
+			m_CurrentLevel = Level;
 			m_LoadingLevel = false;
 		}
 	}
 
 	#ifdef _DEBUG
-	if (l_Loaded)
-		m_Log->Log("Level " + Level + " loaded");
-	else
-		m_Log->Log("Can't load level " + Level);
+		if (l_Loaded)
+			m_Log->Log("Level " + Level + " loaded");
+		else
+			m_Log->Log("Can't load level " + Level);
 	#endif
 
 	return l_Loaded;
@@ -255,30 +258,35 @@ bool CEngine::LoadLevel(const std::string &Level)
 
 bool CEngine::UnloadLevel(const std::string &Level)
 {
-	bool l_Unloaded = false;
+	m_LoadingLevel = true;
 
-	for (size_t i = 0; i < m_Levels.size(); ++i)
-	{
-		if (m_Levels[i]->GetID() == Level)
+		bool l_Unloaded = false;
+
+		for (size_t i = 0; i < m_Levels.size(); ++i)
 		{
-			m_LoadingLevel = true;
-				l_Unloaded = m_Levels[i]->Unload(*this);
-				m_CurrentLevel = "";
-			m_LoadingLevel = false;
+			if (m_Levels[i]->GetID() == Level)
+			{
+			
+					l_Unloaded = m_Levels[i]->Unload(*this);
+					m_CurrentLevel = "";
+			}
 		}
-	}
 
-	#ifdef _DEBUG
-	if (l_Unloaded)
-		m_Log->Log("Level " + Level + " unloaded");
-	else
-		m_Log->Log("Can't unload level " + Level);
-	#endif
+		#ifdef _DEBUG
+		if (l_Unloaded)
+			m_Log->Log("Level " + Level + " unloaded");
+		else
+			m_Log->Log("Can't unload level " + Level);
+		#endif
+
+	m_LoadingLevel = false;
 
 	return l_Unloaded;
 }
 
 CGameObjectManager* CEngine::GetGameObjectManager() const { return m_GameObjectManager; }
+
+CLuaGameObjectHandleManager* CEngine::GetLuaGameObjectHandleManager() const { return m_LuaGameObjectHandleManager; }
 
 CEffectManager* CEngine::GetEffectManager() const {	return m_EffectManager; }
 

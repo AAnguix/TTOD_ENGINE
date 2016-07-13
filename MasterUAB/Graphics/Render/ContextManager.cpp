@@ -843,6 +843,4 @@ void CContextManager::SetRasterizerState(ERasterizedState RasterizerState)
 void CContextManager::SetDepthStencilState(EDepthStencilState DepthStencilState)
 {
 	m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[DepthStencilState], 0);
-
-
 }

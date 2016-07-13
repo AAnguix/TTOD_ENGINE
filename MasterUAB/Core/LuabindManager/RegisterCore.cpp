@@ -1,11 +1,10 @@
 #include "LuabindManager\LuabindManager.h"
-
+#include "LuabindManager\LuabindMacros.h"
 #include <luabind/luabind.hpp>
 
 #include <luabind/operator.hpp>
 #include <luabind/iterator_policy.hpp>
 
-#include "Application.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
 #include "Input\InputManagerImplementation.h"
@@ -14,6 +13,7 @@
 
 /*Base*/
 #include "Utils\GameObjectManager.h"
+#include "GameObject\LuaGameObjectHandleManager.h"
 
 /*Graphics*/
 #include "Render\RenderManager.h"
@@ -30,6 +30,7 @@
 #include "PhysXManager.h"
 
 /*Core*/
+#include "GameObject\LuaGameObjectHandleManager.h"
 #include "Components\Script.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
@@ -50,9 +51,6 @@
 
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
-#define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
-
 //CLUAComponent* f(CLUAComponent *Pointer) { return Pointer; }
 
 //CRenderableObject* GetEntity(const std::string &Layer, const std::string &Object)
@@ -66,16 +64,12 @@ void CLuabindManager::RegisterCore()
 
 	module(LUA_STATE)
 	[
-		class_<CApplication>("CApplication")
-	];
-
-	module(LUA_STATE)
-	[
 		class_<CLevel>("CLevel")
 		.def(constructor<const std::string& >())
 		.def("GetID", &CLevel::GetID)
 		.def("Load", &CLevel::Load)
 		.def("Unload", &CLevel::Unload)
+		.def("GetPercentageLoaded", &CLevel::GetPercentageLoaded)
 	];
 
 	module(LUA_STATE) 
@@ -105,6 +99,7 @@ void CLuabindManager::RegisterCore()
 		.def("GetEffectManager", &CEngine::GetEffectManager)
 		.def("GetRenderableObjectTechniqueManager", &CEngine::GetRenderableObjectTechniqueManager)
 		.def("GetGameObjectManager", &CEngine::GetGameObjectManager)
+		.def("GetLuaGameObjectHandleManager", &CEngine::GetLuaGameObjectHandleManager)
 		.def("GetMaterialManager", &CEngine::GetMaterialManager)
 		.def("GetAnimatedModelManager", &CEngine::GetAnimatedModelManager)
 		.def("GetStaticMeshManager", &CEngine::GetStaticMeshManager)
@@ -133,6 +128,8 @@ void CLuabindManager::RegisterCore()
 		.def("GetDebugHelper", &CEngine::GetDebugHelper)
 		.def("IsPaused", &CEngine::IsPaused)
 		.def("Pause", &CEngine::Pause)
+		.def("Resume", &CEngine::Resume)
+		.def("SetTimeScale", &CEngine::SetTimeScale)
 		.def("GetPausedLuaAddress", &CEngine::GetPausedLuaAddress)
 		.def("GetTimeScaleLuaAddress", &CEngine::GetTimeScaleLuaAddress)
 		.def("GetResourceManager", &CEngine::GetResourceManager)
@@ -152,6 +149,49 @@ void CLuabindManager::RegisterCore()
 		.def("AddNode", &CAStar::AddNode)
 		.def("AddNeighbours", &CAStar::AddNeighbours)
 	];*/
+
+	module(LUA_STATE)
+	[
+		class_<CLuaGameObjectHandleManager>("CLuaGameObjectHandleManager")
+		.def(constructor<>())
+		.def("Add", &CLuaGameObjectHandleManager::Add)
+		.def("Get", &CLuaGameObjectHandleManager::Get)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CLuaGameObjectHandle>("LuaGameObjectHandle")
+		.def(constructor<CGameObject*>())
+		
+		.def("GetPosition", &CLuaGameObjectHandle::GetPosition)
+		.def("GetForward", &CLuaGameObjectHandle::GetForward)
+		.def("GetUp", &CLuaGameObjectHandle::GetUp)
+		.def("GetRight", &CLuaGameObjectHandle::GetRight)
+		.def("GetYaw", &CLuaGameObjectHandle::GetYaw)
+		.def("GetPitch", &CLuaGameObjectHandle::GetPitch)
+		.def("GetRoll", &CLuaGameObjectHandle::GetRoll)
+		.def("SetYaw", &CLuaGameObjectHandle::SetYaw)
+		.def("SetPitch", &CLuaGameObjectHandle::SetPitch)
+		.def("SetRoll", &CLuaGameObjectHandle::SetRoll)
+
+		.def("AddState", &CLuaGameObjectHandle::AddState)
+		.def("AddInteger", &CLuaGameObjectHandle::AddInteger)
+		.def("AddFloat", &CLuaGameObjectHandle::AddFloat)
+		.def("AddBool", &CLuaGameObjectHandle::AddBool)
+		.def("AddTrigger", &CLuaGameObjectHandle::AddTrigger)
+		.def("SetInteger", &CLuaGameObjectHandle::SetInteger)
+		.def("SetFloat", &CLuaGameObjectHandle::SetFloat)
+		.def("SetBool", &CLuaGameObjectHandle::SetBool)
+		.def("SetTrigger", &CLuaGameObjectHandle::SetTrigger)
+
+		.def("GetName", &CLuaGameObjectHandle::GetName)
+		.def("GetGameObject", &CLuaGameObjectHandle::GetGameObject)
+
+		.def("GetPhysxMaterial", &CLuaGameObjectHandle::GetPhysxMaterial)
+
+		.def("PlayEvent", &CLuaGameObjectHandle::PlayEvent)
+		.def("AddSound", &CLuaGameObjectHandle::AddSound)
+	];
 
 	module(LUA_STATE)
 	[
@@ -184,6 +224,7 @@ void CLuabindManager::RegisterCore()
 		.def("Log", (void(CLog::*)(float))&CLog::Log)
 		.def("Log", (void(CLog::*)(const std::string&))&CLog::Log)
 		.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)
+		.def("Log", (void(CLog::*)(const Mat44f&))&CLog::Log)
 		//.def("Log", (void(*)(int)) &CLog::Log)
 	];
 
@@ -452,7 +493,7 @@ void CLuabindManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CAnimatorController>("CAnimatorController")
-		.def(constructor<const std::string, CGameObject*>())
+		/*.def(constructor<const std::string, CGameObject*>())
 		.def("AddState", &CAnimatorController::AddState)
 		.def("AddInteger", &CAnimatorController::AddInteger)
 		.def("AddFloat", &CAnimatorController::AddFloat)
@@ -462,15 +503,15 @@ void CLuabindManager::RegisterComponents()
 		.def("SetFloat", &CAnimatorController::SetFloat)
 		.def("SetBool", &CAnimatorController::SetBool)
 		.def("SetTrigger", &CAnimatorController::SetTrigger)
-		.def("AddAnyStateTransition", &CAnimatorController::AddAnyStateTransition)
+		.def("AddAnyStateTransition", &CAnimatorController::AddAnyStateTransition)*/
 	];
 
 	module(LUA_STATE)
 	[
 		class_<CAudioSource>("CAudioSource")
-		.def(constructor<const std::string, CGameObject*>())
+		/*.def(constructor<const std::string, CGameObject*>())
 		.def("RemoveSounds", &CAudioSource::RemoveSounds)
 		.def("PlayEvent", &CAudioSource::PlayEvent)
-		.def("AddSound", &CAudioSource::AddSound)
+		.def("AddSound", &CAudioSource::AddSound)*/
 	];
 }

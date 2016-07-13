@@ -1,14 +1,18 @@
 function StartLevelOne()
 	dofile("./Data/Scripting/LuaMainInGame.lua")
 	LoadGamePlayScripts() --LuaMainInGame.lua
+	
+	-- dofile("./Data/Scripting/LoadingScreen.lua")
 	g_Engine:AddLevel("Test")
 	g_Engine:LoadLevel("Test")
+	
 	g_DamageCalculator:LoadXML("Data/damage_reduction_percentages.xml")
 	g_GameController:LoadXML("Data/LevelTest/game_entities.xml")
 	
 	LuaMain() --Load new LUA behavior (per frame)
 
 	--g_CameraControllerManager:SetCurrentCameraController("DebugCamera")
+	
 	g_CameraControllerManager:SetCurrentCameraController("ThirdPersonCamera")
 	g_SceneRendererCommandManager:Reload()
 	

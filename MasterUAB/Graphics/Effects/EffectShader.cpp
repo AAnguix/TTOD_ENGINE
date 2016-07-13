@@ -160,6 +160,7 @@ bool CEffectShader::LoadShaderExtended(const std::string &ShaderName, const std:
 			D3DWriteBlobToFile(l_ErrorBlob, l_ErrorsFile.c_str(), true);
 			//CEngine::GetSingleton().GetLogManager()->Log(static_cast<char>(l_ErrorBlob->GetBufferPointer()));
 			assert(false);
+			return false;
 		}
 
 		std::wstring l_WCompiledName;

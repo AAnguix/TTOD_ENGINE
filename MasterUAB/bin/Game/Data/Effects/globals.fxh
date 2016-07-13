@@ -13,7 +13,7 @@ cbuffer SceneConstantBuffer : register( b0 )
 	float4 m_CameraUpVector;
 	float4 m_BaseColor;
 	float4 m_CameraProjectionInfo; //Near,Far,FOV,Aspect Ratio
-	float4 m_Times; //Elapsedtime, Time since Videogame run, Screen Height, Screen With
+	float4 m_Times; //Elapsedtime, Time since Videogame run,  Screen With, Screen Height
 }
 
 cbuffer LightsConstantBuffer : register (b1)
@@ -47,6 +47,9 @@ cbuffer MaterialConstantBuffer : register(b3)
 {
 	float4 m_RawData[16];
 }
+
+static float m_ScreenX = m_Times.z;
+static float m_ScreenY = m_Times.w;
 
 static bool m_LightEnabledArray[4]={m_LightEnabled.x==1.0, m_LightEnabled.y==1.0, m_LightEnabled.z==1.0, m_LightEnabled.w==1.0};
 static float m_LightTypeArray[4]=(float[4])m_LightType;

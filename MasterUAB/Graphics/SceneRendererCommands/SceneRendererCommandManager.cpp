@@ -50,6 +50,8 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 
 		if (l_Commands.Exists())
 		{
+			Destroy();
+
 			for (int i = 0; i < l_Commands.GetNumChildren(); ++i)
 			{
 				CXMLTreeNode l_Element = l_Commands(i);
@@ -264,6 +266,10 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 					}
 				}
 			}
+
+			#ifdef _DEBUG
+					CEngine::GetSingleton().GetLogManager()->Log(m_Filename+" loaded");
+			#endif
 
 			return true;
 		}

@@ -11,6 +11,7 @@
 		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="GUI_technique"/>
 		<renderable_object_technique name="lava_renderable_object_technique" technique="lava_technique"/>
 		<renderable_object_technique name="glow_renderable_object_technique" technique="glow_technique"/>
+		<renderable_object_technique name="raycast_renderable_object_technique" technique="raycast_technique"/>
 	</pool_renderable_object_technique>	
 	
 	<pool_renderable_object_technique name="generate_g_buffer">
@@ -43,6 +44,14 @@
 		<!-- <renderable_object_technique name="animated_models_normal_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
 		<renderable_object_technique name="animated_models_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
 		<renderable_object_technique name="animated_models_normal_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/> -->
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="heat_vision_pool">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="heat_vision_technique"/>
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="outlines_pool">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="outlines_technique"/>
 	</pool_renderable_object_technique>
 	
 	<pool_renderable_object_technique name="noise_and_vignetting_pool">

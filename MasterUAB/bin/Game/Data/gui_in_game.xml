@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- The higher in this file, the farthest will be renderer in the screen -->
 <gui_elements>
-	
 	<!-- Menu -->
 	<gui_spritemap name="felix_font" width="256" height="256" material="felix_font_material">
 		<sprite name="Felix_0.png" x="0" y="0" w="256" h="256" />
@@ -49,13 +49,16 @@
 		<sprite name="health_potion_highlight" x="0" y="0" w="512" h="512" />
 		<sprite name="health_potion_pressed" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>
-	<gui_spritemap name="health_potion_font" width="256" height="256" material="health_potion_font_material">
-		<sprite name="health_potion_font_sprite" x="0" y="0" w="256" h="256" />
+	<gui_spritemap name="health_potion_font" width="512" height="512" material="health_potion_font_material">
+		<sprite name="health_potion_font_0.png" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>
 	<gui_spritemap name="pedestal_button" width="512" height="512" material="pedestal_button_material">
 		<sprite name="pedestal_button_normal" x="0" y="0" w="256" h="256" />
 		<sprite name="pedestal_button_highlight" x="0" y="0" w="256" h="256" />
 		<sprite name="pedestal_button_pressed" x="0" y="0" w="256" h="256" />
+	</gui_spritemap>
+	<gui_spritemap name="map_spritemap_1280_720" width="1280" height="720" material="map_material_1280_720">
+		<sprite name="map_sprite_1280_720" x="0" y="0" w="1280" h="720" />
 	</gui_spritemap>
 </gui_elements>
 

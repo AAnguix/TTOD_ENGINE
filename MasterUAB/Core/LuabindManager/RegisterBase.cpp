@@ -1,5 +1,5 @@
 #include "LuabindManager\LuabindManager.h"
-
+#include "LuabindManager\LuabindMacros.h"
 #include <luabind/luabind.hpp>
 
 #include <luabind/operator.hpp>
@@ -20,6 +20,7 @@
 #include "Utils\Named.h"
 #include "Utils\GameObjectManager.h"
 #include "Utils\GameObject.h"
+#include "Materials\Material.h"
 #include "Math\Vector2.h"
 #include "Math\Vector3.h"
 #include "Math\Vector4.h"
@@ -31,13 +32,11 @@
 #include "Utils\TTODMathUtils.h"
 #include "Utils\FileUtils.h"
 #include "Utils\TTODXMLWriter.h"
+#include "LuabindManager\LuabindMacros.h"
 
 #include <cmath>
 
 using namespace luabind;
-
-#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
-#define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
 void CLuabindManager::RegisterBase()
 {
@@ -145,20 +144,20 @@ void CLuabindManager::RegisterBase()
 		.def(constructor<>())
 		.def(constructor<const std::string&>())
 		.def(constructor<const CXMLTreeNode&>())
-		.def("GetAnimatorController", &CGameObject::GetAnimatorController)
+		/*.def("GetAnimatorController", &CGameObject::GetAnimatorController)
 		.def("GetScript", &CGameObject::GetScript)
 		.def("GetAudioSource", &CGameObject::GetAudioSource)
 		.def("GetRenderableObject", &CGameObject::GetRenderableObject)
-		.def("GetCharacterCollider", &CGameObject::GetCollider)
-		.def("GetCharacterCollider", &CGameObject::GetCharacterCollider)
+		.def("GetCollider", &CGameObject::GetCollider)
+		.def("GetCharacterCollider", &CGameObject::GetCharacterCollider)*/
 
-		.def("SetAnimatorController", &CGameObject::SetAnimatorController)
+		/*.def("SetAnimatorController", &CGameObject::SetAnimatorController)
 		.def("SetScript", &CGameObject::SetScript)
 		.def("SetAudioSource", &CGameObject::SetAudioSource)
 		.def("SetRenderableObject", &CGameObject::SetRenderableObject)
 		.def("SetCollider", &CGameObject::SetCollider)
 		.def("SetCharacterCollider", &CGameObject::SetCharacterCollider)
-		.def("GetThisLuaAddress", &CGameObject::GetThisLuaAddress)
+		.def("GetThisLuaAddress", &CGameObject::GetThisLuaAddress)*/
 	];
 
 	module(LUA_STATE)
@@ -187,7 +186,7 @@ void CLuabindManager::RegisterBase()
 		.def("AddGameObject", (CGameObject*(CGameObjectManager::*)(const std::string&))&CGameObjectManager::AddGameObject)*/
 		//.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)
 	];
-	
+
 	module(LUA_STATE)
 	[
 		class_<CXMLTreeNode>("CXMLTreeNode")

@@ -94,6 +94,13 @@
     <ClCompile Include="Engine\EngineSettings.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Thread.cpp" />
+    <ClCompile Include="GameObject\LuaGameObjectHandle.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\LuaGameObjectHandleManager.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\InputManager.h">
@@ -180,6 +187,16 @@
     <ClInclude Include="Engine\EngineSettings.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Thread.h" />
+    <ClInclude Include="LuabindManager\LuabindMacros.h">
+      <Filter>LuabindManager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\LuaGameObjectHandle.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\LuaGameObjectHandleManager.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Input">
@@ -208,6 +225,9 @@
     </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{4fbf7e96-f8a1-492c-a078-1fb4bd4d8d46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{5c0d48cc-4811-4831-abdd-9947887c784c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -43,20 +43,20 @@ function OnUpdate_Rotate_Player(Player, ElapsedTime)
 	local l_PlayerForward = Vect3f(0.0,0.0,0.0)
 	
 	if Player.m_Right then
-		l_PlayerForward = Player.m_RObject:GetRight()
+		l_PlayerForward = Player.m_LuaGameObject:GetRight()
 	elseif Player.m_Left then 
-		l_PlayerForward = Player.m_RObject:GetRight()*(-1.0)
+		l_PlayerForward = Player.m_LuaGameObject:GetRight()*(-1.0)
 	elseif Player.m_Forward then 
-		l_PlayerForward = Player.m_RObject:GetForward()
+		l_PlayerForward = Player.m_LuaGameObject:GetForward()
 	elseif Player.m_Backwards then 
-		l_PlayerForward = Player.m_RObject:GetForward()*(-1.0)
+		l_PlayerForward = Player.m_LuaGameObject:GetForward()*(-1.0)
 	end
 	
 	local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
-	local l_CurrentYaw = Player.m_RObject:GetYaw()
+	local l_CurrentYaw = Player.m_LuaGameObject:GetYaw()
 	local l_Angle = CTTODMathUtils.AngleBetweenVectors(l_CameraForward,l_PlayerForward)
 	
-	Player.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, Player.m_RotationVelocity, ElapsedTime))
+	Player.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, Player.m_RotationVelocity, ElapsedTime))
 	
 	if math.abs(l_Angle) < 0.1 then
 		g_Player:GetAnimatorController():SetBool("Rotate",false)	
@@ -78,10 +78,10 @@ function OnUpdate_Walk_Player(Player, ElapsedTime)
 	
 	local l_PlayerForward = Vect3f(0.0,0.0,0.0)
 	
-	local l_Forward = Player.m_RObject:GetForward()
-	local l_Backwards = Player.m_RObject:GetForward()*(-1.0)
-	local l_Right = Player.m_RObject:GetRight()
-	local l_Left = Player.m_RObject:GetRight()*(-1.0)
+	local l_Forward = Player.m_LuaGameObject:GetForward()
+	local l_Backwards = Player.m_LuaGameObject:GetForward()*(-1.0)
+	local l_Right = Player.m_LuaGameObject:GetRight()
+	local l_Left = Player.m_LuaGameObject:GetRight()*(-1.0)
 	
 	if (Player.m_Forward and Player.m_Right) then
 		l_PlayerForward =  l_Forward + l_Right
@@ -110,11 +110,11 @@ function OnUpdate_Walk_Player(Player, ElapsedTime)
 	end
 	
 	local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
-	local l_CurrentYaw = Player.m_RObject:GetYaw()
+	local l_CurrentYaw = Player.m_LuaGameObject:GetYaw()
 	local l_Angle = CTTODMathUtils.AngleBetweenVectors(l_CameraForward,l_PlayerForward)
 	
 	if math.abs(l_Angle) > 0.1 then
-		Player.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, Player.m_RotationVelocity, ElapsedTime))
+		Player.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, Player.m_RotationVelocity, ElapsedTime))
 	end
 end
 

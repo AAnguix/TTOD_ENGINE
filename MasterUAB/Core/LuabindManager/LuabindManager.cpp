@@ -9,9 +9,6 @@
 #include "Log\Log.h"
 using namespace luabind;
 
-#define LUA_STATE CEngine::GetSingleton()->GetLuaState()
-#define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
-
 CLuabindManager::CLuabindManager()
 :m_LS(NULL)
 {

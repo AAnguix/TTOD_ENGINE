@@ -10,6 +10,7 @@ class CAudioSource : public CComponent
 private:
 	std::vector<std::pair<std::string, SoundEvent>> m_Sounds;
 	std::vector<SoundEvent> m_SoundsToPlay;
+	bool SoundAdded(const std::string &SoundEventName);
 
 public:
 	CAudioSource(const std::string &Name, CGameObject *Owner);

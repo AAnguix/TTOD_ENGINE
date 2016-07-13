@@ -1,11 +1,12 @@
 class 'EItemButton'
-function EItemButton:__init(GuiID,ButtonID,Normal,Highlight,Pressed,GuiPosition)
+function EItemButton:__init(GuiID,ButtonID,Normal,Highlight,Pressed,GuiPosition,Color)
 	self.m_GuiID = GuiID
 	self.m_ButtonID = ButtonID
 	self.m_Normal = Normal
 	self.m_Highlight = Highlight
 	self.m_Pressed = Pressed
 	self.m_GuiPosition = GuiPosition
+	self.m_Color = Color
 end
 
 class 'EItemText'
@@ -22,7 +23,7 @@ class 'EItemGui'
 function EItemGui:__init()
 	self.m_Text = nil
 	self.m_Button = nil
+	self.m_CooldownButton = nil
 	self.m_HasButton = false
 	self.m_HasText = false
-	g_LogManager:Log("EItemGUI!")
 end

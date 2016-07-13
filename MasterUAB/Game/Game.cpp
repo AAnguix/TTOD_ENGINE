@@ -14,6 +14,7 @@
 #include "Resources\ResourceManager.h"
 
 #include "Resources\resource.h"
+#include "libxml\parser.h"
 
 #pragma comment(lib, "Winmm.lib")
 
@@ -51,6 +52,8 @@ bool CGame::Initialize()
 	int screenWidth, screenHeight;
 	bool result;
 
+	xmlInitParser(); //libXML Thread safer
+	
 	screenWidth = 0;
 	screenHeight = 0;
 	bool l_FullScreen = false;
@@ -209,7 +212,8 @@ bool CGame::Frame()
 
 bool CGame::Update(float ElapsedTime)
 {
-	CEngine::GetSingleton().Update(ElapsedTime);
+	if (!CEngine::GetSingleton().LoadingLevel())
+		CEngine::GetSingleton().Update(ElapsedTime);
 	return true;
 }
 
@@ -217,23 +221,22 @@ LRESULT CALLBACK CGame::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPAR
 {
 	switch (umsg)
 	{
-	
-	case WM_KEYDOWN:
-	{
-		/*m_Input->KeyDown((unsigned int)wparam);*/
-		return 0;
-	}
+		case WM_KEYDOWN:
+		{
+			/*m_Input->KeyDown((unsigned int)wparam);*/
+			return 0;
+		}
 
-	case WM_KEYUP:
-	{
-		/*m_Input->KeyUp((unsigned int)wparam);*/
-		return 0;
-	}
+		case WM_KEYUP:
+		{
+			/*m_Input->KeyUp((unsigned int)wparam);*/
+			return 0;
+		}
 
-	default:
-	{
-		return DefWindowProc(hwnd, umsg, wparam, lparam);
-	}
+		default:
+		{
+			return DefWindowProc(hwnd, umsg, wparam, lparam);
+		}
 	}
 }
 
@@ -272,107 +275,105 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	switch (msg)
 	{
-	case WM_SIZE:
-	{
-		CContextManager* l_ContextManager = CEngine::GetSingleton().GetRenderManager()->GetContextManager();
-		if (l_ContextManager)
+		case WM_SIZE:
 		{
-			//if (wParam != SIZE_MINIMIZED)
+			CContextManager* l_ContextManager = CEngine::GetSingleton().GetRenderManager()->GetContextManager();
+			if (l_ContextManager)
 			{
-				// TODO: Resetear el AntTeakBar
-				TwWindowSize(0, 0);
-				l_ContextManager->ResizeBuffers(hWnd, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
-				TwWindowSize((UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
-			}
-		}
-		return 0;
-	}
-	case WM_CLOSE:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
-	case WM_CHAR:
-	{
-		CEngine::GetSingleton().GetInputManager()->GetKeyBoard()->SetLastChar(wParam);
-		break;
-	}
-	case WM_SETCURSOR:
-	{
-		CEngine::GetSingleton().GetResourceManager()->UpdateCursor();
-	}
-	case WM_SETFOCUS:
-		//hasFocus = true;
-		CEngine::GetSingleton().GetInputManager()->SetFocus(true);
-		break;
-	case  WM_KILLFOCUS:
-		//hasFocus = false;
-		CEngine::GetSingleton().GetInputManager()->SetFocus(false);
-		break;
-	case WM_SYSKEYDOWN:
-	case WM_SYSKEYUP:
-	case WM_KEYDOWN:
-	case WM_KEYUP:
-	{
-		bool WasDown = ((lParam & (1 << 30)) != 0);
-		bool IsDown = ((lParam & (1 << 31)) == 0);
-		bool Alt = ((lParam & (1 << 29)) != 0);
-
-		if (WasDown != IsDown)
-		{
-			if (IsDown)
-			{
-				bool consumed = false;
-				switch (wParam)
+				//if (wParam != SIZE_MINIMIZED)
 				{
-				case VK_RETURN:
-					if (Alt)
-					{
-						/*WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
-						GetWindowPlacement(hWnd, &windowPosition);
-
-						ToggleFullscreen(hWnd, windowPosition);
-						consumed = true;*/
-					}
-					break;
-				case VK_F4:
-					if (Alt)
-					{
-						PostQuitMessage(0);
-						consumed = true;
-					}
-					break;
-				}
-				if (consumed)
-				{
-					break;
+					// TODO: Resetear el AntTeakBar
+					TwWindowSize(0, 0);
+					l_ContextManager->ResizeBuffers(hWnd, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
+					TwWindowSize((UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
 				}
 			}
+			return 0;
 		}
-		CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
-		break;
-	}
-	case WM_MOUSEMOVE:
-	{
-		int xPosAbsolute = GET_X_LPARAM(lParam);
-		int yPosAbsolute = GET_Y_LPARAM(lParam);
+		case WM_CLOSE:
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
+		case WM_DESTROY:
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
+		case WM_CHAR:
+		{
+			CEngine::GetSingleton().GetInputManager()->GetKeyBoard()->SetLastChar(wParam);
+			break;
+		}
+		case WM_SETCURSOR:
+		{
+			CEngine::GetSingleton().GetResourceManager()->UpdateCursor();
+			return TRUE;
+		}
+		case WM_MOUSEMOVE:
+		{
+			int xPosAbsolute = GET_X_LPARAM(lParam);
+			int yPosAbsolute = GET_Y_LPARAM(lParam);
 
-		CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
-	}
-	default:
-	{
-		return ApplicationHandle->MessageHandler(hWnd, msg, wParam, lParam);
-	}
+			CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
+		}
+		case WM_SETFOCUS:
+			//hasFocus = true;
+			CEngine::GetSingleton().GetInputManager()->SetFocus(true);
+			break;
+		case  WM_KILLFOCUS:
+			//hasFocus = false;
+			CEngine::GetSingleton().GetInputManager()->SetFocus(false);
+			break;
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP:
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		{
+			bool WasDown = ((lParam & (1 << 30)) != 0);
+			bool IsDown = ((lParam & (1 << 31)) == 0);
+			bool Alt = ((lParam & (1 << 29)) != 0);
 
-	break;
+			if (WasDown != IsDown)
+			{
+				if (IsDown)
+				{
+					bool consumed = false;
+					switch (wParam)
+					{
+					case VK_RETURN:
+						if (Alt)
+						{
+							/*WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
+							GetWindowPlacement(hWnd, &windowPosition);
+
+							ToggleFullscreen(hWnd, windowPosition);
+							consumed = true;*/
+						}
+						break;
+					case VK_F4:
+						if (Alt)
+						{
+							PostQuitMessage(0);
+							consumed = true;
+						}
+						break;
+					}
+					if (consumed)
+					{
+						break;
+					}
+				}
+			}
+			CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
+			break;
+		}
+		default:
+		{
+			return ApplicationHandle->MessageHandler(hWnd, msg, wParam, lParam);
+		}
 
 	}//end switch( msg )
-	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScreen, bool& VSync, bool& D3DDebug)
@@ -394,7 +395,8 @@ void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScre
 	wc.hInstance = m_hinstance;
 	wc.hIcon = HICON(LoadImage(m_hinstance, MAKEINTRESOURCE(IDI_GAME_ICON), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
 	wc.hIconSm = wc.hIcon;
-	wc.hCursor = NULL; // LoadCursor(NULL, IDC_ARROW);
+
+	wc.hCursor = NULL; //HCURSOR(LoadImage(m_hinstance, MAKEINTRESOURCE(102), IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE));  //LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = NULL; //(HBRUSH)GetStockObject(BLACK_BRUSH);
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = m_ApplicationName;
@@ -440,15 +442,13 @@ void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScre
 	}*/
 
 	m_hwnd = CreateWindow(m_ApplicationName, m_ApplicationName, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, wc.hInstance, NULL);
-	//ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 	
 	//m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName,WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
-	//ShowWindow(m_hwnd, SW_SHOW);
 	
 	//SetForegroundWindow(m_hwnd);
 	//SetFocus(m_hwnd);
 
-	//ShowCursor(false);
+	//ShowCursor(true);
 
 	return;
 }
@@ -456,7 +456,7 @@ void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScre
 
 void CGame::ShutdownWindows()
 {
-	ShowCursor(true);
+	ShowCursor(false);
 
 	if (m_EngineSettings->GetFullScreen())
 	{

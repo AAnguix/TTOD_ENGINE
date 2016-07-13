@@ -3,6 +3,7 @@
 
 #include <string>
 class CEngine;
+#include "GUIManager.h"
 
 class CLevel
 {
@@ -21,10 +22,14 @@ private:
 
 	std::string m_SceneRendererCommandsFilename;
 
+	unsigned int m_PercentageLoaded;
+	void UpdateLoadPercentageLevel(unsigned int Percentage, CGUIManager::SSliderResult& SliderResult);
+
 public:
 	CLevel(const std::string &ID);
 	virtual ~CLevel();
 	std::string GetID() const{ return m_ID; };
+	unsigned int GetPercentageLoaded() const{ return m_PercentageLoaded; }
 
 	bool Load(CEngine& Engine);
 	bool Unload(CEngine& Engine);

@@ -24,6 +24,6 @@ PS_INPUT VS(VS_INPUT IN)
 }
 float4 PS(PS_INPUT IN) : SV_Target
 {
-	return T0Texture.Sample(S0Sampler, IN.UV);
-	return float4(T0Texture.Sample(S0Sampler, IN.UV).aaa, 0.0);
+	float4 l_Texture = T0Texture.Sample(S0Sampler, IN.UV);
+	return l_Texture*IN.Color;
 }

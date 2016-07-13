@@ -236,7 +236,11 @@ public:
 	void AddSlider(const std::string& SliderID, const std::string& Base, const std::string& Top, const std::string& Handle, const std::string& PressedHandle);
 	void AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top, const std::string& Background);
 	
+	
+
 	bool DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position);
+	bool DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color);
+
 	SSliderResult DoSlider(const std::string& GuiID, const std::string& SliderID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);
 	void DoHealthBar(const std::string& GuiID, const std::string& HealthBarID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);
 	void DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position);
@@ -244,6 +248,7 @@ public:
 	void AddFont(const std::string& FontName, const std::string& FontPath);
 
 	void DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text);
+	void DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text, const CColor &Color);
 	std::string DoTextBox(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& CurrentText, float ElapsedTime);
 	void CreateConsole(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, float ElapsedTime);
 };

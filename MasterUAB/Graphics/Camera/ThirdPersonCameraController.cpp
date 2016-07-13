@@ -96,21 +96,24 @@ void CThirdPersonCameraController::Update(float ElapsedTime)
 	m_PlayerPos = m_Position;
 
 	CGameObject* l_PlayerGameObject = CEngine::GetSingleton().GetGameObjectManager()->GetPlayer();
-	CRenderableObject* l_Player = l_PlayerGameObject->GetRenderableObject();
-	assert(l_Player != nullptr);
-
-	if (l_Player != nullptr)
+	if (l_PlayerGameObject)
 	{
-		m_PlayerPos = l_Player->GetPosition();
-		m_PlayerPos.y = m_PlayerPos.y + Y_STRAFE;
-	}
+		CRenderableObject* l_Player = l_PlayerGameObject->GetRenderableObject();
+		assert(l_Player != nullptr);
 
-	Vect3f l_Direction;
-	l_Direction = GetDirection();
-	Vect3f l_Position = m_PlayerPos - l_Direction;
-	l_Position.y = l_Position.y + m_LookAtPitch;
-	std::vector<Vect3f> l_FrustumCorners = CalculateFrustrumCorners(l_Position, ZNEAR);
-	m_NewCameraPosition = CameraCollisionZoom(l_Position, m_PlayerPos, 0.1f, l_FrustumCorners);
+		if (l_Player != nullptr)
+		{
+			m_PlayerPos = l_Player->GetPosition();
+			m_PlayerPos.y = m_PlayerPos.y + Y_STRAFE;
+		}
+
+		Vect3f l_Direction;
+		l_Direction = GetDirection();
+		Vect3f l_Position = m_PlayerPos - l_Direction;
+		l_Position.y = l_Position.y + m_LookAtPitch;
+		std::vector<Vect3f> l_FrustumCorners = CalculateFrustrumCorners(l_Position, ZNEAR);
+		m_NewCameraPosition = CameraCollisionZoom(l_Position, m_PlayerPos, 0.1f, l_FrustumCorners);
+	}
 }
 
 void CThirdPersonCameraController::SetCamera(CCamera *Camera) const

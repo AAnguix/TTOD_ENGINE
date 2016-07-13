@@ -15,7 +15,6 @@ CResourceManager::~CResourceManager()
 bool CResourceManager::Initialize()
 {
 	LoadGameResource(102);
-	LoadGameResource(103);
 	SetCurrentCursor(0);
 	return true;
 }

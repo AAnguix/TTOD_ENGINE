@@ -10,6 +10,7 @@
 #include "Animation\AnimatedInstanceModel.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
+#include "Materials\Material.h"
 
 class CPhysxManagerImplementation;
 
@@ -100,7 +101,7 @@ CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CGameObj
 
 	return l_Collider;
 }
-CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::string &Name, CGameObject *Owner)
+CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::string &Name, CGameObject *Owner, float Height, float Radius, float Density)
 {
 	bool l_Found = false;
 	CCharacterCollider* l_CharacterCollider = nullptr;
@@ -117,6 +118,10 @@ CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::stri
 		l_CharacterCollider = new CCharacterCollider(Name, Owner);
 		Owner->SetCharacterCollider(l_CharacterCollider);
 		m_CharacterColliderComponents.push_back(l_CharacterCollider);
+		CMaterial* l_PhysxMaterial = l_CharacterCollider->GetPhysxMaterial();
+
+		Vect3f l_Position = Owner->GetRenderableObject()->GetPosition();
+		CreateCharacterController(Owner->GetName(), Height, Radius, Density, l_Position, l_PhysxMaterial->GetName(), l_PhysxMaterial->GetStaticFriction(), l_PhysxMaterial->GetDynamicFriction(), l_PhysxMaterial->GetRestitution());
 	}
 	else
 	{

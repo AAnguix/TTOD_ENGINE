@@ -36,14 +36,16 @@ end
 function CEnemyComponent:Initialize()
 
 	local l_ComponentName = self.m_GameObject:GetName().."_CharacterCollider"
-	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_ComponentName, self.m_GameObject)
-	if l_CharacterCollider ~= nil then 
-		local l_Material = l_CharacterCollider:GetPhysxMaterial()
-		local l_MaterialName = l_Material:GetName()
-		m_Position = self.m_RObject:GetPosition()
-		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
-	end
+	-- local l_CharacterCollider = 
+	g_PhysXManager:AddCharacterColliderComponent(l_ComponentName, self.m_GameObject)
+	
+	-- if l_CharacterCollider ~= nil then 
+		-- local l_Material = l_CharacterCollider:GetPhysxMaterial()
+		-- local l_MaterialName = l_Material:GetName()
+		-- m_Position = self.m_RObject:GetPosition()
+		-- l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
+		-- g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
+	-- end
 	
 	l_ACName = self.m_GameObject:GetName().."_AnimatorController"
 	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_GameObject)

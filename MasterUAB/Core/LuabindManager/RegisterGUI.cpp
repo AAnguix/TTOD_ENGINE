@@ -1,5 +1,5 @@
 #include "LuabindManager\LuabindManager.h"
-
+#include "LuabindManager\LuabindMacros.h"
 #include <luabind/luabind.hpp>
 
 #include <luabind/operator.hpp>
@@ -9,9 +9,6 @@
 #include "GUIManager.h"
 
 using namespace luabind;
-
-#define LUA_STATE CEngine::GetSingleton().GetLuabindManager()->GetLuaState()
-#define REGISTER_LUA_FUNCTION(FunctionName,AddrFunction) {luabind::module(LUA_STATE) [ luabind::def(FunctionName,AddrFunction) ];}
 
 void CLuabindManager::RegisterGUI()
 {
@@ -62,11 +59,13 @@ void CLuabindManager::RegisterGUI()
 		.def("AddHealthBar", &CGUIManager::AddHealthBar)
 		.def("AddFont", &CGUIManager::AddFont)
 		.def("DoImage", &CGUIManager::DoImage)
-		.def("DoButton", &CGUIManager::DoButton)
+		.def("DoButton", (bool(CGUIManager::*)(const std::string& GuiID, const std::string& ButtonID, const const CGUIManager::SGUIPosition& Position, const CColor &Color))&CGUIManager::DoButton)
+		.def("DoButton", (bool(CGUIManager::*)(const std::string& GuiID, const std::string& ButtonID, const const CGUIManager::SGUIPosition& Position))&CGUIManager::DoButton)
 		.def("DoSlider", &CGUIManager::DoSlider)
 		.def("DoHealthBar", &CGUIManager::DoHealthBar)
 		.def("DoTextBox", &CGUIManager::DoTextBox)
-		.def("DoText", &CGUIManager::DoText)
+		.def("DoText", (void(CGUIManager::*)(const std::string&, const std::string&, const CGUIManager::SGUIPosition&, const std::string&, const std::string&))&CGUIManager::DoText)
+		.def("DoText", (void(CGUIManager::*)(const std::string&, const std::string&, const CGUIManager::SGUIPosition&, const std::string&, const std::string&, const CColor&))&CGUIManager::DoText)
 		.def("CreateConsole", &CGUIManager::CreateConsole)
 		.def("Destroy", &CGUIManager::Destroy)
 		.def("Load", &CGUIManager::Load)

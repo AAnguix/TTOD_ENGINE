@@ -15,15 +15,18 @@ dofile("./Data/Scripting/Player/Slot.lua")
 dofile("./Data/Scripting/Player/Inventory.lua")
 
 class 'CPlayerComponent' (CLUAComponent)
-function CPlayerComponent:__init(CGameObject)
-	CLUAComponent.__init(self,CGameObject:GetName().."_PlayerScript")
-	self.m_GameObject = CGameObject
-	self.m_RObject = CGameObject:GetRenderableObject()
+function CPlayerComponent:__init(CLuaGameObject)
+	CLUAComponent.__init(self,CLuaGameObject:GetName().."_PlayerScript")
+	self.m_LuaGameObject = CLuaGameObject 
 	self.m_MaxHealth=500.0
-	self.m_Health=self.m_MaxHealth
+	self.m_Health=480.0
 	self.m_Speed=1.0
 	self.m_AttackDelay = 1.0
-	self.m_CharacterControllerHeight = 1.4
+	
+	self.m_Height = 1.4
+	self.m_Density = 30.0
+	self.m_Radius = 0.3
+	
 	self.m_Armors={}
 	self.m_Weapons={}
 	self.m_CurrentArmor = nil
@@ -39,49 +42,39 @@ function CPlayerComponent:__init(CGameObject)
 	self.m_Backwards = false
 	self.m_Right = false
 	self.m_Left = false
-	self.m_E = false
 	
 	self.m_RotationVelocity = 4.0
 	
-	--Components
-	self.m_Animator = nil 
-	self.m_AudioSource = nil
+	--Other
+	self.m_MapOpened = false
 end
 
 function CPlayerComponent:Initialize()
 
-	local l_CColliderName = self.m_GameObject:GetName().."_CharacterCollider"
-	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, self.m_GameObject)
-	if l_CharacterCollider ~= nil then 
-		local l_Material = l_CharacterCollider:GetPhysxMaterial()
-		local l_MaterialName = l_Material:GetName()
-		m_Position = self.m_RObject:GetPosition()
-		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_CharacterControllerHeight, 0.3, 30.0, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
-	end
+	local l_GameObject = self.m_LuaGameObject:GetGameObject()
+	local l_CColliderName = self.m_LuaGameObject:GetName().."_CharacterCollider"
 	
-	local l_AudioSourceName = self.m_GameObject:GetName().."_AudioSource"
-	local l_AudioSource = g_SoundManager:AddComponent(l_AudioSourceName, self.m_GameObject)
-	if l_AudioSource ~= nil then  
-		self.m_AudioSource = l_AudioSource
-		self.m_AudioSource:AddSound("SonidoDePrueba","Play_Hit")
-	end
+	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, l_GameObject, self.m_Height, self.m_Radius, self.m_Density)
+	
+	local l_AudioSourceName = self.m_LuaGameObject:GetName().."_AudioSource"
+	g_SoundManager:AddComponent(l_AudioSourceName, l_GameObject)
+	self.m_LuaGameObject:AddSound("SonidoDePrueba","Play_Hit")
+	--self.m_AudioSource:AddSound("OpenMapSound","Play_Open_Map")
 
 	--Animations
-	local l_ACName = self.m_GameObject:GetName().."_AnimatorController"
-	self.m_Animator = g_AnimatorControllerManager:AddComponent(l_ACName, self.m_GameObject)
+	local l_ACName = self.m_LuaGameObject:GetName().."_AnimatorController"
+	g_AnimatorControllerManager:AddComponent(l_ACName, l_GameObject)
 	
-	local l_Idle = self.m_Animator:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
-	local l_Walk = self.m_Animator:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
-	local l_Attack = self.m_Animator:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
-	local l_Block = self.m_Animator:AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
-	local l_Rotate = self.m_Animator:AddState("Rotate_State", "walk", 1.0, "OnEnter_Rotate_Player", "OnUpdate_Rotate_Player", "OnExit_Rotate_Player")
+	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
+	local l_Walk = self.m_LuaGameObject:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
+	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
+	local l_Block = self.m_LuaGameObject:AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
+	local l_Rotate = self.m_LuaGameObject:AddState("Rotate_State", "walk", 1.0, "OnEnter_Rotate_Player", "OnUpdate_Rotate_Player", "OnExit_Rotate_Player")
 	
-	--GetAnimatorController()->AddBool("Run", false);
-	self.m_Animator:AddBool("Walk", false)
-	self.m_Animator:AddBool("Rotate", false)
-	self.m_Animator:AddTrigger("Attack", false)
-	self.m_Animator:AddTrigger("Block", false)
+	self.m_LuaGameObject:AddBool("Walk", false)
+	self.m_LuaGameObject:AddBool("Rotate", false)
+	self.m_LuaGameObject:AddTrigger("Attack", false)
+	self.m_LuaGameObject:AddTrigger("Block", false)
 	
 	
 	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.0, 0.1, 0.2)
@@ -119,13 +112,14 @@ end
 
 function CPlayerComponent:InitializePlayerStats()
 
-	local l_HealthPotion = CHealthPotion(15.0,50.0)
+	local l_HealthPotion = CHealthPotion(4.0,50.0)
 	local l_ButtonGuiPosition = SGUIPosition(0.95, 0.85, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	local l_TextGuiPosition = SGUIPosition(0.5, 0.5, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed", l_ButtonGuiPosition)
-	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", l_TextGuiPosition, "health_potion_font_sprite",  "aaaa")
+	local l_TextGuiPosition = SGUIPosition(0.968, 0.785, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed", l_ButtonGuiPosition,CColor(1.0,1.0,1.0,1.0))
+	l_HealthPotion:AddCooldownButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed", l_ButtonGuiPosition,CColor(0.6,1.0,1.0,0.85))
+	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", l_TextGuiPosition, "health_potion_font_0.png", "")
 	
-	-- self.m_Inventory:AddItem(l_HealthPotion,5)
+	self.m_Inventory:AddItem(l_HealthPotion,5)
 end 
 
 dofile("./Data/Scripting/PlayerController.lua")
@@ -133,6 +127,16 @@ dofile("./Data/Scripting/PlayerController.lua")
 function CPlayerComponent:Update(ElapsedTime)
 	self.m_Inventory:Update(ElapsedTime)
 	self:PlayerController(ElapsedTime)
+	self:HandleEvents()
+end
+
+function CPlayerComponent:HandleEvents()
+	if self:FullHealth() then
+		g_EventManager:FireEvent("PlayerHasFullHealth")
+	end
+	if self:Dead() then
+		g_EventManager:FireEvent("PlayerIsDead")
+	end
 end
 
 function CPlayerComponent:Lock()
@@ -145,10 +149,25 @@ function CPlayerComponent:IsLocked()
 	return self.m_Locked
 end
 
+function CPlayerComponent:Health(Health) 
+	if((self.m_Health + Health)>self.m_MaxHealth) then
+		self.m_Health = self.m_MaxHealth
+	else
+		self.m_Health = self.m_Health + Health 
+	end
+end
+
+function CPlayerComponent:FullHealth()
+	return (self.m_Health==self.m_MaxHealth)
+end
+function CPlayerComponent:Dead()
+	return (self.m_Health<=0.0)
+end
 function CPlayerComponent:GetHealth() return self.m_Health end
 function CPlayerComponent:GetMaxHealth() return self.m_MaxHealth end
 function CPlayerComponent:GetSpeed() return self.m_Speed end
 function CPlayerComponent:GetReference() return self end
+function CPlayerComponent:IsMapOpened() return self.m_MapOpened end
 
 function CPlayerComponent:AddWeapon(CArmorComponent)
 	table.insert(self.m_Armors, CArmorComponent)
@@ -182,7 +201,7 @@ function CPlayerComponent:GetClosestEnemy(Enemies)
 	local l_MinDistance = 0.0
 	for i=1, (#Enemies) do
 		local l_EnemyPos = Enemies[i]:GetRenderableObject():GetPosition()
-		local l_Distance = (l_EnemyPos-self.m_RObject:GetPosition()):Length()
+		local l_Distance = (l_EnemyPos-self.m_LuaGameObject:GetPosition()):Length()
 		if ((l_MinDistance==0.0)or(l_Distance <= l_MinDistance)) then
 			l_ClosestEnemy = Enemies[i]
 			l_MinDistance = l_Distance
@@ -193,28 +212,31 @@ end
 
 function CPlayerComponent:FaceEnemy(Enemies,ElapsedTime)
 	local l_ClosestEnemy = self:GetClosestEnemy(Enemies)
-	local l_Forward = self.m_RObject:GetForward()
+	local l_Forward = self.m_LuaGameObject:GetForward()
 	local l_EnemyPos = l_ClosestEnemy:GetRenderableObject():GetPosition()
-	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_RObject:GetPosition(), l_EnemyPos)	
+	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)	
 	
-	local l_CurrentYaw = self.m_RObject:GetYaw()
+	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
 	local l_Velocity = self.m_RotationVelocity
-	self.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
 end
 
 function CPlayerComponent:FaceAttackDirection(ElapsedTime)
-	
-	--self.m_RObject:SetYaw(g_CameraControllerManager:GetCurrentCameraController():GetYaw())
-	local l_CurrentYaw = self.m_RObject:GetYaw()
+	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
 	local l_Angle = g_CameraControllerManager:GetCurrentCameraController():GetYaw() - l_CurrentYaw
-	self.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
-	
-	-- local l_Forward = self.m_RObject:GetForward()
-	-- local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
-	
-	-- local l_Angle = CTTODMathUtils.AngleBetweenVectors(l_Forward,l_CameraForward)	
-	
-	-- local l_CurrentYaw = self.m_RObject:GetYaw()
-	-- local l_Velocity = self.m_RotationVelocity
-	-- self.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
+end
+
+function CPlayerComponent:OpenMap()
+	self.m_MapOpened = not self.m_MapOpened
+	if (self.m_MapOpened) then
+		g_Engine:SetTimeScale(0.0)
+	else
+		g_Engine:SetTimeScale(1.0)
+	end
+	--self.m_AudioSource:PlayEvent("OpenMapSound")
+end
+
+function CPlayerComponent:DrinkBeer()
+	self.m_Inventory:UseItem(1)
 end

@@ -153,8 +153,6 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 				}
 			}
 		}
-
-		
 	}
 }
 

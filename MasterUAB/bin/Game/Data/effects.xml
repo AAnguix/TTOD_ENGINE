@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <effects>
+
+	<vertex_shader name="GUI_vs" file="./Data/Effects/GUI.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
+	<pixel_shader name="GUI_ps" file="./Data/Effects/GUI.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="GUI_technique" vertex_shader="GUI_vs" pixel_shader="GUI_ps"/>
+		
 	<!--Lava-->
 	<vertex_shader name="lava_vs" file="./Data/Effects/Lava.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>
 	<pixel_shader name="lava_ps" file="./Data/Effects/Lava.fx" shader_model="ps_5_0" entry_point="PS"/>
 	<effect_technique name="lava_technique" vertex_shader="lava_vs" pixel_shader="lava_ps"/>
+
+	<!--Raycast-->
+	<vertex_shader name="raycast_vs" file="./Data/Effects/Raycast.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>
+	<pixel_shader name="raycast_ps" file="./Data/Effects/Raycast.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="raycast_technique" vertex_shader="raycast_vs" pixel_shader="raycast_ps"/>
+	
+	<!--Heat Vision-->
+	<vertex_shader name="heat_vision_vs" file="./Data/Effects/HeatVision.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
+	<pixel_shader name="heat_vision_ps" file="./Data/Effects/HeatVision.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="heat_vision_technique" vertex_shader="heat_vision_vs" pixel_shader="heat_vision_ps"/>
+
+	<!--Outlines-->
+	<vertex_shader name="outlines_vs" file="./Data/Effects/Outlines.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
+	<pixel_shader name="outlines_ps" file="./Data/Effects/Outlines.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="outlines_technique" vertex_shader="outlines_vs" pixel_shader="outlines_ps"/>
 
 	<vertex_shader name="ds_sphere_vs" file="./Data/Effects/DeferredShadingOmniLightSphere.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
 	<effect_technique name="ds_omnilight_sphere_technique" vertex_shader="ds_sphere_vs"/>
@@ -216,8 +236,5 @@
 		<pixel_shader name="drawquad_ps" file="./Data/Effects/Drawquad.fx" shader_model="ps_5_0" entry_point="PS"/>
 		<effect_technique name="drawquad_technique" vertex_shader="drawquad_vs" pixel_shader="drawquad_ps"/>
 		
-		<vertex_shader name="GUI_vs" file="./Data/Effects/GUI.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
-		<pixel_shader name="GUI_ps" file="./Data/Effects/GUI.fx" shader_model="ps_5_0" entry_point="PS"/>
-		<effect_technique name="GUI_technique" vertex_shader="GUI_vs" pixel_shader="GUI_ps"/>
 		
 </effects>

@@ -158,7 +158,7 @@ public:
 
 	/*Components*/
 	CCollider* AddColliderComponent(const std::string &Name, CGameObject *Owner);
-	CCharacterCollider* AddCharacterColliderComponent(const std::string &Name, CGameObject *Owner);
+	CCharacterCollider* AddCharacterColliderComponent(const std::string &Name, CGameObject *Owner, float Height, float Radius, float Density);
 	virtual void RemoveComponents(){};
 
 	/*Actors*/
