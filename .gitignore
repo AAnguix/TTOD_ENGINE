@@ -4,17 +4,24 @@ MasterUAB/bin/Intermediate/
 MasterUAB/bin/lib/
 
 MasterUAB/bin/Game/*
-!MasterUAB/bin/Game/Data
+MasterUAB/bin/Game/*/
+!MasterUAB/bin/Game/Data/
+
 MasterUAB/bin/Game/Data/*
-!MasterUAB/bin/Game/Data/Scripting
-!MasterUAB/bin/Game/Data/Effects/*.fx
+!MasterUAB/bin/Game/Data/Scripting/
+!MasterUAB/bin/Game/Data/Effects/
+MasterUAB/bin/Game/Data/Effects/compiled/
+
 !MasterUAB/bin/Game/Data/basic_scene_renderer_commands.xml
 !MasterUAB/bin/Game/Data/scene_renderer_commands.xml
 !MasterUAB/bin/Game/Data/renderable_objects_techniques.xml
+
 !MasterUAB/bin/Game/Data/input.xml
+!MasterUAB/bin/Game/Data/cameras.xml
+!MasterUAB/bin/Game/Data/engine_settings.xml
+
 !MasterUAB/bin/Game/Data/effects.xml
 !MasterUAB/bin/Game/Data/effects_materials.xml
-!MasterUAB/bin/Game/Data/cameras.xml
 !MasterUAB/bin/Game/Data/start_screen_camera.xml
 
 !MasterUAB/bin/Game/Data/gui_start_screen.xml
@@ -23,12 +30,6 @@ MasterUAB/bin/Game/Data/*
 
 MasterUAB/ipch/
 MasterUAB/Game/debug32
-
-# Other files
-*.pdb
-*.log
-*.tlog
-*.sdf
 
 # Own libraries
 MasterUAB/3rdParty/DirectXTK/
@@ -44,17 +45,69 @@ MasterUAB/3rdParty/AntTweakBar/debug64/
 MasterUAB/3rdParty/AntTweakBar/release64/
 MasterUAB/3rdParty/WWise/Win32_vc120
 
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Oo]bj/
+[Ll]og/
+
+# VS C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+
+# VS profiler
+*.psess
+*.vsp
+*.vspx
+
+# Other files
+*_i.c
+*_p.c
+*_i.h
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
 # Executables
 *.exe
-
-# Last resource editor state
-*.aps
-
-# Compiled Object files
-*.obj
 
 # Images
 *.jpg
 *.png
-
-

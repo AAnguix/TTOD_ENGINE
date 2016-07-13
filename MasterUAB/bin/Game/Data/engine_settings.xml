@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<engine_settings>
+	<data_path value="./Data/"/> 	
+	<window full_screen="false" screen_position="0 0" screen_size="1280 720" screen_resolution="1280 720"/> 
+	<fps value="30"/> 
+	<vsync value="false"/> 
+	<d3d_debug value="false"/>
+</engine_settings>
