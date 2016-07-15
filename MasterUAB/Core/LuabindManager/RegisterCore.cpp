@@ -225,6 +225,7 @@ void CLuabindManager::RegisterCore()
 		.def("Log", (void(CLog::*)(const std::string&))&CLog::Log)
 		.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)
 		.def("Log", (void(CLog::*)(const Mat44f&))&CLog::Log)
+		.def("Log", (void(CLog::*)(std::vector<Vect3f>))&CLog::Log)
 		//.def("Log", (void(*)(int)) &CLog::Log)
 	];
 

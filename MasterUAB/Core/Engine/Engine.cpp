@@ -149,6 +149,16 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 
 	m_SceneRendererCommandManager->Load("./Data/start_screen_scene_renderer_commands.xml");
 
+	char* l_VCDescription = new char[128];
+	int l_VCMemory;
+	l_ContextManager->GetVideoCardInfo(l_VCDescription, l_VCMemory);
+
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetLogManager()->Log("VC: " + std::string(l_VCDescription) + ". Memory: " + std::to_string(l_VCMemory)+" mb.");
+	#endif
+
+	delete l_VCDescription;
+
 	CEngine::GetSingleton().GetLogManager()->Log("Engine initialized.");
 }
 

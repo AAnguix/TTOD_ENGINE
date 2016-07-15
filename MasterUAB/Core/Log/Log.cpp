@@ -91,7 +91,7 @@ void CLog::Log(int Value)
 void CLog::Log(const Vect3f& Value)
 {
 	std::ostringstream ostr;
-	ostr << Value.x << "," << Value.y << "," << Value.z;
+	ostr <<"[x:"<< Value.x << ", " <<"y:"<< Value.y << ", " << "z:"<< Value.z<<"]";
 	std::string value = ostr.str();
 
 	AppendTimeSinceStart(m_LogFile);
@@ -113,6 +113,14 @@ void CLog::Log(const Mat44f& Value)
 	m_LogFile << value;
 	m_LogFile << "\n";
 	m_LogFile.flush();
+}
+
+void CLog::Log(std::vector<Vect3f> Points)
+{
+	for (size_t i = 0; i < Points.size();++i)
+	{
+		Log(Points[i]);
+	}
 }
 
 void CLog::Erase()

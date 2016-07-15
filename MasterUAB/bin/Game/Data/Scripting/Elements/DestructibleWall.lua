@@ -2,6 +2,10 @@ class 'CDestructibleWall' (CActivableElement)
 function CDestructibleWall:__init(CLuaGameObject)
 	CActivableElement.__init(self, CLuaGameObject, 1.5, "DestructibleWall")
 	g_EventManager:Subscribe( self, "EPressed" )
+	local l_GameObject = self.m_LuaGameObject:GetGameObject()
+	local l_AudioSourceName = self.m_LuaGameObject:GetName().."_AudioSource"
+	g_SoundManager:AddComponent(l_AudioSourceName, l_GameObject)
+	--self.m_LuaGameObject:AddSound("DynamiteSound","Play_DynamiteSound")
 end
 
 --Event

@@ -5,6 +5,7 @@
 #include <fstream>
 #include "Math\Vector3.h"
 #include "Math\Matrix44.h"
+#include <vector>
 
 class CLog
 {
@@ -24,7 +25,8 @@ public:
 	void Log(const std::string& Value);
 	void Log(const Vect3f& Value);
 	void Log(const Mat44f& Value);
-
+	void Log(std::vector<Vect3f> Points);
+	
 	void Erase();
 };
 

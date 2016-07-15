@@ -25,6 +25,7 @@ private:
 	void RegisterMaterials();
 	void RegisterParticles();
 	void RegisterRenderableObjects();
+	void RegisterAI();
 	void RegisterBase();
 	void RegisterCore();
 	void RegisterComponents();

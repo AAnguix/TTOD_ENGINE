@@ -1,9 +1,11 @@
-#ifndef INC_A_STAR_H_
-#define INC_A_STAR_H_
+#ifndef _ASTAR_H_
+#define _ASTAR_H_
 
-//#include <d3dx9.h>
 #include <vector>
 #include "Math\Vector3.h"
+#include <string>
+
+class CXMLTreeNode;
 
 typedef std::vector< Vect3f > VPoints3;
 
@@ -15,21 +17,24 @@ public:
 	~CAStar();
 		
 private:
-
+	std::string m_Filename;
 	struct TNode;
 	typedef std::pair< TNode*, float > PNodeAndDistance;
 	typedef std::vector< PNodeAndDistance > VNodesAndDistances;
+	TNode* GetNode(unsigned int ID) const;
 
 	struct TNode 
 	{
-		Vect3f position;
-		VNodesAndDistances neighbours;
-		TNode *parent;
-		float g;
-		float h;
-		float f;
-		bool inOpenList;
-		bool closed;
+		Vect3f m_Position;
+		VNodesAndDistances m_Neighbours;
+		TNode *m_Parent;
+		float m_G;
+		float m_H;
+		float m_F;
+		bool m_InOpenList;
+		bool m_Closed;
+		TNode();
+		TNode(CXMLTreeNode &TreeNode);
 	};
 
 	typedef std::vector< TNode* > VNodes;
@@ -39,7 +44,6 @@ private:
 	{
 		bool operator ()( const TNode *nodeA, const TNode *nodeB );
 	};
-
 	VNodes m_openList;
 
 	void AddToOpenList( TNode *node );
@@ -55,9 +59,10 @@ private:
 
 public:
 	//void Render( LPDIRECT3DDEVICE9 device );
+	bool LoadNodes(const std::string &Filename);
 	TNode* AddNode(Vect3f Position);
 	void AddNeighbours(TNode* Node, VNodes Neighbours);
-	VPoints3 SearchPath(const Vect3f &pointA, const Vect3f &pointB);
+	std::vector<Vect3f> SearchPath(const Vect3f &pointA, const Vect3f &pointB);
 
 };
 

@@ -316,6 +316,14 @@ void CLuabindManager::RegisterBase()
 
 	]; 
 
+	module(LUA_STATE)
+	[
+		class_< std::vector<Vect3f> >("vector<Vect3f>")
+		.def(constructor<>())
+		.def("size", &std::vector<Vect3f>::size)
+		.def("at", (std::vector<Vect3f>::reference(std::vector<Vect3f>::*)(std::vector<Vect3f>::size_type))&std::vector<Vect3f>::at)
+	];
+
 	module(LUA_STATE) [  
 		class_< Vect4f >("Vect4f") 
 		.def(constructor<>())

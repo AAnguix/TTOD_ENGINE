@@ -47,6 +47,15 @@ function CPlayerComponent:__init(CLuaGameObject)
 	
 	--Other
 	self.m_MapOpened = false
+	
+	self.m_ASTar = CAStar()
+	self.m_ASTar:LoadNodes("./Data/LevelTest/astar_nodes.xml")
+	local l_Points = self.m_ASTar:SearchPath(Vect3f(0.0,0.0,0.0),Vect3f(-10.0,0.0,6.0))
+	
+	-- g_LogManager:Log(l_Points)
+	for i=0, (l_Points:size()-1) do
+		g_LogManager:Log(l_Points:at(i))	
+	end
 end
 
 function CPlayerComponent:Initialize()

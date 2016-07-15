@@ -125,6 +125,7 @@ void CLuabindManager::RunFile(const std::string &FileName) const
 void CLuabindManager::RegisterLUAFunctions()
 {
 	RegisterBase();
+	RegisterAI();
 	RegisterSound();
 	RegisterCore();
 	RegisterGraphics();

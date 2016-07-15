@@ -94,12 +94,14 @@
     <ClCompile Include="Engine\EngineSettings.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="GameObject\LuaGameObjectHandle.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\LuaGameObjectHandleManager.cpp">
       <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="LuabindManager\RegisterAI.cpp">
+      <Filter>LuabindManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,7 +189,6 @@
     <ClInclude Include="Engine\EngineSettings.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Thread.h" />
     <ClInclude Include="LuabindManager\LuabindMacros.h">
       <Filter>LuabindManager</Filter>
     </ClInclude>
