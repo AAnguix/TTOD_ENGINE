@@ -358,7 +358,21 @@ void CDebugRender::RenderDebugLayer(CContextManager* ContextManager, CRenderable
 			{
 				Mat44f l_BoneTransform = l_Parent->GetBoneTransformationMatrix(l_ParentBoneID);
 				Mat44f l_ParentTransform = l_Parent->GetTransform();
-				ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);/*Bone axis*/
+
+				Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
+				l_Translation.SetIdentity();
+				l_Translation.Translate(l_RObject->GetPosition());
+				l_RotX.SetIdentity();
+				l_RotX.RotByAngleX(l_RObject->GetPitch());
+				l_RotY.SetIdentity();
+				l_RotY.RotByAngleY(l_RObject->GetYaw());
+				l_RotZ.SetIdentity();
+				l_RotZ.RotByAngleZ(l_RObject->GetRoll());
+
+				Mat44f l_Tranform;
+				l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
+
+				ContextManager->SetWorldMatrix(l_Tranform*l_BoneTransform*l_ParentTransform);
 			}
 			else ContextManager->SetWorldMatrix(l_RObject->GetTransform());
 		}

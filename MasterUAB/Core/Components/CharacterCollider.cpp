@@ -1,5 +1,5 @@
 #include "Components\CharacterCollider.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include "Engine\Engine.h"
 #include "PhysXManager.h"
 #include "Animation\AnimatedInstanceModel.h"

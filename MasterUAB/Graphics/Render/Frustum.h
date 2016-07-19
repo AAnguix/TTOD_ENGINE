@@ -3,19 +3,21 @@
 
 #include "Math\Matrix44.h"
 #include "Math\Vector3.h"
+#include <DirectXMath.h>
 
 class CFrustum 
 {
 private:
-	float m_Proj[16];
-	float m_Modl[16];
-	float m_Clip[16];
-	float m_Frustum[6][4];
-public:
+	DirectX::XMFLOAT4  m_planes[6];
 
-	void Update(const Mat44f &ViewProj);
-	bool SphereVisible(const Vect3f &Center, float Radius) const;
-	bool BoxVisible(const Vect3f &Max, const Vect3f &Min) const;
+public:
+	CFrustum();
+	void Update(const float screenDepth, const Mat44f projectionMatrix, const Mat44f viewMatrix);
+	bool CheckPoint(Vect3f Point);
+	bool CheckCube(Vect3f Point, float radius);
+	bool CheckSphere(Vect3f Point, float radius);
+	DirectX::XMFLOAT4X4 ConvertMat44fToDxXMF4X4(const Mat44f Matrix);
+	float PlaneDotCoord(DirectX::XMFLOAT4  Plane, Vect3f Point);
 };
 
 #endif

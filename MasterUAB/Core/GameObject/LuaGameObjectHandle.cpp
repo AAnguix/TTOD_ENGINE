@@ -1,11 +1,13 @@
 #include "GameObject\LuaGameObjectHandle.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include "RenderableObjects\RenderableObject.h"
 #include "Components\AnimatorController\AnimatorController.h"
 #include "Components\Collider.h"
 #include "Components\AudioSource.h"
 #include "Log\Log.h"
 #include "Engine\Engine.h"
+#include "Animation\AnimatedInstanceModel.h"
+#include "RenderableObjects\MeshInstance.h"
 
 CLuaGameObjectHandle::CLuaGameObjectHandle(CGameObject* GameObject)
 {
@@ -37,7 +39,38 @@ void CLuaGameObjectHandle::SetPitch(float Pitch){ m_GameObject->GetRenderableObj
 void CLuaGameObjectHandle::SetRoll(float Roll){ m_GameObject->GetRenderableObject()->SetRoll(Roll); }
 void CLuaGameObjectHandle::SetYawPitchRoll(float Yaw, float Pitch, float Roll) { m_GameObject->GetRenderableObject()->SetYawPitchRoll(Yaw,Pitch,Roll); }
 
-const std::string &CLuaGameObjectHandle::GetName()
+CAnimatedCoreModel* CLuaGameObjectHandle::GetAnimatedCoreModel()
+{
+	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
+	if (l_RObject)	{ return ((CAnimatedInstanceModel*)l_RObject)->GetAnimatedCoreModel(); }
+	else { RenderableObjectError();	return nullptr; }
+}
+
+Mat44f CLuaGameObjectHandle::GetBoneTransformationMatrix(const int BoneID) const
+{
+	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
+	if (l_RObject)	{ return ((CAnimatedInstanceModel*)l_RObject)->GetBoneTransformationMatrix(BoneID); }
+	else { RenderableObjectError();	return m44fIDENTITY; }
+}
+const Mat44f&  CLuaGameObjectHandle::GetTransform()
+{
+	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
+	if (l_RObject)	{ return (l_RObject)->GetTransform(); }
+	else { RenderableObjectError();	return m44fIDENTITY; }
+}
+
+void CLuaGameObjectHandle::SetParent(CLuaGameObjectHandle* Parent, const std::string &BoneName)
+{
+	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
+	CAnimatedInstanceModel* l_Parent = (CAnimatedInstanceModel*)Parent->GetGameObject()->GetRenderableObject();
+	if (l_RObject)	
+	{	
+		((CMeshInstance*)l_RObject)->SetParent(l_Parent, BoneName);
+	}
+	else { RenderableObjectError(); }
+}
+
+const std::string CLuaGameObjectHandle::GetName()
 {
 	if (m_GameObject!=nullptr)
 		return m_GameObject->GetName();
@@ -53,6 +86,12 @@ void CLuaGameObjectHandle::GameObjectError() const
 
 }
 
+void CLuaGameObjectHandle::RenderableObjectError() const
+{
+	#ifdef _DEBUG
+		LOG("GameObject " + m_GameObject->GetName() + " doesn't have a RenderableObject");
+	#endif
+}
 void CLuaGameObjectHandle::AnimatorError() const
 {
 	#ifdef _DEBUG

@@ -2,7 +2,7 @@
 #include "Camera\Camera.h"
 #include "XML\XMLTreeNode.h"
 #include "Engine\Engine.h"
-#include "Utils\GameObjectManager.h"
+#include "GameObject\GameObjectManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "PhysXManager.h"
 
@@ -127,6 +127,10 @@ void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 	Camera->SetZNear(ZNEAR);
 	Camera->SetZFar(ZFAR);
 	Camera->SetMatrixs();
+
+	#ifdef _DEBUG
+		CEngine::GetSingleton().GetPhysXManager()->MoveKinematicActor("DebugPhysxCamera", Camera->GetPosition());
+	#endif
 }
 
 void CThirdPersonCameraController::MoveUpDown(float Movement, bool Speed, float ElapsedTime)

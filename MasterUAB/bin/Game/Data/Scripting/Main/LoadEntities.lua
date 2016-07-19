@@ -2,11 +2,11 @@ dofile("./Data/Scripting/Main/LoadCharacters.lua")
 
 -- SHADOWMANAGER
 function CGameController:LoadShadowManager(XMLTreeNode)
-	local l_RObject = GetElementFromLayer(XMLTreeNode)
-	local l_ShadowManager=CShadowManager()
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(XMLTreeNode)
+	local l_ShadowManager = CShadowManager()
 	local l_ComponentName = "ShadowManager_Script"
 	
-	g_ScriptManager:AddComponent(l_ComponentName,l_RObject,l_ShadowManager)
+	g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_ShadowManager)
 	table.insert(self.m_Entities,l_ShadowManager)
 	
 	for i=0, XMLTreeNode:GetNumChildren() do
@@ -26,20 +26,19 @@ end
 -- DESTRUCTIBLEWALL
 function CGameController:LoadDestructibleWall(XMLTreeNode)
 	local l_LuaGameObjectHandle = g_GameController:AddLuaGameObjectHandle(XMLTreeNode)
-	local l_GameObject = l_LuaGameObjectHandle:GetGameObject()
 	local l_DestructibleWall=CDestructibleWall(l_LuaGameObjectHandle)
 	local l_ComponentName = "DestructibleWall_Script"
-	g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_DestructibleWall)
+	g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObjectHandle,l_DestructibleWall)
 	table.insert(self.m_Entities,l_DestructibleWall)
 end
 
 -- LIGHTMANAGER
 function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
-	local l_GameObject = g_GameController:GetLuaGameObjectHandle(XMLTreeNode)
-	local l_LightManager=CLightManager(Pedestal)
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(XMLTreeNode)
+	local l_LightManager = CLightManager(Pedestal)
 	local l_ComponentName = "LightManager_Script"
 	
-	g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_LightManager)
+	g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_LightManager)
 	table.insert(self.m_Entities,l_LightManager)
 	
 	for i=0, XMLTreeNode:GetNumChildren() do
@@ -58,40 +57,55 @@ function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
 end
 
 -- WEAPON
-function CGameController:LoadWeapon(TreeNode, EnemyComponent)
-	local l_WeaponGameObject = GetLuaGameObjectHandle(TreeNode)
-	if l_WeaponGameObject ~= nil then
-		
-		local l_Parent = EnemyComponent.m_RObject
+function CGameController:LoadWeapon(TreeNode, EntityComponent)
+
+	local l_Name = TreeNode:GetPszProperty("game_object", "", false)
+	local l_WeaponLuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
+	if l_WeaponLuaGameObject ~= nil then
+		local l_Parent = EntityComponent.m_LuaGameObject
+		local l_ParentName = EntityComponent.m_LuaGameObject:GetName()
 		local l_BoneName = TreeNode:GetPszProperty("parent_bone", "", false)
+		local l_WeaponName = TreeNode:GetPszProperty("game_object","",false)
 		local l_WeaponType = TreeNode:GetPszProperty("type", "", false)
-		local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)
-													--ComponentType, ParentRObject, MeshRObject, Damage, WeaponType)
-		local l_WeaponComponent = CWeaponComponent("weapon",l_Parent, l_BoneName, l_WeaponGameObject, l_Damage, l_WeaponType)
+		local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)								--ComponentType, ParentRObject, MeshRObject, Damage, WeaponType)
+		local l_WeaponComponent = CWeaponComponent(l_WeaponName,l_Parent, l_BoneName, l_WeaponLuaGameObject, l_Damage, l_WeaponType)
+		table.insert(g_GameController:GetEntities(),l_WeaponComponent)
+		local l_ComponentName = l_WeaponLuaGameObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_WeaponLuaGameObject,l_WeaponComponent)
 		
-		g_Weapon = l_WeaponComponent
-		-- table.insert(self.m_Entities,l_WeaponComponent)
-		local l_ComponentName = l_WeaponGameObject:GetName().."_Script"
-		g_ScriptManager:AddComponent(l_ComponentName,l_WeaponGameObject,l_WeaponComponent)
-		EnemyComponent:SetWeapon(l_WeaponComponent)
-	
+		if l_ParentName == 'Player' then
+			EntityComponent:AddWeapon(l_WeaponComponent)
+		else
+			EntityComponent:SetWeapon(l_WeaponComponent)
+		end
+		--return l_WeaponComponent
 	end
 end
 
 -- ARMOR
-function CGameController:LoadArmor(TreeNode, EnemyComponent)
-	local l_ArmorGameObject = GetLuaGameObjectHandle(TreeNode)
-	if l_ArmorGameObject ~= nil then
+function CGameController:LoadArmor(TreeNode, EntityComponent)
+	local l_Name = TreeNode:GetPszProperty("game_object", "", false)
+	local l_ArmorLuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
+	if l_ArmorLuaGameObject ~= nil then
 	
-		local l_Parent = EnemyComponent.m_RObject
+		local l_Parent = EntityComponent.m_LuaGameObject
+		local l_ParentName = EnemyComponent.m_LuaGameObject:GetName()
+		
 		local l_BoneName = TreeNode:GetPszProperty("parent_bone", "", false)
+		local l_ArmorName = TreeNode:GetPszProperty("game_object","Armor",false)
 		local l_ArmorType = TreeNode:GetPszProperty("type", "", false)
 		local l_Damage = TreeNode:GetFloatProperty("resistance", 0.0, false)
 	
-		local l_ArmorComponent  = CArmorComponent("armor",l_Parent, l_BoneName, l_ArmorGameObject, l_Damage, l_ArmorType)
-		l_ArmorGameObject:AddLuaComponent(l_ArmorComponent)
-		EnemyComponent:SetArmor(l_ArmorComponent)
-		-- l_ArmorComponent:Initialize(l_BoneName)
+		local l_ArmorComponent = CArmorComponent(l_ArmorName,l_Parent, l_BoneName, l_ArmorLuaGameObject, l_Damage, l_ArmorType)
+		table.insert(g_GameController:GetEntities(),l_ArmorComponent)
+		local l_ComponentName = l_ArmorLuaGameObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_ArmorLuaGameObject,l_ArmorComponent)
+		
+		if l_ParentName == 'Player' then
+			EnemyComponent:AddArmor(l_ArmorComponent)
+		else
+			EnemyComponent:SetArmor(l_ArmorComponent)
+		end
 		
 		table.insert(self.m_Entities,l_ArmorComponent)
 	end
@@ -99,10 +113,10 @@ end
 
 -- PEDESTAL
 function CGameController:LoadPedestal(XMLTreeNode)
-	local l_GameObject = GetLuaGameObjectHandle(XMLTreeNode)
-	local l_PedestalComponent=CPedestalComponent(l_GameObject)
-	local l_ComponentName = l_GameObject:GetName().."_PedestalScript"
-	g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_PedestalComponent)
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(XMLTreeNode)
+	local l_PedestalComponent=CPedestalComponent(l_LuaGameObject)
+	local l_ComponentName = l_LuaGameObject.m_LuaGameObject:GetName().."_PedestalScript"
+	g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_PedestalComponent)
 	table.insert(self.m_Entities,l_PedestalComponent)
 	return l_PedestalComponent
 end

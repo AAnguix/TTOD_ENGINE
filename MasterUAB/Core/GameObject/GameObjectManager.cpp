@@ -1,4 +1,5 @@
-#include "GameObjectManager.h"
+#include "GameObject\GameObjectManager.h"
+#include "GameObject\GameObject.h"
 
 CGameObjectManager::CGameObjectManager()
 {
@@ -6,6 +7,11 @@ CGameObjectManager::CGameObjectManager()
 
 CGameObjectManager::~CGameObjectManager()
 {
+}
+
+void CGameObjectManager::SetPlayer(CGameObject* Player)
+{
+	m_Player = Player;
 }
 
 CGameObject* CGameObjectManager::AddGameObject(CXMLTreeNode &TreeNode)

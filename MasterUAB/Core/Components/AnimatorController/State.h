@@ -27,11 +27,14 @@ private:
 	std::string m_OnEnter;
 	std::string m_OnUpdate;
 	std::string m_OnExit;
+	void CheckStateChange(bool HasExitTime, float Timer, CState* NewState, CTransition* Transition);
 
 public:
 	CState(CAnimatorController*, const std::string &Name, const EAnimation &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
 	virtual ~CState();
-	CTransition* AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut);
+	EAnimation GetAnimation() const { return m_Animation; }
+	CTransition* AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut);
+	CTransition* AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn);
 	void OnEnter(CTransition* Transition);
 	void OnUpdate(float ElapsedTime);
 	void OnExit(CTransition* Transition);

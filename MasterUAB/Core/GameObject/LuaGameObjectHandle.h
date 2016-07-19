@@ -6,6 +6,8 @@
 class CGameObject;
 class CState;
 class CMaterial;
+class CAnimatedCoreModel;
+class CAnimatedInstanceModel;
 
 /*Encapsulates components to LUA*/
 class CLuaGameObjectHandle {
@@ -15,13 +17,14 @@ private:
 	void AnimatorError() const;
 	void ColliderError() const;
 	void AudioSourceError() const;
+	void RenderableObjectError() const;
 	void GameObjectError() const;
 
 public:
 	CLuaGameObjectHandle(CGameObject* GameObject);
 	~CLuaGameObjectHandle();
 
-	const std::string &GetName();
+	const std::string GetName();
 	CGameObject* GetGameObject() const;
 
 	/*Graphics*/
@@ -36,6 +39,10 @@ public:
 	void SetPitch(float Pitch);
 	void SetRoll(float Roll);
 	void SetYawPitchRoll(float Yaw, float Pitch, float Roll);
+	CAnimatedCoreModel* GetAnimatedCoreModel();
+	void SetParent(CLuaGameObjectHandle* Parent, const std::string &BoneName);
+	Mat44f GetBoneTransformationMatrix(const int BoneID) const;
+	const Mat44f & GetTransform();
 
 	/*Animations*/
 	CState* AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);

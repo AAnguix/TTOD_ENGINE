@@ -1,5 +1,5 @@
 #include "Components\Collider.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include "RenderableObjects\MeshInstance.h"
 #include "StaticMeshes\StaticMesh.h"
 #include "Engine\Engine.h"

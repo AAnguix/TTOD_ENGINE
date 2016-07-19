@@ -4,6 +4,7 @@
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Render\RenderManager.h"
+#include "Log\Log.h"
 
 CGenerateShadowMapsSceneRendererCommand::CGenerateShadowMapsSceneRendererCommand(CXMLTreeNode &TreeNode) : CSceneRendererCommand(TreeNode)
 {
@@ -29,6 +30,13 @@ void CGenerateShadowMapsSceneRendererCommand::Execute(CRenderManager &RenderMana
 			RenderManager.GetContextManager()->Clear(false,true);
 			
 			std::vector<CRenderableObjectsManager*> m_ROManager = l_Lights[i]->GetLayers();
+
+			#ifdef _DEBUG
+			if (m_ROManager.size() == 0)
+			{
+				LOG("Error. Can't generate shadows because there must be at least one layer");
+			}
+			#endif
 
 			for(size_t i=0;i<m_ROManager.size();i++)
 			{

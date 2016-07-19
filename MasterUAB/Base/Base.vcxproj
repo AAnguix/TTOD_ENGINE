@@ -25,8 +25,6 @@
     <ClInclude Include="Utils\3DElement.h" />
     <ClInclude Include="Utils\EmptyPointerClass.h" />
     <ClInclude Include="Utils\FileUtils.h" />
-    <ClInclude Include="Utils\GameObject.h" />
-    <ClInclude Include="Utils\GameObjectManager.h" />
     <ClInclude Include="Utils\Named.h" />
     <ClInclude Include="Utils\SingletonPattern.h" />
     <ClInclude Include="Utils\TemplatedMapManager.h" />
@@ -41,8 +39,6 @@
     <ClCompile Include="Math\MathConstants.cpp" />
     <ClCompile Include="Utils\3DElement.cpp" />
     <ClCompile Include="Utils\FileUtils.cpp" />
-    <ClCompile Include="Utils\GameObject.cpp" />
-    <ClCompile Include="Utils\GameObjectManager.cpp" />
     <ClCompile Include="Utils\Named.cpp" />
     <ClCompile Include="Utils\TTODMathUtils.cpp" />
     <ClCompile Include="Utils\TTODXMLWriter.cpp" />

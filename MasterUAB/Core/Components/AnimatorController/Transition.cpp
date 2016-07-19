@@ -2,10 +2,9 @@
 #include "State.h"
 #include "AnimatorController.h"
 
-CTransition::CTransition(CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut)
+CTransition::CTransition(CState* NewState, bool HasExitTime, float DelayIn, float DelayOut)
 :m_NewState(NewState)
 ,m_HasExitTime(HasExitTime)
-,m_ExitTime(ExitTime)
 ,m_DelayIn(DelayIn)
 ,m_DelayOut(DelayOut)
 {

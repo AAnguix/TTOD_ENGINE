@@ -18,8 +18,8 @@
 #include "XML\XMLTreeNode.h"
 #include "Utils\3DElement.h"
 #include "Utils\Named.h"
-#include "Utils\GameObjectManager.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObjectManager.h"
+#include "GameObject\GameObject.h"
 #include "Materials\Material.h"
 #include "Math\Vector2.h"
 #include "Math\Vector3.h"
@@ -520,6 +520,7 @@ void CLuabindManager::RegisterBase()
 		.def("Get44Translation", &Mat44f::Get44Translation)
 
 		.def("GetPos", &Mat44f::GetPos)
+		.def("GetWorldPos", &Mat44f::GetWorldPos)
 
 		.def("GetScale", &Mat44f::GetScale)
 		.def("GetScaleX", &Mat44f::GetScaleX)

@@ -41,6 +41,7 @@ g_GraphicsStats = g_Engine:GetGraphicsStats()
 g_Profiler = g_Engine:GetProfiler()
 
 g_EventManager = CEventManager()
+g_AIManager = CAIManager()
 g_GameController = CGameController()
 g_DamageCalculator = CDamageCalculator()
 

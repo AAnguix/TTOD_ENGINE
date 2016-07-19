@@ -11,6 +11,7 @@ class CRenderableObjectsManager : public CTemplatedVectorMapManager<CRenderableO
 
 private:
 	std::string m_Filename;
+	size_t m_ObjectsInsideFrustrum;
 
 public:
 	CRenderableObjectsManager();
@@ -20,7 +21,8 @@ public:
 	void Render(CRenderManager *RM);
 
 	void AddParticleSystemInstance(const std::string &ParticleSystemTypeName, const std::string &ParticleSystemInstanceName, CGameObject* GameObject, const Vect3f &Position, float Yaw, float Pitch, float Roll);
-	
+	size_t GetObjectsInsideFrustrum() const{ return m_ObjectsInsideFrustrum; };
+	void IncrementObjects();
 };
 
 #endif

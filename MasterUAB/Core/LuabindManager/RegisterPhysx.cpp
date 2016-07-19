@@ -45,8 +45,9 @@ void CLuabindManager::RegisterPhysics()
 		.def("CreateConvexMesh", &CPhysXManager::CreateConvexMesh)
 		.def("CreateTriangleMesh", &CPhysXManager::CreateTriangleMesh)*/
 		.def("SetShapeAsTrigger", &CPhysXManager::SetShapeAsTrigger)
-		/*.def("CreateBoxTrigger", &CPhysXManager::CreateBoxTrigger)
-		.def("CreateSphereTrigger", &CPhysXManager::CreateSphereTrigger)*/
+		/*.def("CreateBoxTrigger", &CPhysXManager::CreateBoxTrigger)*/
+		.def("CreateBoxTrigger", (bool(CPhysXManager::*)(const std::string&, const std::string&, const Vect3f&, const std::string&, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateBoxTrigger)
+		.def("CreateSphereTrigger", (bool(CPhysXManager::*)(const std::string&, const std::string&, float, const std::string&, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateSphereTrigger)
 
 		.def("AddColliderComponent", &CPhysXManager::AddColliderComponent)
 		.def("AddCharacterColliderComponent", &CPhysXManager::AddCharacterColliderComponent)

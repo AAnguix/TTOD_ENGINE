@@ -34,6 +34,7 @@ function DefineClasses()
 end
 
 function InitializeLuaMain()
+	g_DamageCalculator:LoadXML("Data/damage_reduction_percentages.xml")
 	InitializeDebugBar()
 	-- SetPlayerCharacterDefaultState()
 	InitializeGUI()

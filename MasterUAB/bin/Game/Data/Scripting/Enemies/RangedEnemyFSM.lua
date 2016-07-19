@@ -1,8 +1,8 @@
 function OnEnter_Idle_RangedEnemy(Enemy)
-	g_LogManager:Log(Enemy.m_RObject:GetName().." enters idle")	
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters idle")	
 end
 function OnUpdate_Idle_RangedEnemy(Enemy, ElapsedTime)
-	if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), Enemy.m_RObject:GetPosition(), Enemy.m_VisionRange) and Enemy:GetTimer() > Enemy:GetAttackDelay()  then 
+	if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), Enemy.m_LuaGameObject:GetPosition(), Enemy.m_VisionRange) and Enemy:GetTimer() > Enemy:GetAttackDelay()  then 
 		Enemy:GetAnimator():SetBool("IsPlayerInsideVisionRange", true)	
 	end
 end
@@ -13,7 +13,7 @@ end
 ------------------------------------------------------------
 
 function OnEnter_Attack_RangedEnemy(Enemy)
-	g_LogManager:Log(Enemy.m_RObject:GetName().." enters attack")
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters attack")
 	Enemy:AttachProjectile()
 end
 function OnUpdate_Attack_RangedEnemy(Enemy, ElapsedTime)

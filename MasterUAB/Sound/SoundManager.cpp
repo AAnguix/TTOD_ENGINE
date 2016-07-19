@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include <assert.h>
 #include "Components\AudioSource.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
 

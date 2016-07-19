@@ -103,6 +103,12 @@
     <ClCompile Include="LuabindManager\RegisterAI.cpp">
       <Filter>LuabindManager</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\GameObjectManager.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\InputManager.h">
@@ -196,6 +202,12 @@
       <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\LuaGameObjectHandleManager.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\GameObjectManager.h">
       <Filter>GameObject</Filter>
     </ClInclude>
   </ItemGroup>

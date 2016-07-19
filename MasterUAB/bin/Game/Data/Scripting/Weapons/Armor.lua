@@ -1,12 +1,11 @@
 class 'CArmorComponent' (CLUAComponent)
-function CArmorComponent:__init(ComponentType, ParentRObject, ParentBoneName, GameObject, Resistance, ArmorType)
+function CArmorComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Resistance, ArmorType)
 	CLUAComponent.__init(self,ComponentType)
-	self.m_GameObject = GameObject
-	self.m_MeshRObject = GameObject:GetRenderableObject() 
-	self.m_ParentRObject = ParentRObject 
+	self.m_LuaGameObject = LuaGameObject
+	self.m_ParentLuaGameObject = ParentLuaGameObject 
 	self.m_Resistance = Resistance
 	self.m_Type = ArmorType
-	self.m_MeshRObject:SetParent(m_ParentRObject,ParentBoneName)
+	self.m_LuaGameObject:SetParent(m_ParentLuaGameObject,ParentBoneName)
 end
 
 -- function CArmorComponent:Initialize(ParentBoneName)
@@ -24,11 +23,11 @@ function CArmorComponent:GetType()
 	return self.m_Type
 end
 
-function CArmorComponent:GetMeshRObject()
-	return self.m_MeshRObject
+function CArmorComponent:GetLuaGameObject()
+	return self.m_LuaGameObject
 end
 
-function CArmorComponent:GetParentRObject()
-	return self.m_ParentRObject
+function CArmorComponent:GetParentLuaGameObject()
+	return self.m_ParentLuaGameObject
 end
 

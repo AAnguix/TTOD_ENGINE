@@ -32,7 +32,7 @@ private:
 		float LifeTime, TotalLife;
 		float Angle, AngularSpeed, AngularAcceleration;
 
-		int ColorControlPoint, SizeControlPoint;
+		size_t ColorControlPoint, SizeControlPoint;
 
 		float LastColorControlTime, NextColorControlTime;
 		float LastSizeControlTime, NextSizeControlTime;

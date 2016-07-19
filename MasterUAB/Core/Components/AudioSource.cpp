@@ -1,6 +1,6 @@
 #include "Components\AudioSource.h"
 #include "Engine\Engine.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include <assert.h>
 #include "ISoundManager.h"
 #include "Log\Log.h"

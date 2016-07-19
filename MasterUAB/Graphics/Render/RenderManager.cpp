@@ -54,9 +54,12 @@ void CRenderManager::InitializeDebugRender()
 
 void CRenderManager::SetCurrentCamera(const CCamera& _CurrentCamera)
 {
-	m_CurrentCamera = _CurrentCamera;
+	/*m_CurrentCamera = _CurrentCamera;
 	Mat44f l_ViewProj = m_CurrentCamera.GetView() * m_CurrentCamera.GetProjection();
-	m_CullFrustum.Update(l_ViewProj);
+	m_CullFrustum.Update(l_ViewProj);*/
+
+	m_CurrentCamera = _CurrentCamera;
+	m_CullFrustum.Update(m_CurrentCamera.GetZFar(), m_CurrentCamera.GetProjection(), m_CurrentCamera.GetView());
 }
 
 bool CRenderManager::AddRenderableObjectToRenderList(const CRenderableObject* _RenderableObject)

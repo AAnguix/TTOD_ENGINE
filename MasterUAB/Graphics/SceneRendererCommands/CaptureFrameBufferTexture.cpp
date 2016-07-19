@@ -105,6 +105,7 @@ bool CCaptureFrameBufferTexture::Capture(unsigned int StageId)
 		return false;
 
 	l_RenderManager->GetContextManager()->GetDeviceContext()->CopyResource(m_DataTexture, l_Surface);
+	l_Surface->Release();
 	return true;
 }
 

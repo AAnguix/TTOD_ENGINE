@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include "Utils\FileUtils.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
 #include "RenderableObjects\MeshInstance.h"
@@ -226,7 +226,7 @@ bool CPhysXManager::CreateDynamicActor(const std::string &ActorName, const std::
 	return false;
 }
 
-bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
+bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateBox(ShapeName, Size,MaterialName,MaterialStaticFriction,MaterialDynamicFriction,MaterialRestitution,Group,true);
 	
@@ -238,7 +238,19 @@ bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::st
 		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
 	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 }
-bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
+bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
+{
+	physx::PxShape* l_Shape = CreateBox(ShapeName, Size, MaterialName, 10.0, 20.0, 1.0, Group, true);
+
+	if (ActorType == "static")
+		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+	else if (ActorType == "dynamic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, false);
+	else if (ActorType == "kinematic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
+	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+}
+bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
 
@@ -251,6 +263,18 @@ bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std:
 	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 }
 
+bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
+{
+	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, 10.0, 20.0, 1.0, Group, true);
+
+	if (ActorType == "static")
+		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+	else if (ActorType == "dynamic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, false);
+	else if (ActorType == "kinematic")
+		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
+	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+}
 
 /*Meshes that need to be cooked*/
 physx::PxConvexMesh*  CPhysXManager::CookConvexMesh(const std::string &CoreName, std::vector<Vect3f> Vertices)

@@ -1,6 +1,6 @@
 class 'CBruteEnemyComponent' (CEnemyComponent)
-function CBruteEnemyComponent:__init(CGameObject)
-	CEnemyComponent.__init(self, CGameObject, "BruteEnemy")
+function CBruteEnemyComponent:__init(CLuaGameObject)
+	CEnemyComponent.__init(self, CLuaGameObject, "BruteEnemy")
 	self.m_Health=300.0
 	self.m_Speed=1.5
 	self.m_AttackDelay=1.0
@@ -8,7 +8,7 @@ function CBruteEnemyComponent:__init(CGameObject)
 	self.m_PointRadius=0.63
 	self.m_DelayToPatrol = 3.0
 	
-	self.m_CollisionSphereName = self.m_RObject:GetName().."_collision_sphere"
+	self.m_CollisionSphereName = self.m_LuaGameObject:GetName().."_collision_sphere"
 	self.m_CollisionSphereRadius = 0.5
 	self.m_PositionToAttack = nil
 	self.m_ChargeForce=20.0
@@ -23,17 +23,16 @@ end
 function CBruteEnemyComponent:Initialize()
 	
 	CEnemyComponent.Initialize(self)
-	local l_AnimatorController = CEnemyComponent.GetGameObject(self):GetAnimatorController()
-
-	local l_Idle = l_AnimatorController:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_BruteEnemy", "OnUpdate_Idle_BruteEnemy", "OnExit_Idle_BruteEnemy")
-	local l_Charge = self.m_RObject:GetAnimatorController():AddState("Charge_State", "run", 1.0, "OnEnter_Charge_BruteEnemy", "OnUpdate_Charge_BruteEnemy", "OnExit_Charge_BruteEnemy")
-	local l_Patrol = self.m_RObject:GetAnimatorController():AddState("Patrol_State", "walk", 1.0, "OnEnter_Patrol_BruteEnemy", "OnUpdate_Patrol_BruteEnemy", "OnExit_Patrol_BruteEnemy")
-	local l_Melee = self.m_RObject:GetAnimatorController():AddState("Melee_State", "iraAttack", 1.0, "OnEnter_Melee_BruteEnemy", "OnUpdate_Melee_BruteEnemy", "OnExit_Melee_BruteEnemy")
 	
-	l_AnimatorController:AddTrigger("IsPlayerInsideVisionRange", false)
-	l_AnimatorController:AddTrigger("GoBackToIdle", false)
-	l_AnimatorController:AddTrigger("MeleeAttack", false)
-	l_AnimatorController:AddBool("DelayToPatrol", false)
+	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_BruteEnemy", "OnUpdate_Idle_BruteEnemy", "OnExit_Idle_BruteEnemy")
+	local l_Charge = self.m_LuaGameObject:AddState("Charge_State", "run", 1.0, "OnEnter_Charge_BruteEnemy", "OnUpdate_Charge_BruteEnemy", "OnExit_Charge_BruteEnemy")
+	local l_Patrol = self.m_LuaGameObject:AddState("Patrol_State", "walk", 1.0, "OnEnter_Patrol_BruteEnemy", "OnUpdate_Patrol_BruteEnemy", "OnExit_Patrol_BruteEnemy")
+	local l_Melee = self.m_LuaGameObject:AddState("Melee_State", "iraAttack", 1.0, "OnEnter_Melee_BruteEnemy", "OnUpdate_Melee_BruteEnemy", "OnExit_Melee_BruteEnemy")
+	
+	self.m_LuaGameObject:AddTrigger("IsPlayerInsideVisionRange", false)
+	self.m_LuaGameObject:AddTrigger("GoBackToIdle", false)
+	self.m_LuaGameObject:AddTrigger("MeleeAttack", false)
+	self.m_LuaGameObject:AddBool("DelayToPatrol", false)
 	
 
 	local l_IdleToCharge = l_Idle:AddTransition("IdleToCharge", l_Charge, false, 0.0, 0.1, 0.1)
@@ -67,7 +66,7 @@ function CBruteEnemyComponent:Charge(ElapsedTime)
 	--g_LogManager:Log(m_PositionToAttack.x.." Player Pos X")
 	--g_LogManager:Log(m_PositionToAttack.y.." Player Pos y")
 	--g_LogManager:Log(m_PositionToAttack.z.." Player Pos z")
-	local l_Enemy = self.m_RObject
+	local l_Enemy = self.m_LuaGameObject
 	local l_EnemyPos = l_Enemy:GetPosition()
 	local ChargeSpeed = self.m_Speed * 40
 	local  l_Displacement = m_PositionToAttack - l_EnemyPos

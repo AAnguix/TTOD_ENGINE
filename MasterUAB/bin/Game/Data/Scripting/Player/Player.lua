@@ -47,15 +47,8 @@ function CPlayerComponent:__init(CLuaGameObject)
 	
 	--Other
 	self.m_MapOpened = false
-	
-	self.m_ASTar = CAStar()
-	self.m_ASTar:LoadNodes("./Data/LevelTest/astar_nodes.xml")
-	local l_Points = self.m_ASTar:SearchPath(Vect3f(0.0,0.0,0.0),Vect3f(-10.0,0.0,6.0))
-	
-	-- g_LogManager:Log(l_Points)
-	for i=0, (l_Points:size()-1) do
-		g_LogManager:Log(l_Points:at(i))	
-	end
+	self.m_IsBlocking = false
+	self.m_Attacking = false
 end
 
 function CPlayerComponent:Initialize()
@@ -77,8 +70,10 @@ function CPlayerComponent:Initialize()
 	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
 	local l_Walk = self.m_LuaGameObject:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
 	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
-	local l_Block = self.m_LuaGameObject:AddState("Block_State", "die", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
+	local l_Block = self.m_LuaGameObject:AddState("Block_State", "normalAttack", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
 	local l_Rotate = self.m_LuaGameObject:AddState("Rotate_State", "walk", 1.0, "OnEnter_Rotate_Player", "OnUpdate_Rotate_Player", "OnExit_Rotate_Player")
+	local l_Injured = self.m_LuaGameObject:AddState("Injured_State", "die", 1.0, "OnEnter_Injured_Player", "OnUpdate_Injured_Player", "OnExit_Injured_Player")
+	local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_Player", "OnUpdate_Dead_Player", "OnExit_Dead_Player")
 	
 	self.m_LuaGameObject:AddBool("Walk", false)
 	self.m_LuaGameObject:AddBool("Rotate", false)
@@ -86,37 +81,46 @@ function CPlayerComponent:Initialize()
 	self.m_LuaGameObject:AddTrigger("Block", false)
 	
 	
-	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.0, 0.1, 0.2)
+	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.1)
 	l_IdleToWalk:AddBoolCondition("Walk", true)
 	
-	local l_IdleToRotate = l_Idle:AddTransition("IdleToRotate", l_Rotate, false, 0.0, 0.1, 0.2)
+	local l_IdleToRotate = l_Idle:AddTransition("IdleToRotate", l_Rotate, false, 0.1)
 	l_IdleToRotate:AddBoolCondition("Rotate",true)
 	
-	-- local l_RotateToIdle = l_Rotate:AddTransition("RotateToIdle", l_Idle, true, 0.0, 0.1, 0.2)
+	-- local l_RotateToIdle = l_Rotate:AddTransition("RotateToIdle", l_Idle, true, 0.1, 0.2)
 	-- l_RotateToIdle:AddBoolCondition("Rotate",false)
 	
 	
-	-- local l_RotateToWalk = l_Rotate:AddTransition("RotateToWalk", l_Walk, false, 0.0, 0.1, 0.2)
+	-- local l_RotateToWalk = l_Rotate:AddTransition("RotateToWalk", l_Walk, false, 0.1, 0.2)
 	-- l_RotateToWalk:AddBoolCondition("Walk", true)
 	-- l_RotateToWalk:AddBoolCondition("Rotate",false)
 	
-	local l_WalkToIdle = l_Walk:AddTransition("WalkToIdle", l_Idle, false, 0.0, 0.1, 0.2)
+	local l_WalkToIdle = l_Walk:AddTransition("WalkToIdle", l_Idle, false, 0.1)
 	l_WalkToIdle:AddBoolCondition("Walk", false)
 	
+	local l_IdleToBlock = l_Idle:AddTransition("IdleToBlock", l_Block, false, 0.1, 0.2)
+	l_IdleToBlock:AddTriggerCondition("Block")
 	
-	-- local l_WalkToIdle = l_Walk:AddTransition("IdleToRotate", l_Idle, false, 0.0, 0.1, 0.2)
+	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false, 1.7, 0.8)
+	l_IdleToAttack:AddTriggerCondition("Attack")
+	local l_AttackToIdle = l_Attack:AddTransition("AttackToIdle", l_Idle, true, 0.2)
+	
+	local l_WalkToAttack = l_Walk:AddTransition("l_WalkToAttack", l_Attack, false, 0.1, 0.1)
+	l_WalkToAttack:AddTriggerCondition("Attack")
+	
+	local l_BlockToIdle = l_Block:AddTransition("BlockToIdle", l_Idle, true, 0.1)
+	
+	-- local l_WalkToIdle = l_Walk:AddTransition("IdleToRotate", l_Idle, false, 0.1, 0.2)
 	-- l_WalkToIdle:AddBoolCondition("Walk", false)
 	
-	-- local l_RotateToAttack = l_Rotate:AddTransition("RotateToAttack", l_Attack, false, 0.0, 0.1, 0.2)
+	-- local l_RotateToAttack = l_Rotate:AddTransition("RotateToAttack", l_Attack, false, 0.1, 0.2)
 	-- l_RotateToAttack:AddTriggerCondition("Attack")
 	-- l_RotateToAttack:AddTriggerCondition("Rotate")
 	
-	-- local l_IdleToBlock = l_Idle:AddTransition("IdleToBlock", l_Block, true, 0.0, 0.5, 1.0)
+	-- local l_IdleToBlock = l_Idle:AddTransition("IdleToBlock", l_Block, true, 0.5, 1.0)
 	-- l_IdleToBlock:AddTriggerCondition("Block")
 
 	self:InitializePlayerStats()
-	g_LogManager:Log("Player initialized...")
-
 end
 
 function CPlayerComponent:InitializePlayerStats()
@@ -172,13 +176,14 @@ end
 function CPlayerComponent:Dead()
 	return (self.m_Health<=0.0)
 end
+function CPlayerComponent:GetLuaGameObject() return self.m_LuaGameObject end
 function CPlayerComponent:GetHealth() return self.m_Health end
 function CPlayerComponent:GetMaxHealth() return self.m_MaxHealth end
 function CPlayerComponent:GetSpeed() return self.m_Speed end
 function CPlayerComponent:GetReference() return self end
 function CPlayerComponent:IsMapOpened() return self.m_MapOpened end
 
-function CPlayerComponent:AddWeapon(CArmorComponent)
+function CPlayerComponent:AddArmor(CArmorComponent)
 	table.insert(self.m_Armors, CArmorComponent)
 	if self.m_CurrentArmor == nil then
 		self.m_CurrentArmor = CArmorComponent
@@ -195,15 +200,26 @@ function CPlayerComponent:ChangeWeapon(Index) self.m_CurrentWeapon = m_Weapons[I
 function CPlayerComponent:GetArmor(Index) return m_Armors[Index] end
 function CPlayerComponent:GetWeapon(Index) return m_Weapons[Index] end
 
-function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
-	self.m_AudioSource:PlayEvent("SonidoDePrueba")
-	--local l_Armor = self.m_CurrentArmor:GetType()
-	local l_Armor = "heroic"
-	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyDamage)
-	if self.m_Health >= 0.0 then
-		self.m_Health = self.m_Health - l_DamageCalculated
-	end
+function CPlayerComponent:IsBlocking() return self.m_IsBlocking end
+function CPlayerComponent:SetBlockingState(state) self.m_IsBlocking = state end
+
+function CPlayerComponent:IsAttacking() return self.m_Attacking end
+function CPlayerComponent:SetAttacking(state) self.m_Attacking = state end
+
+function CPlayerComponent:TakeDamage(Damage)
+	self.m_Health = self.m_Health - Damage
+	--g_LogManager:Log("Al PLayer le Queda de vida: ".. self.m_Health)
 end
+
+-- function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
+	-- self.m_AudioSource:PlayEvent("SonidoDePrueba")
+	-- local l_Armor = self.m_CurrentArmor:GetType()
+	-- local l_Armor = "heroic"
+	-- local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyDamage)
+	-- if self.m_Health >= 0.0 then
+		-- self.m_Health = self.m_Health - l_DamageCalculated
+	-- end
+-- end
 
 function CPlayerComponent:GetClosestEnemy(Enemies)
 	local l_ClosestEnemy = nil

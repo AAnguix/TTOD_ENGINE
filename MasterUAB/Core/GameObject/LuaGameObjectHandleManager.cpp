@@ -12,6 +12,13 @@ CLuaGameObjectHandleManager::~CLuaGameObjectHandleManager()
 
 CLuaGameObjectHandle CLuaGameObjectHandleManager::Add(CGameObject* GameObject)
 {
+	#ifdef _DEBUG
+		if (GameObject == nullptr)
+		{
+			LOG("Can't create LuaGameObjectHandler with null GameObject");
+			return NULL;
+		}
+	#endif
 	m_LuaGameObjectHandles.push_back(CLuaGameObjectHandle(GameObject));
 	return m_LuaGameObjectHandles[m_LuaGameObjectHandles.size() - 1];
 }

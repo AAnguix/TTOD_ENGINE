@@ -1236,6 +1236,12 @@ inline Vector3<T> Matrix44<T>::GetPosBasis() const
 	return GetVectorBasis(3);
 }
 
+template<typename T>
+inline Vector3<T> Matrix44<T>::GetWorldPos() const
+{
+	return Vector3<T>(m30,m31,m32);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Devuelve los 3 primeros elementos de cada columna, interpretados
 /// como vectores 3D y como una base con su posición en coordenadas del

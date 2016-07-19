@@ -1,5 +1,5 @@
 #include "Engine\Engine.h"
-#include "Utils\GameObjectManager.h"
+#include "GameObject\GameObjectManager.h"
 #include "GameObject\LuaGameObjectHandleManager.h"
 #include "Materials\MaterialManager.h"
 #include "Effects\EffectManager.h"
@@ -154,6 +154,8 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 	l_ContextManager->GetVideoCardInfo(l_VCDescription, l_VCMemory);
 
 	#ifdef _DEBUG
+		Quatf l_QuatCamera = Quatf(0.0f, 0.0f, 0.0f, 1.0f);
+		bool l_CamPhysX = CEngine::GetSingleton().GetPhysXManager()->CreateSphereTrigger("DebugPhysxCamera", "DebugPhysxCamera", 0.1, "DebugPhysxCameraMaterial", "GROUP3", Vect3f(0.0f, 0.0f, 0.0f), l_QuatCamera, "kinematic");
 		CEngine::GetSingleton().GetLogManager()->Log("VC: " + std::string(l_VCDescription) + ". Memory: " + std::to_string(l_VCMemory)+" mb.");
 	#endif
 

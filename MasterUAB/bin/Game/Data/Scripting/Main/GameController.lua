@@ -1,9 +1,6 @@
 dofile("./Data/Scripting/Weapons/DamageCalculator.lua")
 
 class 'CGameController'
-
-g_Weapon = nil
-
 function CGameController:__init()
 	self.m_Entities={}
 	self.m_Enemies={}
@@ -22,7 +19,7 @@ function CGameController:Destroy()
 	end
 end
 
-function CGameController:GetScripts()
+function CGameController:GetEntities()
 	return self.m_Entities
 end
 
@@ -38,6 +35,11 @@ function CGameController:Update(ElapsedTime)
 	-- for i=1, (#self.m_Entities) do
 		-- self.m_Entities[i]:Update(ElapsedTime)
 	-- end
+end
+
+function CGameController:LoadLevel(Level)
+	self:LoadXML("Data/Level"..Level.."/game_entities.xml")
+	g_AIManager:LoadLevel(Level)
 end
 
 function CGameController:LoadXML(Filename)
@@ -58,7 +60,7 @@ function CGameController:LoadXML(Filename)
 			local l_Element=l_XMLTreeNode:GetChild(i)
 			local l_ElemName=l_Element:GetName()
 			
-			g_LogManager:Log("Going to load entity "..i)
+			g_LogManager:Log("Loading entity "..i)
 			
 			if l_ElemName=="enemy" then
 				self:LoadEnemy(l_Element)
@@ -75,6 +77,8 @@ function CGameController:LoadXML(Filename)
 			elseif l_ElemName=="destructible_wall" then
 				self:LoadDestructibleWall(l_Element)
 			end 
+			
+			g_LogManager:Log("Entity "..i.." loaded")
 		end
 		g_LogManager:Log("Game entities loaded.")
 	else
@@ -89,20 +93,24 @@ function CGameController:Reload()
 	g_LogManager:Log("GameController reloaded")
 end
 
-function CGameController:GetLuaGameObjectHandle(XMLTreeNode)
-	local l_GameObjectName = XMLTreeNode:GetPszProperty("game_object", "", false)
-	local l_LuaGameObjectHandle = g_LuaGameObjectHandleManager:Get(l_GameObjectName)
-	if l_LuaGameObjectHandle == nil then
-		g_LogManager:Log("NULL. GameobjectHandle "..l_GameObjectName.." doesn't exists")
-	end
-	return l_LuaGameObjectHandle
-end
+-- function CGameController:GetLuaGameObjectHandle(XMLTreeNode)
+	-- local l_GameObjectName = XMLTreeNode:GetPszProperty("game_object", "", false)
+	-- local l_LuaGameObjectHandle = g_LuaGameObjectHandleManager:Get(l_GameObjectName)
+	-- if l_LuaGameObjectHandle == nil then
+		-- g_LogManager:Log("NULL. GameobjectHandle "..l_GameObjectName.." doesn't exists")
+	-- end
+	-- return l_LuaGameObjectHandle
+-- end
 
-function CGameController:AddLuaGameObjectHandle(XMLTreeNode)
-	local l_GameObjectName = XMLTreeNode:GetPszProperty("game_object", "", false)
-	local l_GameObject = g_GameObjectManager:GetResource(l_GameObjectName)
-	local l_LuaGameObjectHandle = g_LuaGameObjectHandleManager:Add(l_GameObject)
-	return l_LuaGameObjectHandle
+function CGameController:AddLuaGameObjectHandle(GameObjectName)
+	local l_GameObject = g_GameObjectManager:GetResource(GameObjectName)
+	if l_GameObject ~= nil then
+		local l_LuaGameObjectHandle = g_LuaGameObjectHandleManager:Add(l_GameObject)
+		return l_LuaGameObjectHandle
+	else
+		g_LogManager:Log("Error. Trying to create handle with null GameObject")
+	end
+	return nil
 end
 
 function CGameController:GetElementFromLayer(XMLTreeNode)
@@ -116,6 +124,20 @@ function CGameController:GetParticleEmitter(XMLTreeNode)
 	local l_LayerName = "particles"
 	local l_RObject = g_LayerManager:GetResource(l_LayerName):GetResource(l_Particle)
 	return l_RObject
+end
+
+function CGameController:GetEnemy(EnemyName)
+	for i=1, (#self.m_Enemies) do
+		if self.m_Enemies[i].m_LuaGameObject:GetName() == EnemyName then
+			return self.m_Enemies[i]
+		end
+	end
+end
+
+function CGameController:PrintEnemyNames()
+	for i=1, (#self.m_Enemies) do
+		g_LogManager:Log(self.m_Enemies[i].m_LuaGameObject:GetName())
+	end
 end
 
 dofile("./Data/Scripting/Main/LoadEntities.lua")

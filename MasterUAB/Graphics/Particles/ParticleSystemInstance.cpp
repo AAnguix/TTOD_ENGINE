@@ -378,7 +378,7 @@ void CParticleSystemInstance::HSVtoRGB(float *r, float *g, float *b, float h, fl
 		return;
 	}
 	h /= 60;			// sector 0 to 5
-	i = floor(h);
+	i = (int)(floor(h));
 	f = h - i;			// factorial part of h
 	p = v * (1 - s);
 	q = v * (1 - s * f);

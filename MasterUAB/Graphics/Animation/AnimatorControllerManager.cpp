@@ -1,7 +1,7 @@
 #include "AnimatorControllerManager.h"
 #include "Components\AnimatorController\AnimatorController.h"
 #include <assert.h>
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 
 CAnimatorControllerManager::CAnimatorControllerManager()
 {

@@ -1,8 +1,9 @@
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "Particles\ParticleSystemInstance.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 
 CRenderableObjectsManager::CRenderableObjectsManager() : CNamed("")
+,m_ObjectsInsideFrustrum(0)
 {
 }
 
@@ -27,11 +28,17 @@ void CRenderableObjectsManager::Update(float ElapsedTime)
 
 void CRenderableObjectsManager::Render(CRenderManager *RM)
 {
+	m_ObjectsInsideFrustrum = 0;
 	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)
 	{
 		m_ResourcesVector[i]->Render(RM);
 	}
 }
+
+void CRenderableObjectsManager::IncrementObjects()
+{
+	m_ObjectsInsideFrustrum+=1;
+};
 
 void CRenderableObjectsManager::AddParticleSystemInstance(const std::string &ParticleSystemTypeName, const std::string &ParticleSystemInstanceName, CGameObject* GameObject, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 {

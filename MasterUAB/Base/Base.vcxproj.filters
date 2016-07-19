@@ -65,12 +65,6 @@
     <ClInclude Include="Utils\TTODXMLWriter.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\GameObject.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\GameObjectManager.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\FileUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -106,12 +100,6 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\TTODXMLWriter.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\GameObject.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\GameObjectManager.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\FileUtils.cpp">

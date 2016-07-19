@@ -5,7 +5,9 @@
 #include "Components\AnimatorController\Animation.h"
 #include "Animation\AnimatedCoreModel.h"
 #include "Components\AnimatorController\Transition.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
+#include "Components\LuaComponent.h"
+#include "Components\Script.h"
 
 CAnimatorController::CAnimatorController(const std::string &Name, CGameObject* Owner)
 :CComponent(Name,Owner)
@@ -69,12 +71,26 @@ void CAnimatorController::Update(float ElapsedTime)
 		{
 			if ((itMap->second->MeetsConditions()))
 			{
-				ChangeCurrentState(itMap->second->GetNewState(), itMap->second);
+				if (itMap->second->GetHasExitTime())
+				{
+					float l_AnimDuration = m_CurrentState->GetAnimation().m_Duration;
+					CScript* l_Script = GetOwner()->GetScript();
+					CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
+					float l_Timer = l_LuaComponent->GetTimer();
+					
+					if (l_Timer >= l_AnimDuration)
+					{
+						ChangeCurrentState(itMap->second->GetNewState(), itMap->second);
+					}
+				}
+				else
+				{
+					ChangeCurrentState(itMap->second->GetNewState(), itMap->second);
+				}
 			}
 		}
 	}
 	m_CurrentState->OnUpdate(ElapsedTime);
-
 }
 
 void CAnimatorController::Render(CRenderManager &RenderManager)
@@ -87,9 +103,9 @@ void CAnimatorController::RenderDebug(CRenderManager &RenderManager)
 
 }
 
-CTransition* CAnimatorController::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut)
+CTransition* CAnimatorController::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut)
 {
-	CTransition* l_Transition = new CTransition(NewState, HasExitTime, ExitTime, DelayIn, DelayOut);
+	CTransition* l_Transition = new CTransition(NewState, HasExitTime, DelayIn, DelayOut);
 	m_AnyStateTransitions.insert(std::pair<const std::string, CTransition*>(Name, l_Transition));
 	return l_Transition;
 }

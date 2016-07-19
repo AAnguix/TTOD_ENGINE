@@ -265,7 +265,7 @@ public:
 	inline Matrix44<T>       Get44Translation() const;
 
 	inline Vector3<T>        GetPos() const;
-
+	inline Vector3<T>        GetWorldPos() const;
 	inline Vector3<T>        GetScale() const;
 	inline T                 GetScaleX() const;
 	inline T                 GetScaleY() const;

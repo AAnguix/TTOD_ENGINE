@@ -223,9 +223,6 @@
     <ClInclude Include="Vertex\VertexTypes.h">
       <Filter>Vertex</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Frustum.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="SceneRendererCommands\ApplyFiltersSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
@@ -236,13 +233,13 @@
       <Filter>Camera</Filter>
     </ClInclude>
     <ClInclude Include="Particles\ParticleManager.h">
-      <Filter>Particles</Filter>
+      <Filter>Render\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Particles\ParticleSystemInstance.h">
-      <Filter>Particles</Filter>
+      <Filter>Render\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Particles\ParticleSystemType.h">
-      <Filter>Particles</Filter>
+      <Filter>Render\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Effects\EffectGeometryShader.h">
       <Filter>Effects</Filter>
@@ -266,6 +263,9 @@
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsManager.h" />
+    <ClInclude Include="Render\Frustum.h">
+      <Filter>Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -475,9 +475,6 @@
     <ClCompile Include="Render\RenderManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Frustum.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="SceneRendererCommands\ApplyFiltersSceneRendererCommand.cpp">
       <Filter>SceneRendererCommands</Filter>
     </ClCompile>
@@ -488,13 +485,13 @@
       <Filter>Camera</Filter>
     </ClCompile>
     <ClCompile Include="Particles\ParticleManager.cpp">
-      <Filter>Particles</Filter>
+      <Filter>Render\Particles</Filter>
     </ClCompile>
     <ClCompile Include="Particles\ParticleSystemInstance.cpp">
-      <Filter>Particles</Filter>
+      <Filter>Render\Particles</Filter>
     </ClCompile>
     <ClCompile Include="Particles\ParticleSystemType.cpp">
-      <Filter>Particles</Filter>
+      <Filter>Render\Particles</Filter>
     </ClCompile>
     <ClCompile Include="Effects\EffectGeometryShader.cpp">
       <Filter>Effects</Filter>
@@ -518,6 +515,9 @@
       <Filter>SceneRendererCommands</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="Render\Frustum.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Textures">
@@ -556,7 +556,7 @@
     <Filter Include="Vertex">
       <UniqueIdentifier>{d5f23a74-f512-46e6-8c64-59999d2ce699}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Particles">
+    <Filter Include="Render\Particles">
       <UniqueIdentifier>{2427e230-fa46-48ca-abe8-3e5306dfdd3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

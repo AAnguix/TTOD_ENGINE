@@ -6,7 +6,7 @@
 #include <vector>
 
 #define LOG(Message) \
-CEngine::GetSingleton().GetLogManager()->Log(Message);
+CEngine::GetSingleton().GetLogManager()->Log(Message)
 
 
 template <class T> 

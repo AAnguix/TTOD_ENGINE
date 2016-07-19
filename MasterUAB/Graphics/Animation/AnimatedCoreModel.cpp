@@ -30,7 +30,8 @@ bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::strin
 	int l_AnimationID = m_CalCoreModel->loadCoreAnimation(Filename);
 	if (l_AnimationID != -1)
 	{
-		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID, Weight));
+		float l_Duration = m_CalCoreModel->getCoreAnimation(l_AnimationID)->getDuration();
+		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID, Weight, l_Duration));
 		//m_Animations.insert(std::pair<const std::string, int>(Name,l_AnimationID));
 		return true;
 	}

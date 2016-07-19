@@ -55,7 +55,6 @@ public:
 private:
 	CState* m_NewState;
 	bool m_HasExitTime;
-	float m_ExitTime;
 	float m_DelayIn;
 	float m_DelayOut;
 
@@ -72,7 +71,7 @@ private:
 	void ClearTriggers();
 
 public:
-	CTransition(CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut);
+	CTransition(CState* NewState, bool HasExitTime, float DelayIn, float DelayOut);
 	~CTransition();
 
 	void AddFloatCondition(const std::string &ParameterName, float TriggerValue, EFloatCondition::EFloatConditionType TriggerConditionType);
@@ -84,6 +83,7 @@ public:
 	CState* GetNewState(){ return m_NewState; };
 	float GetDelayIn() const{ return m_DelayIn; };
 	float GetDelayOut() const{ return m_DelayOut; };
+	bool GetHasExitTime() const{ return m_HasExitTime; };
 };
 
 #endif

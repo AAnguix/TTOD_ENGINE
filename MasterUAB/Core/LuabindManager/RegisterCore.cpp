@@ -12,7 +12,7 @@
 #include "Utils\EmptyPointerClass.h"
 
 /*Base*/
-#include "Utils\GameObjectManager.h"
+#include "GameObject\GameObjectManager.h"
 #include "GameObject\LuaGameObjectHandleManager.h"
 
 /*Graphics*/
@@ -173,6 +173,11 @@ void CLuabindManager::RegisterCore()
 		.def("SetYaw", &CLuaGameObjectHandle::SetYaw)
 		.def("SetPitch", &CLuaGameObjectHandle::SetPitch)
 		.def("SetRoll", &CLuaGameObjectHandle::SetRoll)
+		.def("GetAnimatedCoreModel", &CLuaGameObjectHandle::GetAnimatedCoreModel)
+		.def("SetParent", &CLuaGameObjectHandle::SetParent)
+		.def("GetTransform", &CLuaGameObjectHandle::GetTransform)
+		.def("GetBoneTransformationMatrix", &CLuaGameObjectHandle::GetBoneTransformationMatrix)
+
 
 		.def("AddState", &CLuaGameObjectHandle::AddState)
 		.def("AddInteger", &CLuaGameObjectHandle::AddInteger)
@@ -467,7 +472,7 @@ void CLuabindManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<CTransition>("CTransition")
-		.def(constructor<CState*, const bool, const float, const float, const float >())
+		.def(constructor<CState*, const bool, const float, const float >())
 
 		.def("AddFloatCondition", &CTransition::AddFloatCondition)
 		.def("AddIntegerCondition", &CTransition::AddIntegerCondition)
@@ -484,7 +489,8 @@ void CLuabindManager::RegisterComponents()
 	[
 		class_<CState>("CState")
 		.def(constructor<CAnimatorController*, const std::string, const EAnimation, const float, const std::string, const std::string, const std::string>())
-		.def("AddTransition", &CState::AddTransition)
+		.def("AddTransition", (CTransition* (CState::*)(const std::string&, CState*, bool, float, float))&CState::AddTransition)
+		.def("AddTransition", (CTransition* (CState::*)(const std::string&, CState*, bool, float))&CState::AddTransition)
 		.def("OnEnter", &CState::OnEnter)
 		.def("OnUpdate", &CState::OnUpdate)
 		.def("OnExit", &CState::OnExit)

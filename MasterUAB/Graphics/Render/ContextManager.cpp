@@ -306,8 +306,10 @@ bool CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int 
 		CHECKED_RELEASE(m_DepthStencilView);
 		CHECKED_RELEASE(m_StencilTexture);
 
-		m_SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
+		HRESULT l_Hr = m_SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
+		assert(!FAILED(l_Hr));
 		bool l_Result = CreateBackBuffer(hWnd, Width, Height);
+		assert(l_Result);
 		return l_Result;
 	}
 	return false;

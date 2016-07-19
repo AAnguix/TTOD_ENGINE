@@ -15,7 +15,7 @@
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "Animation\AnimatorControllerManager.h"
 #include "GUIManager.h"
-#include "Utils\GameObjectManager.h"
+#include "GameObject\GameObjectManager.h"
 #include "GameObject\LuaGameObjectHandleManager.h"
 #include "Profiler\Profiler.h"
 #include <thread>
@@ -132,7 +132,7 @@ void CLevel::UpdateLoadPercentageLevel(unsigned int Percentage, CGUIManager::SSl
 	SliderResult = CEngine::GetSingleton().GetGUIManager()->DoSlider("level_percentage_loaded_slider_0", "level_percentage_loaded_slider", l_PercentageLoadedPos, 0.0, 100.0, SliderResult.temp);
 
 
-	CGUIManager::SGUIPosition l_TextPos = CGUIManager::SGUIPosition(0.5, 0.8, 0.1, 0.1, CGUIManager::BOTTOM_CENTER, CGUIManager::GUI_RELATIVE, CGUIManager::GUI_RELATIVE_WIDTH);
+	CGUIManager::SGUIPosition l_TextPos = CGUIManager::SGUIPosition(0.5f, 0.8f, 0.1f, 0.1f, CGUIManager::BOTTOM_CENTER, CGUIManager::GUI_RELATIVE, CGUIManager::GUI_RELATIVE_WIDTH);
 	CEngine::GetSingleton().GetGUIManager()->DoText("LoadingText", "freestyle_script_64_font", l_TextPos, "", "Loading...");
 
 	CRenderManager* l_RenderManager =  CEngine::GetSingleton().GetRenderManager();

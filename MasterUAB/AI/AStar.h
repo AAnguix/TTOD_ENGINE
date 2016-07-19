@@ -66,4 +66,4 @@ public:
 
 };
 
-#endif // INC_A_STAR_H_
+#endif

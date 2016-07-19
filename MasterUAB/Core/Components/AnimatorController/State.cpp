@@ -1,6 +1,6 @@
 #include "State.h"
 #include "Components\AnimatorController\AnimatorController.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include <luabind/luabind.hpp>
 #include "Engine\Engine.h"
 #include "LuabindManager\LuabindManager.h"
@@ -98,15 +98,39 @@ void CState::OnExit(CTransition* Transition)
 	}
 }
 
-CTransition* CState::AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float ExitTime, float DelayIn, float DelayOut)
+CTransition* CState::AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut)
 {
-	CTransition* l_Transition = new CTransition(NewState, HasExitTime, ExitTime, DelayIn, DelayOut);
+	#ifdef _DEBUG
+	if (NewState->GetAnimation().m_Loop)
+	{
+		LOG("Trying to create a transition(" + Name + ") with out delay in a loop animation. ");
+			assert(false);
+	}
+	#endif
+
+	CTransition* l_Transition = new CTransition(NewState, HasExitTime, DelayIn, DelayOut);
+	m_Transitions.insert(std::pair<const std::string, CTransition*>(Name, l_Transition));
+	return l_Transition;
+}
+
+CTransition* CState::AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn)
+{
+	#ifdef _DEBUG
+	if (!NewState->GetAnimation().m_Loop)
+	{
+		LOG("Trying to create a transition(" + Name + ") without out delay in a non-loop animation. ");
+		assert(false);
+	}
+	#endif
+	
+	CTransition* l_Transition = new CTransition(NewState, HasExitTime, DelayIn, 0.0f);
 	m_Transitions.insert(std::pair<const std::string, CTransition*>(Name, l_Transition));
 	return l_Transition;
 }
 
 void CState::OnUpdate(float ElapsedTime)
 {
+	float l_Timer = 0.0f;
 	try
 	{
 		if (!m_OnUpdate.empty())
@@ -117,6 +141,7 @@ void CState::OnUpdate(float ElapsedTime)
 				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
 				assert(l_LuaComponent != nullptr);
 				l_LuaComponent->AddTime(ElapsedTime);
+				l_Timer = l_LuaComponent->GetTimer();
 				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnUpdate.c_str(), l_LuaComponent, ElapsedTime);
 			}
 		}
@@ -134,18 +159,33 @@ void CState::OnUpdate(float ElapsedTime)
 	{
 		if (!m_Animation.m_Loop)
 		{
-			m_AnimatorController->ChangeCurrentState(m_AnimatorController->GetPreviousState(), nullptr);
+			CheckStateChange(false, l_Timer, m_AnimatorController->GetPreviousState(), nullptr);
 		}
 	}
 	else
 	{
 		for (itMap = m_Transitions.begin(); itMap != m_Transitions.end(); ++itMap)
 		{
-			if ((itMap->second->MeetsConditions()))
+			if (itMap->second->MeetsConditions())
 			{
-				m_AnimatorController->ChangeCurrentState(itMap->second->GetNewState(), itMap->second);
+				CheckStateChange(itMap->second->GetHasExitTime(), l_Timer, itMap->second->GetNewState(), itMap->second);
 			}
 		}
 	}
 }
 
+void CState::CheckStateChange(bool HasExitTime, float Timer, CState* NewState, CTransition* Transition)
+{
+	if (HasExitTime)
+	{
+		float l_AnimDuration = m_Animation.m_Duration - 0.075f;
+		if (Timer >= l_AnimDuration)
+		{
+			m_AnimatorController->ChangeCurrentState(NewState, Transition);
+		}
+	}
+	else
+	{
+		m_AnimatorController->ChangeCurrentState(NewState, Transition);
+	}
+}

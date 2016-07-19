@@ -1,5 +1,5 @@
 #include "RenderableObjects\MeshInstance.h"
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include "Engine\Engine.h"
 #include "PhysXManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
@@ -12,6 +12,7 @@
 #include "RenderableObjects\LayerManager.h"
 #include "Animation\AnimatedModelManager.h"
 #include "Render\DebugRender.h"
+#include "Camera\CameraControllerManager.h"
 
 /*Used to create a mesh instance when game is runing*/
 CMeshInstance::CMeshInstance(CGameObject* Owner, const std::string &Name, const std::string &CoreName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
@@ -54,23 +55,76 @@ void CMeshInstance::GeneratePhysxActor(CXMLTreeNode &TreeNode)
 
 		if (l_ActorType != "")
 		{
+			Vect3f Arma_Position;
+			float Arma_Yaw;
+			float Arma_Pitch;
+			float Arma_Roll;
+
+			if (l_ParentName != "" && l_ParentLayer != "" && l_ParentBoneName != "")
+			{
+				Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
+				//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
+				Mat44f l_ParentTransform = m_Parent->GetTransform();
+
+				//l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
+				/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
+				Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
+				l_Translation.SetIdentity();
+				l_Translation.Translate(m_Position);
+				l_RotX.SetIdentity();
+				l_RotX.RotByAngleX(m_Pitch);
+				l_RotY.SetIdentity();
+				l_RotY.RotByAngleY(m_Yaw);
+				l_RotZ.SetIdentity();
+				l_RotZ.RotByAngleZ(m_Roll);
+
+				Mat44f l_Tranform;
+				l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
+				Mat44f tuPutaMatriz = l_Tranform*l_BoneTransform*l_ParentTransform;
+
+				Arma_Position = tuPutaMatriz.GetWorldPos();
+				Arma_Yaw = tuPutaMatriz.GetYaw();
+				Arma_Pitch = tuPutaMatriz.GetPitch();
+				Arma_Roll = tuPutaMatriz.GetRoll();
+			}
+
 			bool l_Trigger = TreeNode.GetBoolProperty("trigger", false);
 			unsigned int l_Group = TreeNode.GetIntProperty("group", 0);
 			float l_Density = TreeNode.GetFloatProperty("density", 1.0f);
 
 			//bool l_AbleToBeTrigger = true;
 			CPhysXManager* l_PhysxManager = CEngine::GetSingleton().GetPhysXManager();
-			l_PhysxManager->AddColliderComponent(m_Name + "_Collider", m_Owner);
 
-			//Quatf l_Rotation(0.0f, 0.0f, 0.0f, 1.0f);
-			Quatf l_Rotation(m_Yaw, m_Pitch, m_Roll);
+			if (l_ParentName == "")
+			{
+				l_PhysxManager->AddColliderComponent(m_Name + "_Collider", m_Owner);
+			}
+
+			Quatf l_Rotation;
+			if (l_ParentName != "")
+			{
+				l_Rotation = Quatf(Arma_Yaw, Arma_Pitch, Arma_Roll);
+			}
+			else
+			{
+				l_Rotation = Quatf(m_Yaw, m_Pitch, m_Roll);
+			}
 
 			if (l_ActorType == "static")
 				l_PhysxManager->CreateStaticActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation);
 			else if (l_ActorType == "dynamic")
 				l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation, l_Density, false);
 			else if (l_ActorType == "kinematic")
-				l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation, l_Density, true);
+			{
+				if (l_ParentName != "")
+				{
+					l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), Arma_Position, l_Rotation, l_Density, true);
+				}
+				else
+				{
+					l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation, l_Density, true);
+				}
+			}
 
 			if (l_Trigger)
 			{
@@ -96,13 +150,15 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 		bool l_IsOutsideFrustum = false;
 
 		#if ENABLE_FRUSTUM
-				//if (!RenderManager->GetFrustum().BoxVisible(m_StaticMesh->GetBoundingBoxMax(), m_StaticMesh->GetBoundingBoxMin()))
-				if (!RenderManager->GetFrustum().SphereVisible(GetTransform()*m_StaticMesh->GetBoundingSphereCenter(), m_StaticMesh->GetBoundingSphereRadius()))
-					l_IsOutsideFrustum = true;
+			float l_ObjectRadious = m_StaticMesh->GetBoundingSphereRadius();
+			if (!RenderManager->GetFrustum().CheckCube(m_Position, l_ObjectRadious))
+				l_IsOutsideFrustum = true;
 		#endif
 
 		if (!l_IsOutsideFrustum)
 		{
+			CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->IncrementObjects();
+
 			if (m_Parent != nullptr && m_ParentBoneId != -1)
 			{
 				Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);

@@ -1,8 +1,9 @@
 #ifndef _GAMEOBJECTMANAGER_H
 #define _GAMEOBJECTMANAGER_H
 
-#include "GameObject.h"
 #include "Utils\TemplatedVectorMapManager.h"
+#include "GameObject\GameObject.h"
+class CGameObject;
 
 class CGameObjectManager : public CTemplatedVectorMapManager<CGameObject>
 {
@@ -13,7 +14,7 @@ public:
 	CGameObjectManager();
 	~CGameObjectManager();
 
-	void SetPlayer(CGameObject* Player){ m_Player = Player; };
+	void SetPlayer(CGameObject* Player);
 	CGameObject* GetPlayer() const{ assert(m_Player != nullptr); return m_Player; };
 
 	CGameObject* AddGameObject(CXMLTreeNode &TreeNode);

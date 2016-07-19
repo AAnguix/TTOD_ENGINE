@@ -9,6 +9,7 @@ function DefineLUAModules()
 	--If you want start screen
 	dofile("./Data/Scripting/Utils.lua")
 	dofile("./Data/Scripting/Main/GameController.lua")
+	dofile("./Data/Scripting/Main/AIManager.lua")
 	dofile("./Data/Scripting/Main/EventManager.lua")
 	dofile("./Data/Scripting/Globals/GlobalsStartScreen.lua")
 	dofile("./Data/Scripting/GUI/GUIStartScreen.lua")

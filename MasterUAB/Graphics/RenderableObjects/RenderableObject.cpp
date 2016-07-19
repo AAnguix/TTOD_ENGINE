@@ -1,7 +1,7 @@
 #include "RenderableObject.h"
 #include <assert.h>
 #include "XML\XMLTreeNode.h"
-#include "Utils\GameObjectManager.h"
+#include "GameObject\GameObjectManager.h"
 #include "Engine\Engine.h"
 
 CRenderableObject::CRenderableObject(const CXMLTreeNode &XMLTreeNode) 

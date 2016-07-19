@@ -1,4 +1,4 @@
-#include "Utils\GameObject.h"
+#include "GameObject\GameObject.h"
 #include "XML\XMLTreeNode.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"

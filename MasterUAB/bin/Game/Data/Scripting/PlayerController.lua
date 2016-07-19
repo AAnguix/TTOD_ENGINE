@@ -38,15 +38,7 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 			-- StartLevelTwo()
 			--g_Player:GetAnimatorController():SetTrigger("Block")
 		end
-		
-		if ((CInputManager.GetInputManager():IsActionActive("MOVE_FWD")) or 
-		(CInputManager.GetInputManager():IsActionActive("MOVE_BACK")) or 
-		(CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT")) or 
-		(CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT")))  then
-			local l_Position = g_Player:GetPosition()
-			self.m_Walk = true
-		end
-
+	
 		l_CCVelocity.x = 0
 		l_CCVelocity.z = 0
 		
@@ -55,33 +47,36 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		if CInputManager.GetInputManager():IsActionActive("E_PRESSED") then			
 			g_EventManager:FireEvent("EPressed")
 		end
-	
-		if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then			
-			self.m_Forward = true
-			-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)				
-			local v = l_CameraController:GetForward()
-			l_CCVelocity = l_CCVelocity + v * l_Speed
-		end
 		
-		if CInputManager.GetInputManager():IsActionActive("MOVE_BACK") then				
-			self.m_Backwards = true
-			-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)	
-			local v = l_CameraController:GetForward()
-			l_CCVelocity = l_CCVelocity - v * l_Speed
-		end
-		
-		if CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT") then
-			self.m_Right = true
-			-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)		
-			local v = l_CameraController:GetRight()
-			l_CCVelocity = l_CCVelocity - v * l_Speed
-		end
-		
-		if CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT") then
-			self.m_Left = true
-			-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)		
-			local v = l_CameraController:GetRight()
-			l_CCVelocity = l_CCVelocity + v * l_Speed
+		if self:IsAttacking()==false then
+			if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then			
+				self.m_Forward = true
+				self.m_Walk = true
+				-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)					
+				local v = l_CameraController:GetForward()
+				l_CCVelocity = l_CCVelocity + v * l_Speed
+			end
+			
+			if CInputManager.GetInputManager():IsActionActive("MOVE_BACK") then				
+				self.m_Backwards = true
+				self.m_Walk = true
+				local v = l_CameraController:GetForward()
+				l_CCVelocity = l_CCVelocity - v * l_Speed
+			end
+			
+			if CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT") then
+				self.m_Right = true
+				self.m_Walk = true
+				local v = l_CameraController:GetRight()
+				l_CCVelocity = l_CCVelocity - v * l_Speed
+			end
+			
+			if CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT") then
+				self.m_Left = true
+				self.m_Walk = true
+				local v = l_CameraController:GetRight()
+				l_CCVelocity = l_CCVelocity + v * l_Speed
+			end
 		end
 		
 		l_CCVelocity = l_CCVelocity + Vect3f(0,-10.0,0) * ElapsedTime

@@ -1,44 +1,73 @@
 -- DRAGON
 function CGameController:LoadDragon(XMLTreeNode)
-	local l_GameObject = GetLuaGameObjectHandle(XMLTreeNode)
-	local l_RObject = l_GameObject:GetRenderableObject()
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(XMLTreeNode)
+	local l_ComponentName = l_LuaGameObject:GetName().."_Script"
+	
 	local l_ParticleEmitter = GetParticleEmitter(XMLTreeNode)
 	local l_BoneName = XMLTreeNode:GetPszProperty("bone_name", "", false)
 	local l_ModelName = XMLTreeNode:GetPszProperty("model_name", "", false)
 	
-	--local l_CoreModel = g_AnimatedModelManager:GetResource(l_ModelName)
-	local l_CoreModel = l_RObject:GetAnimatedCoreModel()
+	local l_CoreModel = l_LuaGameObject:GetAnimatedCoreModel()
 	local l_BoneID = l_CoreModel:GetBoneId(l_BoneName)
 	
-	if l_GameObject ~= nil and l_ParticleEmitter ~= nil and l_BoneName ~= "" then
-		local l_DragonComponent = CDragonComponent(l_GameObject,l_ParticleEmitter,l_BoneID)
-		l_GameObject:AddLuaComponent(l_DragonComponent)
+	if l_LuaGameObject ~= nil and l_ParticleEmitter ~= nil and l_BoneName ~= "" then
+		local l_DragonComponent = CDragonComponent(l_LuaGameObject,l_ParticleEmitter,l_BoneID)
+		g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_DragonComponent)
 		l_DragonComponent:Initialize()
 		table.insert(self.m_Entities,l_DragonComponent)
 	end
 end
 
+-- PLAYER
+function CGameController:LoadPlayer(XMLTreeNode)
+	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
+	g_Player = g_GameController:AddLuaGameObjectHandle(l_Name)
+	
+	local l_ComponentName = g_Player:GetName().."_Script"
+ 	g_Engine:GetGameObjectManager():SetPlayer(g_Player:GetGameObject()) --Tells layer manager who is the player.
+	
+	local l_PlayerComponent=CPlayerComponent(g_Player)
+	g_ScriptManager:AddComponent(l_ComponentName,g_Player,l_PlayerComponent)
+	
+	l_PlayerComponent:Initialize()
+	CGameController:LoadPlayerChilds(l_PlayerComponent,XMLTreeNode)
+	g_PlayerComponent = l_PlayerComponent
+	
+	table.insert(self.m_Entities,l_PlayerComponent)
+	g_LogManager:Log("Player initialized...")
+end
+
+function CGameController:LoadPlayerChilds(Enemy, XMLTreeNode)
+	g_LogManager:Log("Loading player childs")
+	for i=0, XMLTreeNode:GetNumChildren() do
+		local l_Element=XMLTreeNode:GetChild(i)
+		if l_Element:GetName()=="weapon" then
+			self:LoadWeapon(l_Element,Enemy)
+		elseif l_Element:GetName()=="armor" then
+			self:LoadArmor(l_Element,Enemy)
+		end
+	end
+end	
+
 -- ORCS
 function CGameController:LoadEnemy(XMLTreeNode)
-	local l_GameObject = GetLuaGameObjectHandle(XMLTreeNode)
+	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
 	
-	if l_GameObject ~= nil then
-
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
+	if l_LuaGameObject ~= nil then
 		local l_EnemyType = XMLTreeNode:GetPszProperty("enemy_type", "basic_enemy", false)
 		local l_EnemyComponent = nil
 		
 		if l_EnemyType == "basic_enemy" then
-			l_EnemyComponent  = CBasicEnemyComponent(l_GameObject)
+			l_EnemyComponent  = CBasicEnemyComponent(l_LuaGameObject)
 		elseif l_EnemyType == "ranged_enemy" then
-			l_EnemyComponent  = CRangedEnemyComponent(l_GameObject)
+			l_EnemyComponent  = CRangedEnemyComponent(l_LuaGameObject)
 		elseif l_EnemyType == "brute_enemy" then
-			l_EnemyComponent  = CBruteEnemyComponent(l_GameObject)
+			l_EnemyComponent  = CBruteEnemyComponent(l_LuaGameObject)
 		end
 		
-		
-		local l_ComponentName = l_GameObject:GetName().."_Script"
-		g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_EnemyComponent)
-		
+		local l_ComponentName = l_LuaGameObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_EnemyComponent)
 		l_EnemyComponent:Initialize()
 		CGameController:LoadEnemyChilds(l_EnemyComponent,XMLTreeNode)
 		table.insert(self.m_Entities,l_EnemyComponent)
@@ -60,21 +89,3 @@ function CGameController:LoadEnemyChilds(Enemy, XMLTreeNode)
 		end
 	end
 end	
-
--- PLAYER
-function CGameController:LoadPlayer(XMLTreeNode)
-	
-	g_Player = g_GameController:AddLuaGameObjectHandle(XMLTreeNode)
-	local l_GameObject = g_Player:GetGameObject()
-	local l_ComponentName = l_GameObject:GetName().."_Script"
-	
- 	g_Engine:GetGameObjectManager():SetPlayer(l_GameObject) --Tells layer manager who is the player.
-	
-	local l_PlayerComponent=CPlayerComponent(g_Player)
-	g_ScriptManager:AddComponent(l_ComponentName,l_GameObject,l_PlayerComponent)
-	
-	l_PlayerComponent:Initialize()
-	g_PlayerComponent = l_PlayerComponent
-	
-	table.insert(self.m_Entities,l_PlayerComponent)
-end
