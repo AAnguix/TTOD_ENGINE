@@ -7,7 +7,7 @@
 #include "Components\AnimatorController\Transition.h"
 #include "GameObject\GameObject.h"
 #include "Components\LuaComponent.h"
-#include "Components\Script.h"
+#include "Components\Script\Script.h"
 
 CAnimatorController::CAnimatorController(const std::string &Name, CGameObject* Owner)
 :CComponent(Name,Owner)

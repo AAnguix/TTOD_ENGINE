@@ -18,6 +18,7 @@ public:
 	void Update(float ElapsedTime);
 	CScript* AddComponent(const std::string& Name, CLuaGameObjectHandle* Owner, CLUAComponent* Component);
 	void RemoveComponents();
+	CScript* GetScript(const std::string& LuaComponentName) const;
 	const std::vector<CScript *> & GetLUAScripts();
 };
 

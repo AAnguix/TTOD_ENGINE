@@ -140,15 +140,15 @@ float GetShadowMapContrib(int IdLight, float3 WorldPos, Texture2D ShadowMapTextu
 		
 		float2 l_ProjectedLightCoords=float2(((l_LightViewPosition.x/l_LightViewPosition.w)/2.0f)+0.5f, ((-l_LightViewPosition.y/l_LightViewPosition.w)/2.0f)+0.5f);
 		
-		float l_DepthShadowMap=ShadowMapTexture.Sample(Sampler, l_ProjectedLightCoords).r;
-		float l_LightDepth=l_LightViewPosition.z/l_LightViewPosition.w;
-		//float m_ShadowMapBias=0.001;
-		float m_ShadowMapBias=0.001;
-		l_DepthShadowMap=l_DepthShadowMap+m_ShadowMapBias;
-		float m_ShadowMapStrength=0.5;
-		
+		 // Determine if the projected coordinates are in the 0 to 1 range.
 		if((saturate(l_ProjectedLightCoords.x)==l_ProjectedLightCoords.x) && (saturate(l_ProjectedLightCoords.y)==l_ProjectedLightCoords.y))
 		{
+			float l_DepthShadowMap=ShadowMapTexture.Sample(Sampler, l_ProjectedLightCoords).r;
+			float l_LightDepth=l_LightViewPosition.z/l_LightViewPosition.w;
+			float m_ShadowMapBias=0.001;
+			l_DepthShadowMap=l_DepthShadowMap+m_ShadowMapBias;
+			float m_ShadowMapStrength=0.5;
+			
 			// l_ShadowContrib=0
 			if(l_LightDepth>l_DepthShadowMap)
 				l_ShadowContrib=0;

@@ -49,7 +49,17 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		end
 		
 		if self:IsAttacking()==false then
-			if CInputManager.GetInputManager():IsActionActive("MOVE_FWD") then			
+
+			local b1 = CInputManager.GetInputManager():IsActionActive("MOVE_FWD")
+			local lp = SGUIPosition(0.4,0.4,0.2,0.2,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+				
+			if b1 then
+				g_GUIManager:DoText("aa","calibri_font",lp,"","bool: ".."true")
+			else 
+				g_GUIManager:DoText("aa","calibri_font",lp,"","bool: ".."false")
+			end
+		
+			if  b1 then			
 				self.m_Forward = true
 				self.m_Walk = true
 				-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)					

@@ -26,7 +26,7 @@
 		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX" technique="gbuffer_diffuse_lightmap_technique"/>
         <default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX" technique="gbuffer_diffuse_normal_lightmap_technique"/>
 		<renderable_object_technique name="rnm_renderable_object_technique" technique="gbuffer_diffuse_normal_rnm_technique"/>
-		
+		<renderable_object_technique name="Bola_Fuego_object_technique" technique="Bola_Fuego_technique"/>
 		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="gbuffer_drawquad_technique"/>
 	</pool_renderable_object_technique>
 	
@@ -44,6 +44,10 @@
 		<!-- <renderable_object_technique name="animated_models_normal_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
 		<renderable_object_technique name="animated_models_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
 		<renderable_object_technique name="animated_models_normal_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/> -->
+	</pool_renderable_object_technique>
+	
+	<pool_renderable_object_technique name="generate_black_and_white_map">
+		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="generate_black_and_white_map_drawquad_technique"/>
 	</pool_renderable_object_technique>
 	
 	<pool_renderable_object_technique name="heat_vision_pool">

@@ -13,6 +13,7 @@
 #include "Animation\AnimatedModelManager.h"
 #include "Render\DebugRender.h"
 #include "Camera\CameraControllerManager.h"
+#include "Log\Log.h"
 
 /*Used to create a mesh instance when game is runing*/
 CMeshInstance::CMeshInstance(CGameObject* Owner, const std::string &Name, const std::string &CoreName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
@@ -63,11 +64,8 @@ void CMeshInstance::GeneratePhysxActor(CXMLTreeNode &TreeNode)
 			if (l_ParentName != "" && l_ParentLayer != "" && l_ParentBoneName != "")
 			{
 				Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
-				//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
 				Mat44f l_ParentTransform = m_Parent->GetTransform();
 
-				//l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());
-				/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
 				Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
 				l_Translation.SetIdentity();
 				l_Translation.Translate(m_Position);
@@ -80,19 +78,18 @@ void CMeshInstance::GeneratePhysxActor(CXMLTreeNode &TreeNode)
 
 				Mat44f l_Tranform;
 				l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
-				Mat44f tuPutaMatriz = l_Tranform*l_BoneTransform*l_ParentTransform;
+				Mat44f l_MatrixResult = l_Tranform*l_BoneTransform*l_ParentTransform;
 
-				Arma_Position = tuPutaMatriz.GetWorldPos();
-				Arma_Yaw = tuPutaMatriz.GetYaw();
-				Arma_Pitch = tuPutaMatriz.GetPitch();
-				Arma_Roll = tuPutaMatriz.GetRoll();
+				Arma_Position = l_MatrixResult.GetWorldPos();
+				Arma_Yaw = l_MatrixResult.GetYaw();
+				Arma_Pitch = l_MatrixResult.GetPitch();
+				Arma_Roll = l_MatrixResult.GetRoll() - 1.57f;
 			}
 
 			bool l_Trigger = TreeNode.GetBoolProperty("trigger", false);
 			unsigned int l_Group = TreeNode.GetIntProperty("group", 0);
 			float l_Density = TreeNode.GetFloatProperty("density", 1.0f);
 
-			//bool l_AbleToBeTrigger = true;
 			CPhysXManager* l_PhysxManager = CEngine::GetSingleton().GetPhysXManager();
 
 			if (l_ParentName == "")
@@ -101,29 +98,25 @@ void CMeshInstance::GeneratePhysxActor(CXMLTreeNode &TreeNode)
 			}
 
 			Quatf l_Rotation;
+			Vect3f l_Position;
 			if (l_ParentName != "")
 			{
+				l_Position = Arma_Position;
 				l_Rotation = Quatf(Arma_Yaw, Arma_Pitch, Arma_Roll);
 			}
 			else
 			{
+				l_Position = m_Position;
 				l_Rotation = Quatf(m_Yaw, m_Pitch, m_Roll);
 			}
 
 			if (l_ActorType == "static")
-				l_PhysxManager->CreateStaticActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation);
+				l_PhysxManager->CreateStaticActor(m_Name, m_StaticMesh->GetName(), l_Position, l_Rotation);
 			else if (l_ActorType == "dynamic")
-				l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation, l_Density, false);
+				l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), l_Position, l_Rotation, l_Density, false);
 			else if (l_ActorType == "kinematic")
 			{
-				if (l_ParentName != "")
-				{
-					l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), Arma_Position, l_Rotation, l_Density, true);
-				}
-				else
-				{
-					l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), m_Position, l_Rotation, l_Density, true);
-				}
+				l_PhysxManager->CreateDynamicActor(m_Name, m_StaticMesh->GetName(), l_Position, l_Rotation, l_Density, true);
 			}
 
 			if (l_Trigger)
@@ -193,8 +186,18 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 					l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
 					else if (b_Test == 5)
 					l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
-				
-				l_ContextManager->SetWorldMatrix(l_Tranform*l_BoneTransform*l_ParentTransform);
+				Mat44f l_Matrix = l_Tranform*l_BoneTransform*l_ParentTransform;
+				Vect3f l_Po = l_Matrix.GetWorldPos();
+				float l_Y = l_Matrix.GetYaw();
+				float l_P = l_Matrix.GetPitch();
+				float  l_R = l_Matrix.GetRoll();
+				LOG("ESTO EN C");
+				LOG(l_Po);
+				LOG(l_Y);
+				LOG(l_P);
+				LOG(l_R);
+
+				l_ContextManager->SetWorldMatrix(l_Matrix);
 			}
 			else
 			{

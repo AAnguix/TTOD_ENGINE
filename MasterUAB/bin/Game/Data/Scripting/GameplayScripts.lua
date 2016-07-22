@@ -17,5 +17,7 @@ function LoadGamePlayScripts()
 	dofile("./Data/Scripting/Elements/Pedestal.lua")
 	dofile("./Data/Scripting/Elements/ShadowManager.lua")
 	dofile("./Data/Scripting/Elements/LightsManager.lua")
+	dofile("./Data/Scripting/Elements/MagicBall.lua")
+	dofile("./Data/Scripting/Elements/Statue.lua")
 	g_LogManager:Log("Gameplayscripts loaded.")
 end

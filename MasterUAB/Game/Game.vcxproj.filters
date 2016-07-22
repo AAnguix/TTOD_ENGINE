@@ -7,14 +7,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="videogame.cpp" />
-    <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ScriptManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Resources\resource.h">
       <Filter>Resources</Filter>

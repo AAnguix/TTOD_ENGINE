@@ -29,6 +29,7 @@ public:
 
 	/*Graphics*/
 	const Vect3f & GetPosition() const;
+	void SetPosition(const Vect3f& Position);
 	Vect3f GetForward() const;
 	Vect3f GetUp() const;
 	Vect3f GetRight() const;

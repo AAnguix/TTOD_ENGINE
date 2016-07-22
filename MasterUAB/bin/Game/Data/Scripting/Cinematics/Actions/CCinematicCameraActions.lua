@@ -1,37 +1,3 @@
-class 'CCinematicsAction'
-
-function CCinematicsAction:__init(XMLTreeNode)
-	self.m_Time=XMLTreeNode:GetFloatProperty("time", 0.0,false)
-	self.m_Duration=XMLTreeNode:GetFloatProperty("duration", 0.0,false)
-end
-
-function CCinematicsAction:GetTime()
-	return self.m_Time
-end
-
-function CCinematicsAction:SetTime(Value)
-	self.m_Time=Value
-end
-
-function CCinematicsAction:GetDuration()
-	return self.m_Duration
-end
-
-function CCinematicsAction:IsActive()
-	--return self.m_Active
-	return true
-end
-
-function CCinematicsAction:Update(ElapsedTime)
-end
-
-function CCinematicsAction:MustUpdate()
-	return true
-end
-
-function CCinematicsAction:Execute()
-end
-
 --Cameras
 class 'CCinematicsActionSetCamera' (CCinematicsAction)
 function CCinematicsActionSetCamera:__init(XMLTreeNode)
@@ -186,5 +152,3 @@ function CCinematicsActionSetPosition:Execute()
 	local l_3DElement = l_ROManager:GetResource(self.m_Name)
 	l_3DElement:SetPosition(self.m_Value)
 end
-
-

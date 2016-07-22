@@ -26,6 +26,9 @@ public:
 	virtual void Enable(){ m_Enabled = true; };
 	virtual bool IsEnabled(){ return m_Enabled; };
 
+	virtual void OnTriggerEnter(const std::string& Actor){};
+	virtual void OnTriggerExit(const std::string& Actor){};
+
 	CEmptyPointerClass* GetThisLuaAddress() const;
 	CEmptyPointerClass* GetEnabledLuaAddress() const;
 };

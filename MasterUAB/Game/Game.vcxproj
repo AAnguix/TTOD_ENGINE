@@ -125,14 +125,12 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
-    <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="videogame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Resources\resource.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
-    <ClInclude Include="ScriptManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cursor_default.cur" />

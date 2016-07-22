@@ -4,7 +4,10 @@ g_CameraXAxisRotationSpeed=0.3
 --g_CurrentLevel = 0
 
 g_PlayerComponent = nil --Store the instance to the player component
-g_Player = nil -- ... player RObject
+g_Player = nil -- ... player LuaGameObjectHandle
+
+g_MagicBall = nil
+g_Dragon = nil
 
 g_CurrentGuiFile = "./Data/Scripting/GUI/GUIStartScreen.lua"
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainStartScreen.lua"
@@ -41,6 +44,7 @@ g_GraphicsStats = g_Engine:GetGraphicsStats()
 g_Profiler = g_Engine:GetProfiler()
 
 g_EventManager = CEventManager()
+g_CinematicActionManager = CCinematicsActionManager()
 g_AIManager = CAIManager()
 g_GameController = CGameController()
 g_DamageCalculator = CDamageCalculator()

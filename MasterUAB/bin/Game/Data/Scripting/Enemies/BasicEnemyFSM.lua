@@ -23,7 +23,7 @@ function OnUpdate_Idle_BasicEnemy(Enemy, ElapsedTime)
 end
 function OnExit_Idle_BasicEnemy(Enemy)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." exits idle")
-	g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Idle")
+	--g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Idle")
 	Enemy:GetLuaGameObject():SetBool("DelayToPatrol", false)
 end
 
@@ -86,7 +86,7 @@ function OnExit_Attack_BasicEnemy(Enemy)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." exits Attack")
 	--g_PlayerComponent:TakeDamage(Enemy:GetWeapon():GetType(),Enemy:GetWeapon():GetDamage())	
 	--g_PlayerComponent:TakeDamage("knife",15.0)
-	g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Attack")
+	--g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Attack")
 	Enemy:GetLuaGameObject():SetBool("IsPlayerInsideVisionRange", false)
 end
 
@@ -103,6 +103,5 @@ function OnUpdate_Hit_BasicEnemy(Enemy, ElapsedTime)
 end
 function OnExit_Hit_BasicEnemy(Enemy)
 	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits Hit")
-	
-	g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Hit")
+	--g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Hit")
 end

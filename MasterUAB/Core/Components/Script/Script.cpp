@@ -1,4 +1,4 @@
-#include "Components\Script.h"
+#include "Components\Script\Script.h"
 #include "Components\LuaComponent.h"
 #include <cassert>
 

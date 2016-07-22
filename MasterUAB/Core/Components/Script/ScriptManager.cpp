@@ -2,7 +2,7 @@
 #include "GameObject\LuaGameObjectHandle.h"
 #include "GameObject\GameObject.h"
 #include "Components\LuaComponent.h"
-#include "Components\Script.h"
+#include "Components\Script\Script.h"
 #include <assert.h>
 
 CScriptManager::CScriptManager()
@@ -25,6 +25,16 @@ void CScriptManager::UpdateComponents(float ElapsedTime)
 		if (m_Components[i])
 			m_Components[i]->Update(ElapsedTime);
 	}
+}
+
+CScript* CScriptManager::GetScript(const std::string& LuaComponentName) const
+{
+	for (size_t i = 0; i < m_Components.size(); ++i)
+	{
+		if (m_Components[i]->GetLuaComponent()->GetName() == LuaComponentName)
+			return m_Components[i];
+	}
+	return nullptr;
 }
 
 CScript* CScriptManager::AddComponent(const std::string& Name, CLuaGameObjectHandle* Owner, CLUAComponent* Component)

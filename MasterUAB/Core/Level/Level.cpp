@@ -10,7 +10,7 @@
 #include "Render\RenderManager.h"
 #include "Render\DebugRender.h"
 #include "ISoundManager.h"
-#include "ScriptManager.h"
+#include "Components\Script\ScriptManager.h"
 #include "PhysXManager.h"
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "Animation\AnimatorControllerManager.h"

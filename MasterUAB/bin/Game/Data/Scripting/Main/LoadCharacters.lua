@@ -1,18 +1,19 @@
 -- DRAGON
 function CGameController:LoadDragon(XMLTreeNode)
-	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(XMLTreeNode)
-	local l_ComponentName = l_LuaGameObject:GetName().."_Script"
+	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
+	g_Dragon = g_GameController:AddLuaGameObjectHandle(l_Name)
+	local l_ComponentName = g_Dragon:GetName().."_Script"
 	
 	local l_ParticleEmitter = GetParticleEmitter(XMLTreeNode)
 	local l_BoneName = XMLTreeNode:GetPszProperty("bone_name", "", false)
 	local l_ModelName = XMLTreeNode:GetPszProperty("model_name", "", false)
 	
-	local l_CoreModel = l_LuaGameObject:GetAnimatedCoreModel()
+	local l_CoreModel = g_Dragon:GetAnimatedCoreModel()
 	local l_BoneID = l_CoreModel:GetBoneId(l_BoneName)
 	
-	if l_LuaGameObject ~= nil and l_ParticleEmitter ~= nil and l_BoneName ~= "" then
-		local l_DragonComponent = CDragonComponent(l_LuaGameObject,l_ParticleEmitter,l_BoneID)
-		g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_DragonComponent)
+	if g_Dragon ~= nil and l_ParticleEmitter ~= nil and l_BoneName ~= "" then
+		local l_DragonComponent = CDragonComponent(g_Dragon,l_ParticleEmitter,l_BoneID)
+		g_ScriptManager:AddComponent(l_ComponentName,g_Dragon,l_DragonComponent)
 		l_DragonComponent:Initialize()
 		table.insert(self.m_Entities,l_DragonComponent)
 	end
@@ -22,9 +23,9 @@ end
 function CGameController:LoadPlayer(XMLTreeNode)
 	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
 	g_Player = g_GameController:AddLuaGameObjectHandle(l_Name)
-	
 	local l_ComponentName = g_Player:GetName().."_Script"
- 	g_Engine:GetGameObjectManager():SetPlayer(g_Player:GetGameObject()) --Tells layer manager who is the player.
+ 	
+	g_Engine:GetGameObjectManager():SetPlayer(g_Player:GetGameObject()) --Tells layer manager who is the player.
 	
 	local l_PlayerComponent=CPlayerComponent(g_Player)
 	g_ScriptManager:AddComponent(l_ComponentName,g_Player,l_PlayerComponent)

@@ -3,6 +3,7 @@ function StartLevelOne()
 	LoadGamePlayScripts() --LuaMainInGame.lua
 	
 	-- dofile("./Data/Scripting/LoadingScreen.lua")
+	g_DamageCalculator:LoadXML("Data/damage_reduction_percentages.xml")
 	local l_LevelToLoad = "1"
 	g_Engine:AddLevel(l_LevelToLoad)
 	g_Engine:LoadLevel(l_LevelToLoad)

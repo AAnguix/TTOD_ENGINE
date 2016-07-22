@@ -28,6 +28,12 @@ const Vect3f & CLuaGameObjectHandle::GetPosition() const
 	return l_RenderableObject->GetPosition();
 }
 
+void CLuaGameObjectHandle::SetPosition(const Vect3f& Position)
+{
+	CRenderableObject* l_RenderableObject = m_GameObject->GetRenderableObject();
+	l_RenderableObject->SetPosition(Position);
+}
+
 Vect3f CLuaGameObjectHandle::GetForward() const{ return m_GameObject->GetRenderableObject()->GetForward(); }
 Vect3f CLuaGameObjectHandle::GetUp() const{ return m_GameObject->GetRenderableObject()->GetUp(); }
 Vect3f CLuaGameObjectHandle::GetRight() const{ return m_GameObject->GetRenderableObject()->GetRight(); }

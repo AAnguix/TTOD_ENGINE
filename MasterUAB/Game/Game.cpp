@@ -328,6 +328,10 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_KEYDOWN:
+		{
+			//CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
+			//break;
+		}
 		case WM_KEYUP:
 		{
 			bool WasDown = ((lParam & (1 << 30)) != 0);

@@ -1,10 +1,8 @@
 class 'CDragonComponent' (CLUAComponent)
-function CDragonComponent:__init(CGameObject, ParticleSystemInstance, BoneID)
-	CLUAComponent.__init(self,CGameObject:GetName().."_script")
-	self.m_GameObject = CGameObject
-	self.m_RObject = CGameObject:GetRenderableObject()
+function CDragonComponent:__init(CLuaGameObject, ParticleSystemInstance, BoneID)
+	CLUAComponent.__init(self,CLuaGameObject:GetName().."_script")
+	self.m_LuaGameObject = CLuaGameObject
 	
-	self.m_Dead=false
 	self.m_MaxHealth=1000.0
 	self.m_Health=740.0
 	self.m_Weapons = {}
@@ -14,76 +12,77 @@ function CDragonComponent:__init(CGameObject, ParticleSystemInstance, BoneID)
 	self.m_CurrentStateIndex = 0
 	
 	self.m_AttackDelay = 3.0
+	self.m_TimeStuned = 0.0
 	
 	self.m_Speed = 1.0
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	
 	self.m_FireParticles = ParticleSystemInstance
 	self.m_BoneID = BoneID
-	-- self.m_FireParticles:SetParent(CGameObject, BoneName)
+	-- self.m_FireParticles:SetParent(CLuaGameObject, BoneName)
 	self.m_Target = Vect3f(0.0,0.0,0.0)
 	
 	--Character collider
 	self.m_Height = 3.0
-	self.m_Radius = 1.5
+	self.m_Radius = 2.0
 	self.m_Density = 100
 	
-	--Components
-	self.m_Animator = nil 
-	self.m_AudioSource = nil
 end
 
 function CDragonComponent:Initialize()
-	--Physyx
-	local l_CharacterCollider = CCharacterCollider.AddCharacterCollider("CharacterCollider", self.m_GameObject)
-	if l_CharacterCollider ~= nil then 
-		local l_Material = l_CharacterCollider:GetPhysxMaterial()
-		local l_MaterialName = l_Material:GetName()
-		g_PhysXManager:RegisterMaterial(l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
-		m_Position = self.m_RObject:GetPosition()
-		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
-	end
+	
+	local l_GameObject = self.m_LuaGameObject:GetGameObject()
+	local l_CColliderName = self.m_LuaGameObject:GetName().."_CharacterCollider"	
+	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, l_GameObject, self.m_Height, self.m_Radius, self.m_Density)
+	
+	-- if l_CharacterCollider ~= nil then 
+		-- local l_Material = l_CharacterCollider:GetPhysxMaterial()
+		-- local l_MaterialName = l_Material:GetName()
+		-- g_PhysXManager:RegisterMaterial(l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
+		-- m_Position = self.m_RObject:GetPosition()
+		-- l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
+		-- g_PhysXManager:CreateCharacterController(self.m_GameObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName)
+	-- end
 
 	self.m_Animator = CAnimatorController.AddAnimatorController("AnimatorController", self.m_GameObject)
-	local l_Idle = self.m_Animator:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Dragon", "OnUpdate_Idle_Dragon", "OnExit_Idle_Dragon")
-	local l_Scratch = self.m_Animator:AddState("Scratch_State", "normalAttack", 1.0, "OnEnter_Scratch_Dragon", "OnUpdate_Scratch_Dragon", "OnExit_Scratch_Dragon")
-	local l_SpitFire = self.m_Animator:AddState("SpitFire_State", "normalAttack", 1.0, "OnEnter_SpitFire_Dragon", "OnUpdate_SpitFire_Dragon", "OnExit_SpitFire_Dragon")
-	local l_Stomp = self.m_Animator:AddState("Stomp_State", "iraAttack", 1.0, "OnEnter_Stomp_Dragon", "OnUpdate_Stomp_Dragon", "OnExit_Stomp_Dragon")
-	local l_WhipTale = self.m_Animator:AddState("WhipTale_State", "iraAttack", 1.0, "OnEnter_WhipTale_Dragon", "OnUpdate_WhipTale_Dragon", "OnExit_WhipTale_Dragon")
+	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Dragon", "OnUpdate_Idle_Dragon", "OnExit_Idle_Dragon")
+	local l_Scratch = self.m_LuaGameObject:AddState("Scratch_State", "normalAttack", 1.0, "OnEnter_Scratch_Dragon", "OnUpdate_Scratch_Dragon", "OnExit_Scratch_Dragon")
+	local l_SpitFire = self.m_LuaGameObject:AddState("SpitFire_State", "normalAttack", 1.0, "OnEnter_SpitFire_Dragon", "OnUpdate_SpitFire_Dragon", "OnExit_SpitFire_Dragon")
+	local l_Stomp = self.m_LuaGameObject:AddState("Stomp_State", "iraAttack", 1.0, "OnEnter_Stomp_Dragon", "OnUpdate_Stomp_Dragon", "OnExit_Stomp_Dragon")
+	local l_WhipTale = self.m_LuaGameObject:AddState("WhipTale_State", "iraAttack", 1.0, "OnEnter_WhipTale_Dragon", "OnUpdate_WhipTale_Dragon", "OnExit_WhipTale_Dragon")
     
-	self.m_Animator:AddBool("IsPlayerInsideScratchRange", false)
-	self.m_Animator:AddTrigger("WaitingTimeExpired", false) --The time that the dragon waits beetwen attacks
-	self.m_Animator:AddTrigger("TimeSpitingFireExpired", false) --The time that the dragon is spiting fire
-	self.m_Animator:AddTrigger("IsHealthBellow25Percent", false)
-	self.m_Animator:AddTrigger("IsHealthBellow50Percent", false)
-	self.m_Animator:AddTrigger("IsHealthBellow75Percent", false)
-	
-	self.m_Animator:AddBool("HealthBellow25PercentAttackRaised", false)
-	self.m_Animator:AddBool("HealthBellow50PercentAttackRaised", false)
-	self.m_Animator:AddBool("HealthBellow75PercentAttackRaised", false)
+	self.m_LuaGameObject:AddBool("IsPlayerInsideScratchRange", false)
+	self.m_LuaGameObject:AddTrigger("WaitingTimeExpired", false) --The time that the dragon waits beetwen attacks
+	self.m_LuaGameObject:AddTrigger("TimeSpitingFireExpired", false) --The time that the dragon is spiting fire
+	self.m_LuaGameObject:AddTrigger("IsHealthBellow25Percent", false)
+	self.m_LuaGameObject:AddTrigger("IsHealthBellow50Percent", false)
+	self.m_LuaGameObject:AddTrigger("IsHealthBellow75Percent", false)
 
-	local l_IdleToSplitFire = l_Idle:AddTransition("IdleToSplitFire", l_SpitFire, false, 0.0, 0.1, 0.1)
+	self.m_LuaGameObject:AddBool("HealthBellow25PercentAttackRaised", false)
+	self.m_LuaGameObject:AddBool("HealthBellow50PercentAttackRaised", false)
+	self.m_LuaGameObject:AddBool("HealthBellow75PercentAttackRaised", false)
+
+	local l_IdleToSplitFire = l_Idle:AddTransition("IdleToSplitFire", l_SpitFire, false, 0.1, 0.1)
 	l_IdleToSplitFire:AddBoolCondition("IsPlayerInsideScratchRange", false)
 	l_IdleToSplitFire:AddTriggerCondition("WaitingTimeExpired")
 	
-	local l_SplitFireToIdle = l_SpitFire:AddTransition("SplitFireToIdle", l_Idle, false, 0.0, 0.1, 0.1)
+	local l_SplitFireToIdle = l_SpitFire:AddTransition("SplitFireToIdle", l_Idle, false, 0.1)
 	l_SplitFireToIdle:AddTriggerCondition("TimeSpitingFireExpired")
 	
-	local l_IdleToScratch = l_Idle:AddTransition("IdleToScratch", l_Scratch, false, 0.0, 0.1, 0.1)
+	local l_IdleToScratch = l_Idle:AddTransition("IdleToScratch", l_Scratch, false, 0.1, 0.1)
 	l_IdleToScratch:AddBoolCondition("IsPlayerInsideScratchRange", true)
 	l_IdleToScratch:AddTriggerCondition("WaitingTimeExpired")
 	
 	--Special attacks
-	local l_IdleToStomp = l_Idle:AddTransition("IdleToStomp", l_Stomp, false, 0.0, 0.1, 0.1)
+	local l_IdleToStomp = l_Idle:AddTransition("IdleToStomp", l_Stomp, false, 0.1, 0.1)
 	l_IdleToStomp:AddTriggerCondition("IsHealthBellow50Percent")
 	l_IdleToStomp:AddBoolCondition("HealthBellow50PercentAttackRaised",false)
 	
-	local l_IdleToWhipTale25 = l_Idle:AddTransition("IdleToWhipTale25", l_WhipTale, false, 0.0, 0.1, 0.1)
+	local l_IdleToWhipTale25 = l_Idle:AddTransition("IdleToWhipTale25", l_WhipTale, false, 0.1, 0.1)
 	l_IdleToWhipTale25:AddTriggerCondition("IsHealthBellow25Percent")
 	l_IdleToWhipTale25:AddBoolCondition("HealthBellow25PercentAttackRaised",false)
 	
-	local l_IdleToWhipTale75 = l_Idle:AddTransition("IdleToWhipTale75", l_WhipTale, false, 0.0, 0.1, 0.1)
+	local l_IdleToWhipTale75 = l_Idle:AddTransition("IdleToWhipTale75", l_WhipTale, false, 0.1, 0.1)
 	l_IdleToWhipTale75:AddTriggerCondition("IsHealthBellow75Percent")
 	l_IdleToWhipTale75:AddBoolCondition("HealthBellow75PercentAttackRaised",false)
 	
@@ -94,6 +93,16 @@ function CDragonComponent:Initialize()
 	self:AddState(1.0, 20.0, 2.0, 50.0, 3.0, 4.0)
 	
 	--g_LogManager:Log("Dragon "..self.m_GameObject:GetName().." created...")
+end
+
+function CDragonComponent:OnTriggerEnter(Actor)
+	if Actor == "MagicBall" then
+		self:TakeMagicDamage(g_MagicBall:GetDamage())
+		self:Stun(g_MagicBall:GetStunTime())
+	end	
+end
+
+function CDragonComponent:OnTriggerExit(Actor)
 end
 
 function CDragonComponent:CreatePhysxSqueleton()
@@ -178,25 +187,42 @@ function CDragonComponent:LookAtPoint(Point, ElapsedTime)
 end
 
 function CDragonComponent:Update(ElapsedTime)
-
+	self:CheckLife()
+	local l_Stuned = self:CheckStuned()
 end
 
-function CDragonComponent:GetAnimator() return self.m_Animator end
-function CDragonComponent:GetAudioSource() return self.m_AudioSource end
+function CDragonComponent:CheckStuned(ElapsedTime)
+	if self.m_TimeStuned>0 then
+		self.m_TimeStuned = self.m_TimeStuned - ElapsedTime
+		return true
+	end
+	return false
+end
 
-function CDragonComponent:IsDead() return self.m_Dead end
+function CDragonComponent:CheckLife()
+	if self.m_Health<=0 then
+		g_EventManager:FireEvent("DragonIsDead")
+	end
+end
+
 function CDragonComponent:GetHealth() return self.m_Health end
 function CDragonComponent:GetHealthPercentage()
 	return ((self.m_Health*100)/self.m_MaxHealth) 
 end
 function CDragonComponent:GetSpeed()return self.m_Speed end
 function CDragonComponent:GetArmor() return self.m_Armor end
-function CDragonComponent:GetRenderableObject() return self.m_RObject end
 
 function CDragonComponent:TakeDamage(PlayerWeapon, PlayerDamage)
 	local l_DragonArmor = self.m_Armor:GetType()
 	self.m_Health = self.m_Health - (g_DamageCalculator:CalculateDamage(l_DragonArmor,PlayerWeapon,PlayerDamage))
 end
+function CDragonComponent:TakeMagicDamage(Damage)
+	self.m_Health = self.m_Health - Damage
+end
+function CDragonComponent:Stun(Seconds)
+	self.m_TimeStuned = Seconds
+end
+
 function CDragonComponent:NextState()
 	if self.m_CurrentStateIndex < #self.m_States then
 		self.m_CurrentStateIndex = self.m_CurrentStateIndex+1

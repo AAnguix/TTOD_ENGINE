@@ -6,7 +6,7 @@
 #include "LuabindManager\LuabindManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "Components\LuaComponent.h"
-#include "Components\Script.h"
+#include "Components\Script\Script.h"
 #include "Transition.h"
 #include "Log\Log.h"
 

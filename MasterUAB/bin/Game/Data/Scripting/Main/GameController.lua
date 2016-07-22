@@ -66,10 +66,16 @@ function CGameController:LoadXML(Filename)
 				self:LoadEnemy(l_Element)
 			elseif l_ElemName=="player" then
 				self:LoadPlayer(l_Element)
-			elseif l_ElemName=="pedestal" then
-				l_Pedestal = self:LoadPedestal(l_Element)
+			
+			elseif l_ElemName=="magic_ball" then
+				self:LoadMagicBall(l_Element)
+			elseif l_ElemName=="statue" then
+				self:LoadStatue(l_Element)
 			elseif l_ElemName=="dragon" then
 				self:LoadDragon(l_Element)
+				
+			elseif l_ElemName=="pedestal" then
+				l_Pedestal = self:LoadPedestal(l_Element)
 			elseif l_ElemName=="shadow_manager" then
 				self:LoadShadowManager(l_Element)
 			elseif l_ElemName=="light_manager" then

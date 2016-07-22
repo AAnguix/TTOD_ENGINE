@@ -8,12 +8,23 @@ function CCinematicsActionManager:__init()
 	self.m_CurrentExecutedAction=1
 end
 
+function CCinematicsActionManager:Remove(i)
+	table.remove(self.m_Actions,i)
+end
+
 function CCinematicsActionManager:Update(ElapsedTime)
 	self.m_CurrentTime=self.m_CurrentTime+ElapsedTime
 	local l_CurrentActionId=self.m_CurrentAction
+	
 	if l_CurrentActionId>#(self.m_Actions) then
 		return
 	end
+	
+	-- g_LogManager:Log("1. "..self.m_Actions[self.m_CurrentExecutedAction]:GetTime())
+	-- g_LogManager:Log("2. "..self.m_CurrentTime)
+	-- g_LogManager:Log("3. "..self.m_CurrentExecutedAction)
+	-- g_LogManager:Log("4. "..#self.m_Actions)
+	
 	while self.m_CurrentExecutedAction<=(#self.m_Actions) and
 	self.m_Actions[self.m_CurrentExecutedAction]:GetTime()<=self.m_CurrentTime do
 		self.m_Actions[self.m_CurrentExecutedAction]:Execute()
@@ -21,8 +32,23 @@ function CCinematicsActionManager:Update(ElapsedTime)
 	end
 
 	for i=1, (#self.m_Actions) do
+	
+		local l_Time = self.m_Actions[i]:GetTime()
+		local l_Acti = self.m_Actions[i]:IsActive()
+		local l_CurrentT = self.m_CurrentTime
+		if((l_Acti==false) and (l_Time<=l_CurrentT)) then
+			g_LogManager:Log("Activamos "..i.." "..self.m_Actions[i]:GetTime().." "..self.m_CurrentTime)
+			self.m_Actions[i]:SetActive(true)
+		end
+	
 		if self.m_Actions[i]:IsActive() or self.m_Actions[i]:MustUpdate() then
+			
 			self.m_Actions[i]:Update(ElapsedTime)
+		
+			if(self.m_CurrentTime>(self.m_Actions[i]:GetTime()+self.m_Actions[i]:GetDuration())) then
+				self:Remove(i)
+			end
+			
 		end
 	end
 end
@@ -71,6 +97,11 @@ function CCinematicsActionManager:LoadXML(Filename)
 					l_Action=CCinematicsActionAddYawPitchRoll(l_Element)
 				elseif l_ActionName=="set_position" then
 					l_Action=CCinematicsActionSetPosition(l_Element)	
+					
+				elseif l_ActionName=="draw_slide" then
+					l_Action=CCinematicsActionDrawSlide(l_Element)
+				else 
+					g_LogManager:Log("Can't create cinematic action "..l_ActionName..". It doesn't exists.")
 				end
 				
 				if l_Action~=nil then
@@ -81,15 +112,19 @@ function CCinematicsActionManager:LoadXML(Filename)
 							l_LastActionTime=self.m_Actions[(#self.m_Actions)]:GetTime()
 							l_LastActionDuration=self.m_Actions[(#self.m_Actions)]:GetDuration()
 						end
-						l_Action:SetTime(l_Action:GetTime()+l_LastActionTime+l_LastActionDuration)
+						local l_NewTime = l_Action:GetTime()+l_LastActionTime+l_LastActionDuration
+						l_Action:SetTime(l_NewTime)
 						self.m_MaxTime=l_Action:GetTime()+l_LastActionTime+l_LastActionDuration
+					else
+						l_Action:SetTime(l_Action:GetTime())
 					end
 					table.insert(self.m_Actions, l_Action)
 					--sort actions by time
 				end
 			end 
 		end
+		g_LogManager:Log("Cinematic actions loaded")
 	else
-		print("File '"..Filename.."'not correctly loaded")
+		g_LogManager:Log(Filename.." can't be loaded")
 	end
 end 

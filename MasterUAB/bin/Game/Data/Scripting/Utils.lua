@@ -1,3 +1,7 @@
+function ExponentialDisplacement(Displacement,Constant,Base,Exponent)
+	local l_Exp = Displacement*(Base^Exponent)
+	return l_Exp*Constant
+end
 
 --Returns if a 3D Point is inside a circunference arround a point.
 function IsPointInsideCircunferenceLUA(CircunferenceCenter,Point,Radius)
@@ -17,23 +21,7 @@ function CalculateAngleToFacePoint(Forward, OriginPoint, PointToFace)
 	local l_NewAngle = 0.0
 	local l_VectorToDestinyPoint = PointToFace - OriginPoint
 	l_VectorToDestinyPoint:Normalize(1.0)
-	
-	g_LogManager:Log("FWD "..Forward.x.." "..Forward.y.." "..Forward.z.." ")
-	g_LogManager:Log("origin "..OriginPoint.x.." "..OriginPoint.y.." "..OriginPoint.z.." ")
-	g_LogManager:Log("dest "..PointToFace.x.." "..PointToFace.y.." "..PointToFace.z.." ")
-	g_LogManager:Log("vect "..l_VectorToDestinyPoint.x.." "..l_VectorToDestinyPoint.y.." "..l_VectorToDestinyPoint.z.." ")
-	
 	l_NewAngle = AngleBetweenVectors(l_VectorToDestinyPoint, Forward)
-	-- local l_DotProduct = Forward * l_VectorToDestinyPoint
-	-- if l_DotProduct>1.0 then l_DotProduct=1.0 end
-	
-	-- local l_NewAngle = math.acos(l_DotProduct)
-	
-	-- local l_CrossProduct = l_VectorToDestinyPoint:cross(Forward)
-	-- if l_CrossProduct.y < 0.0 then
-		-- l_NewAngle = l_NewAngle*(-1.0)
-	-- end 
- 
 	return l_NewAngle
 end
 

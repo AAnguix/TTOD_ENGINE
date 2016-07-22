@@ -28,7 +28,7 @@ function OnEnter_Attack_Player(Player)
 end
 
 function OnUpdate_Attack_Player(Player, ElapsedTime)
-	
+	Player:FaceEnemy(ElapsedTime)
 end
 
 function OnExit_Attack_Player(Player)

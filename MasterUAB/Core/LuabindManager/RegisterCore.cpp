@@ -31,14 +31,14 @@
 
 /*Core*/
 #include "GameObject\LuaGameObjectHandleManager.h"
-#include "Components\Script.h"
+#include "Components\Script\Script.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
 #include "Components\LuaComponent.h"
 #include "Components\AnimatorController\AnimatorController.h"
 #include "Components\AnimatorController\Transition.h"
 #include "Components\AudioSource.h"
-#include "ScriptManager.h"
+#include "Components\Script\ScriptManager.h"
 #include "Level\Level.h"
 
 #include "GUIManager.h"
@@ -164,6 +164,7 @@ void CLuabindManager::RegisterCore()
 		.def(constructor<CGameObject*>())
 		
 		.def("GetPosition", &CLuaGameObjectHandle::GetPosition)
+		.def("SetPosition", &CLuaGameObjectHandle::SetPosition)
 		.def("GetForward", &CLuaGameObjectHandle::GetForward)
 		.def("GetUp", &CLuaGameObjectHandle::GetUp)
 		.def("GetRight", &CLuaGameObjectHandle::GetRight)
@@ -385,9 +386,31 @@ public:
 			call<void>("Update", ElapsedTime);
 		}
 	}
+	virtual void OnTriggerEnter(const std::string& Actor)
+	{
+		if (IsEnabled())
+		{
+			call<void>("OnTriggerEnter", Actor);
+		}
+	}
+	virtual void OnTriggerExit(const std::string& Actor)
+	{
+		if (IsEnabled())
+		{
+			call<void>("OnTriggerExit", Actor);
+		}
+	}
 	static void default_Update(CLUAComponent* ptr, float ElapsedTime)
 	{
 		return ptr->CLUAComponent::Update(ElapsedTime);
+	}
+	static void default_OnTriggerEnter(CLUAComponent* ptr, const std::string& Actor)
+	{
+		return ptr->CLUAComponent::OnTriggerEnter(Actor);
+	}
+	static void default_OnTriggerExit(CLUAComponent* ptr, const std::string& Actor)
+	{
+		return ptr->CLUAComponent::OnTriggerExit(Actor);
 	}
 	/*std::string GetType() const
 	{
@@ -403,6 +426,8 @@ void CLuabindManager::RegisterComponents()
 		.def(constructor<const std::string>())
 		.def("GetName", &CLUAComponent::GetName)
 		.def("Update", &CLUAComponent::Update, &CLUAComponent_wrapper::default_Update)
+		.def("OnTriggerEnter", &CLUAComponent::OnTriggerEnter, &CLUAComponent_wrapper::default_OnTriggerEnter)
+		.def("OnTriggerExit", &CLUAComponent::OnTriggerExit, &CLUAComponent_wrapper::default_OnTriggerExit)
 		.def("AddTime", &CLUAComponent::AddTime)
 		.def("GetTimer", &CLUAComponent::GetTimer)
 		.def("ResetTimer", &CLUAComponent::ResetTimer)

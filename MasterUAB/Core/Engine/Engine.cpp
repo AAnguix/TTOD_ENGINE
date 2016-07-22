@@ -24,7 +24,7 @@
 #include "Render\GraphicsStats.h"
 #include "Profiler\Profiler.h"
 #include "Animation\AnimatorControllerManager.h"
-#include "ScriptManager.h"
+#include "Components\Script\ScriptManager.h"
 #include "Render\DebugRender.h"
 #include "Level\Level.h"
 #include "Utils\FileUtils.h"
@@ -155,7 +155,7 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 
 	#ifdef _DEBUG
 		Quatf l_QuatCamera = Quatf(0.0f, 0.0f, 0.0f, 1.0f);
-		bool l_CamPhysX = CEngine::GetSingleton().GetPhysXManager()->CreateSphereTrigger("DebugPhysxCamera", "DebugPhysxCamera", 0.1, "DebugPhysxCameraMaterial", "GROUP3", Vect3f(0.0f, 0.0f, 0.0f), l_QuatCamera, "kinematic");
+		bool l_CamPhysX = CEngine::GetSingleton().GetPhysXManager()->CreateSphereTrigger("DebugPhysxCamera", "DebugPhysxCamera", 0.1f, "DebugPhysxCameraMaterial", "GROUP3", Vect3f(0.0f, 0.0f, 0.0f), l_QuatCamera, "kinematic");
 		CEngine::GetSingleton().GetLogManager()->Log("VC: " + std::string(l_VCDescription) + ". Memory: " + std::to_string(l_VCMemory)+" mb.");
 	#endif
 

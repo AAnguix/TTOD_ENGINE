@@ -6,6 +6,9 @@
 #include "Log\Log.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
+#include "Components\Script\ScriptManager.h"
+#include "Components\Script\Script.h"
+#include "Components\LuaComponent.h"
 
 static physx::PxDefaultErrorCallback gDefaultErrorCallback;
 static physx::PxDefaultAllocator gDefaultAllocatorCallback;
@@ -306,15 +309,23 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 
 		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			l_Ss << "OnTriggerEnter" << triggerName << "('" << actorName << "')";
+			CScript* l_Script = CEngine::GetSingleton().GetScriptManager()->GetScript(triggerName);
+			if(l_Script!=nullptr)
+				l_Script->GetLuaComponent()->OnTriggerEnter(actorName);
+
+			/*l_Ss << "OnTriggerEnter" << triggerName << "('" << actorName << "')";
 			std::string l_Code = l_Ss.str();
-			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
+			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);*/
 		}
 		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
-			l_Ss << "OnTriggerExit" << triggerName << "('" << actorName << "')";
+			CScript* l_Script = CEngine::GetSingleton().GetScriptManager()->GetScript(triggerName);
+			if (l_Script != nullptr)
+				l_Script->GetLuaComponent()->OnTriggerExit(actorName);
+
+			/*l_Ss << "OnTriggerExit" << triggerName << "('" << actorName << "')";
 			std::string l_Code = l_Ss.str();
-			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);
+			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);*/
 		}
 	}
 }

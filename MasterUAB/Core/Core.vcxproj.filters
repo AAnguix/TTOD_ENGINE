@@ -73,9 +73,6 @@
     <ClCompile Include="DebugHelper\DebugHelperImplementation.cpp">
       <Filter>DebugHelper</Filter>
     </ClCompile>
-    <ClCompile Include="Components\Script.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Components\LuaComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -108,6 +105,12 @@
     </ClCompile>
     <ClCompile Include="GameObject\GameObjectManager.cpp">
       <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Script\Script.cpp">
+      <Filter>Components\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Script\ScriptManager.cpp">
+      <Filter>Components\Script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,9 +180,6 @@
     <ClInclude Include="DebugHelper\DebugHelperImplementation.h">
       <Filter>DebugHelper</Filter>
     </ClInclude>
-    <ClInclude Include="Components\Script.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Level\Level.h">
       <Filter>Level</Filter>
     </ClInclude>
@@ -209,6 +209,12 @@
     </ClInclude>
     <ClInclude Include="GameObject\GameObjectManager.h">
       <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Script\Script.h">
+      <Filter>Components\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Script\ScriptManager.h">
+      <Filter>Components\Script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +247,9 @@
     </Filter>
     <Filter Include="GameObject">
       <UniqueIdentifier>{5c0d48cc-4811-4831-abdd-9947887c784c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Script">
+      <UniqueIdentifier>{27891363-ec8a-4612-851f-60b79cba0cd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

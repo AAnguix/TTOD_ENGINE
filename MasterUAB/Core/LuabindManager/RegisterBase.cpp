@@ -10,7 +10,7 @@
 #include "Components\AnimatorController\AnimatorController.h"
 #include "Components\CharacterCollider.h"
 #include "Components\Collider.h"
-#include "Components\Script.h"
+#include "Components\Script\Script.h"
 #include "Components\AudioSource.h"
 #include "RenderableObjects\RenderableObject.h"
 #include "Engine\Engine.h"

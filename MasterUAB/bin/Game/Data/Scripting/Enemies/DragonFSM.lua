@@ -4,29 +4,29 @@ end
 function OnUpdate_Idle_Dragon(Dragon, ElapsedTime)
 	
 	local l_AttackDelay = Dragon:GetCurrentState().m_AttackDelay
-	local l_Animator = Dragon:GetAnimator()
+	local l_Lgo = Dragon:GetLuaGameObject()
 	--g_LogManager:Log("Current attack delay "..l_AttackDelay)
 	--g_LogManager:Log("Timer: "..Dragon:GetTimer())
 	
 	if Dragon:GetHealthPercentage() < 75 then
 		--g_LogManager:Log("Health bellow 75%!")
-		l_Animator:SetTrigger("IsHealthBellow75Percent")  
+		l_Lgo:SetTrigger("IsHealthBellow75Percent")  
 	elseif  Dragon:GetHealthPercentage() < 50 then
 		--g_LogManager:Log("Health bellow 50%!")
-		l_Animator:SetTrigger("IsHealthBellow50Percent")  
+		l_Lgo:SetTrigger("IsHealthBellow50Percent")  
 	elseif  Dragon:GetHealthPercentage() < 25 then
 		--g_LogManager:Log("Health bellow 25%!")
-		l_Animator:SetTrigger("IsHealthBellow25Percent")  
+		l_Lgo:SetTrigger("IsHealthBellow25Percent")  
 	end
 	
 	if Dragon:GetTimer() > l_AttackDelay then
 	
 		local l_ScratchRange = Dragon:GetCurrentState().m_ScratchRange
-		l_Animator:SetTrigger("WaitingTimeExpired")  
-		if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), Dragon.m_RObject:GetPosition(), l_ScratchRange)  then 
-			l_Animator:SetBool("IsPlayerInsideScratchRange", true) 
+		l_Lgo:SetTrigger("WaitingTimeExpired")  
+		if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), l_Lgo:GetPosition(), l_ScratchRange)  then 
+			l_Lgo:SetBool("IsPlayerInsideScratchRange", true) 
 		else   
-			l_Animator:SetBool("IsPlayerInsideScratchRange", false)  
+			l_Lgo:SetBool("IsPlayerInsideScratchRange", false)  
 		end
 	end
 end

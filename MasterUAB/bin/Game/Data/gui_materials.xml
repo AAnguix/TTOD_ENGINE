@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <materials>
-	<material name="background_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
-		<texture filename="Data\GUI\textures\background_1280_720.dds"/>
-</material>
 <material name="map_material_1280_720" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\map_1280_720.dds"/>
 </material>
@@ -66,6 +63,54 @@
 <material name="start_screen_level_percentage_loaded_slider_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 	<texture filename="Data\GUI\textures\slider.dds"/>
 </material>
+<material name="background_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+		<texture filename="Data\GUI\textures\background_1280_720.dds"/>
+</material>
+
+<!-- FIRST CINEMATIC -->
+<material name="slide1_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide1.dds"/>
+</material>
+<material name="slide2_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide2.dds"/>
+</material>
+<material name="slide3_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide3.dds"/>
+</material>
+<material name="slide4_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide4.dds"/>
+</material>
+<material name="slide5_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide5.dds"/>
+</material>
+<material name="slide6_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide6.dds"/>
+</material>
+<material name="slide7_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide7.dds"/>
+</material>
+<material name="slide8_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide8.dds"/>
+</material>
+<material name="slide9_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide9.dds"/>
+</material>
+<material name="slide10_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide10.dds"/>
+</material>
+<!-- 
+<material name="slide11_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide11.dds"/>
+</material>
+<material name="slide12_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide12.dds"/>
+</material>
+<material name="slide13_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide13.dds"/>
+</material>
+<material name="slide14_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\Slide14.dds"/>
+</material> -->
 
 <!-- IN GAME MENU -->
 <material name="in_game_menu_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">

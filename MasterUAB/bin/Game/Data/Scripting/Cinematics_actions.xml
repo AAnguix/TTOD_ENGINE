@@ -1,9 +1,62 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <cinematics>
-	<on time="0.0" duration="1.0" action="add_roll" layer="solid" name="WindmillBlades" value="0.01"/>
-	<after_last_action time="0.5" duration="0.0" action="set_camera" name="Camera001" />
-	<after_last_action time="1.5" duration="0.0" action="set_camera" name="FixedCamera" />
+	<on time="0.0" duration="10.0" action="draw_slide" text="Diapositiva 1. Probando el texto '\n' de la diapositiva 1" text_name="Slide1Text" font_name="calibri_font"
+	text_x="0.5" text_y="0.8" text_width="0.1" text_height="0.1" text_color="1.0 0.0 0.0 1.0"
+	gui_image_id="slide1" image_id="slide1_image" sprite="slide1_sprite" />
+
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 2" text_name="Slide2Text" font_name="calibri_font"
+	text_x="0.6" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide2" image_id="slide2_image" sprite="slide2_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 3" text_name="Slide3Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide3" image_id="slide3_image" sprite="slide3_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 4" text_name="Slide4Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide4" image_id="slide4_image" sprite="slide4_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 5" text_name="Slide5Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide5" image_id="slide5_image" sprite="slide5_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 6" text_name="Slide6Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide6" image_id="slide6_image" sprite="slide6_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 7" text_name="Slide7Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide7" image_id="slide7_image" sprite="slide7_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 8" text_name="Slide8Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide8" image_id="slide8_image" sprite="slide8_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 9" text_name="Slide9Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide9" image_id="slide9_image" sprite="slide9_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 10" text_name="Slide10Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide10" image_id="slide10_image" sprite="slide10_sprite" />
+	
+	<!-- <after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 11" text_name="Slide11Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide11" image_id="slide11_image" sprite="slide11_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 12" text_name="Slide12Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide12" image_id="slide12_image" sprite="slide12_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 13" text_name="Slide13Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide13" image_id="slide13_image" sprite="slide13_sprite" />
+	
+	<after_last_action time="0.0" duration="6.0" action="draw_slide" text="Diapositiva 14" text_name="Slide14Text" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0"
+	gui_image_id="slide14" image_id="slide14_image" sprite="slide14_sprite" /> -->
 </cinematics>
 
-<!-- <after_last_action time="1.0" duration="0.0" action="clear_cycle" layer="solid" name="bruja" id="1" delay_out="0.1"/>
-<after_last_action time="2.0" duration="0.0" action="set_yaw" layer="solid" name="ruin_horse" value="2.2"/> -->
+<!-- <on time="0.0" duration="1.0" action="add_roll" layer="solid" name="WindmillBlades" value="0.01"/>
+	<after_last_action time="0.5" duration="0.0" action="set_camera" name="Camera001" />
+	<after_last_action time="1.5" duration="0.0" action="set_camera" name="FixedCamera" /> -->

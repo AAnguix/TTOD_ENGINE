@@ -52,4 +52,49 @@
 	<gui_spritemap name="Nirmala_48_Spritemap" width="512" height="512" material="nirmala_48_font_material">
 		<sprite name="Nirmala48_0.png" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>
+	
+	<!-- FIRST CINEMATIC -->
+	<gui_spritemap name="slide1_spritemap" width="1920" height="1080" material="slide1_material">
+		<sprite name="slide1_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide2_spritemap" width="1920" height="1080" material="slide2_material">
+		<sprite name="slide2_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide3_spritemap" width="1920" height="1080" material="slide3_material">
+		<sprite name="slide3_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide4_spritemap" width="1920" height="1080" material="slide4_material">
+		<sprite name="slide4_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide5_spritemap" width="1920" height="1080" material="slide5_material">
+		<sprite name="slide5_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide6_spritemap" width="1920" height="1080" material="slide6_material">
+		<sprite name="slide6_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide7_spritemap" width="1920" height="1080" material="slide7_material">
+		<sprite name="slide7_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide8_spritemap" width="1920" height="1080" material="slide8_material">
+		<sprite name="slide8_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide9_spritemap" width="1920" height="1080" material="slide9_material">
+		<sprite name="slide9_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide10_spritemap" width="1920" height="1080" material="slide10_material">
+		<sprite name="slide10_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<!-- <gui_spritemap name="slide11_spritemap" width="1920" height="1080" material="slide11_material">
+		<sprite name="slide11_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide12_spritemap" width="1920" height="1080" material="slide12_material">
+		<sprite name="slide12_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide13_spritemap" width="1920" height="1080" material="slide13_material">
+		<sprite name="slide13_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap>
+	<gui_spritemap name="slide14_spritemap" width="1920" height="1080" material="slide14_material">
+		<sprite name="slide14_sprite" x="0" y="0" w="1920" h="1080" />
+	</gui_spritemap> -->
+	
 </gui_elements>

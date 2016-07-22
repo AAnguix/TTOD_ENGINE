@@ -168,8 +168,6 @@ void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 	}
 }
 
-bool b = true;
-
 Mat44f CAnimatedInstanceModel::GetBoneTransformationMatrix(const int BoneID) const
 {
 	Mat44f l_BoneTransformation; 

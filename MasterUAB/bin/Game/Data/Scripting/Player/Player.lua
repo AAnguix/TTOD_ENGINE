@@ -22,6 +22,8 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_Health=480.0
 	self.m_Speed=1.0
 	self.m_AttackDelay = 1.0
+	self.m_MinBlockAngle = 1.74
+	self.m_MaxBlockAngle = 4.53
 	
 	self.m_Height = 1.4
 	self.m_Density = 30.0
@@ -180,6 +182,8 @@ function CPlayerComponent:GetLuaGameObject() return self.m_LuaGameObject end
 function CPlayerComponent:GetHealth() return self.m_Health end
 function CPlayerComponent:GetMaxHealth() return self.m_MaxHealth end
 function CPlayerComponent:GetSpeed() return self.m_Speed end
+function CPlayerComponent:GetMinBlockAngle() return self.m_MinBlockAngle end
+function CPlayerComponent:GetMaxBlockAngle() return self.m_MaxBlockAngle end
 function CPlayerComponent:GetReference() return self end
 function CPlayerComponent:IsMapOpened() return self.m_MapOpened end
 
@@ -206,26 +210,25 @@ function CPlayerComponent:SetBlockingState(state) self.m_IsBlocking = state end
 function CPlayerComponent:IsAttacking() return self.m_Attacking end
 function CPlayerComponent:SetAttacking(state) self.m_Attacking = state end
 
-function CPlayerComponent:TakeDamage(Damage)
-	self.m_Health = self.m_Health - Damage
-	--g_LogManager:Log("Al PLayer le Queda de vida: ".. self.m_Health)
-end
-
--- function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
-	-- self.m_AudioSource:PlayEvent("SonidoDePrueba")
-	-- local l_Armor = self.m_CurrentArmor:GetType()
-	-- local l_Armor = "heroic"
-	-- local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyDamage)
-	-- if self.m_Health >= 0.0 then
-		-- self.m_Health = self.m_Health - l_DamageCalculated
-	-- end
+-- function CPlayerComponent:TakeDamage(Damage)
+	-- self.m_Health = self.m_Health - Damage
 -- end
+
+function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
+	--self.m_AudioSource:PlayEvent("SonidoDePrueba")
+	local l_Armor = self.m_CurrentArmor:GetType()
+	local l_Armor = "heroic"
+	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyDamage)
+	if self.m_Health >= 0.0 then
+		self.m_Health = self.m_Health - l_DamageCalculated
+	end
+end
 
 function CPlayerComponent:GetClosestEnemy(Enemies)
 	local l_ClosestEnemy = nil
 	local l_MinDistance = 0.0
 	for i=1, (#Enemies) do
-		local l_EnemyPos = Enemies[i]:GetRenderableObject():GetPosition()
+		local l_EnemyPos = Enemies[i]:GetLuaGameObject():GetPosition()
 		local l_Distance = (l_EnemyPos-self.m_LuaGameObject:GetPosition()):Length()
 		if ((l_MinDistance==0.0)or(l_Distance <= l_MinDistance)) then
 			l_ClosestEnemy = Enemies[i]
@@ -235,12 +238,13 @@ function CPlayerComponent:GetClosestEnemy(Enemies)
 	return l_ClosestEnemy
 end
 
-function CPlayerComponent:FaceEnemy(Enemies,ElapsedTime)
-	local l_ClosestEnemy = self:GetClosestEnemy(Enemies)
-	local l_Forward = self.m_LuaGameObject:GetForward()
-	local l_EnemyPos = l_ClosestEnemy:GetRenderableObject():GetPosition()
-	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)	
+function CPlayerComponent:FaceEnemy(ElapsedTime)
 	
+	local l_ClosestEnemy = self:GetClosestEnemy(g_GameController:GetEnemies())
+	local l_Forward = self.m_LuaGameObject:GetForward()
+	local l_EnemyPos = l_ClosestEnemy:GetLuaGameObject():GetPosition()
+	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)	
+	--g_LogManager:Log("Angle del FaceEnemy: ".. l_Angle)
 	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
 	local l_Velocity = self.m_RotationVelocity
 	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))

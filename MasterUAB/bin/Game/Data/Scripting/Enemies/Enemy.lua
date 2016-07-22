@@ -2,7 +2,6 @@ class 'CEnemyComponent' (CLUAComponent)
 function CEnemyComponent:__init(CLuaGameObject,EnemyType)
 	CLUAComponent.__init(self,CLuaGameObject:GetName().."_"..EnemyType.."Script")
 	self.m_LuaGameObject = CLuaGameObject
-	self.m_Dead=false
 	self.m_Health=100.0
 	
 	self.m_Armor = nil
@@ -55,7 +54,6 @@ function CEnemyComponent:Update(ElapsedTime)
 	self:MovementController(ElapsedTime)
 end
 
-function CEnemyComponent:IsDead() return self.m_Dead end
 function CEnemyComponent:GetHealth() return self.m_Health end
 function CEnemyComponent:GetSpeed()	return self.m_Speed end
 function CEnemyComponent:GetVisionRange() return self.m_VisionRange end
@@ -70,20 +68,29 @@ function CEnemyComponent:SetAttacking(state) self.m_Attacking = state end
 function CEnemyComponent:IsHit() return self.m_GotHit end
 function CEnemyComponent:SetHitState(state) self.m_GotHit = state end
 
-
-
 function CEnemyComponent:AddWaypoint(WayPoint)
 	table.insert(self.m_WayPoints,WayPoint)
 end
 
---function CEnemyComponent:TakeDamage(PlayerWeapon, PlayerDamage)
-	--self.m_Health = self.m_Health - Damage
---end
+function CEnemyComponent:TakeDamage(PlayerWeapon)
+	--self.m_AudioSource:PlayEvent("SonidoDePrueba")
+	local l_Armor = self.m_Armor:GetType()
+	local l_PlayerDamage = PlayerWeapon:GetDamage()
+	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,PlayerWeapon,l_PlayerDamage)
+	if self.m_Health >= 0.0 then
+		if (self.m_Health - l_DamageCalculated >= 0.0) then
+			self.m_Health = self.m_Health - l_DamageCalculated
+		else
+			self.m_Health = 0.0
+		end
+	end
+	self:CheckAlive()
+end
 
-function CEnemyComponent:TakeDamage(Damage)
-	self.m_Health = self.m_Health - Damage
-	g_LogManager:Log("Al enemigo le queda de vida: ".. self.m_Health)
-
+function CEnemyComponent:CheckAlive()
+	if self.m_Health <= 0.0 then
+		g_LogManager:Log("Enemigo muerto")
+	end
 end
 
 function CEnemyComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, ElapsedTime)
@@ -227,11 +234,12 @@ function CEnemyComponent:MoveWithAStar(ElapsedTime)
 	local l_PlayerPos = g_Player:GetPosition()
 
 	local l_Points = g_AIManager:SearchAStarPath(l_EnemyPos,l_PlayerPos,false)
-	if (l_Points:size() >= 0) then
+	
+	if (l_Points~= nil and l_Points:size() >= 0) then
 	
 		g_LogManager:Log("Points:")
-		g_LogManager:Log(l_Points:at(0))
-		g_LogManager:Log(l_EnemyPos)
+		--g_LogManager:Log(l_Points:at(0))
+		--g_LogManager:Log(l_EnemyPos)
 		
 		local l_VectorToPlayer = l_Points:at(0) - l_EnemyPos
 		l_VectorToPlayer:Normalize(1.0)
