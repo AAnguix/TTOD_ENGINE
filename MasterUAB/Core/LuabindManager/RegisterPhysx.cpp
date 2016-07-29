@@ -49,7 +49,8 @@ void CLuabindManager::RegisterPhysics()
 		.def("CreateBoxTrigger", (bool(CPhysXManager::*)(const std::string&, const std::string&, const Vect3f&, const std::string&, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateBoxTrigger)
 		.def("CreateSphereTrigger", (bool(CPhysXManager::*)(const std::string&, const std::string&, float, const std::string&, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateSphereTrigger)
 
-		.def("AddColliderComponent", &CPhysXManager::AddColliderComponent)
+		.def("AddColliderComponent", (CCollider*(CPhysXManager::*)(const std::string&, CLuaGameObjectHandle*))&CPhysXManager::AddColliderComponent)
+
 		.def("AddCharacterColliderComponent", &CPhysXManager::AddCharacterColliderComponent)
 		.def("RemoveComponents", &CPhysXManager::RemoveComponents)
 		.def("ApplyForce", &CPhysXManager::ApplyForce)

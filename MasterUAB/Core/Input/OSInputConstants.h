@@ -1,0 +1,112 @@
+#ifndef _OSINPUTCONSTANTS_H
+#define _OSINPUTCONSTANTS_H
+
+namespace InputMapping
+{
+	enum EOSInputButtonX
+	{
+		OS_INPUT_BUTTON_ZERO,
+		OS_INPUT_BUTTON_ONE,
+		OS_INPUT_BUTTON_TWO,
+		OS_INPUT_BUTTON_THREE,
+		OS_INPUT_BUTTON_FOUR,
+		OS_INPUT_BUTTON_FIVE,
+		OS_INPUT_BUTTON_SIX,
+		OS_INPUT_BUTTON_SEVEN,
+		OS_INPUT_BUTTON_EIGHT,
+		OS_INPUT_BUTTON_NINE,
+		
+		OS_INPUT_BUTTON_A,
+		OS_INPUT_BUTTON_B,
+		OS_INPUT_BUTTON_C,
+		OS_INPUT_BUTTON_D,
+		OS_INPUT_BUTTON_E,
+		OS_INPUT_BUTTON_F,
+		OS_INPUT_BUTTON_G,
+		OS_INPUT_BUTTON_H,
+		OS_INPUT_BUTTON_I,
+		OS_INPUT_BUTTON_J,
+		OS_INPUT_BUTTON_K,
+		OS_INPUT_BUTTON_L,
+		OS_INPUT_BUTTON_M,
+		OS_INPUT_BUTTON_N,
+		OS_INPUT_BUTTON_O,
+		OS_INPUT_BUTTON_P,
+		OS_INPUT_BUTTON_Q,
+		OS_INPUT_BUTTON_R,
+		OS_INPUT_BUTTON_S,
+		OS_INPUT_BUTTON_T,
+		OS_INPUT_BUTTON_U,
+		OS_INPUT_BUTTON_V,
+		OS_INPUT_BUTTON_W,
+		OS_INPUT_BUTTON_X,
+		OS_INPUT_BUTTON_Y,
+		OS_INPUT_BUTTON_Z,
+
+		OS_INPUT_BUTTON_ENTER,
+		OS_INPUT_BUTTON_ESPACE,
+		OS_INPUT_BUTTON_ESC,
+
+		OS_INPUT_BUTTON_F1,
+		OS_INPUT_BUTTON_F2,
+		OS_INPUT_BUTTON_F3,
+		OS_INPUT_BUTTON_F4,
+		OS_INPUT_BUTTON_F5,
+		OS_INPUT_BUTTON_F6,
+		OS_INPUT_BUTTON_F7,
+		OS_INPUT_BUTTON_F8,
+		OS_INPUT_BUTTON_F9,
+		OS_INPUT_BUTTON_F10,
+		OS_INPUT_BUTTON_F11,
+		OS_INPUT_BUTTON_F12,
+
+		OS_INPUT_BUTTON_MOUSE_RIGHT,
+		OS_INPUT_BUTTON_MOUSE_LEFT,
+		OS_INPUT_BUTTON_MOUSE_WHEEL,
+
+		OS_INPUT_BUTTON_GAMEPAD_ONE,
+		OS_INPUT_BUTTON_GAMEPAD_TWO,
+		OS_INPUT_BUTTON_GAMEPAD_THREE,
+		OS_INPUT_BUTTON_GAMEPAD_FOUR
+	};
+
+	struct SOSInputButtons
+	{
+		EOSInputButtonX m_Button;
+		bool m_Ctrl;
+		bool m_Alt;
+		SOSInputButtons(EOSInputButtonX Button, bool Alt, bool Ctrl) :m_Button(Button), m_Alt(Alt), m_Ctrl(Ctrl){};
+
+		bool operator<(SOSInputButtons const& Right) const
+		{
+			return m_Button < Right.m_Button;
+			bool b = ((m_Button < Right.m_Button) 
+					|| ((m_Button == Right.m_Button) && ((m_Alt && !Right.m_Alt) || (m_Ctrl && !Right.m_Ctrl)) ));
+			return b;
+		}
+
+		/*bool operator==(SOSInputButtons const& Right) const
+		{
+			return (m_Button == Right.m_Button) && (m_Alt==Right.m_Alt) && (m_Ctrl==Right.m_Ctrl);
+		}*/
+	};
+
+	enum EOSInputAxis
+	{
+		OS_INPUT_AXIS_MOUSE_X,
+		OS_INPUT_AXIS_MOUSE_Y,
+		OS_INPUT_AXIS_MOUSE_WHEEL,
+
+		OS_INPUT_AXIS_GAMEPAD_LEFT_X,
+		OS_INPUT_AXIS_GAMEPAD_LEFT_Y,
+
+		OS_INPUT_AXIS_GAMEPAD_RIGHT_X,
+		OS_INPUT_AXIS_GAMEPAD_RIGHT_Y,
+
+		OS_INPUT_AXIS_GAMEPAD_TRIGGER_X,
+		OS_INPUT_AXIS_GAMEPAD_TRIGGER_Y
+	};
+}
+
+#endif
+

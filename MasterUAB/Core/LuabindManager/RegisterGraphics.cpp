@@ -17,7 +17,6 @@
 #include "Components\AnimatorController\AnimatorController.h"
 
 #include "DebugHelper\DebugHelperImplementation.h"
-#include "Input\InputManagerImplementation.h"
 
 /*Graphics*/
 #include "Render\RenderManager.h"
@@ -49,7 +48,7 @@
 #include "Materials\TemplatedMaterialParameter.h"
 #include "Effects\EffectManager.h"
 #include "Textures\TextureManager.h"
-#include "Animation\AnimatorControllerManager.h"
+#include "Components\AnimatorController\AnimatorControllerManager.h"
 #include "Particles\ParticleManager.h"
 #include "Particles\ParticleSystemInstance.h"
 #include "cal3d\model.h"

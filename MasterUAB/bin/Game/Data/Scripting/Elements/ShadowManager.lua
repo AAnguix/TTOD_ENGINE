@@ -4,7 +4,10 @@ CLUAComponent.__init(self,"ShadowManagerScript")
 	self.m_Enable = false
 	self.m_SpotLights = {}
 	self.m_CurrentSpotlight = nil
+	self.m_LuaGameObject = nil
 end
+
+function CShadowManager:GetLuaGameObject() return nil end
 
 function CShadowManager:AddSpotlight(Spotlight)
 	table.insert(self.m_SpotLights,Spotlight)

@@ -5,6 +5,7 @@
 
 class CAnimatorController;
 class CGameObject;
+class CLuaGameObjectHandle;
 
 class CAnimatorControllerManager
 {
@@ -15,7 +16,8 @@ private:
 public:
 	CAnimatorControllerManager();
 	virtual ~CAnimatorControllerManager();
-	CAnimatorController* AddComponent(const std::string &Name, CGameObject* Owner);
+	CAnimatorController* AddComponent(const std::string &Name, CLuaGameObjectHandle* Owner);
+	void RemoveComponent(CGameObject* Owner);
 	void RemoveComponents();
 	void Update(float ElapsedTime);
 };

@@ -46,56 +46,78 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_Left = false
 	
 	self.m_RotationVelocity = 4.0
+	self.m_Velocity = Vect3f(0.0,0.0,0.0)
+	self.m_Speed = 3.0
 	
 	--Other
 	self.m_MapOpened = false
 	self.m_IsBlocking = false
 	self.m_Attacking = false
+	
+	self.m_AttackFinished = true
+	
+	self:SubscribeEvents()
+end
+
+-- Events
+function CPlayerComponent:SubscribeEvents()
+	g_EventManager:Subscribe(self, "PLAYER_WALKING_FORWARD")
+	g_EventManager:Subscribe(self, "PLAYER_WALKING_BACKWARDS")
+	g_EventManager:Subscribe(self, "PLAYER_WALKING_RIGHT")
+	g_EventManager:Subscribe(self, "PLAYER_WALKING_LEFT")
+
+	g_EventManager:Subscribe(self, "LOCK_CHARACTER")
+	g_EventManager:Subscribe(self, "PLAYER_OPENS_MAP")
+	g_EventManager:Subscribe(self, "PLAYER_DRINKS_BEER")
+	g_EventManager:Subscribe(self, "PLAYER_ATTACKS")
+	g_EventManager:Subscribe(self, "PLAYER_BLOCKS")
+	g_EventManager:Subscribe(self, "ON_ALT8_PRESSED")
+end
+
+function CPlayerComponent:ON_ALT8_PRESSED()
+	g_LogManager:Log("entrandoo")
+end
+
+dofile("./Data/Scripting/Player/PlayerEventsHandler.lua")
+
+function CPlayerComponent:AddVelocity(Vector)
+	self.m_Velocity = self.m_Velocity + (Vector * self.m_Speed)
+end
+
+function CPlayerComponent:AddGravity(ElapsedTime)
+	self.m_Velocity = self.m_Velocity + Vect3f(0,-10.0,0) * ElapsedTime
 end
 
 function CPlayerComponent:Initialize()
 
-	local l_GameObject = self.m_LuaGameObject:GetGameObject()
+	-- local l_GameObject = self.m_LuaGameObject:GetGameObject()
 	local l_CColliderName = self.m_LuaGameObject:GetName().."_CharacterCollider"
 	
-	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, l_GameObject, self.m_Height, self.m_Radius, self.m_Density)
+	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, self.m_LuaGameObject, self.m_Height, self.m_Radius, self.m_Density)
 	
 	local l_AudioSourceName = self.m_LuaGameObject:GetName().."_AudioSource"
-	g_SoundManager:AddComponent(l_AudioSourceName, l_GameObject)
+	g_SoundManager:AddComponent(l_AudioSourceName, self.m_LuaGameObject)
 	self.m_LuaGameObject:AddSound("SonidoDePrueba","Play_Hit")
 	--self.m_AudioSource:AddSound("OpenMapSound","Play_Open_Map")
 
 	--Animations
 	local l_ACName = self.m_LuaGameObject:GetName().."_AnimatorController"
-	g_AnimatorControllerManager:AddComponent(l_ACName, l_GameObject)
+	g_AnimatorControllerManager:AddComponent(l_ACName, self.m_LuaGameObject)
 	
 	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
 	local l_Walk = self.m_LuaGameObject:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
 	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
 	local l_Block = self.m_LuaGameObject:AddState("Block_State", "normalAttack", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
-	local l_Rotate = self.m_LuaGameObject:AddState("Rotate_State", "walk", 1.0, "OnEnter_Rotate_Player", "OnUpdate_Rotate_Player", "OnExit_Rotate_Player")
 	local l_Injured = self.m_LuaGameObject:AddState("Injured_State", "die", 1.0, "OnEnter_Injured_Player", "OnUpdate_Injured_Player", "OnExit_Injured_Player")
 	local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_Player", "OnUpdate_Dead_Player", "OnExit_Dead_Player")
 	
 	self.m_LuaGameObject:AddBool("Walk", false)
-	self.m_LuaGameObject:AddBool("Rotate", false)
 	self.m_LuaGameObject:AddTrigger("Attack", false)
 	self.m_LuaGameObject:AddTrigger("Block", false)
 	
 	
 	local l_IdleToWalk = l_Idle:AddTransition("IdleToWalk", l_Walk, false, 0.1)
 	l_IdleToWalk:AddBoolCondition("Walk", true)
-	
-	local l_IdleToRotate = l_Idle:AddTransition("IdleToRotate", l_Rotate, false, 0.1)
-	l_IdleToRotate:AddBoolCondition("Rotate",true)
-	
-	-- local l_RotateToIdle = l_Rotate:AddTransition("RotateToIdle", l_Idle, true, 0.1, 0.2)
-	-- l_RotateToIdle:AddBoolCondition("Rotate",false)
-	
-	
-	-- local l_RotateToWalk = l_Rotate:AddTransition("RotateToWalk", l_Walk, false, 0.1, 0.2)
-	-- l_RotateToWalk:AddBoolCondition("Walk", true)
-	-- l_RotateToWalk:AddBoolCondition("Rotate",false)
 	
 	local l_WalkToIdle = l_Walk:AddTransition("WalkToIdle", l_Idle, false, 0.1)
 	l_WalkToIdle:AddBoolCondition("Walk", false)
@@ -111,13 +133,6 @@ function CPlayerComponent:Initialize()
 	l_WalkToAttack:AddTriggerCondition("Attack")
 	
 	local l_BlockToIdle = l_Block:AddTransition("BlockToIdle", l_Idle, true, 0.1)
-	
-	-- local l_WalkToIdle = l_Walk:AddTransition("IdleToRotate", l_Idle, false, 0.1, 0.2)
-	-- l_WalkToIdle:AddBoolCondition("Walk", false)
-	
-	-- local l_RotateToAttack = l_Rotate:AddTransition("RotateToAttack", l_Attack, false, 0.1, 0.2)
-	-- l_RotateToAttack:AddTriggerCondition("Attack")
-	-- l_RotateToAttack:AddTriggerCondition("Rotate")
 	
 	-- local l_IdleToBlock = l_Idle:AddTransition("IdleToBlock", l_Block, true, 0.5, 1.0)
 	-- l_IdleToBlock:AddTriggerCondition("Block")
@@ -149,9 +164,6 @@ function CPlayerComponent:HandleEvents()
 	if self:FullHealth() then
 		g_EventManager:FireEvent("PlayerHasFullHealth")
 	end
-	if self:Dead() then
-		g_EventManager:FireEvent("PlayerIsDead")
-	end
 end
 
 function CPlayerComponent:Lock()
@@ -174,9 +186,6 @@ end
 
 function CPlayerComponent:FullHealth()
 	return (self.m_Health==self.m_MaxHealth)
-end
-function CPlayerComponent:Dead()
-	return (self.m_Health<=0.0)
 end
 function CPlayerComponent:GetLuaGameObject() return self.m_LuaGameObject end
 function CPlayerComponent:GetHealth() return self.m_Health end
@@ -207,8 +216,13 @@ function CPlayerComponent:GetWeapon(Index) return m_Weapons[Index] end
 function CPlayerComponent:IsBlocking() return self.m_IsBlocking end
 function CPlayerComponent:SetBlockingState(state) self.m_IsBlocking = state end
 
+-- Prevents player from hitting multiple times an enemy in a single attack
 function CPlayerComponent:IsAttacking() return self.m_Attacking end
 function CPlayerComponent:SetAttacking(state) self.m_Attacking = state end
+
+-- Disables multiple attacksw input instructions while player is attacking
+function CPlayerComponent:IsAttackFinished() return self.m_AttackFinished end
+function CPlayerComponent:SetAttackFinished(Value) self.m_AttackFinished = Value end
 
 -- function CPlayerComponent:TakeDamage(Damage)
 	-- self.m_Health = self.m_Health - Damage
@@ -220,7 +234,12 @@ function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
 	local l_Armor = "heroic"
 	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyDamage)
 	if self.m_Health >= 0.0 then
-		self.m_Health = self.m_Health - l_DamageCalculated
+		if((self.m_Health - l_DamageCalculated)<0.0) then
+			self.m_Health = 0.0
+			g_EventManager:FireEvent("PlayerIsDead")
+		else
+			self.m_Health = self.m_Health - l_DamageCalculated
+		end
 	end
 end
 
@@ -239,15 +258,16 @@ function CPlayerComponent:GetClosestEnemy(Enemies)
 end
 
 function CPlayerComponent:FaceEnemy(ElapsedTime)
-	
 	local l_ClosestEnemy = self:GetClosestEnemy(g_GameController:GetEnemies())
-	local l_Forward = self.m_LuaGameObject:GetForward()
-	local l_EnemyPos = l_ClosestEnemy:GetLuaGameObject():GetPosition()
-	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)	
-	--g_LogManager:Log("Angle del FaceEnemy: ".. l_Angle)
-	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-	local l_Velocity = self.m_RotationVelocity
-	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+	if l_ClosestEnemy~= nil then
+		local l_Forward = self.m_LuaGameObject:GetForward()
+		local l_EnemyPos = l_ClosestEnemy:GetLuaGameObject():GetPosition()
+		local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)	
+		--g_LogManager:Log("Angle del FaceEnemy: ".. l_Angle)
+		local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
+		local l_Velocity = self.m_RotationVelocity
+		self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+	end
 end
 
 function CPlayerComponent:FaceAttackDirection(ElapsedTime)

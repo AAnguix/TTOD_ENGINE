@@ -5,6 +5,8 @@ function CMagicBall:__init(CLuaGameObject)
 	self.m_StunTime = 2.0
 end
 
+function CMagicBall:GetLuaGameObject() return self.m_LuaGameObject end
+
 function CMagicBall:GetStunTime() return self.m_StunTime end
 function CMagicBall:GetDamage() return self.m_Damage end
 

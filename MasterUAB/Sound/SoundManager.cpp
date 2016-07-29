@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "Components\AudioSource.h"
 #include "GameObject\GameObject.h"
+#include "GameObject\LuaGameObjectHandle.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
 
@@ -328,7 +329,7 @@ void CSoundManager::UpdateComponents(float ElapsedTime)
 	}
 }
 
-CAudioSource* CSoundManager::AddComponent(const std::string &Name, CGameObject *Owner)
+CAudioSource* CSoundManager::AddComponent(const std::string &Name, CLuaGameObjectHandle *Owner)
 {
 	bool l_Found = false;
 	CAudioSource* l_AudioSource = nullptr;
@@ -342,8 +343,9 @@ CAudioSource* CSoundManager::AddComponent(const std::string &Name, CGameObject *
 	}
 	if (!l_Found)
 	{
-		l_AudioSource = new CAudioSource(Name, Owner);
-		Owner->SetAudioSource(l_AudioSource);
+		CGameObject* l_GObject = Owner->GetGameObject();
+		l_AudioSource = new CAudioSource(Name, l_GObject);
+		l_GObject->SetAudioSource(l_AudioSource);
 		m_Components.push_back(l_AudioSource);
 	}
 	else
@@ -353,6 +355,18 @@ CAudioSource* CSoundManager::AddComponent(const std::string &Name, CGameObject *
 	}
 
 	return l_AudioSource;
+}
+
+void CSoundManager::RemoveComponent(CGameObject *Owner)
+{
+	for (size_t i = 0; i < m_Components.size(); ++i)
+	{
+		if (m_Components[i]->GetOwner() == Owner)
+		{
+			delete m_Components[i];
+			m_Components.erase(m_Components.begin() + i);
+		}
+	}
 }
 
 void CSoundManager::RemoveComponents()

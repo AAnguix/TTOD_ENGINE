@@ -50,12 +50,12 @@ function CItem:UpdateGUI(ElapsedTime)
 		if self:IsInCooldown() then
 			g_GUIManager:DoButton(self.m_Gui.m_CooldownButton.m_GuiID, self.m_Gui.m_CooldownButton.m_ButtonID, self.m_Gui.m_CooldownButton.m_GuiPosition, self.m_Gui.m_CooldownButton.m_Color)
 		else
-			l_Pressed = g_GUIManager:DoButton(self.m_Gui.m_Button.m_GuiID, self.m_Gui.m_Button.m_ButtonID, self.m_Gui.m_Button.m_GuiPosition, self.m_Gui.m_Button.m_Color)
+			g_GUIManager:DoButton(self.m_Gui.m_Button.m_GuiID, self.m_Gui.m_Button.m_ButtonID, self.m_Gui.m_Button.m_GuiPosition, self.m_Gui.m_Button.m_Color)
 		end
 			
-		if l_Pressed then 
-			self:Use() 
-		end
+		-- if l_Pressed then 
+			-- self:Use() 
+		-- end
 	end
 	
 	if (self.m_Gui.m_HasText and self.m_CurrentCooldown>0.00) then

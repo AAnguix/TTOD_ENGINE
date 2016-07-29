@@ -25,6 +25,7 @@ end
 function OnEnter_Attack_Player(Player)
 	g_LogManager:Log("Enters attack")
 	Player:SetAttacking(true)
+	Player:SetAttackFinished(false)
 end
 
 function OnUpdate_Attack_Player(Player, ElapsedTime)
@@ -34,43 +35,8 @@ end
 function OnExit_Attack_Player(Player)
 	g_LogManager:Log("Exit attack")
 	Player:SetAttacking(false)
+	Player:SetAttackFinished(true)
 end
-
-
---Rotate_state
-function OnEnter_Rotate_Player(Player)
-	
-end
-
--- function OnUpdate_Rotate_Player(Player, ElapsedTime)
-	
-	-- local l_PlayerForward = Vect3f(0.0,0.0,0.0)
-	
-	-- if Player.m_Right then
-		-- l_PlayerForward = Player.m_RObject:GetRight()
-	-- elseif Player.m_Left then 
-		-- l_PlayerForward = Player.m_RObject:GetRight()*(-1.0)
-	-- elseif Player.m_Forward then 
-		-- l_PlayerForward = Player.m_RObject:GetForward()
-	-- elseif Player.m_Backwards then 
-		-- l_PlayerForward = Player.m_RObject:GetForward()*(-1.0)
-	-- end
-	
-	-- local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
-	-- local l_CurrentYaw = Player.m_RObject:GetYaw()
-	-- local l_Angle = CTTODMathUtils.AngleBetweenVectors(l_CameraForward,l_PlayerForward)
-	
-	-- Player.m_RObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, Player.m_RotationVelocity, ElapsedTime))
-	
-	-- if math.abs(l_Angle) < 0.1 then
-		-- g_Player:GetAnimatorController():SetBool("Rotate",false)	
-	-- end
--- end
-
-function OnExit_Rotate_Player(Player)
-	
-end
-
 
 --Walk_state
 function OnEnter_Walk_Player(Player)

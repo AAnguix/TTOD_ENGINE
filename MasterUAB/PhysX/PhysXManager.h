@@ -48,6 +48,7 @@ namespace physx
 struct RaycastData;
 class CCollider;
 class CCharacterCollider;
+class CLuaGameObjectHandle;
 class CGameObject;
 
 class CPhysXManager
@@ -157,8 +158,11 @@ public:
 	virtual void Reload();
 
 	/*Components*/
-	CCollider* AddColliderComponent(const std::string &Name, CGameObject *Owner);
-	CCharacterCollider* AddCharacterColliderComponent(const std::string &Name, CGameObject *Owner, float Height, float Radius, float Density);
+	CCollider* AddColliderComponent(const std::string &Name, CGameObject* Owner);
+	CCollider* AddColliderComponent(const std::string &Name, CLuaGameObjectHandle* Owner);
+	void RemoveColliderComponent(CGameObject *Owner);
+	CCharacterCollider* AddCharacterColliderComponent(const std::string &Name, CLuaGameObjectHandle* Owner, float Height, float Radius, float Density);
+	void RemoveCharacterColliderComponent(CGameObject *Owner);
 	virtual void RemoveComponents(){};
 
 	/*Actors*/

@@ -2,6 +2,7 @@
 #include "Components\AnimatorController\AnimatorController.h"
 #include <assert.h>
 #include "GameObject\GameObject.h"
+#include "GameObject\LuaGameObjectHandle.h"
 
 CAnimatorControllerManager::CAnimatorControllerManager()
 {
@@ -19,7 +20,19 @@ void CAnimatorControllerManager::UpdateComponents(float ElapsedTime)
 	}
 }
 
-CAnimatorController* CAnimatorControllerManager::AddComponent(const std::string &Name, CGameObject* Owner)
+void CAnimatorControllerManager::RemoveComponent(CGameObject* Owner)
+{
+	for (size_t i = 0; i < m_Components.size(); ++i)
+	{
+		if (m_Components[i]->GetOwner() == Owner)
+		{
+			delete m_Components[i];
+			m_Components.erase(m_Components.begin() + i);
+		}
+	}
+}
+
+CAnimatorController* CAnimatorControllerManager::AddComponent(const std::string &Name, CLuaGameObjectHandle* Owner)
 {
 	bool l_Found = false;
 	CAnimatorController* l_AnimatorController = nullptr;
@@ -33,8 +46,9 @@ CAnimatorController* CAnimatorControllerManager::AddComponent(const std::string 
 	}
 	if (!l_Found)
 	{
-		l_AnimatorController = new CAnimatorController(Name, Owner);
-		Owner->SetAnimatorController(l_AnimatorController);
+		CGameObject* l_GObject = Owner->GetGameObject();
+		l_AnimatorController = new CAnimatorController(Name, l_GObject);
+		l_GObject->SetAnimatorController(l_AnimatorController);
 		m_Components.push_back(l_AnimatorController);
 	}
 	else

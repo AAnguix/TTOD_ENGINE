@@ -6,7 +6,8 @@
 #include "Engine\EngineSettings.h"
 #include "Render\GraphicsStats.h"
 #include "Engine\Engine.h"
-#include "Input\InputManagerImplementation.h"
+#include "Input\InputMapperImplementation.h"
+
 #include "Input\KeyBoardInput.h"
 #include "LuabindManager\LuabindManager.h"
 #include "Log\Log.h"
@@ -17,6 +18,16 @@
 #include "libxml\parser.h"
 
 #pragma comment(lib, "Winmm.lib")
+
+#include "Input\InputMapper.h"
+#include <luabind/luabind.hpp>
+
+//Forward dec.
+void InputCallback(InputMapping::SMappedInput& inputs);
+void InputGamepadCallback(InputMapping::SMappedInput& inputs);
+
+int LastX = 0;
+int LastY = 0;
 
 static void __stdcall SwitchCameraCallback(void* _app)
 {
@@ -86,17 +97,14 @@ bool CGame::Initialize()
 	}
 	ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 
-	l_Engine.GetInputManager()->Initialize(m_hwnd);
-	l_Engine.GetInputManager()->LoadCommandsFromFile("./Data/input.xml");
+	l_Engine.GetInputMapper()->Initialize(L"./Data/InputContexts.txt",m_hwnd);
+	l_Engine.GetInputMapper()->PushContext(L"maincontext");
+	l_Engine.GetInputMapper()->AddCallback(InputCallback, 0);
 
 	l_Engine.Initialize(&m_hinstance);
 	l_Engine.GetRenderManager()->InitializeDebugRender();
 
-	//CAStar l_AStar;
-	//m_RenderManager.GetDebugRender()->InitializeASTarDebug(l_AStar.SearchPathA(Vect3f(0.0f,0.0f,0.0f),Vect3f(-10.0f,0.0f,5.0f)));
-
 	l_Engine.LoadLevelsCommonData();
-
 
 	/*CEngine::GetSingleton().GetSceneRendererCommandManager()->Load("./Data/scene_renderer_commands.xml");*/
 	l_Engine.GetLuabindManager()->RunLuaMain();
@@ -116,17 +124,10 @@ void CGame::Shutdown()
 		m_Graphics = 0;
 	}
 
-	/*if (m_Input)
-	{
-		delete m_Input;
-		m_Input = 0;
-	}*/
-
 	ShutdownWindows();
 
 	if (m_EngineSettings)
 	{
-		//m_EngineSettings->Shutdown();
 		delete m_EngineSettings;
 		m_EngineSettings = 0;
 	}
@@ -138,8 +139,6 @@ void CGame::Shutdown()
 
 void CGame::Run()
 {
-	SwitchCamera();
-
 	UpdateWindow(m_hwnd);
 
 	MSG msg;
@@ -174,10 +173,12 @@ void CGame::Run()
 			QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
 			float l_ElapsedTime = (currTimeStamp - prevTimeStamp)*secsPerCnt;
 			
-			CEngine::GetSingleton().GetInputManager()->BeginFrame();
+			CEngine::GetSingleton().GetInputMapper()->BeginFrame();
+			CEngine::GetSingleton().GetInputMapper()->Dispatch();
 			result = Update(l_ElapsedTime);
 			result = Frame();
-			CEngine::GetSingleton().GetInputManager()->EndFrame();
+			CEngine::GetSingleton().GetInputMapper()->Clear();
+			CEngine::GetSingleton().GetInputMapper()->EndFrame();
 
 			prevTimeStamp = currTimeStamp;
 			if (!result)
@@ -194,19 +195,10 @@ void CGame::Run()
 
 bool CGame::Frame()
 {
-	bool result;
-
-	/*if (m_Input->IsKeyDown(VK_ESCAPE))
-	{
+	bool l_Result = m_Graphics->Frame();
+	if (!l_Result)
 		return false;
-	}*/
-
-	result = m_Graphics->Frame();
-	if (!result)
-	{
-		return false;
-	}
-
+	
 	return true;
 }
 
@@ -214,30 +206,8 @@ bool CGame::Update(float ElapsedTime)
 {
 	if (!CEngine::GetSingleton().LoadingLevel())
 		CEngine::GetSingleton().Update(ElapsedTime);
+	
 	return true;
-}
-
-LRESULT CALLBACK CGame::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
-{
-	switch (umsg)
-	{
-		case WM_KEYDOWN:
-		{
-			/*m_Input->KeyDown((unsigned int)wparam);*/
-			return 0;
-		}
-
-		case WM_KEYUP:
-		{
-			/*m_Input->KeyUp((unsigned int)wparam);*/
-			return 0;
-		}
-
-		default:
-		{
-			return DefWindowProc(hwnd, umsg, wparam, lparam);
-		}
-	}
 }
 
 void ToggleFullscreen(HWND Window, WINDOWPLACEMENT &WindowPosition)
@@ -266,6 +236,104 @@ void ToggleFullscreen(HWND Window, WINDOWPLACEMENT &WindowPosition)
 		SetWindowPlacement(Window, &WindowPosition);
 		SetWindowPos(Window, 0, 0, 0, 0, 0,
 			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+	}
+}
+
+
+bool ConvertWParamToOSButton(WPARAM wparam, InputMapping::EOSInputButtonX& Button)
+{
+	switch (wparam)
+	{
+		case 13: Button = InputMapping::OS_INPUT_BUTTON_ENTER; break;
+		case 27: Button = InputMapping::OS_INPUT_BUTTON_ESC;	break;
+		case 32: Button = InputMapping::OS_INPUT_BUTTON_ESPACE;	break;
+				 
+		case 48: Button = InputMapping::OS_INPUT_BUTTON_ZERO;	break;
+		case 49: Button = InputMapping::OS_INPUT_BUTTON_ONE;	break;
+		case 50: Button = InputMapping::OS_INPUT_BUTTON_TWO;	break;
+		case 51: Button = InputMapping::OS_INPUT_BUTTON_THREE;	break;
+		case 52: Button = InputMapping::OS_INPUT_BUTTON_FOUR;	break;
+		case 53: Button = InputMapping::OS_INPUT_BUTTON_FIVE;	break;
+		case 54: Button = InputMapping::OS_INPUT_BUTTON_SIX;	break;
+		case 55: Button = InputMapping::OS_INPUT_BUTTON_SEVEN;	break;
+		case 56: Button = InputMapping::OS_INPUT_BUTTON_EIGHT;	break;
+		case 57: Button = InputMapping::OS_INPUT_BUTTON_NINE;	break;
+				 
+		case 65: Button = InputMapping::OS_INPUT_BUTTON_A;	break;
+		case 66: Button = InputMapping::OS_INPUT_BUTTON_B;	break;
+		case 67: Button = InputMapping::OS_INPUT_BUTTON_C;	break;
+		case 68: Button = InputMapping::OS_INPUT_BUTTON_D;	break;
+		case 69: Button = InputMapping::OS_INPUT_BUTTON_E;	break;
+		case 70: Button = InputMapping::OS_INPUT_BUTTON_F;	break;
+		case 71: Button = InputMapping::OS_INPUT_BUTTON_G;	break;
+		case 72: Button = InputMapping::OS_INPUT_BUTTON_H;	break;
+		case 73: Button = InputMapping::OS_INPUT_BUTTON_I;	break;
+		case 74: Button = InputMapping::OS_INPUT_BUTTON_J;	break;
+		case 75: Button = InputMapping::OS_INPUT_BUTTON_K;	break;
+		case 76: Button = InputMapping::OS_INPUT_BUTTON_L;	break;
+		case 77: Button = InputMapping::OS_INPUT_BUTTON_M;	break;
+		case 78: Button = InputMapping::OS_INPUT_BUTTON_N;	break;
+		case 79: Button = InputMapping::OS_INPUT_BUTTON_O;	break;
+		case 80: Button = InputMapping::OS_INPUT_BUTTON_P;	break;
+		case 81: Button = InputMapping::OS_INPUT_BUTTON_Q;	break;
+		case 82: Button = InputMapping::OS_INPUT_BUTTON_R;	break;
+		case 83: Button = InputMapping::OS_INPUT_BUTTON_S;	break;
+		case 84: Button = InputMapping::OS_INPUT_BUTTON_T;	break;
+		case 85: Button = InputMapping::OS_INPUT_BUTTON_U;	break;
+		case 86: Button = InputMapping::OS_INPUT_BUTTON_V;	break;
+		case 87: Button = InputMapping::OS_INPUT_BUTTON_W;	break;
+		case 88: Button = InputMapping::OS_INPUT_BUTTON_X;	break;
+		case 89: Button = InputMapping::OS_INPUT_BUTTON_Y;	break;
+		case 90: Button = InputMapping::OS_INPUT_BUTTON_Z;	break;
+	
+		case 112: Button = InputMapping::OS_INPUT_BUTTON_F1; break;
+		case 113: Button = InputMapping::OS_INPUT_BUTTON_F2; break;
+		case 114: Button = InputMapping::OS_INPUT_BUTTON_F3; break;
+		case 115: Button = InputMapping::OS_INPUT_BUTTON_F4; break;
+		case 116: Button = InputMapping::OS_INPUT_BUTTON_F5; break;
+		case 117: Button = InputMapping::OS_INPUT_BUTTON_F6; break;
+		case 118: Button = InputMapping::OS_INPUT_BUTTON_F7; break;
+		case 119: Button = InputMapping::OS_INPUT_BUTTON_F8; break;
+		case 120: Button = InputMapping::OS_INPUT_BUTTON_F9; break;
+		default: return false; break;
+	}
+
+	return true;
+}
+
+void InputCallback(InputMapping::SMappedInput& inputs)
+{
+	/*AxisX = inputs.Ranges[InputMapping::RANGE_ONE];
+	StateOne = inputs.States.find(InputMapping::STATE_ONE) != inputs.States.end();*/
+
+	std::set<InputMapping::EAction>::iterator itAct;
+	for (itAct = inputs.Actions.begin(); itAct != inputs.Actions.end(); ++itAct)
+	{
+		InputMapping::EAction l_Action = *itAct;
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputActionCallback", l_Action);
+	}
+
+	std::set<InputMapping::EState>::iterator itState;
+	for (itState = inputs.States.begin(); itState != inputs.States.end(); ++itState)
+	{
+		InputMapping::EState l_State = *itState;
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputStateCallback", l_State);
+	}
+
+	if (CEngine::GetSingleton().Initialized())
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputRangesCallback", inputs.Ranges[InputMapping::RANGE_ONE], inputs.Ranges[InputMapping::RANGE_TWO]);
+
+	/*if (inputs.Actions.find(InputMapping::ACTION_ONE) != inputs.Actions.end())
+		LOG("Action one raised");*/
+}
+
+void InputGamepadCallback(InputMapping::SMappedInput& inputs)
+{
+	std::set<InputMapping::EAction>::iterator itAct;
+	for (itAct = inputs.Actions.begin(); itAct != inputs.Actions.end(); ++itAct)
+	{
+		//InputMapping::EAction l_Action = *itAct;
+		//luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputActionCallback", l_Action);
 	}
 }
 
@@ -302,7 +370,8 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_CHAR:
 		{
-			CEngine::GetSingleton().GetInputManager()->GetKeyBoard()->SetLastChar(wParam);
+			CEngine::GetSingleton().GetInputMapper()->GetKeyBoard()->SetLastChar(wParam);
+			//CEngine::GetSingleton().GetInputManager()->GetKeyBoard()->SetLastChar(wParam);
 			break;
 		}
 		case WM_SETCURSOR:
@@ -312,31 +381,74 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_MOUSEMOVE:
 		{
-			int xPosAbsolute = GET_X_LPARAM(lParam);
-			int yPosAbsolute = GET_Y_LPARAM(lParam);
+			int l_X = LOWORD(lParam);
+			int l_Y = HIWORD(lParam);
 
-			CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
+		/*	CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(l_X - LastX));
+			CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(l_Y - LastY));
+
+*/
+			LastX = l_X;
+			LastY = l_Y;
+
+			/*int xPosAbsolute = GET_X_LPARAM(lParam);
+			int yPosAbsolute = GET_Y_LPARAM(lParam);*/
+
+			//NO DEBERIA NECESITAR ESTO, DIRECTX ACTUALIZA EL MOUSE
+			//CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
 		}
 		case WM_SETFOCUS:
 			//hasFocus = true;
-			CEngine::GetSingleton().GetInputManager()->SetFocus(true);
+			//CEngine::GetSingleton().GetInputManager()->SetFocus(true);
+			CEngine::GetSingleton().GetInputMapper()->SetFocus(true);
 			break;
 		case  WM_KILLFOCUS:
 			//hasFocus = false;
-			CEngine::GetSingleton().GetInputManager()->SetFocus(false);
+			//CEngine::GetSingleton().GetInputManager()->SetFocus(false);
+			CEngine::GetSingleton().GetInputMapper()->SetFocus(false);
 			break;
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_KEYDOWN:
 		{
+			InputMapping::EOSInputButtonX l_OSButton;
+			bool l_WasDown = ((lParam & (1 << 31)) != 0);
+
+			bool l_Alt = ((lParam & (1 << 29)) != 0);
+			bool l_Ctrl = false;
+			switch (wParam)
+			{
+				case VK_CONTROL:
+					l_Ctrl = true;
+					break;
+			}
+
+			if (ConvertWParamToOSButton(wParam, l_OSButton))
+			{
+				InputMapping::SOSInputButtons l_OSButtons(l_OSButton, l_Alt, l_Ctrl);
+				CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(l_OSButtons, true, l_WasDown);
+			}
 			//CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
 			//break;
 		}
+		/*{
+			Mapper.Dispatch();
+			Mapper.Clear();
+		}*/
+		return 0;
 		case WM_KEYUP:
 		{
 			bool WasDown = ((lParam & (1 << 30)) != 0);
 			bool IsDown = ((lParam & (1 << 31)) == 0);
-			bool Alt = ((lParam & (1 << 29)) != 0);
+
+			bool l_Alt = ((lParam & (1 << 29)) != 0);
+			bool l_Ctrl = false;
+			switch (wParam)
+			{
+			case VK_CONTROL:
+				l_Ctrl = true;
+				break;
+			}
 
 			if (WasDown != IsDown)
 			{
@@ -346,7 +458,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					switch (wParam)
 					{
 					case VK_RETURN:
-						if (Alt)
+						if (l_Alt)
 						{
 							/*WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
 							GetWindowPlacement(hWnd, &windowPosition);
@@ -356,7 +468,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						}
 						break;
 					case VK_F4:
-						if (Alt)
+						if (l_Alt)
 						{
 							PostQuitMessage(0);
 							consumed = true;
@@ -369,15 +481,19 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			}
-			CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
-			break;
-		}
-		default:
-		{
-			return ApplicationHandle->MessageHandler(hWnd, msg, wParam, lParam);
-		}
+			/*	CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
+			break;*/
 
-	}//end switch( msg )
+			InputMapping::EOSInputButtonX l_OSButton;
+
+			if (ConvertWParamToOSButton(wParam, l_OSButton))
+			{
+				InputMapping::SOSInputButtons l_OSButtons(l_OSButton, l_Alt, l_Ctrl);
+				CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(l_OSButtons, false, true);
+			}
+		}
+	}
+	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScreen, bool& VSync, bool& D3DDebug)
@@ -478,26 +594,3 @@ void CGame::ShutdownWindows()
 
 	return;
 }
-
-
-//LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
-//{
-//	switch (umessage)
-//	{
-//	case WM_DESTROY:
-//	{
-//		PostQuitMessage(0);
-//		return 0;
-//	}
-//
-//	case WM_CLOSE:
-//	{
-//		PostQuitMessage(0);
-//		return 0;
-//	}
-//	default:
-//	{
-//		return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
-//	}
-//	}
-//}

@@ -2,6 +2,7 @@ class 'CBruteEnemyComponent' (CEnemyComponent)
 function CBruteEnemyComponent:__init(CLuaGameObject)
 	CEnemyComponent.__init(self, CLuaGameObject, "BruteEnemy")
 	self.m_Health=300.0
+	self.m_MaxHealth=300.0
 	self.m_Speed=1.5
 	self.m_AttackDelay=1.0
 	self.m_VisionRange=6.0

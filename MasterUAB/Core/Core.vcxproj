@@ -15,6 +15,7 @@
     <ClCompile Include="Components\AnimatorController\AnimatorControllerBoolParameter.cpp" />
     <ClCompile Include="Components\AnimatorController\AnimatorControllerFloatParameter.cpp" />
     <ClCompile Include="Components\AnimatorController\AnimatorControllerIntegerParameter.cpp" />
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerManager.cpp" />
     <ClCompile Include="Components\AnimatorController\AnimatorControllerTriggerParameter.cpp" />
     <ClCompile Include="Components\AnimatorController\State.cpp" />
     <ClCompile Include="Components\AnimatorController\Transition.cpp" />
@@ -32,10 +33,18 @@
     <ClCompile Include="GameObject\GameObjectManager.cpp" />
     <ClCompile Include="GameObject\LuaGameObjectHandle.cpp" />
     <ClCompile Include="GameObject\LuaGameObjectHandleManager.cpp" />
-    <ClCompile Include="Input\InputManager.cpp" />
-    <ClCompile Include="Input\InputManagerImplementation.cpp" />
+    <ClCompile Include="Input\InputContext.cpp" />
+    <ClCompile Include="Input\InputManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Input\InputManagerImplementation.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Input\InputMapper.cpp" />
+    <ClCompile Include="Input\InputMapperImplementation.cpp" />
     <ClCompile Include="Input\KeyBoardInput.cpp" />
     <ClCompile Include="Input\MouseInput.cpp" />
+    <ClCompile Include="Input\RangeConverter.cpp" />
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Log\Log.cpp" />
     <ClCompile Include="LuabindManager\LuabindManager.cpp" />
@@ -55,6 +64,7 @@
     <ClInclude Include="Components\AnimatorController\AnimatorControllerBoolParameter.h" />
     <ClInclude Include="Components\AnimatorController\AnimatorControllerFloatParameter.h" />
     <ClInclude Include="Components\AnimatorController\AnimatorControllerIntegerParameter.h" />
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerManager.h" />
     <ClInclude Include="Components\AnimatorController\AnimatorControllerParameter.h" />
     <ClInclude Include="Components\AnimatorController\AnimatorControllerTriggerParameter.h" />
     <ClInclude Include="Components\AnimatorController\State.h" />
@@ -74,10 +84,21 @@
     <ClInclude Include="GameObject\GameObjectManager.h" />
     <ClInclude Include="GameObject\LuaGameObjectHandle.h" />
     <ClInclude Include="GameObject\LuaGameObjectHandleManager.h" />
-    <ClInclude Include="Input\InputManager.h" />
-    <ClInclude Include="Input\InputManagerImplementation.h" />
+    <ClInclude Include="Input\FileReader.h" />
+    <ClInclude Include="Input\InputConstants.h" />
+    <ClInclude Include="Input\InputContext.h" />
+    <ClInclude Include="Input\InputManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Input\InputManagerImplementation.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Input\InputMapper.h" />
+    <ClInclude Include="Input\InputMapperImplementation.h" />
+    <ClInclude Include="Input\RangeConverter.h" />
     <ClInclude Include="Input\KeyBoardInput.h" />
     <ClInclude Include="Input\MouseInput.h" />
+    <ClInclude Include="Input\OSInputConstants.h" />
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Log\Log.h" />
     <ClInclude Include="LuabindManager\LuabindMacros.h" />

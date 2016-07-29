@@ -2,6 +2,7 @@ class 'CRangedEnemyComponent' (CEnemyComponent)
 function CRangedEnemyComponent:__init(CLuaGameObject)
 	CEnemyComponent.__init(self, CLuaGameObject, "RanguedEnemy")
 	self.m_Health=150.0
+	self.m_MaxHealth=150.0
 	self.m_Speed=2.0
 	self.m_AttackDelay=2.0
 	self.m_VisionRange=9.0

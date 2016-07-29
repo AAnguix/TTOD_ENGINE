@@ -7,6 +7,25 @@ function CGameController:__init()
 	self.m_Filename = ""
 end
 
+function CGameController:RemoveEntity(Name)
+	for i=1, (#self.m_Entities) do
+		local l_LuaGO = self.m_Entities[i]:GetLuaGameObject()
+		if  (l_LuaGO~=nil) and (l_LuaGO:GetName()) == Name then
+			self.m_Entities[i] = nil
+			g_LuaGameObjectHandleManager:Remove(Name)
+		end
+	end
+end
+
+function CGameController:RemoveEnemy(Name)
+	for i=1, (#self.m_Enemies) do
+		local l_LuaGO = self.m_Enemies[i]:GetLuaGameObject()
+		if  (l_LuaGO~=nil) and (l_LuaGO:GetName()) == Name then
+			self.m_Enemies[i] = nil
+		end
+	end
+end
+
 function CGameController:Destroy()
 	for i=1, (#self.m_Entities) do
 		g_LogManager:Log(self.m_Entities[i]:GetName().. " destroyed")
@@ -56,7 +75,7 @@ function CGameController:LoadXML(Filename)
 	end
 	
 	if l_Loaded and l_XMLTreeNode:GetName() == "game_entities" then
-		for i=0, l_XMLTreeNode:GetNumChildren() do
+		for i=0, l_XMLTreeNode:GetNumChildren()-1 do
 			local l_Element=l_XMLTreeNode:GetChild(i)
 			local l_ElemName=l_Element:GetName()
 			
@@ -82,6 +101,8 @@ function CGameController:LoadXML(Filename)
 				self:LoadLightManager(l_Element,l_Pedestal)
 			elseif l_ElemName=="destructible_wall" then
 				self:LoadDestructibleWall(l_Element)
+			elseif l_ElemName=="show_health_bar_manager" then
+				self:LoadShowHealthBarManager(l_Element)
 			end 
 			
 			g_LogManager:Log("Entity "..i.." loaded")
@@ -109,7 +130,7 @@ end
 -- end
 
 function CGameController:AddLuaGameObjectHandle(GameObjectName)
-	local l_GameObject = g_GameObjectManager:GetResource(GameObjectName)
+	local l_GameObject = g_Engine:GetGameObjectManager():GetResource(GameObjectName)
 	if l_GameObject ~= nil then
 		local l_LuaGameObjectHandle = g_LuaGameObjectHandleManager:Add(l_GameObject)
 		return l_LuaGameObjectHandle

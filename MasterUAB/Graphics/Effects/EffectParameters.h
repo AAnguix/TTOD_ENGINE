@@ -5,7 +5,7 @@
 #include "Math\Vector4.h"
 #include "Math\Color.h"
 
-#define MAXBONES 70
+#define MAXBONES 95
 #define MAX_LIGHTS_BY_SHADER 4
 #define MAX_OBJECT_RAW_PARAMETER 16
 

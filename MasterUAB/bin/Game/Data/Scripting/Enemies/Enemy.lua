@@ -2,7 +2,8 @@ class 'CEnemyComponent' (CLUAComponent)
 function CEnemyComponent:__init(CLuaGameObject,EnemyType)
 	CLUAComponent.__init(self,CLuaGameObject:GetName().."_"..EnemyType.."Script")
 	self.m_LuaGameObject = CLuaGameObject
-	self.m_Health=100.0
+	self.m_Health = 100.0
+	self.m_MaxHealth = 100.0
 	
 	self.m_Armor = nil
 	self.m_Weapon = nil
@@ -29,32 +30,37 @@ function CEnemyComponent:__init(CLuaGameObject,EnemyType)
 	--Conditionals
 	self.m_Attacking = false
 	self_m_GotHit = false
+	
+	self.m_GuiAvatar = nil
+	self.m_DieDelay = 3.0
 end
+
+function CEnemyComponent:GetAvatar() return self.m_GuiAvatar end
 
 function CEnemyComponent:Initialize()
 
-	local l_GameObject = self.m_LuaGameObject:GetGameObject()
+	-- local l_GameObject = self.m_LuaGameObject:GetGameObject()
 	local l_ComponentName = self.m_LuaGameObject:GetName().."_CharacterCollider"
-	local l_CharacterCollider = g_PhysXManager:AddCharacterColliderComponent(l_ComponentName, l_GameObject, self.m_Height, self.m_Radius, self.m_Density)
-	if l_CharacterCollider ~= nil then 
-		local l_Material = l_CharacterCollider:GetPhysxMaterial()
-		local l_MaterialName = l_Material:GetName()
-		m_Position = self.m_LuaGameObject:GetPosition()
-		l_CControlerPos = Vect3f(m_Position.x, m_Position.y, m_Position.z)
-		g_PhysXManager:CreateCharacterController(self.m_LuaGameObject:GetName(), self.m_Height, self.m_Radius , self.m_Density, l_CControlerPos, l_MaterialName, l_Material:GetStaticFriction(), l_Material:GetDynamicFriction(), l_Material:GetRestitution())
-	end
+	g_PhysXManager:AddCharacterColliderComponent(self.m_LuaGameObject:GetName(), self.m_LuaGameObject, self.m_Height, self.m_Radius, self.m_Density)
 	
-	l_ACName = self.m_LuaGameObject:GetName().."_AnimatorController"
-	g_AnimatorControllerManager:AddComponent(l_ACName, l_GameObject)
+	local l_ACName = self.m_LuaGameObject:GetName().."_AnimatorController"
+	g_AnimatorControllerManager:AddComponent(l_ACName, self.m_LuaGameObject)
 	
 	g_LogManager:Log("Enemy "..self.m_LuaGameObject:GetName().." created...")
 end
 
 function CEnemyComponent:Update(ElapsedTime)
 	self:MovementController(ElapsedTime)
+	-- if self.m_Health<=0.0 then
+		-- self.m_DieDelay = self.m_DieDelay - ElapsedTime
+		-- if self.m_DieDelay<=0.0 then
+			-- g_GameController:RemoveEntity(self.m_LuaGameObject:GetName())
+		-- end
+	-- end
 end
 
 function CEnemyComponent:GetHealth() return self.m_Health end
+function CEnemyComponent:GetMaxHealth() return self.m_MaxHealth end
 function CEnemyComponent:GetSpeed()	return self.m_Speed end
 function CEnemyComponent:GetVisionRange() return self.m_VisionRange end
 function CEnemyComponent:GetAttackDelay() return self.m_AttackDelay end
@@ -74,22 +80,24 @@ end
 
 function CEnemyComponent:TakeDamage(PlayerWeapon)
 	--self.m_AudioSource:PlayEvent("SonidoDePrueba")
-	local l_Armor = self.m_Armor:GetType()
+	if g_ShowHealthBarManager ~= nil then
+		g_ShowHealthBarManager:SetLastEnemyHit(self)
+		g_EventManager:FireEvent("ENEMY_TAKES_DAMAGE")
+	end
+	local l_Armor = ""
+	if self.m_Armor ~= nil then l_Armor = self.m_Armor:GetType() end
 	local l_PlayerDamage = PlayerWeapon:GetDamage()
 	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,PlayerWeapon,l_PlayerDamage)
-	if self.m_Health >= 0.0 then
-		if (self.m_Health - l_DamageCalculated >= 0.0) then
-			self.m_Health = self.m_Health - l_DamageCalculated
-		else
-			self.m_Health = 0.0
-		end
-	end
-	self:CheckAlive()
-end
 
-function CEnemyComponent:CheckAlive()
-	if self.m_Health <= 0.0 then
-		g_LogManager:Log("Enemigo muerto")
+	if self.m_Health >= 0.0 then
+		if((self.m_Health - l_DamageCalculated)<0.0) then
+			self.m_Health = 0.0
+			local l_Name = self.m_LuaGameObject:GetName()
+			g_GameController:RemoveEnemy(l_Name)
+			g_GameController:RemoveEntity(l_Name)
+		else
+			self.m_Health = self.m_Health - l_DamageCalculated
+		end
 	end
 end
 
@@ -127,9 +135,8 @@ function CEnemyComponent:MovementController(ElapsedTime)
 	
 	if self.M_FollowWaypoints then
 		self:FTWP(ElapsedTime)
-	elseif self.M_AttackMovement then
-		--self:MTPNP(ElapsedTime)
-		self:MoveWithAStar(ElapsedTime)
+	-- elseif self.M_AttackMovement then
+		-- self:MoveWithAStar(ElapsedTime)
 	end
 	
 	self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)

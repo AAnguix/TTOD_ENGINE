@@ -13,7 +13,7 @@
 #include "Components\Script\ScriptManager.h"
 #include "PhysXManager.h"
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
-#include "Animation\AnimatorControllerManager.h"
+#include "Components\AnimatorController\AnimatorControllerManager.h"
 #include "GUIManager.h"
 #include "GameObject\GameObjectManager.h"
 #include "GameObject\LuaGameObjectHandleManager.h"

@@ -8,6 +8,8 @@ function CArmorComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneNa
 	self.m_LuaGameObject:SetParent(m_ParentLuaGameObject,ParentBoneName)
 end
 
+function CArmorComponent:GetLuaGameObject() return self.m_LuaGameObject end
+
 -- function CArmorComponent:Initialize(ParentBoneName)
 	
 -- end
@@ -21,10 +23,6 @@ end
 
 function CArmorComponent:GetType()
 	return self.m_Type
-end
-
-function CArmorComponent:GetLuaGameObject()
-	return self.m_LuaGameObject
 end
 
 function CArmorComponent:GetParentLuaGameObject()

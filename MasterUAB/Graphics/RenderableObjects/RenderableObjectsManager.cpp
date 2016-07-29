@@ -18,6 +18,19 @@ CRenderableObjectsManager::~CRenderableObjectsManager()
 //	Load(m_Filename);
 //}
 
+bool CRenderableObjectsManager::RemoveRenderableObject(const std::string& RenderableObjectName)
+{
+	for (size_t i = 0; i < m_ResourcesVector.size(); ++i)
+	{
+		if (m_ResourcesVector[i]->GetName()==RenderableObjectName)
+		{
+			RemoveResource(RenderableObjectName);
+			return true;
+		}
+	}
+	return false;
+}
+
 void CRenderableObjectsManager::Update(float ElapsedTime)
 {
 	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)

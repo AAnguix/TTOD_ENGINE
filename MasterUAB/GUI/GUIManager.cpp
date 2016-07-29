@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "Engine\Engine.h"
 #include "Render\RenderManager.h"
-#include "Input\InputManagerImplementation.h"
+#include "Input\InputMapperImplementation.h"
 #include "Input\MouseInput.h"
 #include "Log\Log.h"
 #include "Materials\MaterialManager.h"
@@ -434,54 +434,78 @@ CGUIManager::SHealthBarInfo* CGUIManager::GetHealthBar(const std::string& Health
 
 void CGUIManager::AddImage(const std::string& ImageID, const std::string& Sprite)
 {
-	SSpriteInfo* l_Sprite = GetSprite(Sprite);
-	assert(l_Sprite != nullptr);
+	std::map<std::string, SImageInfo*>::iterator it;
+	it = m_Images.find(ImageID);
 
-	SImageInfo* l_Image = new SImageInfo(l_Sprite);
-	m_Images[ImageID] = l_Image;
+	if (it == m_Images.end())
+	{
+		SSpriteInfo* l_Sprite = GetSprite(Sprite);
+		assert(l_Sprite != nullptr);
+
+		SImageInfo* l_Image = new SImageInfo(l_Sprite);
+		m_Images[ImageID] = l_Image;
+	}
 }
 
 void CGUIManager::AddButton(const std::string& ButtonID, const std::string& Normal, const std::string& Highlight, const std::string& Pressed)
 {
-	SSpriteInfo* l_Normal = GetSprite(Normal);
-	SSpriteInfo* l_Highlight = GetSprite(Highlight);
-	SSpriteInfo* l_Pressed = GetSprite(Pressed);
-	assert(l_Normal != nullptr);
-	assert(l_Highlight != nullptr);
-	assert(l_Pressed != nullptr); 
+	std::map<std::string, SButtonInfo*>::iterator it;
+	it = m_Buttons.find(ButtonID);
+	
+	if (it == m_Buttons.end())
+	{
+		SSpriteInfo* l_Normal = GetSprite(Normal);
+		SSpriteInfo* l_Highlight = GetSprite(Highlight);
+		SSpriteInfo* l_Pressed = GetSprite(Pressed);
+		assert(l_Normal != nullptr);
+		assert(l_Highlight != nullptr);
+		assert(l_Pressed != nullptr);
 
-	SButtonInfo* l_Button = new SButtonInfo(l_Normal, l_Highlight, l_Pressed);
-	m_Buttons[ButtonID] = l_Button;
+		SButtonInfo* l_Button = new SButtonInfo(l_Normal, l_Highlight, l_Pressed);
+		m_Buttons[ButtonID] = l_Button;
+	}
 }
 
 void CGUIManager::AddSlider(const std::string& SliderID, const std::string& Base, const std::string& Top, const std::string& Handle, const std::string& PressedHandle)
 {
-	SSpriteInfo* l_Base = GetSprite(Base);
-	SSpriteInfo* l_Top = GetSprite(Top);
-	SSpriteInfo* l_Handle = GetSprite(Handle);
-	SSpriteInfo* l_PressedHandle = GetSprite(PressedHandle);
+	std::map<std::string, SSliderInfo*>::iterator it;
+	it = m_Sliders.find(SliderID);
 
-	assert(l_Base != nullptr);
-	assert(l_Top != nullptr);
-	assert(l_Handle != nullptr);
-	assert(l_PressedHandle != nullptr);
+	if (it == m_Sliders.end())
+	{
+		SSpriteInfo* l_Base = GetSprite(Base);
+		SSpriteInfo* l_Top = GetSprite(Top);
+		SSpriteInfo* l_Handle = GetSprite(Handle);
+		SSpriteInfo* l_PressedHandle = GetSprite(PressedHandle);
 
-	SSliderInfo* l_Slider = new SSliderInfo(l_Base, l_Top, l_Handle, l_PressedHandle);
-	m_Sliders[SliderID] = l_Slider;
+		assert(l_Base != nullptr);
+		assert(l_Top != nullptr);
+		assert(l_Handle != nullptr);
+		assert(l_PressedHandle != nullptr);
+
+		SSliderInfo* l_Slider = new SSliderInfo(l_Base, l_Top, l_Handle, l_PressedHandle);
+		m_Sliders[SliderID] = l_Slider;
+	}
 }
 
 void CGUIManager::AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top, const std::string& Background)
 {
-	SSpriteInfo* l_Base = GetSprite(Base);
-	SSpriteInfo* l_Top = GetSprite(Top);
-	SSpriteInfo* l_Background = GetSprite(Background);
+	std::map<std::string, SHealthBarInfo*>::iterator it;
+	it = m_HealthBars.find(HealthBarID);
 
-	assert(l_Base != nullptr);
-	assert(l_Top != nullptr);
-	assert(l_Background != nullptr);
+	if (it == m_HealthBars.end())
+	{ 
+		SSpriteInfo* l_Base = GetSprite(Base);
+		SSpriteInfo* l_Top = GetSprite(Top);
+		SSpriteInfo* l_Background = GetSprite(Background);
 
-	SHealthBarInfo* l_HealthBar = new SHealthBarInfo(l_Base, l_Top, l_Background);
-	m_HealthBars[HealthBarID] = l_HealthBar;
+		assert(l_Base != nullptr);
+		assert(l_Top != nullptr);
+		assert(l_Background != nullptr);
+
+		SHealthBarInfo* l_HealthBar = new SHealthBarInfo(l_Base, l_Top, l_Background);
+		m_HealthBars[HealthBarID] = l_HealthBar;
+	}
 }
 
 void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position)
@@ -848,7 +872,8 @@ std::string CGUIManager::DoTextBox(const std::string& GuiID, const std::string& 
 			l_DisplayText = l_ActiveText;
 		}
 
-		CKeyBoardInput* l_KeyBoard = CEngine::GetSingleton().GetInputManager()->GetKeyBoard();
+		CKeyBoardInput* l_KeyBoard = CEngine::GetSingleton().GetInputMapper()->GetKeyBoard();
+		//CKeyBoardInput* l_KeyBoard = CEngine::GetSingleton().GetInputManager()->GetKeyBoard();
 
 		wchar_t l_LastChar = l_KeyBoard->ConsumeLastChar();
 
@@ -923,7 +948,8 @@ void CGUIManager::CheckInput()
 {
 	if (!m_InputUpToDate)
 	{
-		CMouseInput* l_Mouse = CEngine::GetSingleton().GetInputManager()->GetMouse();
+		//CMouseInput* l_Mouse = CEngine::GetSingleton().GetInputManager()->GetMouse();
+		CMouseInput* l_Mouse = CEngine::GetSingleton().GetInputMapper()->GetMouse();
 		m_MouseX = (float)l_Mouse->GetX();
 		m_MouseY = (float)l_Mouse->GetY();
 

@@ -7,11 +7,11 @@ CLUAComponent.__init(self,"pedestal")
 	g_GUIManager:AddButton("pedestal01_button", "pedestal_button_normal", "pedestal_button_highlight", "pedestal_button_pressed")
 	self.m_TimeActive = 4.0
 	self.m_SoundPlayed = false
-	g_EventManager:Subscribe( self, "EPressed" )
+	g_EventManager:Subscribe( self, "PLAYER_INTERACTS" )
 end
 
 --Event
-function CPedestalComponent:EPressed()
+function CPedestalComponent:PLAYER_INTERACTS()
 	if self:IsPlayerInsideInteractionRange(g_Player:GetPosition()) then
 		self.m_Active = true
 	end

@@ -5,6 +5,7 @@
 class CScript;
 class CLuaGameObjectHandle;
 class CLUAComponent;
+class CGameObject;
 
 class CScriptManager
 {
@@ -17,6 +18,7 @@ public:
 	virtual ~CScriptManager();
 	void Update(float ElapsedTime);
 	CScript* AddComponent(const std::string& Name, CLuaGameObjectHandle* Owner, CLUAComponent* Component);
+	void RemoveComponent(CGameObject* Owner);
 	void RemoveComponents();
 	CScript* GetScript(const std::string& LuaComponentName) const;
 	const std::vector<CScript *> & GetLUAScripts();

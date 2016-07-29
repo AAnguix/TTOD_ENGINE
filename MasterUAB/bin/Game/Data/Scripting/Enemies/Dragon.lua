@@ -31,9 +31,9 @@ end
 
 function CDragonComponent:Initialize()
 	
-	local l_GameObject = self.m_LuaGameObject:GetGameObject()
+	-- local l_GameObject = self.m_LuaGameObject:GetGameObject()
 	local l_CColliderName = self.m_LuaGameObject:GetName().."_CharacterCollider"	
-	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, l_GameObject, self.m_Height, self.m_Radius, self.m_Density)
+	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, self.m_LuaGameObject, self.m_Height, self.m_Radius, self.m_Density)
 	
 	-- if l_CharacterCollider ~= nil then 
 		-- local l_Material = l_CharacterCollider:GetPhysxMaterial()

@@ -4,16 +4,15 @@ function CStatueComponent:__init(CLuaGameObject, MagicBallLuaGameObject)
 	self.m_MagicBall = MagicBallLuaGameObject
 	self.m_MagicBallCasted = false
 	self.m_ShootVelocity = 2.0
-	g_EventManager:Subscribe( self, "EPressed" )
+	g_EventManager:Subscribe( self, "PLAYER_INTERACTS" )
 	g_EventManager:Subscribe( self, "DragonImpactedByMagicBall" )
-	local l_GameObject = self.m_LuaGameObject:GetGameObject()
 	local l_AudioSourceName = self.m_LuaGameObject:GetName().."_AudioSource"
-	g_SoundManager:AddComponent(l_AudioSourceName, l_GameObject)
+	g_SoundManager:AddComponent(l_AudioSourceName, self.m_LuaGameObject)
 	--self.m_LuaGameObject:AddSound("MagicBallSound","Play_MagicBallSound")
 end
 
 --Event
-function CStatueComponent:EPressed()
+function CStatueComponent:PLAYER_INTERACTS()
 	if(CActivableElement.IsActivable(self)) then
 		self:CastMagicBall()
 	end

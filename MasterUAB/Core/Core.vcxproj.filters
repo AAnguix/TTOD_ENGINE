@@ -112,6 +112,21 @@
     <ClCompile Include="Components\Script\ScriptManager.cpp">
       <Filter>Components\Script</Filter>
     </ClCompile>
+    <ClCompile Include="Input\InputContext.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\RangeConverter.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputMapperImplementation.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputMapper.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\AnimatorController\AnimatorControllerManager.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\InputManager.h">
@@ -215,6 +230,30 @@
     </ClInclude>
     <ClInclude Include="Components\Script\ScriptManager.h">
       <Filter>Components\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputContext.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\OSInputConstants.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputConstants.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\FileReader.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\RangeConverter.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputMapperImplementation.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputMapper.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\AnimatorController\AnimatorControllerManager.h">
+      <Filter>Components\AnimatorController</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

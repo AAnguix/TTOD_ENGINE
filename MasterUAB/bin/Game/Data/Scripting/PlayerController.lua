@@ -1,107 +1,29 @@
-l_CCVelocity = Vect3f(0.0,0.0,0.0)
-
 function CPlayerComponent:PlayerController(ElapsedTime)
 	
-	self.m_Walk = false
-	local g_Run = false
-	self.m_Rotate = false
-	
-	self.m_Forward = false
-	self.m_Backwards = false
-	self.m_Right = false
-	self.m_Left = false
-	
-	local l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
-	
-	if CInputManager.GetInputManager():IsActionActive("LOCK_CHARACTER") then
-		if (self:IsLocked()) then	
-			self:Unlock()
-		else
-			self:Lock()
-		end
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("OPEN_MAP") then			
-		self:OpenMap()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("DRINK_BEER") then			
-		self:DrinkBeer()
-	end
-	
 	if (self:IsLocked() == false) then
-		if CInputManager.GetInputManager():IsActionActive("PLAYER_ATTACKS") then	
-			g_Player:SetTrigger("Attack")
-			-- self.m_Rotate = true
-		end
-		if CInputManager.GetInputManager():IsActionActive("PLAYER_BLOCKS") then	
-			-- StartLevelTwo()
-			--g_Player:GetAnimatorController():SetTrigger("Block")
-		end
-	
-		l_CCVelocity.x = 0
-		l_CCVelocity.z = 0
 		
-		l_Speed = 3
+		self:AddGravity(ElapsedTime)
 		
-		if CInputManager.GetInputManager():IsActionActive("E_PRESSED") then			
-			g_EventManager:FireEvent("EPressed")
-		end
-		
-		if self:IsAttacking()==false then
-
-			local b1 = CInputManager.GetInputManager():IsActionActive("MOVE_FWD")
-			local lp = SGUIPosition(0.4,0.4,0.2,0.2,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-				
-			if b1 then
-				g_GUIManager:DoText("aa","calibri_font",lp,"","bool: ".."true")
-			else 
-				g_GUIManager:DoText("aa","calibri_font",lp,"","bool: ".."false")
-			end
-		
-			if  b1 then			
-				self.m_Forward = true
-				self.m_Walk = true
-				-- self:MatchPlayerYawToCameraYaw(l_CameraController,ElapsedTime,g_Forward,g_Backwards,g_Right,g_Left)					
-				local v = l_CameraController:GetForward()
-				l_CCVelocity = l_CCVelocity + v * l_Speed
-			end
+		local l_Pos = SGUIPosition(0.4,0.4,0.2,0.2,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoText("aa","calibri_font",l_Pos,"","Velocity: "..self.m_Velocity.x..","..self.m_Velocity.y..","..self.m_Velocity.z)
 			
-			if CInputManager.GetInputManager():IsActionActive("MOVE_BACK") then				
-				self.m_Backwards = true
-				self.m_Walk = true
-				local v = l_CameraController:GetForward()
-				l_CCVelocity = l_CCVelocity - v * l_Speed
-			end
-			
-			if CInputManager.GetInputManager():IsActionActive("STRAFE_RIGHT") then
-				self.m_Right = true
-				self.m_Walk = true
-				local v = l_CameraController:GetRight()
-				l_CCVelocity = l_CCVelocity - v * l_Speed
-			end
-			
-			if CInputManager.GetInputManager():IsActionActive("STRAFE_LEFT") then
-				self.m_Left = true
-				self.m_Walk = true
-				local v = l_CameraController:GetRight()
-				l_CCVelocity = l_CCVelocity + v * l_Speed
-			end
-		end
-		
-		l_CCVelocity = l_CCVelocity + Vect3f(0,-10.0,0) * ElapsedTime
-		
 		if g_Engine:LoadingLevel() == false then
 			if ElapsedTime>0.0 then
-				l_CCVelocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (l_CCVelocity * ElapsedTime), ElapsedTime)
+				self.m_Velocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (self.m_Velocity * ElapsedTime), ElapsedTime)
 			else 
-				l_CCVelocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (l_CCVelocity), ElapsedTime)
+				self.m_Velocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (self.m_Velocity), ElapsedTime)
 			end 
-			
 			g_Player:SetBool("Walk", self.m_Walk)
-			g_Player:SetBool("Rotate",self.m_Rotate)
-			--GetPlayer():GetAnimatorController():SetBool("Run", g_Run); 
 		end
+		
+		self.m_Velocity.x = 0
+		self.m_Velocity.z = 0
+		
+		self.m_Walk = false
+		self.m_Forward = false
+		self.m_Backwards = false
+		self.m_Right = false
+		self.m_Left = false
 		
 	end --END CharBlock
 	

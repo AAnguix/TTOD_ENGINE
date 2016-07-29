@@ -99,6 +99,7 @@ function CDamageCalculator:AddWeapon(WeaponType)
 end
 
 function CDamageCalculator:GetPercentage(Armor,Weapon)
+	if (Armor == "" or Weapon=="") then return 0.0 end
 	local l_Key = ""..Armor.."_"..Weapon
 	return self.m_DamageReductionPct[l_Key].m_Percentage
 end

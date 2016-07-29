@@ -191,11 +191,11 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 				float l_Y = l_Matrix.GetYaw();
 				float l_P = l_Matrix.GetPitch();
 				float  l_R = l_Matrix.GetRoll();
-				LOG("ESTO EN C");
+			/*	LOG("ESTO EN C");
 				LOG(l_Po);
 				LOG(l_Y);
 				LOG(l_P);
-				LOG(l_R);
+				LOG(l_R);*/
 
 				l_ContextManager->SetWorldMatrix(l_Matrix);
 			}

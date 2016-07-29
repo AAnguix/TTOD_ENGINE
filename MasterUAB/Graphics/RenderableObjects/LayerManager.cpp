@@ -44,6 +44,18 @@ CLayerManager::~CLayerManager()
 
 }
 
+bool CLayerManager::RemoveRenderableObject(const std::string& RenderableObjectName)
+{
+	for (size_t i = 0; i < m_ResourcesVector.size(); ++i)
+	{
+		if (m_ResourcesVector[i]->RemoveRenderableObject(RenderableObjectName))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void CLayerManager::AddMeshComponent(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 {
 	CMeshInstance* l_RObject = new CMeshInstance(Owner, InstanceMeshName, CoreMeshName, Position, Yaw, Pitch, Roll);

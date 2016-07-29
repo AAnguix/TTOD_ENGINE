@@ -20,25 +20,25 @@ private:
 
 	bool AddElementToLayer(const std::string &Layer, CRenderableObject* RenderableObject);
 
-	
-
 public:  
 	CLayerManager();  
 	virtual ~CLayerManager();
 
-	/*CRenderableObject* AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
-	CRenderableObject* AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
-*/
 	void AddMeshComponent(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	void AddAnimatedComponent(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, CGameObject* Owner, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	void AddParticleSystemInstance(const std::string &Layer, const std::string &ParticleSystemTypeName, const std::string &ParticleSystemInstanceName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
+	bool RemoveRenderableObject(const std::string& RenderableObjectName);
 
-	//void Destroy();  
 	void Load(const std::string &Filename);  
 	void Reload();  
 	void Update(float ElapsedTime); 
 	void Render(CRenderManager &RenderManager);  
 	void Render(CRenderManager &RenderManager, const std::string &LayerName);
+
+	
+	/*CRenderableObject* AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
+	CRenderableObject* AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
+	*/
 };
 
 #endif

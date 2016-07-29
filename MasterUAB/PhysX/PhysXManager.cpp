@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include "Utils\FileUtils.h"
+#include "GameObject\LuaGameObjectHandle.h"
 #include "GameObject\GameObject.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
@@ -75,7 +76,37 @@ CPhysXManager::Groups CPhysXManager::GetGroup(const std::string &Group)
 	}
 }
 
-CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CGameObject *Owner)
+/*Adds colliders from LUA*/
+CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CLuaGameObjectHandle* Owner)
+{
+	bool l_Found = false;
+	CCollider* l_Collider = nullptr;
+	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
+	{
+		if (m_ColliderComponents[i]->GetName() == Name)
+		{
+			l_Found = true;
+			i = m_ColliderComponents.size();
+		}
+	}
+	if (!l_Found)
+	{
+		CGameObject* l_GObject = Owner->GetGameObject();
+		l_Collider = new CCollider(Name, l_GObject);
+		l_GObject->SetCollider(l_Collider);
+		m_ColliderComponents.push_back(l_Collider);
+	}
+	else
+	{
+		assert(false);
+		delete(l_Collider); l_Collider = NULL;
+	}
+
+	return l_Collider;
+}
+
+/*Adds colliders from C++*/
+CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CGameObject* Owner)
 {
 	bool l_Found = false;
 	CCollider* l_Collider = nullptr;
@@ -101,7 +132,22 @@ CCollider* CPhysXManager::AddColliderComponent(const std::string &Name, CGameObj
 
 	return l_Collider;
 }
-CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::string &Name, CGameObject *Owner, float Height, float Radius, float Density)
+
+
+void CPhysXManager::RemoveColliderComponent(CGameObject *Owner)
+{
+	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
+	{
+		if (m_ColliderComponents[i]->GetOwner() == Owner)
+		{
+			delete m_ColliderComponents[i];
+			m_ColliderComponents.erase(m_ColliderComponents.begin() + i);
+			RemoveActor(Owner->GetName());
+		}
+	}
+}
+
+CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::string &Name, CLuaGameObjectHandle* Owner, float Height, float Radius, float Density)
 {
 	bool l_Found = false;
 	CCharacterCollider* l_CharacterCollider = nullptr;
@@ -115,12 +161,13 @@ CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::stri
 	}
 	if (!l_Found)
 	{
-		l_CharacterCollider = new CCharacterCollider(Name, Owner);
-		Owner->SetCharacterCollider(l_CharacterCollider);
+		CGameObject* l_GObject = Owner->GetGameObject();
+		l_CharacterCollider = new CCharacterCollider(Name, l_GObject);
+		l_GObject->SetCharacterCollider(l_CharacterCollider);
 		m_CharacterColliderComponents.push_back(l_CharacterCollider);
 		CMaterial* l_PhysxMaterial = l_CharacterCollider->GetPhysxMaterial();
 
-		Vect3f l_Position = Owner->GetRenderableObject()->GetPosition();
+		Vect3f l_Position = l_GObject->GetRenderableObject()->GetPosition();
 		CreateCharacterController(Owner->GetName(), Height, Radius, Density, l_Position, l_PhysxMaterial->GetName(), l_PhysxMaterial->GetStaticFriction(), l_PhysxMaterial->GetDynamicFriction(), l_PhysxMaterial->GetRestitution());
 	}
 	else
@@ -134,6 +181,21 @@ CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::stri
 
 	return l_CharacterCollider;
 }
+
+
+void CPhysXManager::RemoveCharacterColliderComponent(CGameObject *Owner)
+{
+	for (size_t i = 0; i < m_CharacterColliderComponents.size(); ++i)
+	{
+		if (m_CharacterColliderComponents[i]->GetOwner() == Owner)
+		{
+			delete m_CharacterColliderComponents[i];
+			m_CharacterColliderComponents.erase(m_CharacterColliderComponents.begin() + i);
+			RemoveActor(Owner->GetName());
+		}
+	}
+}
+
 
 physx::PxMaterial* CPhysXManager::RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution)
 {
@@ -570,22 +632,30 @@ void CPhysXManager::UpdateComponents(float ElapsedTime)
 
 bool CPhysXManager::RemoveActor(const std::string &ActorName)
 {
+	
 	auto it_controller = m_CharacterControllers.find(ActorName);
 	auto it_Actors = m_ActorIndexs.find(ActorName);
+
+	/*if (it_Actors != m_ActorIndexs.end())
+	{
+		size_t a = it_Actors->second;
+		m_Scene->removeActor(*m_Actors[a]);
+	}
+	*/
 
 	if (it_controller != m_CharacterControllers.end()) //Is a C.Controller
 	{
 		it_controller->second->release();
-		m_CharacterControllers.erase(it_controller);
-
-		return true;
+		m_CharacterControllers.erase(it_controller); 
 	}
 
 	if (it_Actors != m_ActorIndexs.end())
 	{
 		size_t l_RemovedActorIndex = it_Actors->second;
 
-		m_Actors[l_RemovedActorIndex]->release();
+		//m_Actors[l_RemovedActorIndex]->release();
+		
+		m_Scene->removeActor(*m_Actors[l_RemovedActorIndex]);
 
 		size_t l_MovedActorIndex = m_Actors.size() - 1;
 

@@ -18,6 +18,8 @@ function CWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneN
 	--g_LogManager:Log("Weapon created")
 end
 
+function CWeaponComponent:GetLuaGameObject() return self.m_LuaGameObject end
+
 -- function CWeaponComponent:Initialize(ParentBoneName)
 	
 -- end
@@ -44,6 +46,7 @@ function CWeaponComponent:OnTriggerEnter(Actor)
 				if l_Enemy ~=  nil then
 					l_Enemy:TakeDamage(self)
 					l_Enemy:SetHitState(true)
+					g_PlayerComponent:SetAttacking(false) 
 				end
 			end
 		end
@@ -95,11 +98,11 @@ function CWeaponComponent:SetWeaponTransform(ElapsedTime)
 	local l_Yaw = l_Matrix:GetYaw()
 	local l_Pitch = l_Matrix:GetPitch()
 	local l_Roll = l_Matrix:GetRoll()
-	g_LogManager:Log("ESTO EN LUA")
-	g_LogManager:Log(l_Position)	
-	g_LogManager:Log(l_Yaw.."")	
-	g_LogManager:Log(l_Pitch.."")	
-	g_LogManager:Log(l_Roll.."")	
+	-- g_LogManager:Log("ESTO EN LUA")
+	-- g_LogManager:Log(l_Position)	
+	-- g_LogManager:Log(l_Yaw.."")	
+	-- g_LogManager:Log(l_Pitch.."")	
+	-- g_LogManager:Log(l_Roll.."")	
 	local l_Quat = Quatf(l_Yaw, l_Pitch+(0.3), l_Roll)
 	g_PhysXManager:MoveKinematicActor(self.m_LuaGameObject:GetName(), l_Position, l_Quat)
 end
@@ -139,10 +142,6 @@ end
 
 function CWeaponComponent:GetType()
 	return self.m_Type
-end
-
-function CWeaponComponent:GetMeshLuaGameObject()
-	return self.m_LuaGameObject
 end
 
 function CWeaponComponent:GetParentLuaGameObject()

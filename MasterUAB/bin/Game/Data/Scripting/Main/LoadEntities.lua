@@ -9,7 +9,7 @@ function CGameController:LoadShadowManager(XMLTreeNode)
 	g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_ShadowManager)
 	table.insert(self.m_Entities,l_ShadowManager)
 	
-	for i=0, XMLTreeNode:GetNumChildren() do
+	for i=0, XMLTreeNode:GetNumChildren()-1 do
 		local l_Element=XMLTreeNode:GetChild(i)
 		if l_Element:GetName()=="spot_light" then
 			local l_SpotLightName = l_Element:GetPszProperty("name","",false)
@@ -41,7 +41,7 @@ function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
 	g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_LightManager)
 	table.insert(self.m_Entities,l_LightManager)
 	
-	for i=0, XMLTreeNode:GetNumChildren() do
+	for i=0, XMLTreeNode:GetNumChildren()-1 do
 		local l_Element=XMLTreeNode:GetChild(i)
 		if l_Element:GetName()=="light" then
 			local l_LightName = l_Element:GetPszProperty("name","",false)

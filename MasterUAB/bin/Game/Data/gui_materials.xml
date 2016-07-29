@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <materials>
+<material name="avatars_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+		<texture filename="Data\GUI\textures\avatars.png"/>
+</material>
 <material name="map_material_1280_720" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\map_1280_720.dds"/>
 </material>

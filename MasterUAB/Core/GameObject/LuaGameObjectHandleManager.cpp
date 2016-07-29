@@ -1,4 +1,5 @@
 #include "GameObject\LuaGameObjectHandleManager.h"
+#include "GameObject\GameObjectManager.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
 
@@ -42,7 +43,12 @@ void CLuaGameObjectHandleManager::Remove(const std::string &GameObjectName)
 	{
 		if (m_LuaGameObjectHandles[i].GetName() == GameObjectName)
 		{
+			CEngine::GetSingleton().GetGameObjectManager()->RemoveGameObject(GameObjectName);
 			m_LuaGameObjectHandles.erase(m_LuaGameObjectHandles.begin() + i);
+
+			#ifdef _DEBUG
+				LOG("Gameobject " + GameObjectName + " completely removed");
+			#endif
 		}
 	}
 }

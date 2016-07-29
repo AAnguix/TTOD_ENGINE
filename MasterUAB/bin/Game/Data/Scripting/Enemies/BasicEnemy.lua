@@ -1,20 +1,21 @@
 class 'CBasicEnemyComponent' (CEnemyComponent)
 function CBasicEnemyComponent:__init(CGameObject)
 	CEnemyComponent.__init(self, CGameObject,"BasicEnemy")
-	self.m_Health=100.0
+	self.m_Health=850.0
+	self.m_MaxHealth=850.0
 	self.m_Speed=1.2
 	self.m_AttackDelay=2.5
 	self.m_AttackRange=1.3
 	self.m_VisionRange=5.0
 	self.m_DelayToPatrol = 3.0
 	
+	self.m_GuiAvatar = "basic_enemy_avatar_image"
+	
 	-- self.m_Weapon = CWeapon(10,"knife")
 	-- self.m_Armor = CArmor(5,"basic")
 end
 
-function CBasicEnemyComponent:Attack()
-	
-end
+function CBasicEnemyComponent:Attack() end
 
 function CBasicEnemyComponent:Initialize()
 	

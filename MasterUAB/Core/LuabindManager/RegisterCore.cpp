@@ -7,7 +7,6 @@
 
 #include "Engine\Engine.h"
 #include "Log\Log.h"
-#include "Input\InputManagerImplementation.h"
 #include "DebugHelper\DebugHelperImplementation.h"
 #include "Utils\EmptyPointerClass.h"
 
@@ -25,7 +24,7 @@
 #include "Lights\LightManager.h"
 #include "StaticMeshes\StaticMeshManager.h"
 #include "Animation\AnimatedModelManager.h"
-#include "Animation\AnimatorControllerManager.h"
+#include "Components\AnimatorController\AnimatorControllerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "PhysXManager.h"
 
@@ -40,6 +39,7 @@
 #include "Components\AudioSource.h"
 #include "Components\Script\ScriptManager.h"
 #include "Level\Level.h"
+#include "Input\InputConstants.h"
 
 #include "GUIManager.h"
 #include "Particles\ParticleManager.h"
@@ -108,8 +108,8 @@ void CLuabindManager::RegisterCore()
 		.def("GetSceneRendererCommandManager", &CEngine::GetSceneRendererCommandManager)
 		
 		.def("GetParticleSystemManager", &CEngine::GetParticleSystemManager)
-		.def("GetInputManager", &CEngine::GetInputManager)
 
+		//.def("GetInputMapper", &CEngine::GetInputMapper)
 		.def("GetPhysXManager", &CEngine::GetPhysXManager)
 		.def("GetGUIManager", &CEngine::GetGUIManager)
 		.def("GetSoundManager", &CEngine::GetSoundManager)
@@ -118,6 +118,7 @@ void CLuabindManager::RegisterCore()
 		.def("GetScriptManager", &CEngine::GetScriptManager)
 		.def("GetLayerManager", &CEngine::GetLayerManager)
 
+		.def("GetElapsedTime", &CEngine::GetElapsedTime)
 		.def("GetRealTimeSinceStartup", &CEngine::GetRealTimeSinceStartup)
 		.def("GetProfiler", &CEngine::GetProfiler)
 		.def("GetGraphicsStats", &CEngine::GetGraphicsStats)
@@ -156,6 +157,7 @@ void CLuabindManager::RegisterCore()
 		.def(constructor<>())
 		.def("Add", &CLuaGameObjectHandleManager::Add)
 		.def("Get", &CLuaGameObjectHandleManager::Get)
+		.def("Remove", &CLuaGameObjectHandleManager::Remove)
 	];
 
 	module(LUA_STATE)
@@ -252,7 +254,9 @@ void CLuabindManager::RegisterCore()
 		.def("RemoveComponents", &CScriptManager::RemoveComponents)
 	];
 
-	module(LUA_STATE) 
+
+	//Obsolete
+	/*module(LUA_STATE) 
 	[
 		class_<CInputManager>("CInputManager")
 		.def("IsActionActive", &CInputManager::IsActionActive)
@@ -265,9 +269,10 @@ void CLuabindManager::RegisterCore()
 			def("GetInputManager", &CInputManager::GetInputManager) 
 			,def("SetCurrentInputManager", &CInputManager::SetCurrentInputManager) 
 		]
-	];
+	];*/
 
-	module(LUA_STATE) 
+	//Obsolete
+	/*module(LUA_STATE) 
 	[
 		class_<CInputManagerImplementation,CInputManager>("CInputManagerImplementation")
 		.def(constructor<>())
@@ -281,7 +286,7 @@ void CLuabindManager::RegisterCore()
 		.def("update_cursor", &CInputManagerImplementation::UpdateCursor)
 		.def("update_cursor_movement", &CInputManagerImplementation::UpdateCursorMovement)
 		.def("GetHwnd", &CInputManagerImplementation::GetHwnd)
-	];
+	];*/
 
 	/*module(LUA_STATE) [  
 		class_<CDebugHelper>("CDebugHelper")   

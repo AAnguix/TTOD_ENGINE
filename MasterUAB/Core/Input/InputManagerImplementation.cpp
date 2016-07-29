@@ -8,13 +8,13 @@
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dinput8.lib")
 
-DWORD WINAPI FakeXInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState)
-{
-	return ERROR_DEVICE_NOT_CONNECTED;
-}
-
-typedef DWORD WINAPI TF_XInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState);
-TF_XInputGetState *s_XInputGetState = FakeXInputGetState;
+//DWORD WINAPI FakeXInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState)
+//{
+//	return ERROR_DEVICE_NOT_CONNECTED;
+//}
+//
+//typedef DWORD WINAPI TF_XInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState);
+//TF_XInputGetState *s_XInputGetState = FakeXInputGetState;
 
 CInputManagerImplementation::CInputManagerImplementation()
 :m_MovementX(0)
@@ -43,21 +43,21 @@ CInputManagerImplementation::CInputManagerImplementation()
 	
 
 	// mouse input 
-	HRESULT l_HR;
+	/*HRESULT l_HR;
 	DWORD l_CoopFlags = 0;
-
+*/
 	//l_CoopFlags = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND;
 
-	if (FAILED(l_HR = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_DI, NULL)))
+	/*if (FAILED(l_HR = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_DI, NULL)))
 		return;
 	if (FAILED(l_HR = m_DI->CreateDevice(GUID_SysMouse, &m_Mouse, NULL)))
 		return;
 	if (FAILED(l_HR = m_Mouse->SetDataFormat(&c_dfDIMouse2)))
-		return;
+		return;*/
 	//if (FAILED(l_HR = m_Mouse->SetCooperativeLevel(hWnd, l_CoopFlags)))
 	//	return;
 
-	HMODULE XInputLibrary = LoadLibraryA("xinput1_4.dll");
+	/*HMODULE XInputLibrary = LoadLibraryA("xinput1_4.dll");
 	if (!XInputLibrary)
 	{
 		XInputLibrary = LoadLibraryA("xinput9_1_0.dll");
@@ -81,7 +81,8 @@ CInputManagerImplementation::CInputManagerImplementation()
 		m_MouseInput = new CMouseInput();
 	}
 
-	m_KeyBoardInput = new CKeyBoardInput();
+	m_KeyBoardInput = new CKeyBoardInput();*/
+
 	//else
 		//MessageBox(hWnd, "Problem with de mouse input!", "Mouse", MB_ICONERROR | MB_OK);
 }
@@ -393,293 +394,299 @@ CInputManagerImplementation::Action::MouseButton CInputManagerImplementation::Pa
 	}
 }
 
-
 void CInputManagerImplementation::BeginFrame()
 {
-	m_ActiveActions.clear();
-	m_ActiveAxis.clear();
-	m_CursorD = Vect2i(0, 0);
 
-	if (m_Focus)
-	{
-		{
-			DIMOUSESTATE2 l_DIMouseState;
-
-			if (m_Mouse != NULL)
-			{
-
-				ZeroMemory(&l_DIMouseState, sizeof(l_DIMouseState));
-				HRESULT l_HR = m_Mouse->GetDeviceState(sizeof(DIMOUSESTATE2), &l_DIMouseState);
-				if (FAILED(l_HR))
-				{
-					l_HR = m_Mouse->Acquire();
-					while (l_HR == DIERR_INPUTLOST)
-						l_HR = m_Mouse->Acquire();
-				}
-				else
-				{
-
-					m_MovementX = l_DIMouseState.lX;
-					m_MovementY = l_DIMouseState.lY;
-					m_MovementZ = l_DIMouseState.lZ;
-
-					if(m_MovementX == 0 && m_MovementY==0)
-						printf("a\n");
-					else
-						printf("b\n");
-
-
-					m_PreviousButtonLeft = m_ButtonLeft;
-					m_PreviousButtonMiddle = m_ButtonMiddle;
-					m_PreviousButtonRight = m_ButtonRight;
-
-					m_ButtonRight = (l_DIMouseState.rgbButtons[1] & 0x80) != 0;
-					m_ButtonLeft = (l_DIMouseState.rgbButtons[0] & 0x80) != 0;
-					m_ButtonMiddle = (l_DIMouseState.rgbButtons[2] & 0x80) != 0;
-
-					m_CursorD = Vect2i(m_MovementX, m_MovementY);
-				}
-			}
-		}
-
-		// ----------------------------
-
-		XINPUT_STATE l_ControllerState[4];
-		bool l_ControllerPresent[4] = { false, false, false, false };
-		for (int i = 0; i < 4; ++i)
-		{
-			if (s_XInputGetState(i, &l_ControllerState[i]) == ERROR_SUCCESS)
-			{
-				l_ControllerPresent[i] = true;
-			}
-		}
-
-		// ----------------------------
-
-
-		for (std::vector<Action>::const_iterator it = m_Actions.cbegin(); it != m_Actions.cend(); ++it)
-		{
-			const Action& action = *it;
-
-			bool current = false, previous = false;
-			bool otherNeeds = true;
-			bool isActionActive = false;
-
-			switch (action.inputType)
-			{
-			case KEYBOARD:
-				current = m_KeysCurrent[action.keyboard.key];
-				previous = m_KeysPrevious[action.keyboard.key];
-				otherNeeds = (!action.keyboard.needsAlt || m_Alt) && (!action.keyboard.needsCtrl || m_Ctrl);
-				break;
-
-			case MOUSE:
-				switch (action.mouse.button)
-				{
-				case Action::LEFT:
-					current = m_ButtonLeft;
-					previous = m_PreviousButtonLeft;
-					break;
-
-				case Action::CENTER:
-					current = m_ButtonMiddle;
-					previous = m_PreviousButtonMiddle;
-					break;
-
-				case Action::RIGHT:
-					current = m_ButtonRight;
-					previous = m_PreviousButtonRight;
-					break;
-
-				default:
-					break;
-				}
-				break;
-
-			case GAMEPAD:
-				if (l_ControllerPresent[action.gamepad.gamepadNumber])
-				{
-					WORD rawState = l_ControllerState[action.gamepad.gamepadNumber].Gamepad.wButtons;
-					current = ((rawState & action.gamepad.button) != 0);
-					previous = ((m_PadButtensPrevious[action.gamepad.gamepadNumber] & action.gamepad.button) != 0);
-				}
-				break;
-
-			default:
-				break;
-			}
-
-
-			switch (action.mode)
-			{
-			case Action::ON_PRESS:
-
-				if (otherNeeds && current && !previous)
-				{
-					isActionActive = true;
-				}
-				break;
-
-			case Action::WHILE_PRESSED:
-
-				if (otherNeeds && current)
-				{
-					isActionActive = true;
-				}
-				break;
-
-			case Action::ON_RELEASE:
-
-				// TODO: añadir acciones de release
-				if (otherNeeds && !current && previous)
-				{
-					isActionActive = true;
-				}
-				break;
-
-			case Action::WHILE_RELEASED:
-				// TODO: añadir acciones de botón no pulsado
-
-				if (otherNeeds && !current)
-				{
-					isActionActive = true;
-				}
-				break;
-
-			default:
-				break;
-			}
-
-			if (isActionActive)
-			{
-				m_ActiveActions.insert(action.name);
-
-				if (action.triggersAxis)
-				{
-					m_ActiveAxis[action.axisName] += action.axisValue;
-				}
-			}
-		}
-
-		// ----------------------------
-
-		for (std::vector<Axis>::const_iterator it = m_Axis.cbegin(); it != m_Axis.cend(); ++it)
-		{
-			const Axis& axis = *it;
-			switch (axis.inputType)
-			{
-			case MOUSE:
-				switch (axis.mouse.axis)
-				{
-				case X:
-					m_ActiveAxis[axis.name] += m_MovementX * m_MouseSpeed * axis.mouse.scale;
-					break;
-				case Y:
-					m_ActiveAxis[axis.name] += m_MovementY * m_MouseSpeed * axis.mouse.scale;
-					break;
-				case WHEEL:
-					m_ActiveAxis[axis.name] += m_MovementZ * axis.mouse.scale;
-					break;
-				}
-				break;
-			case GAMEPAD:
-				switch (axis.gamepad.axis)
-				{
-				case LEFT_X:
-					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
-					{
-						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbLX;
-						if (rawState < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
-						}
-						else if (rawState > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
-						}
-					}
-					break;
-				case LEFT_Y:
-					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
-					{
-						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbLY;
-						if (rawState < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
-						}
-						else if (rawState > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
-						}
-					}
-					break;
-				case RIGHT_X:
-					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
-					{
-						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbRX;
-						if (rawState < -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
-						}
-						else if (rawState > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
-						}
-					}
-					break;
-	
-				case RIGHT_Y:
-					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
-					{
-						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbRY;
-						if (rawState < -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
-						}
-						else if (rawState > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
-						}
-					}
-					break;
-				case LEFT_TRIGGER:
-					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
-					{
-						BYTE rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.bLeftTrigger;
-						if (rawState > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
-						{
-							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_TRIGGER_THRESHOLD) / (256.0f - XINPUT_GAMEPAD_TRIGGER_THRESHOLD));
-						}
-					}
-					break;
-				case RIGHT_TRIGGER:
-					// TODO: Controles para el trigger derecho
-					break;
-
-				}
-				break;
-			}
-
-		}
-
-		// Save gamepad button states
-
-		{
-
-			for (int i = 0; i < 4; ++i)
-			{
-				if (l_ControllerPresent[i])
-				{
-					m_PadButtensPrevious[i] = l_ControllerState[i].Gamepad.wButtons;
-				}
-				else
-				{
-					m_PadButtensPrevious[i] = 0;
-				}
-			}
-		}
-	}
 }
+//void CInputManagerImplementation::BeginFrame()
+//{
+//	m_ActiveActions.clear();
+//	m_ActiveAxis.clear();
+//	m_CursorD = Vect2i(0, 0);
+//
+//	if (m_Focus)
+//	{
+//		{
+//			DIMOUSESTATE2 l_DIMouseState;
+//
+//			if (m_Mouse != NULL)
+//			{
+//
+//				ZeroMemory(&l_DIMouseState, sizeof(l_DIMouseState));
+//				HRESULT l_HR = m_Mouse->GetDeviceState(sizeof(DIMOUSESTATE2), &l_DIMouseState);
+//				if (FAILED(l_HR))
+//				{
+//					l_HR = m_Mouse->Acquire();
+//					while (l_HR == DIERR_INPUTLOST)
+//						l_HR = m_Mouse->Acquire();
+//				}
+//				else
+//				{
+//
+//					m_MovementX = l_DIMouseState.lX;
+//					m_MovementY = l_DIMouseState.lY;
+//					m_MovementZ = l_DIMouseState.lZ;
+//
+//					if(m_MovementX == 0 && m_MovementY==0)
+//						printf("a\n");
+//					else
+//						printf("b\n");
+//
+//
+//					m_PreviousButtonLeft = m_ButtonLeft;
+//					m_PreviousButtonMiddle = m_ButtonMiddle;
+//					m_PreviousButtonRight = m_ButtonRight;
+//
+//					m_ButtonRight = (l_DIMouseState.rgbButtons[1] & 0x80) != 0;
+//					m_ButtonLeft = (l_DIMouseState.rgbButtons[0] & 0x80) != 0;
+//					m_ButtonMiddle = (l_DIMouseState.rgbButtons[2] & 0x80) != 0;
+//
+//					m_CursorD = Vect2i(m_MovementX, m_MovementY);
+//
+//					//Mapper.SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(l_X - LastX));
+//					//Mapper.SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(l_Y - LastY));
+//				}
+//			}
+//		}
+//
+//		// ----------------------------
+//
+//		XINPUT_STATE l_ControllerState[4];
+//		bool l_ControllerPresent[4] = { false, false, false, false };
+//		for (int i = 0; i < 4; ++i)
+//		{
+//			if (s_XInputGetState(i, &l_ControllerState[i]) == ERROR_SUCCESS)
+//			{
+//				l_ControllerPresent[i] = true;
+//			}
+//		}
+//
+//		// ----------------------------
+//
+//
+//		for (std::vector<Action>::const_iterator it = m_Actions.cbegin(); it != m_Actions.cend(); ++it)
+//		{
+//			const Action& action = *it;
+//
+//			bool current = false, previous = false;
+//			bool otherNeeds = true;
+//			bool isActionActive = false;
+//
+//			switch (action.inputType)
+//			{
+//			case KEYBOARD:
+//				current = m_KeysCurrent[action.keyboard.key];
+//				previous = m_KeysPrevious[action.keyboard.key];
+//				otherNeeds = (!action.keyboard.needsAlt || m_Alt) && (!action.keyboard.needsCtrl || m_Ctrl);
+//				break;
+//
+//			case MOUSE:
+//				switch (action.mouse.button)
+//				{
+//				case Action::LEFT:
+//					current = m_ButtonLeft;
+//					previous = m_PreviousButtonLeft;
+//					break;
+//
+//				case Action::CENTER:
+//					current = m_ButtonMiddle;
+//					previous = m_PreviousButtonMiddle;
+//					break;
+//
+//				case Action::RIGHT:
+//					current = m_ButtonRight;
+//					previous = m_PreviousButtonRight;
+//					break;
+//
+//				default:
+//					break;
+//				}
+//				break;
+//
+//			case GAMEPAD:
+//				if (l_ControllerPresent[action.gamepad.gamepadNumber])
+//				{
+//					WORD rawState = l_ControllerState[action.gamepad.gamepadNumber].Gamepad.wButtons;
+//					current = ((rawState & action.gamepad.button) != 0);
+//					previous = ((m_PadButtensPrevious[action.gamepad.gamepadNumber] & action.gamepad.button) != 0);
+//				}
+//				break;
+//
+//			default:
+//				break;
+//			}
+//
+//
+//			switch (action.mode)
+//			{
+//			case Action::ON_PRESS:
+//
+//				if (otherNeeds && current && !previous)
+//				{
+//					isActionActive = true;
+//				}
+//				break;
+//
+//			case Action::WHILE_PRESSED:
+//
+//				if (otherNeeds && current)
+//				{
+//					isActionActive = true;
+//				}
+//				break;
+//
+//			case Action::ON_RELEASE:
+//
+//				// TODO: añadir acciones de release
+//				if (otherNeeds && !current && previous)
+//				{
+//					isActionActive = true;
+//				}
+//				break;
+//
+//			case Action::WHILE_RELEASED:
+//				// TODO: añadir acciones de botón no pulsado
+//
+//				if (otherNeeds && !current)
+//				{
+//					isActionActive = true;
+//				}
+//				break;
+//
+//			default:
+//				break;
+//			}
+//
+//			if (isActionActive)
+//			{
+//				m_ActiveActions.insert(action.name);
+//
+//				if (action.triggersAxis)
+//				{
+//					m_ActiveAxis[action.axisName] += action.axisValue;
+//				}
+//			}
+//		}
+//
+//		// ----------------------------
+//
+//		for (std::vector<Axis>::const_iterator it = m_Axis.cbegin(); it != m_Axis.cend(); ++it)
+//		{
+//			const Axis& axis = *it;
+//			switch (axis.inputType)
+//			{
+//			case MOUSE:
+//				switch (axis.mouse.axis)
+//				{
+//				case X:
+//					m_ActiveAxis[axis.name] += m_MovementX * m_MouseSpeed * axis.mouse.scale;
+//					break;
+//				case Y:
+//					m_ActiveAxis[axis.name] += m_MovementY * m_MouseSpeed * axis.mouse.scale;
+//					break;
+//				case WHEEL:
+//					m_ActiveAxis[axis.name] += m_MovementZ * axis.mouse.scale;
+//					break;
+//				}
+//				break;
+//			case GAMEPAD:
+//				switch (axis.gamepad.axis)
+//				{
+//				case LEFT_X:
+//					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
+//					{
+//						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbLX;
+//						if (rawState < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
+//						}
+//						else if (rawState > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
+//						}
+//					}
+//					break;
+//				case LEFT_Y:
+//					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
+//					{
+//						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbLY;
+//						if (rawState < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
+//						}
+//						else if (rawState > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE));
+//						}
+//					}
+//					break;
+//				case RIGHT_X:
+//					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
+//					{
+//						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbRX;
+//						if (rawState < -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
+//						}
+//						else if (rawState > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
+//						}
+//					}
+//					break;
+//	
+//				case RIGHT_Y:
+//					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
+//					{
+//						SHORT rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.sThumbRY;
+//						if (rawState < -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
+//						}
+//						else if (rawState > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE));
+//						}
+//					}
+//					break;
+//				case LEFT_TRIGGER:
+//					if (l_ControllerPresent[axis.gamepad.gamepadNumber])
+//					{
+//						BYTE rawState = l_ControllerState[axis.gamepad.gamepadNumber].Gamepad.bLeftTrigger;
+//						if (rawState > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
+//						{
+//							m_ActiveAxis[axis.name] += (float)((rawState + XINPUT_GAMEPAD_TRIGGER_THRESHOLD) / (256.0f - XINPUT_GAMEPAD_TRIGGER_THRESHOLD));
+//						}
+//					}
+//					break;
+//				case RIGHT_TRIGGER:
+//					// TODO: Controles para el trigger derecho
+//					break;
+//
+//				}
+//				break;
+//			}
+//
+//		}
+//
+//		// Save gamepad button states
+//
+//		{
+//
+//			for (int i = 0; i < 4; ++i)
+//			{
+//				if (l_ControllerPresent[i])
+//				{
+//					m_PadButtensPrevious[i] = l_ControllerState[i].Gamepad.wButtons;
+//				}
+//				else
+//				{
+//					m_PadButtensPrevious[i] = 0;
+//				}
+//			}
+//		}
+//	}
+//}
 
 void CInputManagerImplementation::EndFrame()
 {

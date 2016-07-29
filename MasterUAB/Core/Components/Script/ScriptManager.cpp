@@ -65,6 +65,18 @@ CScript* CScriptManager::AddComponent(const std::string& Name, CLuaGameObjectHan
 	return l_Script;
 }
 
+void CScriptManager::RemoveComponent(CGameObject* Owner)
+{
+	for (size_t i = 0; i < m_Components.size(); ++i)
+	{
+		if (m_Components[i]->GetOwner() == Owner)
+		{
+			delete m_Components[i];
+			m_Components.erase(m_Components.begin() + i);
+		}
+	}
+}
+
 void CScriptManager::RemoveComponents()
 {
 	for (size_t i = 0; i < m_Components.size(); ++i)

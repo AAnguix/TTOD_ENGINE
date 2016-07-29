@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <direct.h>
 #include "Engine\Engine.h"
-#include "Input\InputManagerImplementation.h"
 #include "Log\Log.h"
+#include "Input\InputMapperImplementation.h"
 
 bool CFileUtils::FolderExists(const char* FolderName)
 {
@@ -254,7 +254,7 @@ std::string CFileUtils::SelectTextureFile(HWND Hwnd, const std::string  &InFile)
 	ZeroMemory(&of, sizeof(of));
 
 	of.lStructSize = sizeof(of);
-	of.hwndOwner = CEngine::GetSingleton().GetInputManager()->GetHwnd();
+	of.hwndOwner = CEngine::GetSingleton().GetInputMapper()->GetHwnd();
 	//of.lpstrFilter = "Text Files (*.txt)\0*.txt\0";
 	of.lpstrFilter = "PNG Files(.png)\0*.png\0DDS Files(.dds)\0*.dds\0All Files(*.*)\0*.*\0"; //"PNG Files(.png)\0*.ASM\0DDS Files(.dds)\0*.dds\0All Files(*.*)\0*.*\0";
 	char l_File[MAX_PATH];

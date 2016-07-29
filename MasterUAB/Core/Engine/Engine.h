@@ -60,7 +60,12 @@ class CRenderableObjectTechniqueManager;
 class CSceneRendererCommandManager;
 class CDebugHelperImplementation;
 class CParticleManager;
-class CInputManagerImplementation;
+
+namespace InputMapping
+{
+	class CInputMapperImplementation;
+}
+
 class CGraphicsStats;
 class CEmptyPointerClass;
 class CLevel;
@@ -105,7 +110,7 @@ private:
 	CSceneRendererCommandManager* m_SceneRendererCommandManager;
 	CDebugHelperImplementation* m_DebugHelper;
 	CParticleManager* m_ParticleSystemManager;
-	CInputManagerImplementation* m_InputManager;
+	InputMapping::CInputMapperImplementation* m_InputMapper;
 	CGraphicsStats* m_GraphicsStats;
 	CProfiler* m_Profiler;
 	CResourceManager* m_ResourceManager;
@@ -124,10 +129,16 @@ private:
 
 	HINSTANCE* m_HInstance;
 
+	float m_ElapsedTime;
+	bool m_Initialized;
+
 	CEngine();
 
 public:
 	virtual ~CEngine();
+	float GetElapsedTime() const { return m_ElapsedTime; }
+	bool Initialized() const { return m_Initialized; }
+
 
 	float GetRealTimeSinceStartup();
 	void SetTimeScale(float TimeScale);
@@ -171,7 +182,7 @@ public:
 	CSceneRendererCommandManager* GetSceneRendererCommandManager() const;
 	CDebugHelperImplementation* GetDebugHelper() const;
 	CParticleManager* GetParticleSystemManager() const;
-	CInputManagerImplementation* GetInputManager() const;
+	InputMapping::CInputMapperImplementation* GetInputMapper() const;
 	CGUIManager* GetGUIManager() const;
 	ISoundManager* GetSoundManager() const;
 	CGraphicsStats* GetGraphicsStats() const;

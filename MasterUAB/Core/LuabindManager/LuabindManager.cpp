@@ -89,12 +89,15 @@ void CLuabindManager::Initialize()
 
 void CLuabindManager::RunLuaMain()
 {
-	RunFile("./Data/scripting/LuaMainStartScreen.lua");
+	RunFile("./Data/scripting/LuaMain.lua");
 	RunCode("LuaMain()");
 }
 
 void CLuabindManager::Destroy()
 {  
+	RunFile("./Data/scripting/DestroyLua.lua");
+	RunCode("DestroyLua()");
+
 	if(m_LS!=NULL)
 	lua_close(m_LS); 
 }  

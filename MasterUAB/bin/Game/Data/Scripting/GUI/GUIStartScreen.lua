@@ -55,8 +55,7 @@ function OptionsMenu()
 end
 
 function CreditsMenu()
-	dofile("./Data/Scripting/GUI/GUICredits.lua")
-	InitializeGUI()
+	g_LuaGuiManager:SetGui(3)
 end
 
 function ExitGame()

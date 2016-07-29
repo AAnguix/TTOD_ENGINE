@@ -40,7 +40,7 @@ end
 
 function CGameController:LoadPlayerChilds(Enemy, XMLTreeNode)
 	g_LogManager:Log("Loading player childs")
-	for i=0, XMLTreeNode:GetNumChildren() do
+	for i=0, XMLTreeNode:GetNumChildren()-1 do
 		local l_Element=XMLTreeNode:GetChild(i)
 		if l_Element:GetName()=="weapon" then
 			self:LoadWeapon(l_Element,Enemy)
@@ -77,7 +77,7 @@ function CGameController:LoadEnemy(XMLTreeNode)
 end
 
 function CGameController:LoadEnemyChilds(Enemy, XMLTreeNode)
-	for i=0, XMLTreeNode:GetNumChildren() do
+	for i=0, XMLTreeNode:GetNumChildren()-1 do
 		local l_Element=XMLTreeNode:GetChild(i)
 		if l_Element:GetName()=="way_point" then
 			local l_V = Vect3f(0.0,0.0,0.0)
@@ -90,3 +90,17 @@ function CGameController:LoadEnemyChilds(Enemy, XMLTreeNode)
 		end
 	end
 end	
+
+function CGameController:LoadShowHealthBarManager(XMLTreeNode)
+	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
+	
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
+	if l_LuaGameObject ~= nil then
+		local l_ShowHealthBarComponent  = CShowHealthBarManagerComponent(l_LuaGameObject)
+		local l_ComponentName = l_LuaGameObject:GetName().."_Script"
+		g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_ShowHealthBarComponent)
+		g_ShowHealthBarManager = l_ShowHealthBarComponent
+		table.insert(self.m_Entities,l_ShowHealthBarComponent)
+	end
+end
+

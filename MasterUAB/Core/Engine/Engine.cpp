@@ -18,12 +18,12 @@
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "DebugHelper\DebugHelperImplementation.h"
 #include "Particles\ParticleManager.h"
-#include "Input\InputManagerImplementation.h"
+#include "Input\InputMapperImplementation.h"
 #include "GUIManager.h"
 #include "ISoundManager.h"
 #include "Render\GraphicsStats.h"
 #include "Profiler\Profiler.h"
-#include "Animation\AnimatorControllerManager.h"
+#include "Components\AnimatorController\AnimatorControllerManager.h"
 #include "Components\Script\ScriptManager.h"
 #include "Render\DebugRender.h"
 #include "Level\Level.h"
@@ -42,9 +42,13 @@ CEngine::CEngine()
 ,m_SecsPerCnt(0.0f)
 ,m_TimeSinceStart(0.0f)
 ,m_HInstance(nullptr)
+,m_Initialized(false)
+,m_ElapsedTime(0.0f)
 {
+	m_Log = new CLog;
+	m_LuabindManager = new CLuabindManager;
 	m_CurrentLevel = "0";
-	m_InputManager = new CInputManagerImplementation;
+	m_InputMapper = new InputMapping::CInputMapperImplementation;
 	m_LuaGameObjectHandleManager = new CLuaGameObjectHandleManager();
 	m_GameObjectManager = new CGameObjectManager();
 	m_CameraControllerManager = new CCameraControllerManager;
@@ -52,10 +56,8 @@ CEngine::CEngine()
 	m_MaterialManager = new CMaterialManager;
 	m_TextureManager = new CTextureManager;
 	m_StaticMeshManager = new CStaticMeshManager;
-	m_LuabindManager = new CLuabindManager;
 	m_AnimatedModelManager = new CAnimatedModelManager;
 	m_LightManager = new CLightManager;
-	m_Log = new CLog;
 	m_PhysXManager = CPhysXManager::CreatePhysxManager();
 	m_LayerManager = new CLayerManager();
 	m_RenderableObjectTechniqueManager = new CRenderableObjectTechniqueManager;
@@ -91,10 +93,8 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_RenderableObjectTechniqueManager);}
 	{CHECKED_DELETE(m_LayerManager);}
 	{CHECKED_DELETE(m_PhysXManager);}
-	{CHECKED_DELETE(m_Log);}
 	{CHECKED_DELETE(m_LightManager);}
 	{CHECKED_DELETE(m_AnimatedModelManager);}
-	{CHECKED_DELETE(m_LuabindManager);}
 	//{CHECKED_DELETE(m_RenderableObjectsManager);}
 	{CHECKED_DELETE(m_StaticMeshManager);}
 	{CHECKED_DELETE(m_TextureManager);}
@@ -103,7 +103,9 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_CameraControllerManager);}
 	{CHECKED_DELETE(m_GameObjectManager); }
 	{CHECKED_DELETE(m_LuaGameObjectHandleManager); }
-	{CHECKED_DELETE(m_InputManager); }
+	{CHECKED_DELETE(m_InputMapper); }
+	{CHECKED_DELETE(m_LuabindManager); }
+	{CHECKED_DELETE(m_Log); }
 	m_HInstance = nullptr;
 }
 
@@ -121,7 +123,8 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 
 	m_ResourceManager->Initialize();
 
-	CInputManager::SetCurrentInputManager(m_InputManager);
+	CInputMapper::SetCurrentInputMapper(m_InputMapper);
+
 
 	CContextManager* l_ContextManager = m_RenderManager->GetContextManager();
 	m_DebugHelper->Initialize(l_ContextManager->GetDevice());
@@ -161,6 +164,8 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 
 	delete l_VCDescription;
 
+	m_Initialized = true;
+
 	CEngine::GetSingleton().GetLogManager()->Log("Engine initialized.");
 }
 
@@ -191,6 +196,8 @@ void CEngine::SetTimeScale(float TimeScale)
 void CEngine::Update(float ElapsedTime)
 {
 	ElapsedTime *= m_TimeScale;
+
+	m_ElapsedTime = ElapsedTime;
 
 	CCamera l_Camera = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera();
 
@@ -330,7 +337,7 @@ CDebugHelperImplementation* CEngine::GetDebugHelper() const { return m_DebugHelp
 
 CParticleManager* CEngine::GetParticleSystemManager() const { return m_ParticleSystemManager;}
 
-CInputManagerImplementation* CEngine::GetInputManager() const { return m_InputManager;}
+InputMapping::CInputMapperImplementation* CEngine::GetInputMapper() const { return m_InputMapper; }
 
 CRenderManager* CEngine::GetRenderManager() const { return m_RenderManager; }
 

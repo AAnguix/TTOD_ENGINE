@@ -6,6 +6,8 @@ CLUAComponent.__init(self,ScriptType)
 	self.m_InteractionRange = InteractionRange
 end
 
+function CActivableElement:GetLuaGameObject() return self.m_LuaGameObject end
+
 function CActivableElement:GetInteractionRange()	
 	return self.m_InteractionRange
 end

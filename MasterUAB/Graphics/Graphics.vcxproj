@@ -14,7 +14,6 @@
     <ClInclude Include="Animation\AnimatedCoreModel.h" />
     <ClInclude Include="Animation\AnimatedInstanceModel.h" />
     <ClInclude Include="Animation\AnimatedModelManager.h" />
-    <ClInclude Include="Animation\AnimatorControllerManager.h" />
     <ClInclude Include="Animation\tick.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Camera\CameraController.h" />
@@ -120,7 +119,6 @@
     <ClCompile Include="Animation\AnimatedCoreModel.cpp" />
     <ClCompile Include="Animation\AnimatedInstanceModel.cpp" />
     <ClCompile Include="Animation\AnimatedModelManager.cpp" />
-    <ClCompile Include="Animation\AnimatorControllerManager.cpp" />
     <ClCompile Include="Animation\tick.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Camera\CameraController.cpp" />

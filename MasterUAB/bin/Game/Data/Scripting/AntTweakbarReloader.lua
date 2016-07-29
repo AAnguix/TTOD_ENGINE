@@ -1,48 +1,35 @@
-function Reload()
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT1_PRESSED") then
-		ReloadScene()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT2_PRESSED") then
-		ReloadEffects()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT3_PRESSED") then
-		ReloadAnimatedModels()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT4_PRESSED") then
-		ReloadStaticMeshes()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT5_PRESSED") then
-		ReloadLayers()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT6_PRESSED") then
-		ReloadLights()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT7_PRESSED") then
-		ReloadMaterials()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT8_PRESSED") then
-		ReloadSceneRendererCommands()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("ON_ALT9_PRESSED") then
-		ReloadGUI()
-	end
-	
-	if CInputManager.GetInputManager():IsActionActive("RELOAD_LUA") then
-		ReloadLua()
-	end
+class 'CAntTweakBarReloader'
+function CAntTweakBarReloader:__init()
+	self:SubscribeEvents()
 end
 
-function ReloadLua()
+function CAntTweakBarReloader:SubscribeEvents()
+	g_EventManager:Subscribe(self, "ON_ALT1_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT2_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT3_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT4_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT5_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT6_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT7_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT8_PRESSED")
+	g_EventManager:Subscribe(self, "ON_ALT9_PRESSED")
+	g_EventManager:Subscribe(self, "RELOAD_LUA")
+end
+
+function CAntTweakBarReloader:ON_ALT1_PRESSED() self:ReloadScene() end
+function CAntTweakBarReloader:ON_ALT2_PRESSED() self:ReloadEffects()() end
+function CAntTweakBarReloader:ON_ALT3_PRESSED() self:ReloadAnimatedModels() end
+function CAntTweakBarReloader:ON_ALT4_PRESSED() self:ReloadStaticMeshes() end
+function CAntTweakBarReloader:ON_ALT5_PRESSED() self:ReloadLayers() end
+function CAntTweakBarReloader:ON_ALT6_PRESSED() self:ReloadLights() end
+function CAntTweakBarReloader:ON_ALT7_PRESSED() self:ReloadMaterials() end
+function CAntTweakBarReloader:ON_ALT8_PRESSED() self:ReloadSceneRendererCommands() end
+function CAntTweakBarReloader:ON_ALT9_PRESSED() self:ReloadGUI() end
+function CAntTweakBarReloader:RELOAD_LUA() self:ReloadLua() end
+
+function CAntTweakBarReloader:ReloadLua()
 	CEngine.GetSingleton():GetDebugHelper():RemoveBar()
-	ReloadLog()
+	self:ReloadLog()
 	dofile(g_CurrentLuaMainFile)
 	LuaMain()
 	g_ScriptManager:RemoveComponents()
@@ -52,7 +39,7 @@ function ReloadLua()
 	g_GameController:Reload()
 end
 
-function ReloadScene()
+function CAntTweakBarReloader:ReloadScene()
 	local l_Engine = CEngine.GetSingleton()
 	if g_CurrentLevel ~= 0 then
 		g_ScriptManager:RemoveComponents()
@@ -78,7 +65,7 @@ function ReloadScene()
 	end
 end
 
-function ReloadEffects() 
+function CAntTweakBarReloader:ReloadEffects() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetEffectManager():ReloadFile()
@@ -91,12 +78,12 @@ function ReloadEffects()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadEffectTechnique(EffectTechniqueName)
+function CAntTweakBarReloader:ReloadEffectTechnique(EffectTechniqueName)
 	local l_Technique=CEngine.GetSingleton():GetEffectManager():GetResource(EffectTechniqueName)
 	l_Technique:Refresh()
 end
 
-function ReloadRenderableObjectTechniques() 
+function CAntTweakBarReloader:ReloadRenderableObjectTechniques() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetRenderableObjectTechniqueManager():Reload()
@@ -108,7 +95,7 @@ function ReloadRenderableObjectTechniques()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadMaterials()
+function CAntTweakBarReloader:ReloadMaterials()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetMaterialManager():Reload()
@@ -119,7 +106,7 @@ function ReloadMaterials()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadAnimatedModels() 
+function CAntTweakBarReloader:ReloadAnimatedModels() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetAnimatedModelManager():Reload()
@@ -128,7 +115,7 @@ function ReloadAnimatedModels()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadStaticMeshes() 
+function CAntTweakBarReloader:ReloadStaticMeshes() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetStaticMeshManager():Reload()
@@ -137,7 +124,7 @@ function ReloadStaticMeshes()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadLayers() 
+function CAntTweakBarReloader:ReloadLayers() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()
 	l_Engine:GetLayerManager():Reload()
@@ -145,36 +132,36 @@ function ReloadLayers()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadLights()
+function CAntTweakBarReloader:ReloadLights()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetLightManager():Reload()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadSceneRendererCommands() 
+function CAntTweakBarReloader:ReloadSceneRendererCommands() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetSceneRendererCommandManager():Reload()
 end
 
-function ReloadGUI()
+function CAntTweakBarReloader:ReloadGUI()
 	g_GUIManager:Reload()
 	dofile(g_CurrentGuiFile) --Reload GUI___.lua
 	InitializeGUI()
 end
 
-function ReloadCameras()
+function CAntTweakBarReloader:ReloadCameras()
 	g_CameraControllerManager:Reload()
 end
 
-function ReloadParticles()
+function CAntTweakBarReloader:ReloadParticles()
 	g_ParticleSystemManager:Reload()
 end
 
-function ReloadCameras()
+function CAntTweakBarReloader:ReloadCameras()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetCameraControllerManager():Reload()
 end
 
-function ReloadLog()
+function CAntTweakBarReloader:ReloadLog()
 	g_LogManager:Reload(false)
 end

@@ -17,6 +17,8 @@ public:
 	void SetPlayer(CGameObject* Player);
 	CGameObject* GetPlayer() const{ assert(m_Player != nullptr); return m_Player; };
 
+	void RemoveGameObject(const std::string &Name);
+
 	CGameObject* AddGameObject(CXMLTreeNode &TreeNode);
 	CGameObject* AddGameObject(const std::string &GameObjectName);
 };

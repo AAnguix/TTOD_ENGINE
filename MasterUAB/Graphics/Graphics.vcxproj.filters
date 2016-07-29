@@ -253,9 +253,6 @@
     <ClInclude Include="Render\GraphicsStats.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\AnimatorControllerManager.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="SceneRendererCommands\CaptureStencilBufferSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
@@ -504,9 +501,6 @@
     </ClCompile>
     <ClCompile Include="Render\GraphicsStats.cpp">
       <Filter>Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\AnimatorControllerManager.cpp">
-      <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="SceneRendererCommands\CaptureStencilBufferSceneRendererCommand.cpp">
       <Filter>SceneRendererCommands</Filter>
