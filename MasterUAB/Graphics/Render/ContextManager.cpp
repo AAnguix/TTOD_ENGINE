@@ -309,7 +309,7 @@ bool CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int 
 		HRESULT l_Hr = m_SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
 		assert(!FAILED(l_Hr));
 		bool l_Result = CreateBackBuffer(hWnd, Width, Height);
-		assert(l_Result);
+		
 		return l_Result;
 	}
 	return false;

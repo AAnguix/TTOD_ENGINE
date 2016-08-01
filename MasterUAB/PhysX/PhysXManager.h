@@ -209,6 +209,8 @@ public:
 
 	/*Gameplay*/
 	bool Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* result_ = nullptr);
+	std::string RaycastOutName(const Vect3f& Origin, const Vect3f& Direction, const float& Length);
+
 	void SetShapeAsTrigger(const std::string &ShapeName);
 	void ApplyForce(const std::string &ActorName, const Vect3f &Force);
 	void RemoveTriggerState(const std::string &ActorName);

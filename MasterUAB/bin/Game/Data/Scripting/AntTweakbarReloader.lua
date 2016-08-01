@@ -37,6 +37,8 @@ function CAntTweakBarReloader:ReloadLua()
 	g_SoundManager:RemoveComponents()
 	g_AnimatorControllerManager:RemoveComponents()
 	g_GameController:Reload()
+	dofile("./Data/Scripting/GUI/LuaGuiManager.lua")
+	g_LuaGuiManager:Reload()
 end
 
 function CAntTweakBarReloader:ReloadScene()

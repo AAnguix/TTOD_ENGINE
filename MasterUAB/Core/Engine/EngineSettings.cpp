@@ -12,6 +12,8 @@ CEngineSettings::CEngineSettings()
 ,m_ScreenPosition(Vect2i(0, 0))
 ,m_DataPath("")
 ,m_D3DDebug(false)
+,m_GuiMaterials("")
+,m_EffectsMaterials("")
 {
 
 }
@@ -54,6 +56,15 @@ bool CEngineSettings::LoadSettings(const std::string &SettingsFile)
 				else if (l_Element.GetName() == std::string("d3d_debug"))
 				{
 					m_Fps = l_Element.GetBoolProperty("value", false);
+				}
+
+				else if (l_Element.GetName() == std::string("gui_materials"))
+				{
+					m_GuiMaterials = l_Element.GetPszProperty("value", false);
+				}
+				else if (l_Element.GetName() == std::string("effects_materials"))
+				{
+					m_EffectsMaterials = l_Element.GetPszProperty("value", false);
 				}
 				else if (l_Element.GetName() == std::string("data_path"))
 				{

@@ -17,6 +17,27 @@ static physx::PxDefaultAllocator gDefaultAllocatorCallback;
 #define PVD_HOST "127.0.0.1"
 #endif
 
+physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+{
+	//physx::PxFilterObjectType l_test = physx::PxGetFilterObjectType(attributes0);
+	//physx::PxFilterObjectType l_test2 = physx::PxGetFilterObjectType(attributes1);
+
+	if ((physx::PxGetFilterObjectType(attributes0) == physx::PxFilterObjectType::eRIGID_STATIC || physx::PxGetFilterObjectType(attributes1) == physx::PxFilterObjectType::eRIGID_STATIC) && (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)))
+	{
+		return physx::PxFilterFlag::eSUPPRESS;
+	}
+	else
+	{
+		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT
+			| physx::PxPairFlag::eTRIGGER_DEFAULT
+			| physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+			| physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+	}
+	return physx::PxFilterFlag::eDEFAULT;
+
+};
+
 CPhysXManager* CPhysXManager::CreatePhysxManager()
 {
 	return new CPhysXManagerImplementation();
@@ -60,7 +81,8 @@ CPhysXManagerImplementation::CPhysXManagerImplementation()
 	physx::PxSceneDesc sceneDesc(m_PhysX->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
-	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
 	m_Scene = m_PhysX->createScene(sceneDesc);
 	assert(m_Scene);

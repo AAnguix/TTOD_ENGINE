@@ -1,5 +1,6 @@
 function OnEnter_Idle_Dragon(Dragon, ElapsedTime)
-	--g_LogManager:Log(Dragon.m_RObject:GetName().." enters idle")
+	--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." enters idle")
+	
 end
 function OnUpdate_Idle_Dragon(Dragon, ElapsedTime)
 	
@@ -20,12 +21,16 @@ function OnUpdate_Idle_Dragon(Dragon, ElapsedTime)
 	end
 	
 	if Dragon:GetTimer() > l_AttackDelay then
-	
+		--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." El timepo es mayor del Attack Delay")
+		
 		local l_ScratchRange = Dragon:GetCurrentState().m_ScratchRange
+		--g_LogManager:Log(l_ScratchRange.." Scratch range")
 		l_Lgo:SetTrigger("WaitingTimeExpired")  
 		if CTTODMathUtils.PointInsideCircle(g_Player:GetPosition(), l_Lgo:GetPosition(), l_ScratchRange)  then 
+			--g_LogManager:Log("IsPlayerInsideScratchRange true")
 			l_Lgo:SetBool("IsPlayerInsideScratchRange", true) 
 		else   
+			--g_LogManager:Log("IsPlayerInsideScratchRange False")
 			l_Lgo:SetBool("IsPlayerInsideScratchRange", false)  
 		end
 	end
@@ -56,17 +61,18 @@ end
 ------------------------------------------------------------
 
 function OnEnter_Scratch_Dragon(Dragon, ElapsedTime)
-	--g_LogManager:Log(Dragon.m_RObject:GetName().." enters Scratch")
+	--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." Enters Scartch")
 	local l_PlayerPos = g_Player:GetPosition()
-	Dragon:SetTarget(l_PlayerPos)
+	--Dragon:SetTarget(l_PlayerPos)
 end
 function OnUpdate_Scratch_Dragon(Dragon, ElapsedTime)
-	Dragon:Attack(l_PlayerPos)
-	Dragon:GetAnimator():SetBool("IsPlayerInsideScratchRange", false)  --LLeva a Idle_State
+	--Dragon:Attack(l_PlayerPos)
+	
 	--Discutir si es mejor que el ataque sea solo 1 vez y vuelva a Idle o que se quede aca con un cooldown time o qu hagamos otro chequeo de si esta en el rango de vision
 end
 function OnExit_Scratch_Dragon(Dragon, ElapsedTime)
-	
+	local l_Lgo = Dragon:GetLuaGameObject()
+	l_Lgo:SetBool("IsPlayerInsideScratchRange", false)  
 end
 
 ------------------------------------------------------------

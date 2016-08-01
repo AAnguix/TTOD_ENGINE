@@ -116,6 +116,7 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 		if (l_Actor.Exists())
 		{
 			m_CalCoreModel = new CalCoreModel(GetName());
+			CEngine::GetSingleton().GetMaterialManager()->AddMaterialsFileName(l_S);
 
 			for (int i = 0; i < l_Actor.GetNumChildren(); ++i)
 			{
@@ -124,16 +125,27 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 				if (l_Element.GetName() == std::string("skeleton"))
 				{
 					std::string s = Path + l_Element.GetPszProperty("filename");
-					if(!LoadSkeleton(Path+l_Element.GetPszProperty("filename")))
+					if (!LoadSkeleton(Path + l_Element.GetPszProperty("filename")))
+					{
+						#ifdef _DEBUG
+							LOG("Unable to load skeleton " + std::string(l_Element.GetPszProperty("filename")));
+						#endif
 						return;
+					}
 				}
 				else if (l_Element.GetName() == std::string("mesh"))
 				{
-					if(!LoadMesh(Path+l_Element.GetPszProperty("filename")))
+					if (!LoadMesh(Path + l_Element.GetPszProperty("filename")))
+					{
+						#ifdef _DEBUG
+							LOG("Unable to load mesh " + std::string(l_Element.GetPszProperty("filename")));
+						#endif
 						return;
+					}
 				}
 				else if (l_Element.GetName() == std::string("material"))
 				{	
+					std::string l_MaterialName = l_Element.GetPszProperty("name", "");
 					CMaterial *l_Material=new CMaterial(l_Element);
 
 					if(!CEngine::GetSingleton().GetMaterialManager()->AddResource(l_Material->GetName(), l_Material))
@@ -141,9 +153,13 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 						if (l_Material != NULL)
 							delete(l_Material);
 						l_Material = NULL;
+						#ifdef _DEBUG
+							LOG("Unable to load material " + std::string(l_MaterialName) + " on model " + m_Name + ". It's already created.");
+						#endif
 					}
 					else
 					{
+						CEngine::GetSingleton().GetMaterialManager()->InsertMaterialIntoMaterialsFileName(l_MaterialName, l_S);
 						m_Materials.push_back(l_Material);
 					}
 

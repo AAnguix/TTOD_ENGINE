@@ -40,6 +40,7 @@ end
 function CShowHealthBarManagerComponent:ShowBar()
 	local l_EnemyCurrentHealth = self.m_LastEnemyHit:GetHealth() 
 	local l_EnemyMaxHealth = self.m_LastEnemyHit:GetMaxHealth()
+	
 	local l_HealthBarPos = SGUIPosition(self.m_X,self.m_Y,self.m_Width,self.m_Height,CGUIManager.TOP_LEFT,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	g_GUIManager:DoHealthBar(self.m_HealthBarID,self.m_HealthBarName,l_HealthBarPos, 0.0, l_EnemyMaxHealth, l_EnemyCurrentHealth) 	
 	

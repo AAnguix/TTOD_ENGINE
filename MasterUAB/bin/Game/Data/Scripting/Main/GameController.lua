@@ -5,6 +5,7 @@ function CGameController:__init()
 	self.m_Entities={}
 	self.m_Enemies={}
 	self.m_Filename = ""
+	g_EventManager:Subscribe(self, "PLAYER_IS_DEAD")
 end
 
 function CGameController:RemoveEntity(Name)
@@ -28,7 +29,7 @@ end
 
 function CGameController:Destroy()
 	for i=1, (#self.m_Entities) do
-		g_LogManager:Log(self.m_Entities[i]:GetName().. " destroyed")
+		--g_LogManager:Log(self.m_Entities[i]:GetName().. " destroyed")
 		if self.m_Entities[i]:GetName() ~= "Player_PlayerScript" then
 			self.m_Entities[i] = nil
 		end
@@ -36,7 +37,20 @@ function CGameController:Destroy()
 	for i=1, (#self.m_Enemies) do
 		self.m_Enemies[i] = nil
 	end
+	g_LogManager:Log("Lua GameController destroyed")
 end
+
+function CGameController:PLAYER_IS_DEAD()
+	--Reproducir sonido
+	g_LogManager:Log("Player is DEAD")
+	self:Destroy()
+	local l_CurrentLevel = g_Engine:GetCurrentLevel()
+	g_Engine:UnloadLevel(l_CurrentLevel)
+	g_Engine:LoadLevel(l_CurrentLevel)
+	self:LoadXML("Data/Level"..l_CurrentLevel.."/game_entities.xml")
+	g_LogManager:Log("mierda1")
+end
+
 
 function CGameController:GetEntities()
 	return self.m_Entities
@@ -47,7 +61,12 @@ function CGameController:GetEnemies()
 end
 
 function CGameController:GetEnemy(EnemyName)
-	return self.m_Enemies[EnemyName]
+	for i=1, (#self.m_Enemies) do
+		if self.m_Enemies[i].m_LuaGameObject:GetName() == EnemyName then
+			return self.m_Enemies[i]
+		end
+	end
+	return nil
 end
 
 function CGameController:Update(ElapsedTime)
@@ -151,14 +170,6 @@ function CGameController:GetParticleEmitter(XMLTreeNode)
 	local l_LayerName = "particles"
 	local l_RObject = g_LayerManager:GetResource(l_LayerName):GetResource(l_Particle)
 	return l_RObject
-end
-
-function CGameController:GetEnemy(EnemyName)
-	for i=1, (#self.m_Enemies) do
-		if self.m_Enemies[i].m_LuaGameObject:GetName() == EnemyName then
-			return self.m_Enemies[i]
-		end
-	end
 end
 
 function CGameController:PrintEnemyNames()

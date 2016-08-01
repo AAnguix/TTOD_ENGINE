@@ -38,9 +38,22 @@ function CLuaGuiManager:__init()
 	
 	self.m_ShowGraphicsStats = true
 	
+	self:Initialize()
+end
+
+function CLuaGuiManager:Initialize()
 	self:AddGui(CLuaGuiStartScreen())
 	self:AddGui(CLuaGuiInGame())
 	self:AddGui(CLuaGuiCredits())
+end
+
+function CLuaGuiManager:Reload()
+	for i=1, (#self.m_GUIs) do
+		self.m_GUIs[i] = nil
+	end
+	self.m_CurrentGui=nil
+	self:Initialize()
+	self:SetGui(2)
 end
 
 --Manager subscribes events, and call apropiate method

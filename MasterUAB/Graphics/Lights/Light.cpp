@@ -29,6 +29,7 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 :CNamed(TreeNode)
 ,C3DElement(TreeNode)
 ,m_ShadowMap(nullptr)
+,m_BlackAndWhiteMap(nullptr)
 ,m_ShadowMaskTexture(nullptr)
 ,m_ViewShadowMap(m44fZERO)
 ,m_ProjectionShadowMap(m44fZERO)
@@ -58,6 +59,7 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 		int l_ShadowMapHeight = TreeNode.GetIntProperty("shadow_map_height",0);		
 
 		m_ShadowMap = new CDynamicTexture(GetName()+"_ShadowMap",l_ShadowMapWidth,l_ShadowMapHeight,true,CDynamicTexture::R32_FLOAT);
+		m_BlackAndWhiteMap = new CDynamicTexture(GetName() + "_BlackAndWhiteMap", l_ShadowMapWidth, l_ShadowMapHeight, true, CDynamicTexture::R32_FLOAT);
 
 		for (int i = 0; i < TreeNode.GetNumChildren(); ++i)
 		{
@@ -80,6 +82,7 @@ CLight::CLight(const std::string &Name)
 :CNamed(Name)
 ,m_GenerateShadowMap(false)
 ,m_ShadowMap(nullptr)
+,m_BlackAndWhiteMap(nullptr)
 ,m_ShadowMaskTexture(nullptr)
 ,m_Color(v4fZERO)
 ,m_Intensity(0.0f)
@@ -92,6 +95,7 @@ CLight::CLight(const std::string &Name)
 CLight::~CLight()
 {
 	CHECKED_DELETE(m_ShadowMap);
+	CHECKED_DELETE(m_BlackAndWhiteMap);
 	m_Layers.clear();
 }
 

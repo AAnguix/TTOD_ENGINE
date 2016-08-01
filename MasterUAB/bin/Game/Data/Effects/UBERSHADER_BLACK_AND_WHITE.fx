@@ -6,25 +6,28 @@
 struct VS_INPUT
 {
 	float4 Pos : POSITION;
-	float4 Color : COLOR0;
+	
+	#ifdef HAS_WEIGHTS
+		float4 Weight : BLENDWEIGHT;
+		float4 Indices : BLENDINDICES;
+	#endif
+	
 	float2 UV : TEXCOORD0;
 };
 struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
-	float4 Color : COLOR0;
 	float2 UV : TEXCOORD0;
 };
 PS_INPUT VS(VS_INPUT IN)
 {
 	PS_INPUT l_Output = (PS_INPUT)0;
 	l_Output.Pos=IN.Pos;
-	l_Output.Color=IN.Color;
 	l_Output.UV=IN.UV;
 	return l_Output;
 }
 
-float3 GetLightInt(int IdLight, float3 WorldPos, float3 Nn, float4 DiffuseTexture)
+float GetLightInt(int IdLight, float3 WorldPos, float3 Nn)
 {
 	if(m_LightEnabledArray[IdLight]) //Enabled
 	{
@@ -36,12 +39,12 @@ float3 GetLightInt(int IdLight, float3 WorldPos, float3 Nn, float4 DiffuseTextur
 			lightDirection/=l_Distance; //Normalize
 			
 			float l_DiffuseContrib = GetOmniDiffuseContrib(Nn,lightDirection);
-			return (l_DiffuseContrib * m_LightColor[IdLight].xyz * DiffuseTexture.xyz * m_LightIntensityArray[IdLight] * l_Attenuation);
+			return (l_DiffuseContrib * m_LightIntensityArray[IdLight] * l_Attenuation);
 		}
 		else if(m_LightTypeArray[IdLight]==1.0f) //DIRECTIONAL
 		{
 			float l_DiffuseContrib = GetDirectionalDiffuseContrib(Nn,m_LightDirection[IdLight]);
-			return (l_DiffuseContrib * m_LightColor[IdLight].xyz * DiffuseTexture.xyz * m_LightIntensityArray[IdLight]);
+			return (l_DiffuseContrib * m_LightIntensityArray[IdLight]);
 		}
 		else if(m_LightTypeArray[IdLight]==2.0f) //SPOT
 		{
@@ -53,23 +56,19 @@ float3 GetLightInt(int IdLight, float3 WorldPos, float3 Nn, float4 DiffuseTextur
 			float l_SpotAttenuation =  GetSpotAttenuation(m_LightAngleArray[IdLight],m_LightFallOffAngleArray[IdLight],lightDirection,m_LightDirection[IdLight]);
 			
 			float l_DiffuseContrib = GetSpotDiffuseContrib(Nn,lightDirection);
-			
-			return (l_DiffuseContrib * m_LightColor[IdLight].xyz * DiffuseTexture.xyz * m_LightIntensityArray[IdLight] * l_Attenuation * l_SpotAttenuation);
+			return (l_DiffuseContrib * m_LightIntensityArray[IdLight] * l_Attenuation * l_SpotAttenuation);
 		}
 		
-		return float3(0.0,0.0,0.0);
+		return 0.0;
 	}
 	
-	return float3(0.0,0.0,0.0);
-	
-	//return saturate(dot(l_WorldNormal, m_LightPosition[0].xyz));
+	return 0.0;
 }
 
 float4 PS(PS_INPUT IN) : SV_Target
 {
-	float4 l_DiffuseMap = T0Texture.Sample(S0Sampler, IN.UV);
-	float4 l_NormalMap = T1Texture.Sample(S1Sampler, IN.UV);
-	float l_Depth = T2Texture.Sample(S2Sampler, IN.UV).r;
+	float4 l_NormalMap = T0Texture.Sample(S1Sampler, IN.UV);
+	float l_Depth = T1Texture.Sample(S2Sampler, IN.UV).r;
 	
 	float l_SpecularPower=60.0f;
 	
@@ -100,9 +99,9 @@ float4 PS(PS_INPUT IN) : SV_Target
 			
 			if(l_LightDepthValue < l_Depth)
 			{
-				l_LightIntensity = GetLightInt(0, l_WorldPos, l_WorldNormal, l_DiffuseMap);
+				l_LightIntensity = GetLightInt(0, l_WorldPos, l_WorldNormal);
 
-				if(l_LightIntensity > 0.0f)
+				if(l_LightIntensity > 0.0)
 				{
 					color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 				}

@@ -30,6 +30,11 @@ void CDirectionalLight::Render(CRenderManager *RM)
 
 void CDirectionalLight::SetShadowMap(CRenderManager &RenderManager)
 {
+	if (m_ShadowMap == NULL)
+	{
+		assert(false);
+		return;
+	}
 	Vect3f l_ShadowMapFrameDisplacement = v3fZERO;
 
 	CGameObject* l_PlayerGameObject = CEngine::GetSingleton().GetGameObjectManager()->GetPlayer();
@@ -59,4 +64,35 @@ void CDirectionalLight::SetShadowMap(CRenderManager &RenderManager)
 	m_viewport.TopLeftY=0.0f;
 	RenderManager.GetContextManager()->GetDeviceContext()->RSSetViewports(1, &m_viewport);
 	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, m_ShadowMap->GetDepthStencilView());
+}
+
+void CDirectionalLight::SetBlackAndWhiteMap(CRenderManager &RenderManager)
+{
+	if (m_BlackAndWhiteMap == NULL)
+	{
+		assert(false);
+		return;
+	}
+
+	Vect3f l_ShadowMapFrameDisplacement = v3fZERO;
+
+	CGameObject* l_PlayerGameObject = CEngine::GetSingleton().GetGameObjectManager()->GetPlayer();
+	CRenderableObject* l_Player = l_PlayerGameObject->GetRenderableObject();
+	Vect3f l_PlayerPos = l_Player->GetPosition();
+	SetPosition(l_PlayerPos + m_PlayerOffset);
+
+	unsigned int l_ShadowMapWidth = m_BlackAndWhiteMap->GetWidth();
+	unsigned int l_ShadowMapHeight = m_BlackAndWhiteMap->GetHeight();
+
+	ID3D11RenderTargetView *l_RenderTargetViews[1];
+	l_RenderTargetViews[0] = m_BlackAndWhiteMap->GetRenderTargetView();
+	D3D11_VIEWPORT m_viewport;
+	m_viewport.Width = (float)l_ShadowMapWidth;
+	m_viewport.Height = (float)l_ShadowMapHeight;
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0.0f;
+	m_viewport.TopLeftY = 0.0f;
+	RenderManager.GetContextManager()->GetDeviceContext()->RSSetViewports(1, &m_viewport);
+	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, m_BlackAndWhiteMap->GetDepthStencilView());
 }

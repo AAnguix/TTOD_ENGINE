@@ -23,6 +23,9 @@ private:
 	std::string m_DataPath;
 	bool m_D3DDebug;
 
+	std::string m_GuiMaterials;
+	std::string m_EffectsMaterials;
+
 public:
 	CEngineSettings();
 	virtual ~CEngineSettings();
@@ -32,6 +35,9 @@ public:
 	Vect2i GetScreenPosition() const { return m_ScreenPosition; };
 	Vect2i GetScreenResolution() const { return m_ScreenResolution; };
 	bool VSyncEnabled() const { return m_VSyncEnabled; };
+
+	std::string GetEffectsMaterialsFileName() const{ return m_EffectsMaterials; };
+	std::string GetGuiMaterialsFileName() const{ return m_GuiMaterials; };
 
 	bool LoadSettings(const std::string &SettingsFile);
 	

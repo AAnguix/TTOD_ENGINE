@@ -193,7 +193,7 @@ bool CAStar::TCompareNodes::operator()( const TNode *nodeA, const TNode *nodeB )
 CAStar::VNodes CAStar::PSearchPath( TNode* nodeA, TNode *nodeB ) 
 {
 	// Marcamos todos los nodos como no visitados
-	/*VNodes::const_iterator it;
+	VNodes::const_iterator it;
 	for( it = m_map.begin(); it != m_map.end(); ++it ) 
 	{
 		TNode *node = *it;
@@ -203,7 +203,7 @@ CAStar::VNodes CAStar::PSearchPath( TNode* nodeA, TNode *nodeB )
 		node->m_Parent = NULL;
 		node->m_InOpenList = false;
 		node->m_Closed = false;
-	}*/
+	}
 
 	// Inicializamos la lista abierta con el nodo inicial
 	m_openList.clear();

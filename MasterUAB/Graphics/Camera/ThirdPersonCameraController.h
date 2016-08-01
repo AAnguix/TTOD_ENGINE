@@ -41,6 +41,7 @@ public:
 	void AddPitch(float Radians);
 	Vect3f GetDirection() const;
 	void Update(float ElapsedTime);
+	void Shake(bool ElapsedTime);
 
 	float GetPlayerCameraAngleDif(Vect3f PlayerPosition);
 	EType GetType() const{ return THIRD_PERSON; };

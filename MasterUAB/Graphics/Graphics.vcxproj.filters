@@ -263,6 +263,9 @@
     <ClInclude Include="Render\Frustum.h">
       <Filter>Render</Filter>
     </ClInclude>
+    <ClInclude Include="SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.h">
+      <Filter>SceneRendererCommands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -511,6 +514,9 @@
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Render\Frustum.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.cpp">
+      <Filter>SceneRendererCommands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

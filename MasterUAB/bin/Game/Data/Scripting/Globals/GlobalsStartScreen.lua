@@ -4,7 +4,6 @@ g_Player = nil -- ... player LuaGameObjectHandle
 g_MagicBall = nil
 g_Dragon = nil
 
-g_CurrentGuiFile = "./Data/Scripting/GUI/GUIStartScreen.lua"
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainStartScreen.lua"
 
 g_Engine = CEngine.GetSingleton()

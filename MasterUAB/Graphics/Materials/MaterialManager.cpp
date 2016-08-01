@@ -3,8 +3,12 @@
 #include "XML\XMLTreeNode.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
+#include "Engine\EngineSettings.h"
 
-CMaterialManager::CMaterialManager() : m_Filename("")
+CMaterialManager::CMaterialManager()
+:m_Filename("")
+,m_EffectsMaterialsLoaded(false)
+,m_GuiMaterialsLoaded(false)
 {
 	
 }
@@ -19,16 +23,23 @@ void CMaterialManager::Destroy()
 	std::map<const std::string, std::vector<CMaterial*>>::iterator itMap;
 	for (itMap = m_MaterialsPerFileName.begin(); itMap != m_MaterialsPerFileName.end(); ++itMap)
 	{
-		if (itMap->first != ".Data/gui_materials.xml")
+		std::string l_GuiMaterials = CEngine::GetSingleton().GetEngineSettings()->GetGuiMaterialsFileName();
+		std::string l_EffectsMaterials = CEngine::GetSingleton().GetEngineSettings()->GetEffectsMaterialsFileName();
+
+		if (itMap->first != l_GuiMaterials && itMap->first != l_EffectsMaterials)
 		{
 			std::vector<CMaterial*> l_MaterialsVector = itMap->second;
 
-			for (size_t i = 0; i < l_MaterialsVector.size(); ++i)
+			for (size_t i = 0; i < l_MaterialsVector.size() ; ++i)
 			{
-				delete(l_MaterialsVector[i]);
-				l_MaterialsVector[i] = NULL;
+				std::map<std::string, CMaterial*>::iterator itr = m_Resources.find(l_MaterialsVector[i]->GetName());
+				if (itr != m_Resources.end())
+				{
+					delete itr->second;
+					m_Resources.erase(itr);
+				}
 			}
-			itMap->second.clear();
+			l_MaterialsVector.clear();
 		}
 	}
 }
@@ -65,6 +76,12 @@ void CMaterialManager::Load(const std::string &Filename)
 				}
 			}
 
+			std::string l_GuiMaterials = CEngine::GetSingleton().GetEngineSettings()->GetGuiMaterialsFileName();
+			std::string l_EffectsMaterials = CEngine::GetSingleton().GetEngineSettings()->GetEffectsMaterialsFileName();
+
+			if (Filename == l_GuiMaterials) m_GuiMaterialsLoaded = true;
+			if (Filename == l_EffectsMaterials) m_EffectsMaterialsLoaded = true;
+
 			m_MaterialsPerFileName.insert(std::pair<std::string, std::vector<CMaterial*>>(Filename, l_FileMaterials));
 		} 
 		else {assert(false); }
@@ -94,6 +111,34 @@ void CMaterialManager::Reload()
 	#ifdef _DEBUG
 		CEngine::GetSingleton().GetLogManager()->Log("MaterialManager reloaded");
 	#endif
+}
+
+void CMaterialManager::AddMaterialsFileName(const std::string &MaterialsFileName)
+{
+	std::map<const std::string, std::vector<CMaterial*>>::iterator it;
+	std::vector<CMaterial*> l_FileMaterials;
+	for (it = m_MaterialsPerFileName.begin(); it != m_MaterialsPerFileName.end(); ++it)
+	{
+		if (it->first == MaterialsFileName)
+			return;
+	}
+	m_MaterialsPerFileName.insert(std::pair<std::string, std::vector<CMaterial*>>(MaterialsFileName, l_FileMaterials));
+}
+
+bool CMaterialManager::InsertMaterialIntoMaterialsFileName(const std::string &MaterialName, const std::string &MaterialsFileName)
+{
+	std::map<const std::string, std::vector<CMaterial*>>::iterator it;
+	for (it = m_MaterialsPerFileName.begin(); it != m_MaterialsPerFileName.end(); ++it)
+	{
+		if (it->first == MaterialsFileName)
+		{
+			CMaterial* l_Material = GetResource(MaterialName);
+			assert(l_Material != nullptr);
+			it->second.push_back(l_Material);
+			return true;
+		}
+	}
+	return false;
 }
  
 const std::vector<CMaterial *> & CMaterialManager::GetLUAMaterials()

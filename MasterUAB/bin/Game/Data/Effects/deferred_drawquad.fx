@@ -41,8 +41,10 @@ float4 PS(PS_INPUT IN) : SV_Target
 	
 	
 	float l_ShadowMapContrib = GetShadowMapContrib(0,l_WorldPos,T6Texture,S6Sampler);
+	//float l_ShadowMapContrib = T7Texture.Sample(S7Sampler, IN.UV).r;
 	
-
+	//float3 l_BlackAndWhite = T7Texture.Sample(S7Sampler, IN.UV);
+	//return float4(l_BlackAndWhite,1.0);
 	// if(m_LightTypeArray[0]==0)
 	// {
 		// //OMNI

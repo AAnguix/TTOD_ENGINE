@@ -291,7 +291,7 @@ bool CPhysXManager::CreateDynamicActor(const std::string &ActorName, const std::
 bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateBox(ShapeName, Size,MaterialName,MaterialStaticFriction,MaterialDynamicFriction,MaterialRestitution,Group,true);
-	
+	SetShapeAsTrigger(ShapeName);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -303,7 +303,7 @@ bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::st
 bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateBox(ShapeName, Size, MaterialName, 10.0, 20.0, 1.0, Group, true);
-
+	SetShapeAsTrigger(ShapeName);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -315,7 +315,7 @@ bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::st
 bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
-
+	SetShapeAsTrigger(ShapeName);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -328,7 +328,7 @@ bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std:
 bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, 10.0, 20.0, 1.0, Group, true);
-
+	SetShapeAsTrigger(ShapeName);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -870,6 +870,21 @@ bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterM
 	return true;
 }
 
+std::string CPhysXManager::RaycastOutName(const Vect3f& Origin, const Vect3f& Direction, const float& Length)
+{
+	std::string l_ActorName = "";
+	physx::PxRaycastBuffer l_ReturnBuffer;
+	Vect3f Pos = Vect3f(Origin.x, (Origin.y + 1.2f), Origin.z);
+	physx::PxQueryFilterData filterData(physx::PxQueryFlag::eSTATIC);
+
+	bool status = m_Scene->raycast(CastVec(Pos), CastVec(Direction), Length, l_ReturnBuffer, physx::PxHitFlags(physx::PxHitFlag::eDEFAULT), filterData);
+	if (status)
+	{
+		l_ActorName = m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
+	}
+	return l_ActorName;
+}
+
 float CPhysXManager::CameraRaycast(const Vect3f& Origin, const Vect3f& End, const float& Length)
 {
 	float l_HitDistance = Length;
@@ -925,9 +940,13 @@ void CPhysXManager::MoveKinematicActor(const std::string& ActorName, const Vect3
 physx::PxActor* CPhysXManager::IsRigidDynamic(const std::string& ActorName)
 {
 	auto it_Actors = m_ActorIndexs.find(ActorName);
-	size_t l_ActorIndex = it_Actors->second;
-	physx::PxActor* l_Actor = m_Actors[l_ActorIndex];
-	return l_Actor->isRigidDynamic();
+	if (it_Actors != m_ActorIndexs.end())
+	{
+		size_t l_ActorIndex = it_Actors->second;
+		physx::PxActor* l_Actor = m_Actors[l_ActorIndex];
+		return l_Actor->isRigidDynamic();
+	}
+	return nullptr;
 }
 
 void CPhysXManager::Reload()

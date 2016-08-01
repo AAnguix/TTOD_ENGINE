@@ -82,6 +82,7 @@ void CLuabindManager::RegisterRender()
 		.def("Render", &CRenderManager::Render)
 		.def("GetContextManager", &CRenderManager::GetContextManager)
 		.def("GetDebugRender", &CRenderManager::GetDebugRender)
+		.def("GetCurrentCamera", &CRenderManager::GetCurrentCamera)
 	];
 
 	module(LUA_STATE)
@@ -205,6 +206,7 @@ void CLuabindManager::RegisterCamera()
 		.def("GetView", &CCamera::GetView)
 		.def("GetProjection", &CCamera::GetProjection)
 		.def("SetMatrixs", &CCamera::SetMatrixs)
+		.def("GetPositionInScreenCoordinates", &CCamera::GetPositionInScreenCoordinates)
 	];
 
 	module(LUA_STATE)

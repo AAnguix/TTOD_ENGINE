@@ -21,10 +21,12 @@ function Update(ElapsedTime)
 	if g_Engine:IsPaused() == false then
 		-- g_GameController:Update(ElapsedTime)
 		g_EventManager:Update()
+		--g_LogManager:Log("LuiEvents updated")
 		g_LuaCameraController:Update(ElapsedTime)
 		--UpdateCinematics(ElapsedTime)
 	end
 	g_LuaGuiManager:Update()
+	--g_LogManager:Log("LuiGui updated")
 end
 
 function InputActionCallback(Action)

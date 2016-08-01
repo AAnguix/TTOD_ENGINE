@@ -133,7 +133,7 @@ function CGameController:LoadMagicBall(XMLTreeNode)
 	if g_MagicBall==nil then 
 		local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
 		g_MagicBall = g_GameController:AddLuaGameObjectHandle(l_Name)
-		g_LogManager:Log("Magic ball created")
+		--g_LogManager:Log("Magic ball created")
 		-- local l_MagicBallComponent=CMagicBallComponent(g_MagicBall)
 		-- local l_ComponentName = g_MagicBall.m_LuaGameObject:GetName().."_StatueScript"
 		-- g_ScriptManager:AddComponent(l_ComponentName,g_MagicBall,l_MagicBallComponent)

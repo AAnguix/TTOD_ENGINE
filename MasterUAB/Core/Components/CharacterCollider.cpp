@@ -7,8 +7,13 @@
 
 CCharacterCollider::CCharacterCollider(const std::string &Name, CGameObject *Owner)
 :CComponent(Name,Owner)
+,m_PhysxMaterial(false)
 {
-	m_PhysxMaterial = ((CAnimatedInstanceModel*)Owner->GetRenderableObject())->GetAnimatedCoreModel()->GetMaterials()[0];
+	CAnimatedInstanceModel* l_AnimatedInstance = ((CAnimatedInstanceModel*)Owner->GetRenderableObject());
+	CAnimatedCoreModel* l_CoreModel = l_AnimatedInstance->GetAnimatedCoreModel();
+	assert(l_CoreModel != nullptr);
+	assert(l_CoreModel->GetMaterials().size() > 0);
+	m_PhysxMaterial = l_CoreModel->GetMaterials()[0];
 }
 
 CCharacterCollider::~CCharacterCollider()

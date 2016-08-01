@@ -36,14 +36,21 @@ end
 function CLuaGuiInGame:Update(ElapsedTime)
 	
 	CLuaGui.Update(self,ElapsedTime)
-	local l_HealthBarPos = SGUIPosition(0.83,0.05,0.3,0.075,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, g_PlayerComponent:GetMaxHealth(), g_PlayerComponent:GetHealth()) 
+	
+	-- local l_Pos = g_PlayerComponent:GetLuaGameObject():GetPosition()
+	-- local l_Vector = Vect3f(l_Pos.x,l_Pos.y+2.0,l_Pos.z)
+	-- local l_ScreenPos = g_RenderManager:GetCurrentCamera():GetPositionInScreenCoordinates(l_Vector)
+	
+	if g_PlayerComponent:GetHealth() >= 0.0 then
+		local l_HealthBarPos = SGUIPosition(0.83,0.05,0.3,0.075,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoHealthBar("player_health_bar_0","player_health_bar",l_HealthBarPos, 0.0, g_PlayerComponent:GetMaxHealth(), g_PlayerComponent:GetHealth()) 
+	end
 	
 	local l_AvatarPos = SGUIPosition(0.62,0.05, 0.05, 0.05, CGUIManager.TOP_LEFT, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
 	g_GUIManager:DoImage("player_avatar", "player_avatar_image", l_AvatarPos)
 	
-	local l_TextPos = SGUIPosition(0.5, 0.8, 0.1, 0.1, CGUIManager.BOTTOM_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("LoadingText", "freestyle_script_64_font", l_TextPos, "", "Loading...", CColor(0.0,1.0,0.0,1.0))
+	-- local l_TextPos = SGUIPosition(0.5, 0.8, 0.1, 0.1, CGUIManager.BOTTOM_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+	-- g_GUIManager:DoText("LoadingText", "freestyle_script_64_font", l_TextPos, "", "Loading...", CColor(0.0,1.0,0.0,1.0))
 
 	self:UpdateMenu()
 	

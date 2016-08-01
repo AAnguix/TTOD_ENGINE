@@ -27,7 +27,7 @@ private:
 	std::string m_OnEnter;
 	std::string m_OnUpdate;
 	std::string m_OnExit;
-	void CheckStateChange(bool HasExitTime, float Timer, CState* NewState, CTransition* Transition);
+	bool CheckStateChange(bool HasExitTime, float Timer, CState* NewState, CTransition* Transition);
 
 public:
 	CState(CAnimatorController*, const std::string &Name, const EAnimation &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);

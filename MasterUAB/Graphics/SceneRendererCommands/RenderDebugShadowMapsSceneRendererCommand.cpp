@@ -23,7 +23,7 @@ void CRenderDebugShadowMapsSceneRendererCommand::Execute(CRenderManager &RenderM
 	{
 		if(l_Lights[i]->GetGenerateShadowMap() && l_Lights[i]->GetShadowMap()!=NULL)
 		{
-			RenderManager.DrawScreenQuad(l_Technique->GetEffectTechnique(),(CTexture*)l_Lights[i]->GetShadowMap(),0,0,1,1,CColor(0.0,0.0,0.0,1.0));
+			RenderManager.DrawScreenQuad(l_Technique->GetEffectTechnique(),(CTexture*)l_Lights[i]->GetShadowMap(),0, 0, 1, 1, CColor(0.0, 0.0, 0.0, 1.0));
 		}
 	}
 }

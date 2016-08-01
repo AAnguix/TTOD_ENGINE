@@ -3,6 +3,8 @@
 #include <assert.h>
 #include "GameObject\GameObject.h"
 #include "GameObject\LuaGameObjectHandle.h"
+#include "Engine\Engine.h"
+#include "Log\Log.h"
 
 CAnimatorControllerManager::CAnimatorControllerManager()
 {

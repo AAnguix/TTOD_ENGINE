@@ -44,8 +44,8 @@ function UpdateGUI(ElapsedTime)
 	-- local l_Pos = SGUIPosition(0.1,0.1,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 	-- g_GUIManager:DoText("textoDePrueba","felix_font",l_Pos,"","Game is paused!")
 	
-	local l_TextPos = SGUIPosition(0.5, 0.8, 0.1, 0.1, CGUIManager.BOTTOM_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	g_GUIManager:DoText("LoadingText", "freestyle_script_64_font", l_TextPos, "", "Loading...", CColor(0.0,1.0,0.0,1.0))
+	-- local l_TextPos = SGUIPosition(0.5, 0.8, 0.1, 0.1, CGUIManager.BOTTOM_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+	-- g_GUIManager:DoText("LoadingText", "freestyle_script_64_font", l_TextPos, "", "Loading...", CColor(0.0,1.0,0.0,1.0))
 
 	UpdateMenu()
 	

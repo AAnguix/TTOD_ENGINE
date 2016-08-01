@@ -8,14 +8,12 @@ function CWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneN
 	self.m_BoneID = self.m_ParentLuaGameObject:GetAnimatedCoreModel():GetBoneId(ParentBoneName)
 	self.m_LuaGameObject:SetParent(self.m_ParentLuaGameObject,ParentBoneName)
 	self.m_BasePosition = self.m_LuaGameObject:GetPosition()
-	--g_LogManager:Log(self.m_BasePosition)
+	
 	self.m_BaseYaw = self.m_LuaGameObject:GetYaw()
-	--g_LogManager:Log("BSeYaw "..self.m_BaseYaw)
+	
 	self.m_BasePitch = self.m_LuaGameObject:GetPitch()
-	--g_LogManager:Log("BPitch "..self.m_BasePitch)
+	
 	self.m_BaseRoll = self.m_LuaGameObject:GetRoll()
-	--g_LogManager:Log("BRoll "..self.m_BaseRoll)
-	--g_LogManager:Log("Weapon created")
 end
 
 function CWeaponComponent:GetLuaGameObject() return self.m_LuaGameObject end

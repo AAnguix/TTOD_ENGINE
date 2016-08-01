@@ -47,7 +47,14 @@
 	</pool_renderable_object_technique>
 	
 	<pool_renderable_object_technique name="generate_black_and_white_map">
-		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="generate_black_and_white_map_drawquad_technique"/>
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX" technique="black_and_white_map_technique"/>
+		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX" technique="black_and_white_map_normal_technique"/>
+		<renderable_object_technique name="diffuse_environment_renderable_object_technique" technique="black_and_white_map_environment_technique"/>
+		<renderable_object_technique name="diffuse_normal_environment_renderable_object_technique" technique="black_and_white_map_normal_environment_technique"/>
+		<default_technique vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" technique="black_and_white_map_animated_models_technique"/>
+		<!-- <renderable_object_technique name="animated_models_normal_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
+		<renderable_object_technique name="animated_models_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/>
+		<renderable_object_technique name="animated_models_normal_environment_renderable_object_technique" technique="shadowmap_animated_models_technique"/> -->
 	</pool_renderable_object_technique>
 	
 	<pool_renderable_object_technique name="heat_vision_pool">

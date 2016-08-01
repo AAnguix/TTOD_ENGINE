@@ -5,4 +5,6 @@
 	<fps value="30"/> 
 	<vsync value="false"/> 
 	<d3d_debug value="false"/>
+	<gui_materials value="./Data/gui_materials.xml"/>
+	<effects_materials value="./Data/effects_materials.xml"/>
 </engine_settings>

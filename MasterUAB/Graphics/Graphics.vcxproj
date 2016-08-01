@@ -89,6 +89,7 @@
     <ClInclude Include="SceneRendererCommands\DrawQuadRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\EnableAlphaBlendSceneRendererCommand.h" />
+    <ClInclude Include="SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\GenerateShadowMapsSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\PresentSceneRendererCommand.h" />
     <ClInclude Include="SceneRendererCommands\RenderDebugGridSceneRendererCommand.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="SceneRendererCommands\DrawQuadRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\EnableAdditiveAlphaBlendSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\EnableAlphaBlendSceneRendererCommand.cpp" />
+    <ClCompile Include="SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\GenerateShadowMapsSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\PresentSceneRendererCommand.cpp" />
     <ClCompile Include="SceneRendererCommands\RenderDebugGridSceneRendererCommand.cpp" />

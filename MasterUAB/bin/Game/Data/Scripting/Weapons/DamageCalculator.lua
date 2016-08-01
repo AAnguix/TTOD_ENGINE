@@ -25,6 +25,9 @@ function CDamageCalculator:LogWeapons()
 end
 
 function CDamageCalculator:CalculateDamage(ArmorType,WeaponType, Damage)
+	if (ArmorType==nil or Weapon==nil) then 
+		return Damage 
+	end
 	local l_DamageReductionPercentage = self:GetPercentage(ArmorType,WeaponType)
 	local l_Damage = Damage - ((Damage*l_DamageReductionPercentage)/100)
 	return l_Damage
@@ -99,7 +102,6 @@ function CDamageCalculator:AddWeapon(WeaponType)
 end
 
 function CDamageCalculator:GetPercentage(Armor,Weapon)
-	if (Armor == "" or Weapon=="") then return 0.0 end
 	local l_Key = ""..Armor.."_"..Weapon
 	return self.m_DamageReductionPct[l_Key].m_Percentage
 end

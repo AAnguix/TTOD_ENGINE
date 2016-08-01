@@ -59,6 +59,7 @@ void CState::OnEnter(CTransition* Transition)
 				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
 				assert(l_LuaComponent != nullptr);
 				l_LuaComponent->ResetTimer();
+				LOG("entrando a " + m_OnEnter);
 				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnEnter.c_str(), l_LuaComponent);
 			}
 		}
@@ -86,6 +87,7 @@ void CState::OnExit(CTransition* Transition)
 			{
 				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
 				assert(l_LuaComponent != nullptr);
+				LOG("saliendo de " + m_OnEnter);
 				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnExit.c_str(), l_LuaComponent);
 			}
 		}
@@ -168,13 +170,17 @@ void CState::OnUpdate(float ElapsedTime)
 		{
 			if (itMap->second->MeetsConditions())
 			{
-				CheckStateChange(itMap->second->GetHasExitTime(), l_Timer, itMap->second->GetNewState(), itMap->second);
+				bool l_Changued = CheckStateChange(itMap->second->GetHasExitTime(), l_Timer, itMap->second->GetNewState(), itMap->second);
+				if (l_Changued || CEngine::GetSingleton().LoadingLevel())
+				{
+					break;
+				}
 			}
 		}
 	}
 }
 
-void CState::CheckStateChange(bool HasExitTime, float Timer, CState* NewState, CTransition* Transition)
+bool CState::CheckStateChange(bool HasExitTime, float Timer, CState* NewState, CTransition* Transition)
 {
 	if (HasExitTime)
 	{
@@ -182,10 +188,13 @@ void CState::CheckStateChange(bool HasExitTime, float Timer, CState* NewState, C
 		if (Timer >= l_AnimDuration)
 		{
 			m_AnimatorController->ChangeCurrentState(NewState, Transition);
+			return true;
 		}
+		return false;
 	}
 	else
 	{
 		m_AnimatorController->ChangeCurrentState(NewState, Transition);
+		return true;
 	}
 }

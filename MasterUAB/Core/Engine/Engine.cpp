@@ -30,6 +30,7 @@
 #include "Utils\FileUtils.h"
 #include <windef.h>
 #include "Resources\ResourceManager.h"
+#include "Engine\EngineSettings.h"
 #include <sstream>
 
 CEngine::CEngine()
@@ -44,6 +45,7 @@ CEngine::CEngine()
 ,m_HInstance(nullptr)
 ,m_Initialized(false)
 ,m_ElapsedTime(0.0f)
+,m_EngineSettings(nullptr)
 {
 	m_Log = new CLog;
 	m_LuabindManager = new CLuabindManager;
@@ -107,6 +109,7 @@ CEngine::~CEngine()
 	{CHECKED_DELETE(m_LuabindManager); }
 	{CHECKED_DELETE(m_Log); }
 	m_HInstance = nullptr;
+	m_EngineSettings = nullptr;
 }
 
 void CEngine::Initialize(HINSTANCE* HInstance)
@@ -285,9 +288,8 @@ bool CEngine::UnloadLevel(const std::string &Level)
 		{
 			if (m_Levels[i]->GetID() == Level)
 			{
-			
-					l_Unloaded = m_Levels[i]->Unload(*this);
-					m_CurrentLevel = "";
+				l_Unloaded = m_Levels[i]->Unload(*this);
+				m_CurrentLevel = "";
 			}
 		}
 
@@ -363,3 +365,7 @@ void CEngine::TerminateApplication()
 
 CEmptyPointerClass* CEngine::GetPausedLuaAddress() const { return (CEmptyPointerClass *)&m_Paused; }
 CEmptyPointerClass* CEngine::GetTimeScaleLuaAddress() const { return (CEmptyPointerClass *)&m_TimeScale; }
+
+CEngineSettings* CEngine::GetEngineSettings() const{ return m_EngineSettings; }
+
+void CEngine::SetEngineSettings(CEngineSettings* Settings){ m_EngineSettings = Settings; }

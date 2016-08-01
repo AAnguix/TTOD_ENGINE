@@ -1,8 +1,8 @@
 class 'CBasicEnemyComponent' (CEnemyComponent)
 function CBasicEnemyComponent:__init(CGameObject)
 	CEnemyComponent.__init(self, CGameObject,"BasicEnemy")
-	self.m_Health=850.0
-	self.m_MaxHealth=850.0
+	self.m_Health=100.0
+	self.m_MaxHealth=100.0
 	self.m_Speed=1.2
 	self.m_AttackDelay=2.5
 	self.m_AttackRange=1.3

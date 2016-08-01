@@ -21,5 +21,8 @@ void COmniLight::Render(CRenderManager *RenderManager)
 
 void COmniLight::SetShadowMap(CRenderManager &RenderManager)
 {
+}
 
+void COmniLight::SetBlackAndWhiteMap(CRenderManager &RenderManager)
+{
 }

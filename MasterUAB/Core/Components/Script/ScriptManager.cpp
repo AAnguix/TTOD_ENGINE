@@ -4,6 +4,8 @@
 #include "Components\LuaComponent.h"
 #include "Components\Script\Script.h"
 #include <assert.h>
+#include "Engine\Engine.h"
+#include "Log\Log.h"
 
 CScriptManager::CScriptManager()
 {

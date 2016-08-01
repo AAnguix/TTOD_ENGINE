@@ -235,32 +235,54 @@ function CEnemyComponent:MTPNP(ElapsedTime)
 end
 
 function CEnemyComponent:MoveWithAStar(ElapsedTime)
-
+	
 	local l_Enemy = self.m_LuaGameObject
 	local l_EnemyPos = l_Enemy:GetPosition()
+	
 	local l_PlayerPos = g_Player:GetPosition()
-
+	local l_Pos = Vect3f(0.0,0.0,0.0)
 	local l_Points = g_AIManager:SearchAStarPath(l_EnemyPos,l_PlayerPos,false)
 	
 	if (l_Points~= nil and l_Points:size() >= 0) then
 	
-		g_LogManager:Log("Points:")
+		--g_LogManager:Log("Points:")
 		--g_LogManager:Log(l_Points:at(0))
 		--g_LogManager:Log(l_EnemyPos)
-		
-		local l_VectorToPlayer = l_Points:at(0) - l_EnemyPos
+		local l_VectorToPlayer = Vect3f(0.0,0.0,0.0)
+		local l_TotalPoints = l_Points:size()
+			
+		for i=0,(l_TotalPoints-1) do
+			l_Pos = l_Points:at(i)
+					
+			if CTTODMathUtils.PointInsideCircle(l_EnemyPos, l_Pos, 0.9) then
+				local l_next = i +1
+					l_VectorToPlayer = l_Points:at(l_next) - l_EnemyPos
+				break
+			end
+		end
+				
 		l_VectorToPlayer:Normalize(1.0)
-		
-		g_LogManager:Log(l_VectorToPlayer)
-		
 		self.m_Velocity.x = 0.0
 		self.m_Velocity.z = 0.0
 		self.m_Velocity = self.m_Velocity + (l_VectorToPlayer*self:GetSpeed())
 		
+		local l_Forward = self.m_LuaGameObject:GetForward()
+		local NameOfHit = g_PhysXManager:Raycast2(l_EnemyPos, l_Forward, 5.0)
+		
+		local l_RotateView = false
+		local l_Distance = (l_PlayerPos-self.m_LuaGameObject:GetPosition()):Length()
+		if l_Distance < 6.0 and NameOfHit == "" then 
+			l_RotateView = true
+		end
+		
 		if ElapsedTime>0.0 then
-			self:LookAtPoint(l_PlayerPos,ElapsedTime)
+			if l_RotateView then
+				self:LookAtPoint(l_PlayerPos,ElapsedTime)
+			end	
 		else 
-			self:LookAtPoint(l_PlayerPos,0.0)
+			if l_RotateView then
+				self:LookAtPoint(l_PlayerPos,0.0)
+			end
 		end 
 	end
 end

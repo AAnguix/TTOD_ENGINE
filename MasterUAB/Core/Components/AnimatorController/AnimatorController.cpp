@@ -60,6 +60,9 @@ CAnimatorController::~CAnimatorController()
 		delete itMapTransitions->second;
 	}
 	m_AnyStateTransitions.clear();
+
+	m_PreviousState = nullptr;
+	m_CurrentState = nullptr;
 }
 
 void CAnimatorController::Update(float ElapsedTime)
@@ -90,7 +93,8 @@ void CAnimatorController::Update(float ElapsedTime)
 			}
 		}
 	}
-	m_CurrentState->OnUpdate(ElapsedTime);
+	if (m_CurrentState!=nullptr)
+		m_CurrentState->OnUpdate(ElapsedTime);
 }
 
 void CAnimatorController::Render(CRenderManager &RenderManager)

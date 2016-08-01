@@ -26,6 +26,7 @@
 #include "SceneRendererCommands\RenderDebugGridSceneRendererCommand.h"
 #include "SceneRendererCommands\RenderDebugShadowMapsSceneRendererCommand.h"
 #include "SceneRendererCommands\GenerateShadowMapsSceneRendererCommand.h"
+#include "SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.h"
 #include "SceneRendererCommands\ApplyFiltersSceneRendererCommand.h"
 #include "Utils.h"
 #include "Log\Log.h"
@@ -83,6 +84,14 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 					if (!AddResource(l_GenerateShadowMap->GetName() + l_S, l_GenerateShadowMap))
 					{
 						CHECKED_DELETE(l_GenerateShadowMap);
+					}
+				}
+				else if (l_Element.GetName() == std::string("generate_black_and_white_maps"))
+				{
+					CGenerateBlackAndWhiteMapsSceneRendererCommand* l_GenerateBlackAndWhiteMap = new CGenerateBlackAndWhiteMapsSceneRendererCommand(l_Element);
+					if (!AddResource(l_GenerateBlackAndWhiteMap->GetName() + l_S, l_GenerateBlackAndWhiteMap))
+					{
+						CHECKED_DELETE(l_GenerateBlackAndWhiteMap);
 					}
 				}
 				else if (l_Element.GetName() == std::string("set_render_target"))

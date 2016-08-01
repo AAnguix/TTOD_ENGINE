@@ -23,9 +23,10 @@ end
 
 --Attack_State
 function OnEnter_Attack_Player(Player)
-	g_LogManager:Log("Enters attack")
+	--g_LogManager:Log("Enters attack")
 	Player:SetAttacking(true)
 	Player:SetAttackFinished(false)
+	--Player:TakeDamage(nil,400)
 end
 
 function OnUpdate_Attack_Player(Player, ElapsedTime)
@@ -33,7 +34,7 @@ function OnUpdate_Attack_Player(Player, ElapsedTime)
 end
 
 function OnExit_Attack_Player(Player)
-	g_LogManager:Log("Exit attack")
+	--g_LogManager:Log("Exit attack")
 	Player:SetAttacking(false)
 	Player:SetAttackFinished(true)
 end
@@ -76,6 +77,7 @@ function OnUpdate_Walk_Player(Player, ElapsedTime)
 	
 	if math.abs(l_Angle) > 0.1 then
 		local FinalYaw = CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, Player.m_RotationVelocity, ElapsedTime)
+		g_LogManager:Log(FinalYaw.." ")
 		Player.m_LuaGameObject:SetYaw(FinalYaw)
 	end
 end
@@ -98,4 +100,18 @@ end
 function OnExit_Block_Player(Player)
 	Player:SetBlockingState(false)
 	g_LogManager:Log(P_StateTotalTime.." Tiempo total dentro del estado BlockState")
+end
+
+--Tossed
+function OnEnter_Tossed_Player(PlayerComponent)
+	g_LogManager:Log("Player enters Tossed")
+	PlayerComponent:IsBeingTossed(true)
+end
+
+function OnUpdate_Tossed_Player(Player, ElapsedTime)
+end
+
+function OnExit_Tossed_Player(Player)
+	g_LogManager:Log("Player exit Tossed")
+	PlayerComponent:IsBeingTossed(false)
 end

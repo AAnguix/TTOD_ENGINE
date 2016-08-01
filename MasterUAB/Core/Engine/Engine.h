@@ -71,6 +71,7 @@ class CEmptyPointerClass;
 class CLevel;
 class CProfiler;
 class CResourceManager;
+class CEngineSettings;
 
 #ifndef _WINDEF_
 	struct HINSTANCE__; 
@@ -114,13 +115,15 @@ private:
 	CGraphicsStats* m_GraphicsStats;
 	CProfiler* m_Profiler;
 	CResourceManager* m_ResourceManager;
-
-	std::string m_CurrentLevel;
-	float m_TimeScale;
-	bool m_Paused;
+	CEngineSettings* m_EngineSettings;
 
 	std::vector<CLevel*> m_Levels;
+	std::string m_CurrentLevel;
+
 	bool m_LoadingLevel;
+
+	float m_TimeScale;
+	bool m_Paused;
 	bool m_GuiLoaded;
 
 	float m_SecsPerCnt;
@@ -190,6 +193,8 @@ public:
 	CScriptManager* GetScriptManager() const;
 	CProfiler* GetProfiler() const;
 	CResourceManager* GetResourceManager() const;
+	void SetEngineSettings(CEngineSettings* Settings);
+	CEngineSettings* GetEngineSettings() const;
 
 	void SetRenderManager(CRenderManager *RenderManager) {m_RenderManager=RenderManager;}
 };

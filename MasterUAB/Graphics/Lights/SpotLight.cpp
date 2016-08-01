@@ -26,9 +26,12 @@ void CSpotLight::Render(CRenderManager *RenderManager)
 
 void CSpotLight::SetShadowMap(CRenderManager &RenderManager)
 {
-	if(m_ShadowMap==NULL)
+	if (m_ShadowMap == NULL)
+	{
+		assert(false);
 		return;
-	
+	}
+
 	m_ViewShadowMap.SetIdentity();
 	m_ViewShadowMap.SetFromLookAt(m_Position, m_Position+m_Direction, v3fY);
 	unsigned int l_ShadowMapWidth=m_ShadowMap->GetWidth();
@@ -49,6 +52,30 @@ void CSpotLight::SetShadowMap(CRenderManager &RenderManager)
 	m_viewport.TopLeftY=0.0f;
 	RenderManager.GetContextManager()->GetDeviceContext()->RSSetViewports(1, &m_viewport);
 	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, m_ShadowMap->GetDepthStencilView());
+}
+
+void CSpotLight::SetBlackAndWhiteMap(CRenderManager &RenderManager)
+{
+	if (m_BlackAndWhiteMap == NULL)
+	{
+		assert(false);
+		return;
+	}
+
+	unsigned int l_ShadowMapWidth = m_BlackAndWhiteMap->GetWidth();
+	unsigned int l_ShadowMapHeight = m_BlackAndWhiteMap->GetHeight();
+	
+	ID3D11RenderTargetView *l_RenderTargetViews[1];
+	l_RenderTargetViews[0] = m_BlackAndWhiteMap->GetRenderTargetView();
+	D3D11_VIEWPORT m_viewport;
+	m_viewport.Width = (float)l_ShadowMapWidth;
+	m_viewport.Height = (float)l_ShadowMapHeight;
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0.0f;
+	m_viewport.TopLeftY = 0.0f;
+	RenderManager.GetContextManager()->GetDeviceContext()->RSSetViewports(1, &m_viewport);
+	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, m_BlackAndWhiteMap->GetDepthStencilView());
 }
 
 CEmptyPointerClass* CSpotLight::GetFallOffLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_FallOff); }
