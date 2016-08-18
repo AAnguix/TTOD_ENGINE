@@ -8,6 +8,7 @@
 #include "GameObject\GameObject.h"
 #include "Components\LuaComponent.h"
 #include "Components\Script\Script.h"
+#include <assert.h>
 
 CAnimatorController::CAnimatorController(const std::string &Name, CGameObject* Owner)
 :CComponent(Name,Owner)
@@ -72,7 +73,7 @@ void CAnimatorController::Update(float ElapsedTime)
 	{
 		for (itMap = m_AnyStateTransitions.begin(); itMap != m_AnyStateTransitions.end(); ++itMap)
 		{
-			if ((itMap->second->MeetsConditions()))
+			if ((m_CurrentState != itMap->second->GetNewState()) && (itMap->second->MeetsConditions()))
 			{
 				if (itMap->second->GetHasExitTime())
 				{
@@ -109,7 +110,28 @@ void CAnimatorController::RenderDebug(CRenderManager &RenderManager)
 
 CTransition* CAnimatorController::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut)
 {
+	#ifdef _DEBUG
+		if (NewState->GetAnimation().m_Loop)
+		{
+			assert(false);
+		}
+	#endif
+
 	CTransition* l_Transition = new CTransition(NewState, HasExitTime, DelayIn, DelayOut);
+	m_AnyStateTransitions.insert(std::pair<const std::string, CTransition*>(Name, l_Transition));
+	return l_Transition;
+}
+
+CTransition* CAnimatorController::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn)
+{
+	#ifdef _DEBUG
+		if (!NewState->GetAnimation().m_Loop)
+		{
+			assert(false);
+		}
+	#endif
+
+	CTransition* l_Transition = new CTransition(NewState, HasExitTime, DelayIn, 0.0f);
 	m_AnyStateTransitions.insert(std::pair<const std::string, CTransition*>(Name, l_Transition));
 	return l_Transition;
 }
@@ -141,6 +163,40 @@ CState* CAnimatorController::AddState(const std::string &Name, const std::string
 		return l_State;
 	}
 }
+CState* CAnimatorController::AddState(const std::string &Name, std::vector<const std::string> Animations, float RestartAnimationsTime, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
+{
+	std::map<const std::string, CState*>::iterator itMap;
+
+	itMap = m_States.find(Name);
+
+	if (itMap != m_States.end())
+	{
+		return nullptr;
+	}
+	else
+	{
+		std::vector<EAnimation> l_Animations;
+
+		for (size_t i = 0; i < Animations.size(); ++i)
+		{
+			EAnimation l_Animation = ((CAnimatedInstanceModel*)m_Owner->GetRenderableObject())->m_AnimatedCoreModel->GetAnimation(Animations[i]);
+			l_Animations.push_back(l_Animation);
+		}
+
+		CState* l_State = new CState(this, Name, l_Animations, RestartAnimationsTime, Speed, OnEnter, OnUpdate, OnExit);
+
+		m_States.insert(std::pair<const std::string, CState*>(Name, l_State));
+
+		if (m_CurrentState == nullptr)
+		{
+			m_CurrentState = l_State;
+			m_CurrentState->OnEnter(nullptr);
+		}
+
+		return l_State;
+	}
+}
+
 bool CAnimatorController::SearchParameter(const std::string &Name)
 {
 	std::map<const std::string, CAnimatorControllerParameter*>::iterator itMap;

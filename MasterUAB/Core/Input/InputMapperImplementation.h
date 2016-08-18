@@ -50,7 +50,7 @@ namespace InputMapping
 	public:
 		void Clear();
 		void SetOSButtonState(SOSInputButtons Button, bool Pressed, bool Previouslypressed);
-		void SetOSAxisValue(EOSInputAxis axis, double value);
+		float SetOSAxisValue(EOSInputAxis axis, double value);
 
 	public:
 		void Dispatch() const;
@@ -75,6 +75,9 @@ namespace InputMapping
 		CKeyBoardInput* GetKeyBoard() const;
 		HWND GetHwnd() const { return m_Hwnd; };
 
+		int GetMovementX() const { return m_MovementX; };
+		int GetMovementY() const { return m_MovementY; };
+
 	private:
 		bool MapButtonToAction(SOSInputButtons Button, EAction& ction) const;
 		bool MapButtonToState(SOSInputButtons Button, EState& State) const;
@@ -87,7 +90,6 @@ namespace InputMapping
 		
 		std::map<std::wstring, CInputContext*> m_InputContexts;
 		std::list<CInputContext*> m_ActiveContexts;
-
 		std::multimap<int, InputCallback> m_CallbackTable;
 
 		SMappedInput m_CurrentMappedInput;
@@ -108,6 +110,8 @@ namespace InputMapping
 		//DirectX mouse
 		LPDIRECTINPUT8 m_DirectInput;
 		LPDIRECTINPUTDEVICE8 m_DirectInputDevice;
+
+		float GetZBlurConstant(float Base, float XDisplacement, float ScreenWidth, float Thresold) const;
 	};
 
 }

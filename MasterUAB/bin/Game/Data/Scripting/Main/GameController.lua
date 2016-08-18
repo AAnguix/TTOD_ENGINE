@@ -1,44 +1,20 @@
-dofile("./Data/Scripting/Weapons/DamageCalculator.lua")
-
 class 'CGameController'
 function CGameController:__init()
-	self.m_Entities={}
-	self.m_Enemies={}
+	-- Tables
+	self.m_Entities = {}
+	self.m_Enemies = {}
+	self.m_Armors = {}
+	self.m_Weapons = {}
 	self.m_Filename = ""
 	g_EventManager:Subscribe(self, "PLAYER_IS_DEAD")
 end
 
-function CGameController:RemoveEntity(Name)
-	for i=1, (#self.m_Entities) do
-		local l_LuaGO = self.m_Entities[i]:GetLuaGameObject()
-		if  (l_LuaGO~=nil) and (l_LuaGO:GetName()) == Name then
-			self.m_Entities[i] = nil
-			g_LuaGameObjectHandleManager:Remove(Name)
-		end
-	end
-end
+-- Includes
+dofile("./Data/Scripting/Weapons/DamageCalculator.lua")
+dofile("./Data/Scripting/Main/LoadCharacters.lua")
+dofile("./Data/Scripting/Main/LoadEntities.lua")
 
-function CGameController:RemoveEnemy(Name)
-	for i=1, (#self.m_Enemies) do
-		local l_LuaGO = self.m_Enemies[i]:GetLuaGameObject()
-		if  (l_LuaGO~=nil) and (l_LuaGO:GetName()) == Name then
-			self.m_Enemies[i] = nil
-		end
-	end
-end
-
-function CGameController:Destroy()
-	for i=1, (#self.m_Entities) do
-		--g_LogManager:Log(self.m_Entities[i]:GetName().. " destroyed")
-		if self.m_Entities[i]:GetName() ~= "Player_PlayerScript" then
-			self.m_Entities[i] = nil
-		end
-	end
-	for i=1, (#self.m_Enemies) do
-		self.m_Enemies[i] = nil
-	end
-	g_LogManager:Log("Lua GameController destroyed")
-end
+dofile("./Data/Scripting/Main/GameControllerRemover.lua")
 
 function CGameController:PLAYER_IS_DEAD()
 	--Reproducir sonido
@@ -48,26 +24,9 @@ function CGameController:PLAYER_IS_DEAD()
 	g_Engine:UnloadLevel(l_CurrentLevel)
 	g_Engine:LoadLevel(l_CurrentLevel)
 	self:LoadXML("Data/Level"..l_CurrentLevel.."/game_entities.xml")
-	g_LogManager:Log("mierda1")
 end
 
-
-function CGameController:GetEntities()
-	return self.m_Entities
-end
-
-function CGameController:GetEnemies()
-	return self.m_Enemies
-end
-
-function CGameController:GetEnemy(EnemyName)
-	for i=1, (#self.m_Enemies) do
-		if self.m_Enemies[i].m_LuaGameObject:GetName() == EnemyName then
-			return self.m_Enemies[i]
-		end
-	end
-	return nil
-end
+dofile("./Data/Scripting/Main/GameControllerGets.lua")
 
 function CGameController:Update(ElapsedTime)
 	-- for i=1, (#self.m_Entities) do
@@ -78,6 +37,7 @@ end
 function CGameController:LoadLevel(Level)
 	self:LoadXML("Data/Level"..Level.."/game_entities.xml")
 	g_AIManager:LoadLevel(Level)
+	g_ItemManager:LoadItems(Level)
 end
 
 function CGameController:LoadXML(Filename)
@@ -149,12 +109,13 @@ end
 -- end
 
 function CGameController:AddLuaGameObjectHandle(GameObjectName)
+	g_LogManager:Log("Adding handle "..GameObjectName)
 	local l_GameObject = g_Engine:GetGameObjectManager():GetResource(GameObjectName)
 	if l_GameObject ~= nil then
 		local l_LuaGameObjectHandle = g_LuaGameObjectHandleManager:Add(l_GameObject)
 		return l_LuaGameObjectHandle
 	else
-		g_LogManager:Log("Error. Trying to create handle with null GameObject")
+		g_LogManager:Log("Error. Trying to create handle with null GameObject. "..GameObjectName)
 	end
 	return nil
 end
@@ -174,8 +135,20 @@ end
 
 function CGameController:PrintEnemyNames()
 	for i=1, (#self.m_Enemies) do
-		g_LogManager:Log(self.m_Enemies[i].m_LuaGameObject:GetName())
+		if(self.m_Enemies[i].m_LuaGameObject ~= nil) then
+			g_LogManager:Log(self.m_Enemies[i].m_LuaGameObject:GetName())
+		else
+			g_LogManager:Log("nil")
+		end
 	end
 end
 
-dofile("./Data/Scripting/Main/LoadEntities.lua")
+function CGameController:PrintEntitiesNames()
+	for i=1, (#self.m_Entities) do
+		if(self.m_Entities[i].m_LuaGameObject ~= nil) then
+			g_LogManager:Log(self.m_Entities[i].m_LuaGameObject:GetName())
+		else
+			g_LogManager:Log("nil")
+		end
+	end
+end

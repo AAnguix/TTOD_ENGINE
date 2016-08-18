@@ -15,11 +15,19 @@ CLuaGameObjectHandle::CLuaGameObjectHandle(CGameObject* GameObject)
 }
 CLuaGameObjectHandle::~CLuaGameObjectHandle()
 {
+	
 }
 
 CGameObject* CLuaGameObjectHandle::GetGameObject() const
 {
 	return m_GameObject;
+}
+
+void CLuaGameObjectHandle::EnableRenderableObject(bool Value)
+{
+	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
+	if (l_RObject)	{ if (Value) l_RObject->Enable(); else  l_RObject->Disable(); }
+	else { RenderableObjectError();	}
 }
 
 const Vect3f & CLuaGameObjectHandle::GetPosition() const 
@@ -63,6 +71,20 @@ const Mat44f&  CLuaGameObjectHandle::GetTransform()
 	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
 	if (l_RObject)	{ return (l_RObject)->GetTransform(); }
 	else { RenderableObjectError();	return m44fIDENTITY; }
+}
+
+void CLuaGameObjectHandle::SetTemporalRenderableObjectTechnique(CRenderableObjectTechnique* RenderableObjectTechnique)
+{
+	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
+	if (l_RObject)	{ ((CAnimatedInstanceModel*)l_RObject)->SetTemporalRenderableObjectTechnique(RenderableObjectTechnique); }
+	else { RenderableObjectError(); }
+}
+
+std::vector<CMaterial*> CLuaGameObjectHandle::CreateCopyMaterialsFromCore()
+{
+	CRenderableObject* l_RObject = m_GameObject->GetRenderableObject();
+	if (!l_RObject)	{ RenderableObjectError(); }
+	return ((CAnimatedInstanceModel*)l_RObject)->CreateCopyMaterialsFromCore();
 }
 
 void CLuaGameObjectHandle::SetParent(CLuaGameObjectHandle* Parent, const std::string &BoneName)
@@ -117,11 +139,36 @@ void CLuaGameObjectHandle::AudioSourceError() const
 	#endif
 }
 
+void CLuaGameObjectHandle::EnableAnimatorController(bool Value)
+{
+	CAnimatorController* l_Animator = m_GameObject->GetAnimatorController();
+	if (l_Animator)	{ if (Value) l_Animator->Enable(); else l_Animator->Disable(); }
+	else { AnimatorError(); }
+}
+
 CState* CLuaGameObjectHandle::AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
 {
 	CAnimatorController* l_Animator = m_GameObject->GetAnimatorController();
 	if (l_Animator)	{ return l_Animator->AddState(Name, Animation, Speed, OnEnter, OnUpdate, OnExit);	}
 	else { AnimatorError();	return nullptr; }
+}
+CState* CLuaGameObjectHandle::AddState(const std::string &Name, std::vector<const std::string> Animations, float RestartAnimationsTime, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
+{
+	CAnimatorController* l_Animator = m_GameObject->GetAnimatorController();
+	if (l_Animator)	{ return l_Animator->AddState(Name, Animations, RestartAnimationsTime, Speed, OnEnter, OnUpdate, OnExit); }
+	else { AnimatorError();	return nullptr; }
+}
+CTransition* CLuaGameObjectHandle::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut)
+{
+	CAnimatorController* l_Animator = m_GameObject->GetAnimatorController();
+	if (l_Animator)	{ return l_Animator->AddAnyStateTransition(Name, NewState, HasExitTime, DelayIn, DelayOut); }
+	else { AnimatorError(); return nullptr; }
+}
+CTransition* CLuaGameObjectHandle::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn)
+{
+	CAnimatorController* l_Animator = m_GameObject->GetAnimatorController();
+	if (l_Animator)	{ return l_Animator->AddAnyStateTransition(Name, NewState, HasExitTime, DelayIn); }
+	else { AnimatorError(); return nullptr; }
 }
 bool CLuaGameObjectHandle::AddInteger(const std::string &Name, int Value)
 {
@@ -184,6 +231,13 @@ CMaterial* CLuaGameObjectHandle::GetPhysxMaterial() const
 		ColliderError();
 		return nullptr;
 	}
+}
+
+void CLuaGameObjectHandle::EnableAudioSource(bool Value)
+{
+	CAudioSource* l_AudioSource = m_GameObject->GetAudioSource();
+	if (l_AudioSource)	{ if (Value) l_AudioSource->Enable(); else l_AudioSource->Disable(); }
+	else { AudioSourceError(); }
 }
 
 bool CLuaGameObjectHandle::AddSound(const std::string &Key, const std::string &SoundEventName)

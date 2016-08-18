@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <vld.h> //Visual Leak Detector
+#include <memory>
 
 void CheckMemoryLeaks()
 {

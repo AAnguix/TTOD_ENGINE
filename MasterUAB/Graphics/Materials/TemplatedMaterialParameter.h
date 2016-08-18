@@ -28,6 +28,7 @@ public:
 	};
 	void * GetValueAddress() const{return (void*)&m_Value;};
 	T GetValue() const { return m_Value; };
+	void SetValue(T Value) { m_Value = Value; }
 	const std::string &GetDescription(){return m_Description;};
 };
 

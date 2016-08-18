@@ -31,6 +31,27 @@ bool CRenderableObjectsManager::RemoveRenderableObject(const std::string& Render
 	return false;
 }
 
+/*
+Remove RenderableObject from map and vector.
+Caution with this method. It doesn't deletes the RenderableObject pointer.
+Used to move a RenderableObject from one layer to another.
+*/
+void CRenderableObjectsManager::RemoveRenderableObjectFromContainers(const std::string& RenderableObjectName)
+{
+	CMapResourceValue l_ResourceValue = m_ResourcesMap[RenderableObjectName];
+	size_t l_Index = l_ResourceValue.m_Id;
+
+	m_ResourcesMap.erase(RenderableObjectName);
+	m_ResourcesVector.erase(m_ResourcesVector.begin() + l_Index);
+	for (TMapResources::iterator l_It = m_ResourcesMap.begin(); l_It != m_ResourcesMap.end(); l_It++)
+	{
+		if (l_It->second.m_Id>l_Index)
+		{
+			l_It->second.m_Id--;
+		}
+	}
+}
+
 void CRenderableObjectsManager::Update(float ElapsedTime)
 {
 	for (size_t i = 0; i<m_ResourcesVector.size(); ++i)

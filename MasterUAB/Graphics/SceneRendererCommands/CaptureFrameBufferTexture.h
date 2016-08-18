@@ -19,7 +19,6 @@ public:
 	CCaptureFrameBufferTexture(const std::string &Name, unsigned int Width,unsigned int Height);
 	virtual ~CCaptureFrameBufferTexture();
 	bool Capture(unsigned int StageId);
-	bool SaveToFile(std::string& Path);
 };
 
 #endif

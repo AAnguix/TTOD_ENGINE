@@ -8,8 +8,6 @@
 
 bool CAnimatedCoreModel::LoadMesh(const std::string &Filename)
 {
-	//int r = m_CalCoreModel->loadCoreMesh(Filename);
-	//return r;
 	if(m_CalCoreModel->loadCoreMesh(Filename) != -1)
 		return true;
 
@@ -18,21 +16,16 @@ bool CAnimatedCoreModel::LoadMesh(const std::string &Filename)
 
 bool CAnimatedCoreModel::LoadSkeleton(const std::string &Filename)
 {
-	//int r=m_CalCoreModel->loadCoreSkeleton(Filename);
-	//return r;
 	return m_CalCoreModel->loadCoreSkeleton(Filename);
 }
 
 bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, bool Loop, float Weight)
 {
-	//int r=m_CalCoreModel->loadCoreAnimation(Filename);
-	//return r;
 	int l_AnimationID = m_CalCoreModel->loadCoreAnimation(Filename);
 	if (l_AnimationID != -1)
 	{
 		float l_Duration = m_CalCoreModel->getCoreAnimation(l_AnimationID)->getDuration();
 		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID, Weight, l_Duration));
-		//m_Animations.insert(std::pair<const std::string, int>(Name,l_AnimationID));
 		return true;
 	}
 	return false;
@@ -50,8 +43,8 @@ EAnimation CAnimatedCoreModel::GetAnimation(const std::string &Name)
 	return m_Animations[0];
 }
 
-CAnimatedCoreModel::CAnimatedCoreModel() : 
-m_CalCoreModel(NULL),
+CAnimatedCoreModel::CAnimatedCoreModel() 
+:m_CalCoreModel(NULL),
 m_Materials(NULL), 
 m_BSPosition(v3fZERO),
 m_BSRadius(v3fZERO), CNamed("")
@@ -91,17 +84,6 @@ CalCoreModel* CAnimatedCoreModel::GetCoreModel()
 	return m_CalCoreModel;
 }
 
-//int CAnimatedCoreModel::GetAnimationID(const std::string &Name)
-//{
-//	std::map<const std::string, int>::iterator it;
-//
-//	it = m_Animations.find(Name);
-//	if (it == m_Animations.end())
-//		return -1;
-//	else
-//		return it->second;
-//}
-  
 void CAnimatedCoreModel::Load(const std::string &Path)
 {
 	m_Path=Path;

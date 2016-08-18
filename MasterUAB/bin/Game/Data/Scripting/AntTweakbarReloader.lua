@@ -85,6 +85,10 @@ function CAntTweakBarReloader:ReloadEffectTechnique(EffectTechniqueName)
 	l_Technique:Refresh()
 end
 
+function CAntTweakBarReloader:ReloadStaticMesh(CStaticMesh) 
+	CStaticMesh:Reload() 
+end
+
 function CAntTweakBarReloader:ReloadRenderableObjectTechniques() 
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetPhysXManager():Reload()

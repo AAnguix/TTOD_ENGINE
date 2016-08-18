@@ -29,18 +29,25 @@ void CScriptManager::UpdateComponents(float ElapsedTime)
 	}
 }
 
-CScript* CScriptManager::GetScript(const std::string& LuaComponentName) const
+CScript* CScriptManager::GetScript(const std::string& ScriptName) const
 {
 	for (size_t i = 0; i < m_Components.size(); ++i)
 	{
-		if (m_Components[i]->GetLuaComponent()->GetName() == LuaComponentName)
+		if (m_Components[i]->GetName() == ScriptName)
 			return m_Components[i];
 	}
+	#ifdef _DEBUG
+		LOG("Unable to find " + ScriptName + " script");
+	#endif
 	return nullptr;
 }
 
 CScript* CScriptManager::AddComponent(const std::string& Name, CLuaGameObjectHandle* Owner, CLUAComponent* Component)
 {
+	#ifdef _DEBUG
+		if (!Component)	{ LOG("Trying to add a NULL Lua Component"); }
+	#endif
+
 	bool l_Found = false;
 	CScript* l_Script = nullptr;
 	for (size_t i = 0; i < m_Components.size(); ++i)

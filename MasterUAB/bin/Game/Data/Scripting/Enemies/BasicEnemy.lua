@@ -10,12 +10,7 @@ function CBasicEnemyComponent:__init(CGameObject)
 	self.m_DelayToPatrol = 3.0
 	
 	self.m_GuiAvatar = "basic_enemy_avatar_image"
-	
-	-- self.m_Weapon = CWeapon(10,"knife")
-	-- self.m_Armor = CArmor(5,"basic")
 end
-
-function CBasicEnemyComponent:Attack() end
 
 function CBasicEnemyComponent:Initialize()
 	
@@ -61,27 +56,27 @@ function CBasicEnemyComponent:Initialize()
 	self.m_AStar = CAStar()
 end
 
-function CBasicEnemyComponent:MoveToPlayerNearestPoint(PlayerPos, ElapsedTime)
-	
-	local l_EnemyPos = self.m_LuaGameObject:GetPosition()
-	
-	local l_VectorToPlayer = PlayerPos - l_EnemyPos
-	l_VectorToPlayer:Normalize(1.0)
-	
-	local l_Forward = self.m_LuaGameObject:GetForward()
-	l_Forward.y = 0.0
-	
-	local l_NewAngle = 0.0 
-	
+ 
+function CBasicEnemyComponent:Update(ElapsedTime)
+    CEnemyComponent.Update(self,ElapsedTime)
+    self:MovementController(ElapsedTime)
+end
+
+function CBasicEnemyComponent:MovementController(ElapsedTime)
+	local l_Name = self.m_LuaGameObject:GetName()
 	self.m_Velocity.x = 0.0
 	self.m_Velocity.z = 0.0
-	self.m_Velocity = self.m_Velocity + (l_VectorToPlayer*self.m_Speed)
+	
+	if self.M_FollowWaypoints then
+		self:FollowTriangleWayPoints(ElapsedTime)
+	elseif self.M_AttackMovement then
+		self:MoveWithAStar(ElapsedTime)
+	end
+	
 	self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
 	if ElapsedTime>0.0 then
-		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity * ElapsedTime), ElapsedTime)
-		self:LookAtPoint(PlayerPos,ElapsedTime)
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, (self.m_Velocity * ElapsedTime), ElapsedTime)
 	else 
-		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Enemy:GetName(), (self.m_Velocity), ElapsedTime)
-		self:LookAtPoint(PlayerPos,0.0)
+		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, (self.m_Velocity), ElapsedTime)
 	end 
 end

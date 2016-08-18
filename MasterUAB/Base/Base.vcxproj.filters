@@ -68,6 +68,9 @@
     <ClInclude Include="Utils\FileUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\PerlinNoise.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Math">
@@ -103,6 +106,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\FileUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\PerlinNoise.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>

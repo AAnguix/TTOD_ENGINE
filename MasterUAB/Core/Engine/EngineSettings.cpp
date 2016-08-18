@@ -51,11 +51,11 @@ bool CEngineSettings::LoadSettings(const std::string &SettingsFile)
 				}
 				else if (l_Element.GetName() == std::string("vsync"))
 				{
-					m_Fps = l_Element.GetBoolProperty("value", false);
+					m_VSyncEnabled = l_Element.GetBoolProperty("value", false);
 				}
 				else if (l_Element.GetName() == std::string("d3d_debug"))
 				{
-					m_Fps = l_Element.GetBoolProperty("value", false);
+					m_D3DDebug = l_Element.GetBoolProperty("value", false);
 				}
 
 				else if (l_Element.GetName() == std::string("gui_materials"))

@@ -49,6 +49,11 @@
 		<sprite name="health_potion_highlight" x="0" y="0" w="512" h="512" />
 		<sprite name="health_potion_pressed" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>
+	<gui_spritemap name="dynamite" width="512" height="512" material="dynamite_material">
+		<sprite name="dynamite_normal" x="0" y="0" w="512" h="512" />
+		<sprite name="dynamite_highlight" x="0" y="0" w="512" h="512" />
+		<sprite name="dynamite_pressed" x="0" y="0" w="512" h="512" />
+	</gui_spritemap>
 	<gui_spritemap name="health_potion_font" width="512" height="512" material="health_potion_font_material">
 		<sprite name="health_potion_font_0.png" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>

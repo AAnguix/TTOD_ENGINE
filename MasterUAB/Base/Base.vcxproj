@@ -26,6 +26,9 @@
     <ClInclude Include="Utils\EmptyPointerClass.h" />
     <ClInclude Include="Utils\FileUtils.h" />
     <ClInclude Include="Utils\Named.h" />
+    <ClInclude Include="Utils\PerlinNoise.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Utils\SingletonPattern.h" />
     <ClInclude Include="Utils\TemplatedMapManager.h" />
     <ClInclude Include="Utils\TemplatedVectorMapManager.h" />
@@ -40,6 +43,9 @@
     <ClCompile Include="Utils\3DElement.cpp" />
     <ClCompile Include="Utils\FileUtils.cpp" />
     <ClCompile Include="Utils\Named.cpp" />
+    <ClCompile Include="Utils\PerlinNoise.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Utils\TTODMathUtils.cpp" />
     <ClCompile Include="Utils\TTODXMLWriter.cpp" />
     <ClCompile Include="XML\Example.cpp">

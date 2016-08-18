@@ -291,7 +291,7 @@ bool CPhysXManager::CreateDynamicActor(const std::string &ActorName, const std::
 bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateBox(ShapeName, Size,MaterialName,MaterialStaticFriction,MaterialDynamicFriction,MaterialRestitution,Group,true);
-	SetShapeAsTrigger(ShapeName);
+	ChangeShapeTriggerState(ShapeName, true);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -303,7 +303,7 @@ bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::st
 bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateBox(ShapeName, Size, MaterialName, 10.0, 20.0, 1.0, Group, true);
-	SetShapeAsTrigger(ShapeName);
+	ChangeShapeTriggerState(ShapeName, true);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -315,7 +315,7 @@ bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::st
 bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
-	SetShapeAsTrigger(ShapeName);
+	ChangeShapeTriggerState(ShapeName, true);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -328,7 +328,7 @@ bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std:
 bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, 10.0, 20.0, 1.0, Group, true);
-	SetShapeAsTrigger(ShapeName);
+	ChangeShapeTriggerState(ShapeName, true);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -595,12 +595,15 @@ void CPhysXManager::CheckMapAndVectors()
 
 void CPhysXManager::Update(float ElapsedTime)
 {
+	RemoveActors();
+
 	m_LeftOverSeconds += ElapsedTime;
 
 	if (m_LeftOverSeconds >= PHYSX_UPDATE_STEP)
 	{
 		m_Scene->simulate(PHYSX_UPDATE_STEP);
-		m_Scene->fetchResults(true);
+		physx::PxU32 l_ErrorState;
+		bool l_Result = m_Scene->fetchResults(true, &l_ErrorState);
 
 		m_LeftOverSeconds = fmod(m_LeftOverSeconds, PHYSX_UPDATE_STEP);
 
@@ -618,44 +621,37 @@ void CPhysXManager::Update(float ElapsedTime)
 	UpdateComponents(ElapsedTime);
 }
 
-void CPhysXManager::UpdateComponents(float ElapsedTime)
+/*
+Removes all the pending actors. 
+*/
+void CPhysXManager::RemoveActors()
 {
-	for (size_t i = 0; i < m_CharacterColliderComponents.size(); ++i)
+	for (size_t i = 0; i < m_ActorsToBeDeleted.size(); ++i)
 	{
-		m_CharacterColliderComponents[i]->Update(ElapsedTime);
+		RemoveActorToBeDeleted(m_ActorsToBeDeleted[i]);
 	}
-	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
-	{
-		m_ColliderComponents[i]->Update(ElapsedTime);
-	}
+	m_ActorsToBeDeleted.clear();
 }
 
-bool CPhysXManager::RemoveActor(const std::string &ActorName)
+bool CPhysXManager::RemoveActorToBeDeleted(const std::string &ActorName)
 {
-	
 	auto it_controller = m_CharacterControllers.find(ActorName);
 	auto it_Actors = m_ActorIndexs.find(ActorName);
-
-	/*if (it_Actors != m_ActorIndexs.end())
-	{
-		size_t a = it_Actors->second;
-		m_Scene->removeActor(*m_Actors[a]);
-	}
-	*/
+	bool l_IsCharacterController = false;
 
 	if (it_controller != m_CharacterControllers.end()) //Is a C.Controller
 	{
 		it_controller->second->release();
-		m_CharacterControllers.erase(it_controller); 
+		m_CharacterControllers.erase(it_controller);
+		l_IsCharacterController = true;
 	}
 
-	if (it_Actors != m_ActorIndexs.end())
+	else if (it_Actors != m_ActorIndexs.end())
 	{
 		size_t l_RemovedActorIndex = it_Actors->second;
 
-		//m_Actors[l_RemovedActorIndex]->release();
-		
-		m_Scene->removeActor(*m_Actors[l_RemovedActorIndex]);
+		if (!l_IsCharacterController)
+			m_Actors[l_RemovedActorIndex]->release();
 
 		size_t l_MovedActorIndex = m_Actors.size() - 1;
 
@@ -683,6 +679,26 @@ bool CPhysXManager::RemoveActor(const std::string &ActorName)
 	}
 
 	return false;
+}
+
+/*
+Push and actor in the ToBeDeleted actors list. They will be deleted in the next physx simulation.
+*/
+void CPhysXManager::RemoveActor(const std::string &ActorName)
+{
+	m_ActorsToBeDeleted.push_back(ActorName);
+}
+
+void CPhysXManager::UpdateComponents(float ElapsedTime)
+{
+	for (size_t i = 0; i < m_CharacterColliderComponents.size(); ++i)
+	{
+		m_CharacterColliderComponents[i]->Update(ElapsedTime);
+	}
+	for (size_t i = 0; i < m_ColliderComponents.size(); ++i)
+	{
+		m_ColliderComponents[i]->Update(ElapsedTime);
+	}
 }
 
 void CPhysXManager::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName, float StaticFriction, float DynamicFriction, float Restitution)
@@ -748,7 +764,7 @@ Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterContro
 	#endif
 
 	size_t index = (size_t)l_Controller->getUserData();
-	l_Controller->move(CastVec(l_Move), l_Move.Length()*0.01f, ElapsedTime, l_Filters);
+	l_Controller->move(CastVec(l_Move), l_Move.Length()*0.005f, ElapsedTime, l_Filters);
 
 	physx::PxRigidDynamic* l_Actor = l_Controller->getActor();
 
@@ -800,90 +816,74 @@ Vect3f CPhysXManager::GetCharacterControllerFootPosition(const std::string& Char
 	return l_Result;
 }
 
-void CPhysXManager::SetShapeAsTrigger(const std::string &ShapeName)
+void CPhysXManager::ChangeShapeTriggerState(const std::string &ShapeName, bool State)
 {
 	physx::PxShape* l_Shape = GetShape(ShapeName);
 	assert(l_Shape != nullptr);
 
 	if (l_Shape != nullptr)
 	{
-		l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-		l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		if (State)
+		{
+			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
+
 	}
-	//auto it_Actors = m_ActorIndexs.find(ActorName);
-
-	//if (it_Actors != m_ActorIndexs.end())
-	//{
-	//	size_t l_Index = it_Actors->second;
-	//	physx::PxActor* l_PxActor = m_Actors[l_Index];
-
-	//	physx::PxRigidDynamic* l_DynamicActor = l_PxActor->is<physx::PxRigidDynamic>();
-	//	physx::PxShape* l_Shape;
-
-	//	if (l_DynamicActor != nullptr)
-	//	{
-	//		l_DynamicActor->getShapes(&l_Shape, 1);
-	//		l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-	//		l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-	//	}
-	//	else
-	//	{
-	//		physx::PxRigidStatic* l_StaticActor = l_PxActor->is<physx::PxRigidStatic>();
-
-	//		if (l_StaticActor != nullptr)
-	//		{
-	//			l_StaticActor->getShapes(&l_Shape, 1);
-	//			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-	//			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-	//		}
-	//	}
-	//}
 }
 
-bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* Result_)
+bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& Direction, const float& Length, SRaycastData* Result_)
 {
-	physx::PxFilterData filterData;
-	filterData.setToDefault();
-	//filterData.word0 = GROUP1 | GROUP2;
-	filterData.word0 = 1 | 2;
-
-	Vect3f l_Direction = End - Origin;
-	float l_Lenght = l_Direction.Length();
-	l_Direction.Normalize(); //normalize
-
-	physx::PxRaycastBuffer l_ReturnBuffer;
-	bool status = m_Scene->raycast
-	(
-	CastVec(Origin), CastVec(l_Direction), l_Lenght,
-	l_ReturnBuffer,
-	physx::PxHitFlags(physx::PxHitFlag::eDEFAULT),
-	physx::PxQueryFilterData(
-	filterData,
-	physx::PxQueryFlag::eDYNAMIC | physx::PxQueryFlag::eSTATIC)
-	);
-
-	Result_->m_Position = CastVec(l_ReturnBuffer.block.position);
-	Result_->m_Normal = CastVec(l_ReturnBuffer.block.normal);
-	Result_->m_Distance = l_ReturnBuffer.block.distance;
-	Result_->m_ActorName = m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
-
-	return true;
-}
-
-std::string CPhysXManager::RaycastOutName(const Vect3f& Origin, const Vect3f& Direction, const float& Length)
-{
-	std::string l_ActorName = "";
-	physx::PxRaycastBuffer l_ReturnBuffer;
-	Vect3f Pos = Vect3f(Origin.x, (Origin.y + 1.2f), Origin.z);
 	physx::PxQueryFilterData filterData(physx::PxQueryFlag::eSTATIC);
+	physx::PxRaycastBuffer l_ReturnBuffer;
+	bool status = m_Scene->raycast(CastVec(Origin), CastVec(Direction), Length, l_ReturnBuffer, physx::PxHitFlags(physx::PxHitFlag::eDEFAULT), filterData);
 
-	bool status = m_Scene->raycast(CastVec(Pos), CastVec(Direction), Length, l_ReturnBuffer, physx::PxHitFlags(physx::PxHitFlag::eDEFAULT), filterData);
 	if (status)
 	{
-		l_ActorName = m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
+		Result_->m_Position = CastVec(l_ReturnBuffer.block.position);
+		Result_->m_Normal = CastVec(l_ReturnBuffer.block.normal);
+		Result_->m_Distance = l_ReturnBuffer.block.distance;
+		Result_->m_ActorName = m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
+		return true;
 	}
-	return l_ActorName;
+
+	return false;
 }
+
+//bool CPhysXManager::Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* Result_)
+//{
+//	physx::PxFilterData filterData;
+//	filterData.setToDefault();
+//	//filterData.word0 = GROUP1 | GROUP2;
+//	filterData.word0 = 1 | 2;
+//
+//	Vect3f l_Direction = End - Origin;
+//	float l_Lenght = l_Direction.Length();
+//	l_Direction.Normalize(); //normalize
+//
+//	physx::PxRaycastBuffer l_ReturnBuffer;
+//	bool status = m_Scene->raycast
+//	(
+//	CastVec(Origin), CastVec(l_Direction), l_Lenght,
+//	l_ReturnBuffer,
+//	physx::PxHitFlags(physx::PxHitFlag::eDEFAULT),
+//	physx::PxQueryFilterData(
+//	filterData,
+//	physx::PxQueryFlag::eDYNAMIC | physx::PxQueryFlag::eSTATIC)
+//	);
+//
+//	Result_->m_Position = CastVec(l_ReturnBuffer.block.position);
+//	Result_->m_Normal = CastVec(l_ReturnBuffer.block.normal);
+//	Result_->m_Distance = l_ReturnBuffer.block.distance;
+//	Result_->m_ActorName = m_ActorNames[(size_t)l_ReturnBuffer.block.actor->userData];
+//
+//	return true;
+//}
 
 float CPhysXManager::CameraRaycast(const Vect3f& Origin, const Vect3f& End, const float& Length)
 {
@@ -1002,38 +1002,6 @@ void CPhysXManager::ApplyForce(const std::string &ActorName, const Vect3f &Force
 			l_DynamicActor->addForce(l_Force);
 		}
 
-	}
-}
-
-void CPhysXManager::RemoveTriggerState(const std::string &ActorName)
-{
-	auto it_Actors = m_ActorIndexs.find(ActorName);
-
-	if (it_Actors != m_ActorIndexs.end())
-	{
-		size_t l_Index = it_Actors->second;
-		physx::PxActor* l_PxActor = m_Actors[l_Index];
-
-		physx::PxRigidDynamic* l_DynamicActor = l_PxActor->is<physx::PxRigidDynamic>();
-		physx::PxShape* l_Shape;
-
-		if (l_DynamicActor != nullptr)
-		{
-			l_DynamicActor->getShapes(&l_Shape, 1);
-			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-		}
-		else
-		{
-			physx::PxRigidStatic* l_StaticActor = l_PxActor->is<physx::PxRigidStatic>();
-
-			if (l_StaticActor != nullptr)
-			{
-				l_StaticActor->getShapes(&l_Shape, 1);
-				l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-				l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-			}
-		}
 	}
 }
 
@@ -1167,8 +1135,7 @@ physx::PxShape* CPhysXManager::CreateTriangleMesh(const std::string &ShapeName, 
 	physx::PxTriangleMesh* l_TriangleMesh = CookTriangleMesh(ShapeName, Vertices, Indices);
 	return GenerateShape(ShapeName, physx::PxTriangleMeshGeometry(l_TriangleMesh), MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
 }
-
-physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group)
+physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const Vect3f Pos, const float Yaw, const float Pitch, const float Roll, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group)
 {
 	physx::PxShape* l_Shape = nullptr;
 
@@ -1195,7 +1162,7 @@ physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &Sha
 
 		if (l_NumVertexs > 0)
 		{
-			unsigned int l_NumBytes = sizeof(float)*3*l_NumVertexs;
+			unsigned int l_NumBytes = sizeof(float) * 3 * l_NumVertexs;
 
 			l_VtxsData = malloc(l_NumBytes);
 			fread(l_VtxsData, l_NumBytes, 1, l_File);
@@ -1242,20 +1209,60 @@ physx::PxShape* CPhysXManager::CreateTriangleMeshFromFile(const std::string &Sha
 		{
 			l_Shape = CreateTriangleMesh(ShapeName, l_ShapeVertex, l_ShapeIndex, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
 
-			//SUPER HARDCODEADO PARA LA SALA 3
-			Quatf l_Rot = Quatf(0.0, 0.0, 0.0, 1.0);
-			Vect3f l_PositionQ = Vect3f(10.8045f, -2.90423f, 16.0195f);
-			CreateStaticActor(ShapeName, ShapeName, l_PositionQ, l_Rot);
+
+			Quatf l_Rot = Quatf(Yaw, Pitch, Roll);
+			CreateStaticActor(ShapeName, ShapeName, Pos, l_Rot);
 		}
 		else
 		{
-			#ifdef _DEBUG
-				CEngine::GetSingleton().GetLogManager()->Log("Error loading shape file " + Filename);
-			#endif
+#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("Error loading shape file " + Filename);
+#endif
 		}
 	}
 
 	fclose(l_File);
 
 	return l_Shape;
+}
+
+void CPhysXManager::CreateBoxLua(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	CreateBox(ShapeName, Size, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+void CPhysXManager::CreateSphereLua(const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+{
+	CreateSphere(ShapeName, Radius, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
+}
+
+bool CPhysXManager::GeometryQuery(const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_)
+{
+	//physx::PxGeometry l_Geometry = physx::PxSphereGeometry(2.5f);
+	physx::PxGeometry l_Geometry = physx::PxBoxGeometry(physx::PxReal(2.0f), physx::PxReal(2.0f), physx::PxReal(2.0f));
+	physx::PxTransform l_InitialPos = physx::PxTransform(CastVec(Position), CastQuat(Orientation));
+	physx::PxVec3 l_DirectionVector = physx::PxVec3(CastVec(Direction));
+	physx::PxSweepBuffer l_Buffer;
+	//physx::PxHitFlags l_Flag = physx::PxHitFlag::eNORMAL | physx::PxHitFlag::eDISTANCE | physx::PxHitFlag::ePOSITION;
+	physx::PxHitFlags l_Flag = physx::PxHitFlag::eDEFAULT;
+
+
+	//physx::PxGeometry sphereGeometry = physx::PxSphereGeometry(1.5f);
+	//physx::PxTransform l_InitialPos = physx::PxTransform(physx::PxVec3(0, 5, 0));
+	//physx::PxReal maxDistance = 10.0f;
+	//physx::PxVec3 unitDir = physx::PxVec3(0, -1, 0);
+	//physx::PxQueryFilterData l_filterData(physx::PxQueryFlag::eSTATIC);
+	physx::PxQueryFilterData l_filterData(physx::PxQueryFlag::eANY_HIT);
+
+	bool status = m_Scene->sweep(l_Geometry, l_InitialPos, l_DirectionVector, Length, l_Buffer, l_Flag, l_filterData);
+	if (status)
+	{
+		Result_->m_Position = CastVec(l_Buffer.block.position);
+		Result_->m_Normal = CastVec(l_Buffer.block.normal);
+		Result_->m_Distance = l_Buffer.block.distance;
+		Result_->m_ActorName = m_ActorNames[(size_t)l_Buffer.block.actor->userData];
+
+		return true;
+	}
+
+	return false;
 }

@@ -29,8 +29,9 @@ function CLuaCameraController:BLOCK_CAMERA()
 end
 
 function CLuaCameraController:CENTER_CAMERA()
-	self:GetCCC():SetYaw(0.0)
-	self:GetCCC():SetPitch(0.0)
+	-- self:GetCCC():SetYaw(0.0)
+	-- self:GetCCC():SetPitch(0.0)
+	g_Engine:GetTextureManager():SaveBlackAndWhiteTexturesToFile()
 end
 
 function CLuaCameraController:ZOOM_IN_CAMERA()
@@ -74,4 +75,39 @@ function CLuaCameraController:ThirdPersonCamera(ElapsedTime)
 	local l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
 end
 
+-- function CLuaCameraController:CameraShake(ElapsedTime)
+	-- local l_Rotation = Vect3f(0.0,0.0,0.0)
+	-- local l_Yaw = self:GetCCC():GetYaw()
+	-- local l_Pitch = self:GetCCC():GetPitch()
+	-- local l_Roll = 0.0
+	
+	-- local l_Amplituded = 1.0
+	-- local l_Frequence = 1.0
+	
+	-- local l_V1 = CPerlinNoise.noise3(l_Yaw/l_Frequence,l_Pitch/l_Frequence,l_Roll/l_Frequence)*l_Amplituded
+	-- l_Rotation.x = l_Rotation.x + l_V1
+	-- local l_V2 = CPerlinNoise.noise3(l_Yaw/l_Frequence,l_Pitch/l_Frequence+100,l_Roll/l_Frequence)*l_Amplituded
+	-- l_Rotation.y = l_Rotation.y + l_V2
+	-- --l_Rotation.z += CPerlinNoise.noise(l_Yaw/l_Frequence,l_Pitch/l_Frequence,l_Roll/l_Frequence+100)*l_Amplituded
+	-- g_LogManager:Log(l_Rotation.x.." "..l_Rotation.y.." "..l_Rotation.z)
+	
+	-- self:GetCCC():AddYaw(l_Rotation.x)
+	-- self:GetCCC():AddPitch(l_Rotation.y)
+-- end
+
+	-- local yaw = self:GetCCC():GetYaw()
+
+	
+	-- local pìtch = self:GetCCC():GetPitch()
+	
+	-- local l_Rotation = Vect3f(0.0,0.0,0.0)
+	
+	-- local roll = l_Camera:GetRoll()
+	
+	-- l_Rotation.x += CPerlinNoise.noise(yaw/l_Frequence,pìtch/l_Frequence,roll/l_Frequence)*l_Amplituded
+	-- l_Rotation.y += CPerlinNoise.noise(yaw/l_Frequence,pìtch/l_Frequence+100,roll/l_Frequence)*l_Amplituded
+	-- l_Rotation.z += CPerlinNoise.noise(yaw/l_Frequence,pìtch/l_Frequence,roll/l_Frequence+100)*l_Amplituded
+	
+	-- self:GetCCC():SetYaw(l_Rotation.y)
+	-- self:GetCCC():SetPitch(l_Rotation.x)
 

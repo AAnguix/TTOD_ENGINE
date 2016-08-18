@@ -17,6 +17,7 @@
 /*Graphics*/
 #include "Render\RenderManager.h"
 #include "Materials\MaterialManager.h"
+#include "Materials\Material.h"
 #include "Textures\TextureManager.h"
 #include "Camera\CameraControllerManager.h"
 #include "RenderableObjects\LayerManager.h"
@@ -36,6 +37,7 @@
 #include "Components\LuaComponent.h"
 #include "Components\AnimatorController\AnimatorController.h"
 #include "Components\AnimatorController\Transition.h"
+#include "Components\AnimatorController\Animation.h"
 #include "Components\AudioSource.h"
 #include "Components\Script\ScriptManager.h"
 #include "Level\Level.h"
@@ -162,9 +164,19 @@ void CLuabindManager::RegisterCore()
 
 	module(LUA_STATE)
 	[
+		class_<std::vector<CMaterial*>>("materialsVector")
+		.def(constructor<>())
+		.def("size", &std::vector<CMaterial*>::size)
+		.def("clear", &std::vector<CMaterial*>::clear)
+		.def("at", (std::vector<CMaterial*>::reference(std::vector<CMaterial*>::*)(std::vector<CMaterial*>::size_type))&std::vector<CMaterial*>::at)
+	];
+
+	module(LUA_STATE)
+	[
 		class_<CLuaGameObjectHandle>("LuaGameObjectHandle")
 		.def(constructor<CGameObject*>())
 		
+		.def("EnableRenderableObject", &CLuaGameObjectHandle::EnableRenderableObject)
 		.def("GetPosition", &CLuaGameObjectHandle::GetPosition)
 		.def("SetPosition", &CLuaGameObjectHandle::SetPosition)
 		.def("GetForward", &CLuaGameObjectHandle::GetForward)
@@ -180,9 +192,14 @@ void CLuabindManager::RegisterCore()
 		.def("SetParent", &CLuaGameObjectHandle::SetParent)
 		.def("GetTransform", &CLuaGameObjectHandle::GetTransform)
 		.def("GetBoneTransformationMatrix", &CLuaGameObjectHandle::GetBoneTransformationMatrix)
+		.def("SetTemporalRenderableObjectTechnique", &CLuaGameObjectHandle::SetTemporalRenderableObjectTechnique)
+		.def("CreateCopyMaterialsFromCore", &CLuaGameObjectHandle::CreateCopyMaterialsFromCore)
 
-
-		.def("AddState", &CLuaGameObjectHandle::AddState)
+		.def("EnableAnimatorController", &CLuaGameObjectHandle::EnableAnimatorController)
+		.def("AddState", (CState*(CLuaGameObjectHandle::*)(const std::string &, const std::string &, float, const std::string &, const std::string &, const std::string &))&CLuaGameObjectHandle::AddState)
+		.def("AddState", (CState*(CLuaGameObjectHandle::*)(const std::string &, std::vector<const std::string>, float, float, const std::string &, const std::string &, const std::string &))&CLuaGameObjectHandle::AddState)
+		.def("AddAnyStateTransition", (CTransition*(CLuaGameObjectHandle::*)(const std::string&, CState*, bool, float))&CLuaGameObjectHandle::AddAnyStateTransition)
+		.def("AddAnyStateTransition", (CTransition*(CLuaGameObjectHandle::*)(const std::string&, CState*, bool, float, float))&CLuaGameObjectHandle::AddAnyStateTransition)
 		.def("AddInteger", &CLuaGameObjectHandle::AddInteger)
 		.def("AddFloat", &CLuaGameObjectHandle::AddFloat)
 		.def("AddBool", &CLuaGameObjectHandle::AddBool)
@@ -197,6 +214,7 @@ void CLuabindManager::RegisterCore()
 
 		.def("GetPhysxMaterial", &CLuaGameObjectHandle::GetPhysxMaterial)
 
+		.def("EnableAudioSource", &CLuaGameObjectHandle::EnableAudioSource)
 		.def("PlayEvent", &CLuaGameObjectHandle::PlayEvent)
 		.def("AddSound", &CLuaGameObjectHandle::AddSound)
 	];
@@ -405,6 +423,13 @@ public:
 			call<void>("OnTriggerExit", Actor);
 		}
 	}
+	virtual void OnShapeHit(const std::string& Actor)
+	{
+		if (IsEnabled())
+		{
+			call<void>("OnShapeHit", Actor);
+		}
+	}
 	static void default_Update(CLUAComponent* ptr, float ElapsedTime)
 	{
 		return ptr->CLUAComponent::Update(ElapsedTime);
@@ -416,6 +441,10 @@ public:
 	static void default_OnTriggerExit(CLUAComponent* ptr, const std::string& Actor)
 	{
 		return ptr->CLUAComponent::OnTriggerExit(Actor);
+	}
+	static void default_OnShapeHit(CLUAComponent* ptr, const std::string& Actor)
+	{
+		return ptr->CLUAComponent::OnShapeHit(Actor);
 	}
 	/*std::string GetType() const
 	{
@@ -433,6 +462,7 @@ void CLuabindManager::RegisterComponents()
 		.def("Update", &CLUAComponent::Update, &CLUAComponent_wrapper::default_Update)
 		.def("OnTriggerEnter", &CLUAComponent::OnTriggerEnter, &CLUAComponent_wrapper::default_OnTriggerEnter)
 		.def("OnTriggerExit", &CLUAComponent::OnTriggerExit, &CLUAComponent_wrapper::default_OnTriggerExit)
+		.def("OnShapeHit", &CLUAComponent::OnShapeHit, &CLUAComponent_wrapper::default_OnShapeHit)
 		.def("AddTime", &CLUAComponent::AddTime)
 		.def("GetTimer", &CLUAComponent::GetTimer)
 		.def("ResetTimer", &CLUAComponent::ResetTimer)
@@ -517,8 +547,31 @@ void CLuabindManager::RegisterComponents()
 
 	module(LUA_STATE)
 	[
+		class_<EAnimation>("EAnimation")
+		.def(constructor<const std::string&, bool, unsigned int, float, float>())
+		.def(constructor<>())
+		.def_readonly("m_Loop", &EAnimation::m_Loop)
+		.def_readonly("m_ID", &EAnimation::m_ID)
+		.def_readonly("m_Weight", &EAnimation::m_Weight)
+		.def_readonly("m_Duration", &EAnimation::m_Duration)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<std::vector<EAnimation> >("EAnimationVector")
+		.def(constructor<>())
+		.def("size", &std::vector<EAnimation>::size)
+		.def("clear", &std::vector<EAnimation>::clear)
+		.def("at", (std::vector<EAnimation>::reference(std::vector<EAnimation>::*)(std::vector<EAnimation>::size_type))&std::vector<EAnimation>::at)
+		.def("push_back", (void(std::vector<EAnimation>::*)(const EAnimation&))&std::vector<EAnimation>::push_back)
+		//.def("push_back", (void(std::vector<EAnimation>::*)(EAnimation&&))&std::vector<EAnimation>::push_back)
+	];
+
+	module(LUA_STATE)
+	[
 		class_<CState>("CState")
 		.def(constructor<CAnimatorController*, const std::string, const EAnimation, const float, const std::string, const std::string, const std::string>())
+		.def(constructor<CAnimatorController*, const std::string, const std::vector<EAnimation>&, float, const float, const std::string, const std::string, const std::string>())
 		.def("AddTransition", (CTransition* (CState::*)(const std::string&, CState*, bool, float, float))&CState::AddTransition)
 		.def("AddTransition", (CTransition* (CState::*)(const std::string&, CState*, bool, float))&CState::AddTransition)
 		.def("OnEnter", &CState::OnEnter)

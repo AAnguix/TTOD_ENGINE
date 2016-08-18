@@ -39,6 +39,13 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 					else
 					{
 						bool l_Load = l_StaticMesh->Load(l_Element.GetPszProperty("filename"));
+						#ifdef _DEBUG
+							if (!l_Load)
+							{
+								std::string l_Name = l_Element.GetPszProperty("name");
+								CEngine::GetSingleton().GetLogManager()->Log("Mesh " + l_Name + " Not loaded properly");
+							}
+						#endif
 						assert(l_Load);
 						if (l_Load)
 							l_StaticMesh->LoadShape(l_Element.GetPszProperty("shape_type", ""), l_Element.GetPszProperty("group", ""), l_Element.GetBoolProperty("is_exclusive", false));
@@ -49,8 +56,11 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 					std::string l_Name = l_Element.GetPszProperty("name");
 					std::string l_Group = l_Element.GetPszProperty("group");
 					std::string l_Filename = l_Element.GetPszProperty("filename");
-					//CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group)
-					CEngine::GetSingleton().GetPhysXManager()->CreateTriangleMeshFromFile(l_Name, l_Filename, "PhXMesh", 10.0f, 10.0f, 0.5f, l_Group);
+					Vect3f  l_Position = l_Element.GetVect3fProperty("pos", v3fZERO);
+					float l_Yaw = l_Element.GetFloatProperty("yaw", 0.0f);
+					float l_Pitch = l_Element.GetFloatProperty("pitch", 0.0f);
+					float l_Roll = l_Element.GetFloatProperty("roll", 0.0f);
+					CEngine::GetSingleton().GetPhysXManager()->CreateTriangleMeshFromFile(l_Name, l_Filename, l_Position, l_Yaw, l_Pitch, l_Roll, "PhXMesh", 10.0f, 10.0f, 0.5f, l_Group);
 				}
 			}
 		}

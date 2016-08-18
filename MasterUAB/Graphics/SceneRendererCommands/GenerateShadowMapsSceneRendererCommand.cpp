@@ -38,10 +38,10 @@ void CGenerateShadowMapsSceneRendererCommand::Execute(CRenderManager &RenderMana
 			}
 			#endif
 
-			for(size_t i=0;i<m_ROManager.size();i++)
+			for(size_t j=0;j<m_ROManager.size();j++)
 			{
 				CLayerManager* l_Layer = CEngine::GetSingleton().GetLayerManager();
-				l_Layer->Render(RenderManager, m_ROManager[i]->GetName());
+				l_Layer->Render(RenderManager, m_ROManager[j]->GetName());
 				//RenderManager.DrawScreenQuad(CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("MV_POSITION4_COLOR_TEXTURE_VERTEX")->GetEffectTechnique(),(CTexture*)l_Lights[i]->GetShadowMap(),0,0,1.0,1.0,CColor(1.0,0.0,0.0,1.0));
 			}
 		}

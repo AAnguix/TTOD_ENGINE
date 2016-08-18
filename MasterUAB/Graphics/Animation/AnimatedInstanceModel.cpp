@@ -21,10 +21,11 @@
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(CGameObject* Owner, const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 :CRenderableObject(Owner, Name, Position, Yaw, Pitch, Roll)
-,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL)
+,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL), m_TemporalMaterials(NULL)
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
+,m_TemporalRenderbleObjectTechnique(NULL)
 {
 	CAnimatedCoreModel* l_AnimatedCoreModel = CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(ModelName);
 	if (l_AnimatedCoreModel == nullptr)
@@ -39,10 +40,11 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CGameObject* Owner, const std::st
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
 :CRenderableObject(TreeNode)
-,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL)
+,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL), m_TemporalMaterials(NULL)
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
+,m_TemporalRenderbleObjectTechnique(NULL)
 {
 	std::string l_ModelName = TreeNode.GetPszProperty("model_name");
 	CAnimatedCoreModel* l_AnimatedCoreModel = CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(l_ModelName);
@@ -61,9 +63,34 @@ CAnimatedInstanceModel::~CAnimatedInstanceModel()
 	Destroy();
 }
 
+/*
+Creates a copy of the core materials. 
+Instance will be rendered with these materials.
+*/
+std::vector<CMaterial*> CAnimatedInstanceModel::CreateCopyMaterialsFromCore()
+{
+	for (size_t i = 0; i < m_Materials.size(); ++i)
+	{
+		CMaterial* l_CopyMaterial = new CMaterial(*m_Materials[i]);
+		m_TemporalMaterials.push_back(l_CopyMaterial);
+	}
+	m_Materials.clear();
+	return m_TemporalMaterials;
+}
+
 void CAnimatedInstanceModel::Destroy()
 {
 	m_Materials.clear();
+
+	for (size_t i = 0; i < m_TemporalMaterials.size(); ++i)
+	{
+		if (m_TemporalMaterials[i])
+		{
+			delete m_TemporalMaterials[i];
+			m_TemporalMaterials[i] = NULL;
+		}
+	}
+	m_TemporalMaterials.clear();
 	CHECKED_DELETE(m_CalModel);
 	CHECKED_DELETE(m_CalHardwareModel);
 	CHECKED_DELETE(m_RenderableVertexs);
@@ -134,6 +161,11 @@ void CAnimatedInstanceModel::Initialize(CAnimatedCoreModel *AnimatedCoreModel)
 	LoadVertexBuffer();
 }
 
+void CAnimatedInstanceModel::SetTemporalRenderableObjectTechnique(CRenderableObjectTechnique* RenderableObjectTechnique)
+{
+	m_TemporalRenderbleObjectTechnique = RenderableObjectTechnique;
+}
+
 void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 {	
 	//CalBoundingBox l_BoundingBox = m_CalModel->getBoundingBox();
@@ -145,10 +177,20 @@ void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 	{
 		CEffectManager::m_SceneEffectParameters.m_World = GetTransform();
 		int l_HardwareMeshCount = m_CalHardwareModel->getHardwareMeshCount();
+		CMaterial* l_Material;
 
 		for (int l_HardwareMeshId = 0; l_HardwareMeshId < l_HardwareMeshCount; ++l_HardwareMeshId)
 		{
-			m_Materials[l_HardwareMeshId]->Apply();
+			if (m_TemporalMaterials.size() > 0)
+			{
+				l_Material = m_TemporalMaterials[l_HardwareMeshId];
+			}
+			else
+			{
+				l_Material = m_Materials[l_HardwareMeshId];
+			}
+
+			l_Material->Apply();
 			m_CalHardwareModel->selectHardwareMesh(l_HardwareMeshId);
 			Mat44f l_Transformations[MAXBONES];
 
@@ -162,8 +204,16 @@ void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 			}
 
 			memcpy(&CEffectManager::m_AnimatedModelEffectParameters.m_Bones, l_Transformations, MAXBONES*sizeof(float) * 4 * 4);
-			m_Materials[l_HardwareMeshId]->GetRenderableObjectTechnique()->GetEffectTechnique()->SetConstantBuffer(2,&CEffectManager::m_AnimatedModelEffectParameters.m_Bones);
-			m_RenderableVertexs->RenderIndexed(RenderManager,m_Materials[l_HardwareMeshId]->GetRenderableObjectTechnique()->GetEffectTechnique(), &CEffectManager::m_SceneEffectParameters, m_CalHardwareModel->getFaceCount() * 3, m_CalHardwareModel->getStartIndex(), m_CalHardwareModel->getBaseVertexIndex());
+			if (!m_TemporalRenderbleObjectTechnique)
+			{
+				l_Material->GetRenderableObjectTechnique()->GetEffectTechnique()->SetConstantBuffer(2, &CEffectManager::m_AnimatedModelEffectParameters.m_Bones);
+				m_RenderableVertexs->RenderIndexed(RenderManager, l_Material->GetRenderableObjectTechnique()->GetEffectTechnique(), &CEffectManager::m_SceneEffectParameters, m_CalHardwareModel->getFaceCount() * 3, m_CalHardwareModel->getStartIndex(), m_CalHardwareModel->getBaseVertexIndex());
+			}
+			else
+			{
+				m_TemporalRenderbleObjectTechnique->GetEffectTechnique()->SetConstantBuffer(2, &CEffectManager::m_AnimatedModelEffectParameters.m_Bones);
+				m_RenderableVertexs->RenderIndexed(RenderManager, m_TemporalRenderbleObjectTechnique->GetEffectTechnique(), &CEffectManager::m_SceneEffectParameters, m_CalHardwareModel->getFaceCount() * 3, m_CalHardwareModel->getStartIndex(), m_CalHardwareModel->getBaseVertexIndex());
+			}
 		}
 	}
 }

@@ -89,7 +89,6 @@ end
 -- end
 function CLuaGuiManager:Update(ElapsedTime)
 	self.m_CurrentGui:Update(ElapsedTime)
-	-- g_LogManager:Log("GUI: "..self.m_CurrentGui:GetName())
 	self:ShowGraphicsStats()
 	self:ShowProfilerStats()
 end

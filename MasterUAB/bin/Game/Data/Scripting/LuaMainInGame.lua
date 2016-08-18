@@ -21,7 +21,6 @@ function Update(ElapsedTime)
 	if g_Engine:IsPaused() == false then
 		-- g_GameController:Update(ElapsedTime)
 		g_EventManager:Update()
-		--g_LogManager:Log("LuiEvents updated")
 		g_LuaCameraController:Update(ElapsedTime)
 		--UpdateCinematics(ElapsedTime)
 	end
@@ -98,7 +97,7 @@ function InputRangesCallback(xAxis,yAxis)
 		l_CameraController:AddYaw( xAxis * g_Engine:GetElapsedTime())
 	end
 	if l_CameraController:GetType() == CCameraController.DEBUG then
-		l_CameraController:AddYaw(xAxis * ElapsedTime * 0.3)
-		l_CameraController:AddPitch(yAxis * ElapsedTime * 0.3)
+		l_CameraController:AddYaw(xAxis * g_Engine:GetElapsedTime() * 0.3)
+		l_CameraController:AddPitch(yAxis * g_Engine:GetElapsedTime() * 0.3)
 	end
 end

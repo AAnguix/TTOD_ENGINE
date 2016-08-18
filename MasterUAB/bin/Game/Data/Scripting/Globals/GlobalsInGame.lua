@@ -14,3 +14,5 @@ g_CurrentGuiFile = "./Data/Scripting/GUI/GUIInGame.lua"
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainInGame.lua"
 
 g_IsGamePaused = false
+
+g_FadeOutNoiseTexture = "./Data/Effects/textures/FadeOutNoise.dds"

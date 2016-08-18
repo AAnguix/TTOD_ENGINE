@@ -3,9 +3,12 @@
 
 #include "Camera\CameraController.h"
 #include <vector>
+#include "CameraSmoother.h"
+
 class CCamera;
 class CXMLTreeNode;
 class CEmptyPointerClass;
+class CCameraShaker;
 
 class CThirdPersonCameraController : public CCameraController
 {
@@ -16,6 +19,10 @@ private:
 	float m_Zoom, m_ZoomSpeed, m_MaxZoom, m_MinZoom;
 	
 	float m_LookAtPitch, m_MaxLookAtPitch, m_MinLookAtPitch;
+
+	CCameraSmoother m_Smoother;
+	CCameraShaker* m_Shaker;
+	bool m_Shaking;
 
 	Vect3f m_PlayerPos;
 	float m_CurrentTime;
@@ -39,12 +46,17 @@ public:
 
 	void AddYaw(float Radians);
 	void AddPitch(float Radians);
+	void AddRoll(float Radians);
+
 	Vect3f GetDirection() const;
 	void Update(float ElapsedTime);
-	void Shake(bool ElapsedTime);
 
 	float GetPlayerCameraAngleDif(Vect3f PlayerPosition);
 	EType GetType() const{ return THIRD_PERSON; };
+
+	void StartSmoothing();
+	void StopSmoothing();
+	void StartShaking(Vect3f CameraRotation, int Duration, int YawFrequency, float MinYawRandom, float MaxYawRandom, int PitchFrequency, float MinPitchRandom, float MaxPitchRandom);
 
 	CEmptyPointerClass* GetZoomLuaAddress() const;
 	CEmptyPointerClass* GetZoomSpeedLuaAddress() const;

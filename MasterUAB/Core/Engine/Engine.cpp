@@ -217,7 +217,7 @@ void CEngine::Update(float ElapsedTime)
 	
 	if (!m_Paused)
 	{
-		m_RenderManager->GetContextManager()->SetTimes(ElapsedTime);
+		m_RenderManager->GetContextManager()->SetTimeParameters(ElapsedTime);
 
 		l_CameraController->Update(ElapsedTime);
 
@@ -231,6 +231,8 @@ void CEngine::Update(float ElapsedTime)
 	}
 
 	m_SoundManager->Update(&l_Camera, ElapsedTime);
+
+	m_LuaGameObjectHandleManager->Update();
 
 	m_GraphicsStats->Update(ElapsedTime);
 

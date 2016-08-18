@@ -39,19 +39,37 @@ CLuaGameObjectHandle CLuaGameObjectHandleManager::Get(const std::string &GameObj
 }
 void CLuaGameObjectHandleManager::Remove(const std::string &GameObjectName)
 {
+	m_HandlesToBeDeleted.push_back(GameObjectName);
+}
+
+void CLuaGameObjectHandleManager::RemoveHandle(const std::string &GameObjectName)
+{
 	for (size_t i = 0; i < m_LuaGameObjectHandles.size(); ++i)
 	{
 		if (m_LuaGameObjectHandles[i].GetName() == GameObjectName)
 		{
 			CEngine::GetSingleton().GetGameObjectManager()->RemoveGameObject(GameObjectName);
 			m_LuaGameObjectHandles.erase(m_LuaGameObjectHandles.begin() + i);
-
 			#ifdef _DEBUG
 				LOG("Gameobject " + GameObjectName + " completely removed");
 			#endif
 		}
 	}
 }
+
+void CLuaGameObjectHandleManager::Update()
+{
+	RemoveHandlesToBeDeleted();
+}
+
+void CLuaGameObjectHandleManager::RemoveHandlesToBeDeleted()
+{
+	for (size_t i = 0; i < m_HandlesToBeDeleted.size(); ++i)
+	{
+		RemoveHandle(m_HandlesToBeDeleted[i]);
+	}
+}
+
 void CLuaGameObjectHandleManager::Destroy()
 {
 	m_LuaGameObjectHandles.clear();

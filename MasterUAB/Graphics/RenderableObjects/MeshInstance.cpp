@@ -21,6 +21,7 @@ CMeshInstance::CMeshInstance(CGameObject* Owner, const std::string &Name, const 
 ,m_StaticMesh(nullptr)
 ,m_Parent(nullptr)
 ,m_ParentBoneId(-1)
+,m_TemporalRenderbleObjectTechnique(NULL)
 {
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(CoreName);
 }
@@ -31,6 +32,7 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 ,m_StaticMesh(nullptr)
 ,m_Parent(nullptr)
 ,m_ParentBoneId(-1)
+,m_TemporalRenderbleObjectTechnique(NULL)
 {
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(TreeNode.GetPszProperty("core_name", ""));
 }
@@ -121,8 +123,7 @@ void CMeshInstance::GeneratePhysxActor(CXMLTreeNode &TreeNode)
 
 			if (l_Trigger)
 			{
-				//assert(l_AbleToBeTrigger);
-				l_PhysxManager->SetShapeAsTrigger(m_StaticMesh->GetName());
+				l_PhysxManager->ChangeShapeTriggerState(m_StaticMesh->GetName(), true);
 			}
 		}
 	}
@@ -132,7 +133,6 @@ CMeshInstance::~CMeshInstance()
 {
 }
 
-static int b_Test = 0;
 void CMeshInstance::Render(CRenderManager* RenderManager)
 {
 	if (m_StaticMesh == NULL)
@@ -148,76 +148,89 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 				l_IsOutsideFrustum = true;
 		#endif
 
-		if (!l_IsOutsideFrustum)
-		{
-			CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->IncrementObjects();
-
-			if (m_Parent != nullptr && m_ParentBoneId != -1)
+			if (!l_IsOutsideFrustum)
 			{
-				Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
-				//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
-				Mat44f l_ParentTransform = m_Parent->GetTransform();
-				CContextManager* l_ContextManager = RenderManager->GetContextManager();
+				CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->IncrementObjects();
 
-				/*l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
-				l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());*/
-				/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
-				Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
-				l_Translation.SetIdentity();
-				l_Translation.Translate(m_Position);
-				l_RotX.SetIdentity();
-				l_RotX.RotByAngleX(m_Pitch);
-				l_RotY.SetIdentity();
-				l_RotY.RotByAngleY(m_Yaw);
-				l_RotZ.SetIdentity();
-				l_RotZ.RotByAngleZ(m_Roll);
+				if (m_Parent != nullptr && m_ParentBoneId != -1)
+				{
+					Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
+					//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
+					Mat44f l_ParentTransform = m_Parent->GetTransform();
+					CContextManager* l_ContextManager = RenderManager->GetContextManager();
 
-				Mat44f l_Tranform;
-				l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
-				/*if (b_Test==0)
-					l_Tranform = l_RotZ*l_RotY*l_RotX*l_Translation;
-					else if (b_Test == 1)
-					l_Tranform = l_RotZ*l_RotX*l_RotY*l_Translation;
-					else if (b_Test == 2)*/
+					/*l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
+					l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());*/
+					/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
+					Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
+					l_Translation.SetIdentity();
+					l_Translation.Translate(m_Position);
+					l_RotX.SetIdentity();
+					l_RotX.RotByAngleX(m_Pitch);
+					l_RotY.SetIdentity();
+					l_RotY.RotByAngleY(m_Yaw);
+					l_RotZ.SetIdentity();
+					l_RotZ.RotByAngleZ(m_Roll);
 
-				/*else if (b_Test == 3)
-					l_Tranform = l_RotX*l_RotZ*l_RotY*l_Translation;
-					else if (b_Test == 4)
-					l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
-					else if (b_Test == 5)
-					l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
-				Mat44f l_Matrix = l_Tranform*l_BoneTransform*l_ParentTransform;
-				Vect3f l_Po = l_Matrix.GetWorldPos();
-				float l_Y = l_Matrix.GetYaw();
-				float l_P = l_Matrix.GetPitch();
-				float  l_R = l_Matrix.GetRoll();
-			/*	LOG("ESTO EN C");
-				LOG(l_Po);
-				LOG(l_Y);
-				LOG(l_P);
-				LOG(l_R);*/
+					Mat44f l_Tranform;
+					l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
+					/*if (b_Test==0)
+						l_Tranform = l_RotZ*l_RotY*l_RotX*l_Translation;
+						else if (b_Test == 1)
+						l_Tranform = l_RotZ*l_RotX*l_RotY*l_Translation;
+						else if (b_Test == 2)*/
 
-				l_ContextManager->SetWorldMatrix(l_Matrix);
+					/*else if (b_Test == 3)
+						l_Tranform = l_RotX*l_RotZ*l_RotY*l_Translation;
+						else if (b_Test == 4)
+						l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
+						else if (b_Test == 5)
+						l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
+					Mat44f l_Matrix = l_Tranform*l_BoneTransform*l_ParentTransform;
+					Vect3f l_Po = l_Matrix.GetWorldPos();
+					float l_Y = l_Matrix.GetYaw();
+					float l_P = l_Matrix.GetPitch();
+					float  l_R = l_Matrix.GetRoll();
+					/*	LOG("ESTO EN C");
+						LOG(l_Po);
+						LOG(l_Y);
+						LOG(l_P);
+						LOG(l_R);*/
+
+					l_ContextManager->SetWorldMatrix(l_Matrix);
+				}
+				else
+				{
+					RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
+				}
+				if (!m_TemporalRenderbleObjectTechnique)
+				{
+					m_StaticMesh->Render(RenderManager);
+				}
+				else 
+				{
+					m_StaticMesh->Render(RenderManager, m_TemporalRenderbleObjectTechnique);
+				}
 			}
-			else
-			{
-				RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
-			}
-			m_StaticMesh->Render(RenderManager);
-		}
 	}
 }
+
+void CMeshInstance::SetTemporalRenderableObjectTechnique(CRenderableObjectTechnique* RenderableObjectTechnique)
+{
+	m_TemporalRenderbleObjectTechnique = RenderableObjectTechnique;
+}
+
 
 
 void CMeshInstance::SetParent(CAnimatedInstanceModel* Parent, const std::string &BoneName)
 {
-	assert(Parent != nullptr);
+	m_Parent = Parent;
 	if (Parent != nullptr)
 	{
-		m_Parent = Parent;
 		int l_ParentBoneId = m_Parent->GetAnimatedCoreModel()->GetBoneId(BoneName);
 		if (l_ParentBoneId != -1)
 			m_ParentBoneId = l_ParentBoneId;
 	}
+	else { m_ParentBoneId = -1;}
 }
 

@@ -15,6 +15,7 @@
 #include "RenderableObjects\RenderableObject.h"
 #include "Engine\Engine.h"
 
+#include "Utils\PerlinNoise.h"
 #include "XML\XMLTreeNode.h"
 #include "Utils\3DElement.h"
 #include "Utils\Named.h"
@@ -46,6 +47,16 @@ void CLuabindManager::RegisterBase()
 		class_<std::string>("string")
 		.def(constructor<>())
 		.def(constructor<const char *>())
+	];
+
+	module(LUA_STATE)
+	[
+		class_<std::vector<const std::string> >("stringVector")
+		.def(constructor<>())
+		.def("size", &std::vector<const std::string>::size)
+		.def("clear", &std::vector<const std::string>::clear)
+		.def("at", (std::vector<const std::string>::reference(std::vector<const std::string>::*)(std::vector<const std::string>::size_type))&std::vector<const std::string>::at)
+		.def("push_back", (void(std::vector<const std::string>::*)(const std::string&))&std::vector<const std::string>::push_back)
 	];
 
 	module(LUA_STATE)
@@ -163,6 +174,25 @@ void CLuabindManager::RegisterBase()
 
 	module(LUA_STATE)
 	[
+		class_<CPerlinNoise>("CPerlinNoise")
+		.scope
+		[
+			def("noise3", &CPerlinNoise::noise3_parser)
+		]
+	];
+
+	module(LUA_STATE)
+	[
+		class_< std::vector<float> >("vector<float>")
+		.def(constructor<>())
+		.def("size", &std::vector<float>::size)
+		.def("size", &std::vector<float>::clear)
+		.def("at", (std::vector<float>::reference(std::vector<float>::*)(std::vector<float>::size_type))&std::vector<float>::at)
+	];
+
+
+	module(LUA_STATE)
+	[
 		class_<CTemplatedVectorMapManager<CGameObject>::TVectorResources>("TVectorResources")
 		.def("size", &CTemplatedVectorMapManager<CGameObject>::TVectorResources::size)
 	];
@@ -183,9 +213,7 @@ void CLuabindManager::RegisterBase()
 		class_< CGameObjectManager, CTemplatedVectorMapManager<CGameObject>>("CGameObjectManager")
 		.def("GetPlayer", &CGameObjectManager::GetPlayer)
 		.def("SetPlayer", &CGameObjectManager::SetPlayer)
-		/*.def("AddGameObject", (CGameObject*(CGameObjectManager::*)(CXMLTreeNode&))&CGameObjectManager::AddGameObject)
-		.def("AddGameObject", (CGameObject*(CGameObjectManager::*)(const std::string&))&CGameObjectManager::AddGameObject)*/
-		//.def("Log", (void(CLog::*)(const Vect3f&))&CLog::Log)
+		.def("AddGameObject", (CGameObject*(CGameObjectManager::*)(const std::string&))&CGameObjectManager::AddGameObject)
 	];
 
 	module(LUA_STATE)
@@ -357,7 +385,7 @@ void CLuabindManager::RegisterBase()
 		.def_readwrite("x", &CColor::x)
 		.def_readwrite("y", &CColor::y)
 		.def_readwrite("z", &CColor::z)
-		.def_readwrite("z", &CColor::w)
+		.def_readwrite("w", &CColor::w)
 		.def("GetRed", &CColor::GetRed)
 		.def("SetRed", &CColor::SetRed)
 		.def("GetBlue", &CColor::GetBlue)

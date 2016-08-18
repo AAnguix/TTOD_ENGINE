@@ -20,24 +20,27 @@ static physx::PxDefaultAllocator gDefaultAllocatorCallback;
 physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
-	//physx::PxFilterObjectType l_test = physx::PxGetFilterObjectType(attributes0);
-	//physx::PxFilterObjectType l_test2 = physx::PxGetFilterObjectType(attributes1);
-
-	if ((physx::PxGetFilterObjectType(attributes0) == physx::PxFilterObjectType::eRIGID_STATIC || physx::PxGetFilterObjectType(attributes1) == physx::PxFilterObjectType::eRIGID_STATIC) && (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)))
+	if ((physx::PxGetFilterObjectType(attributes0) == physx::PxFilterObjectType::eRIGID_STATIC || physx::PxGetFilterObjectType(attributes1) == physx::PxFilterObjectType::eRIGID_STATIC)
+		&& (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)))
 	{
 		return physx::PxFilterFlag::eSUPPRESS;
 	}
+	else if ((physx::PxFilterObjectIsKinematic(attributes0)) && (physx::PxFilterObjectIsKinematic(attributes1)))
+	{
+		return physx::PxFilterFlag::eDEFAULT;
+	}
+
 	else
 	{
-		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT
+		pairFlags =
+			physx::PxPairFlag::eCONTACT_DEFAULT
 			| physx::PxPairFlag::eTRIGGER_DEFAULT
-			| physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS
-			| physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+			| physx::PxPairFlag::eNOTIFY_CONTACT_POINTS
+			| physx::PxPairFlag::eSOLVE_CONTACT;
 	}
+
 	return physx::PxFilterFlag::eDEFAULT;
-
 };
-
 CPhysXManager* CPhysXManager::CreatePhysxManager()
 {
 	return new CPhysXManagerImplementation();
@@ -121,7 +124,7 @@ void CPhysXManagerImplementation::CreateScene()
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
+	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS | physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS;
 	m_Scene = m_PhysX->createScene(sceneDesc);
 	assert(m_Scene);
 
@@ -319,7 +322,7 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 	{
 		//ignore pairs when shapes have been deleted
 		if ((pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER)))
-			continue;
+			continue; 
 
 		size_t indexTrigger = (size_t)pairs[i].triggerActor->userData;
 		size_t indexActor = (size_t)pairs[i].otherActor->userData;
@@ -365,8 +368,24 @@ void CPhysXManagerImplementation::onObstacleHit(const physx::PxControllerObstacl
 
 void CPhysXManagerImplementation::onShapeHit(const physx::PxControllerShapeHit& hit)
 {
-	hit.actor;
-	hit.controller;
+	physx::PxRigidActor* l_Actor = hit.actor;
+	size_t index = (size_t)l_Actor->userData;
+	std::string l_ActorName = m_ActorNames[index];
+
+	physx::PxController* l_CharacterController = hit.controller;
+	size_t l_CharacterControllerIndex = (size_t)l_CharacterController->getActor()->userData;
+	std::string l_CharacterControllerName = m_ActorNames[l_CharacterControllerIndex];
+
+	CScript* l_Script = CEngine::GetSingleton().GetScriptManager()->GetScript(l_CharacterControllerName);
+	if (l_Script != nullptr)
+		l_Script->GetLuaComponent()->OnShapeHit(l_ActorName);
+
+	if (l_ActorName == "CATRigTail4")
+	{
+		physx::PxVec3 l_PxDir = hit.dir;
+		physx::PxF32 l_PxLength = hit.length;
+		physx::PxExtendedVec3 l_PosW = hit.worldPos;
+	}
 }
 void CPhysXManagerImplementation::CreateCharacterController(const std::string &Name, const float &Height, const float &Radius, const float &Density, const Vect3f &Position, const std::string &MaterialName, float StaticFriction, float DynamicFriction, float Restitution)
 {

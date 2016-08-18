@@ -193,7 +193,8 @@ void CEffectManager::SetLightConstants(unsigned int IdLight, CLight *Light)
 
 		if(Light->GetGenerateShadowMap())
 		{
-			CDynamicTexture *l_ShadowMap=Light->GetShadowMap();
+			CDynamicTexture *l_ShadowMap = Light->GetShadowMap();
+			CDynamicTexture *l_BlackAndWhite = Light->GetBlackAndWhiteMap();
 			CTexture *l_ShadowMask=Light->GetShadowMaskTexture();
 			
 			CEffectManager::m_LightEffectParameters.m_UseShadowMask[IdLight]=l_ShadowMask!=NULL ? 1.0f : 0.0f;
@@ -201,11 +202,41 @@ void CEffectManager::SetLightConstants(unsigned int IdLight, CLight *Light)
 			CEffectManager::m_LightEffectParameters.m_LightProjection[IdLight]=Light->GetProjectionShadowMap();
 			l_ShadowMap->Activate(UAB_ID_SHADOW_MAP+IdLight*2);
 			
-			//Light->GetBlackAndWhiteMap()->Activate(UAB_ID_SHADOW_MAP + 1 + IdLight * 2); 
+			if (l_BlackAndWhite != NULL)
+				l_BlackAndWhite->Activate(UAB_ID_SHADOW_MAP + 1 + IdLight * 2);
 
-			if(l_ShadowMask!=NULL)
-				l_ShadowMask->Activate(UAB_ID_SHADOW_MAP+1+IdLight*2);
+			/*if(l_ShadowMask!=NULL)
+				l_ShadowMask->Activate(UAB_ID_SHADOW_MAP+1+IdLight*2);*/
 		}
+	}
+}
+
+void CEffectManager::SetBlackAndWhiteLightConstants(CLight *Light)
+{
+	assert(Light != nullptr);
+
+	if (Light != nullptr)
+	{
+		int IdLight = 0;
+		m_LightEffectParameters.m_LightEnabled[IdLight] = 1.0f;
+		if (!Light->GetActive())
+			m_LightEffectParameters.m_LightEnabled[IdLight] = 0.0f;
+
+		m_LightEffectParameters.m_LightType[IdLight] = (float)Light->GetType();
+		m_LightEffectParameters.m_LightPosition[IdLight] = Light->GetPosition();
+
+		m_LightEffectParameters.m_UseShadowMap[IdLight] = Light->GetGenerateShadowMap();
+
+		if (Light->GetGenerateShadowMap())
+		{
+			CDynamicTexture *l_ShadowMap = Light->GetShadowMap();
+			CEffectManager::m_LightEffectParameters.m_UseShadowMask[IdLight] = 0.0f;
+			CEffectManager::m_LightEffectParameters.m_LightView[IdLight] = Light->GetViewShadowMap();
+			CEffectManager::m_LightEffectParameters.m_LightProjection[IdLight] = Light->GetProjectionShadowMap();
+			l_ShadowMap->Activate(UAB_ID_SHADOW_MAP);
+		}
+
+		UpdateLightBuffers();
 	}
 }
 
@@ -228,8 +259,13 @@ void CEffectManager::SetLightsConstants(unsigned int MaxLights)
 		}
 	}
 	
+	UpdateLightBuffers();
+}
+
+void CEffectManager::UpdateLightBuffers()
+{
 	std::map<std::string, CEffectTechnique*>::iterator itMap;
-	for ( itMap = m_Resources.begin(); itMap != m_Resources.end(); ++itMap)
+	for (itMap = m_Resources.begin(); itMap != m_Resources.end(); ++itMap)
 	{
 		//CSceneEffectParameters,0. CLightEffectParameters,1. CAnimatedModelEffectParameters,2.
 		CEffectPixelShader* l_PShader = itMap->second->GetPixelShader();
@@ -240,7 +276,7 @@ void CEffectManager::SetLightsConstants(unsigned int MaxLights)
 
 		//CEffectGeometryShader* l_GShader = itMap->second->GetGeometryShader();
 		/*if (l_GShader!=nullptr)
-			l_GShader->SetConstantBuffer(1, &m_LightEffectParameters);*/
+		l_GShader->SetConstantBuffer(1, &m_LightEffectParameters);*/
 	}
 }
 

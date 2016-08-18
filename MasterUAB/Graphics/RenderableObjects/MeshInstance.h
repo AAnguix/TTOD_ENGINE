@@ -6,12 +6,14 @@ class CGameObject;
 class CStaticMesh;
 class CXMLTreeNode;
 class CAnimatedInstanceModel;
+class CRenderableObjectTechnique;
 
 class CMeshInstance : public CRenderableObject 
 {  
 
 private:   
 	CStaticMesh *m_StaticMesh;  
+	CRenderableObjectTechnique* m_TemporalRenderbleObjectTechnique;
 
 	int m_ParentBoneId;
 	CAnimatedInstanceModel* m_Parent;
@@ -23,6 +25,7 @@ public:
 
 	void GeneratePhysxActor(CXMLTreeNode &TreeNode);
 	void Render(CRenderManager* RenderManager);
+	void SetTemporalRenderableObjectTechnique(CRenderableObjectTechnique* RenderableObjectTechnique);
 	TRenderableObjectType GetClassType() const{ return TRenderableObjectType::MESH_INSTANCE; };
 
 	CAnimatedInstanceModel* GetParent() const { return m_Parent; };

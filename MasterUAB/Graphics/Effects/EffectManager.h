@@ -17,6 +17,7 @@ private:
 	CTemplatedMapManager<CEffectGeometryShader> m_GeometryShaders;
 	std::string m_Filename; 
 	//void Destroy();
+	void UpdateLightBuffers();
 
 	size_t m_EffectsStateCode; 
 
@@ -41,6 +42,7 @@ public:
 	void SetLightsConstantsDefaultValues(unsigned int MaxLights = MAX_LIGHTS_BY_SHADER);
 	void SetLightConstants(unsigned int IdLight, CLight *Light);  
 	void SetLightsConstants(unsigned int MaxLights=MAX_LIGHTS_BY_SHADER);
+	void SetBlackAndWhiteLightConstants(CLight *Light);
 
 	const std::vector<CEffectTechnique *> & GetLUAEffects();
 }; 

@@ -23,6 +23,7 @@ public:
 	Vect4f m_BaseColor;
 	Vect4f m_CameraProjectionInfo;
 	Vect4f m_Times;
+	Vect4f m_Mouse;
 };
 class CAnimatedModelEffectParameters
 {

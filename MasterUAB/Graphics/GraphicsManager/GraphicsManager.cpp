@@ -36,14 +36,18 @@ bool CGraphicsManager::Initialize(int ScreenWidth, int ScreenHeight, HWND Hwnd, 
 	m_RenderManager = new CRenderManager(m_ContextManager);
 	CEngine::GetSingleton().SetRenderManager(m_RenderManager);
 
+	ShowWindow(Hwnd, SW_SHOWDEFAULT);
+
 	//m_RenderManager->InitializeDebugRender();
 
 	l_Result = m_ContextManager->Initialize(Hwnd, ScreenWidth, ScreenHeight, FullScreen, VSync, D3DDebug);
 	if (!l_Result){return false;}
 
+	//if (!FullScreen)
+	//{
 	l_Result = m_ContextManager->CreateBackBuffer(Hwnd, ScreenWidth, ScreenHeight);
 	if (!l_Result){ false; }
-
+	//}
 	l_Result = m_ContextManager->InitStates();  
 	if (!l_Result){ return false; }
 

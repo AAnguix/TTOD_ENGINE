@@ -4,10 +4,6 @@ P_StateTotalTime = 0.0
 --Idle_State
 function OnEnter_Idle_Player(PlayerComponent)
 	--g_LogManager:Log("Player enters Idle")
-	--local l = ((CPlayerComponent)PlayerComponent):GetSpeed()
-	--g_LogManager:Log("Player "..PlayerComponent:GetType())
-	-- g_LogManager:Log("Speed "..PlayerComponent:GetSpeed())
-	-- g_LogManager:Log("Health "..PlayerComponent:GetHealth())
 end
 
 function OnUpdate_Idle_Player(Player, ElapsedTime)
@@ -26,11 +22,19 @@ function OnEnter_Attack_Player(Player)
 	--g_LogManager:Log("Enters attack")
 	Player:SetAttacking(true)
 	Player:SetAttackFinished(false)
-	--Player:TakeDamage(nil,400)
+	
+	local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
+	Player:SetAttackDirection(l_CameraForward)
+	
+	-- g_Engine:GetRenderManager():GetContextManager():SetFullScreen(true, 1920, 1080)
+	
+	-- Player:TakeDamage(nil,400)
 end
 
 function OnUpdate_Attack_Player(Player, ElapsedTime)
-	Player:FaceEnemy(ElapsedTime)
+	Player:CalculateAttackDirection(ElapsedTime)
+	local l_PlayerForward = Player.m_LuaGameObject:GetForward()    
+	Player.m_Velocity = Player.m_Velocity + (l_PlayerForward*Player.m_AttackDisplacement)
 end
 
 function OnExit_Attack_Player(Player)
@@ -41,6 +45,7 @@ end
 
 --Walk_state
 function OnEnter_Walk_Player(Player)
+	-- g_Engine:GetRenderManager():GetContextManager():SetFullScreen(false, 1920, 1080)
 end
 
 function OnUpdate_Walk_Player(Player, ElapsedTime)
@@ -77,13 +82,11 @@ function OnUpdate_Walk_Player(Player, ElapsedTime)
 	
 	if math.abs(l_Angle) > 0.1 then
 		local FinalYaw = CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, Player.m_RotationVelocity, ElapsedTime)
-		g_LogManager:Log(FinalYaw.." ")
 		Player.m_LuaGameObject:SetYaw(FinalYaw)
 	end
 end
 
 function OnExit_Walk_Player(Player)
-	
 end
 
 --Block_state

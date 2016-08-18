@@ -11,6 +11,11 @@
 #include "Input\KeyBoardInput.h"
 #include <Xinput.h>
 #include <Windows.h>
+#include "Effects\EffectManager.h"
+#include "Render\RenderManager.h"
+
+#include "Utils\TTODMathUtils.h"
+
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dinput8.lib")
 
@@ -154,9 +159,18 @@ void InputMapping::CInputMapperImplementation::BeginFrame()
 					m_ButtonMiddle = (l_DIMouseState.rgbButtons[2] & 0x80) != 0;
 
 					m_DirectXCursor = Vect2i(m_MovementX, m_MovementY);
+			
 
-					CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(m_MovementX * m_MouseSpeed));
-					CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(m_MovementY * m_MouseSpeed));
+					float l_XAsisValue = CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(m_MovementX * m_MouseSpeed));
+					float l_YAsisValue = CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(m_MovementY * m_MouseSpeed));
+					
+					float l_ZBlurConstant = GetZBlurConstant(0.5f, (float)m_MovementX, (float)CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetFrameBufferWidth(), 0.1f);
+
+					long l_X = m_MouseInput->GetX();
+					long l_Y = m_MouseInput->GetY();
+
+					//LOG(std::to_string(l_XDisplacement) + " " + std::to_string(l_YDisplacement) + " // " + std::to_string(l_X) + " " + std::to_string(l_Y));
+					CEffectManager::m_SceneEffectParameters.m_Mouse = Vect4f((float)l_X, (float)l_Y, l_ZBlurConstant, 0.0f);
 
 					CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_LEFT, false, false), m_ButtonLeft, m_PreviousButtonLeft);
 					CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_RIGHT,false,false), m_ButtonRight, m_PreviousButtonRight);
@@ -175,6 +189,34 @@ void InputMapping::CInputMapperImplementation::BeginFrame()
 			}
 		}
 	}
+}
+
+/*
+Returns the ZBlur constant that determinates ZBlur intensity. The higher the mouse X-displacement is, the higher the effect will be.
+Params:
+XDisplacement[in]: Number of horizontal-displacement pixels since the last frame.
+Thresold[in]: Percentage of the screen displacement needed to get return a ZBlur constant value of 0.0.;
+*/
+float InputMapping::CInputMapperImplementation::GetZBlurConstant(float Base, float XDisplacement, float ScreenWidth, float Thresold) const
+{
+	//return abs(XDisplacement) / (ScreenWidth*Thresold);
+	float l_MaxDisplacement = ScreenWidth*Thresold; //Maximum X Displacement value
+	float l_MinDisplacement = 0.0001f;
+
+	float l_MinExponent = CTTODMathUtils::LogBaseBofX(l_MaxDisplacement, Base);  //ZBlur constant = 1.0
+	float l_MaxExponent = CTTODMathUtils::LogBaseBofX(l_MinDisplacement, Base);  //ZBlur constant = 0.0
+
+	float l_Exponent = (abs(XDisplacement)*l_MinExponent) / l_MaxDisplacement;
+
+	if (l_Exponent < l_MinExponent)
+		l_Exponent = l_MinExponent;
+	else if (l_Exponent>l_MaxExponent)
+		l_Exponent = l_MaxExponent;
+
+	float l_Exponential = std::pow(Base, l_Exponent);
+	float l_Result = 1 - (l_Exponential / l_MaxDisplacement);
+
+	return l_Result;
 }
 
 void InputMapping::CInputMapperImplementation::EndFrame()
@@ -227,7 +269,7 @@ void InputMapping::CInputMapperImplementation::SetOSButtonState(SOSInputButtons 
 	MapAndEatButton(Button);
 }
 
-void InputMapping::CInputMapperImplementation::SetOSAxisValue(EOSInputAxis axis, double value)
+float InputMapping::CInputMapperImplementation::SetOSAxisValue(EOSInputAxis axis, double value)
 {
 	for (std::list<CInputContext*>::const_iterator iter = m_ActiveContexts.begin(); iter != m_ActiveContexts.end(); ++iter)
 	{
@@ -237,9 +279,10 @@ void InputMapping::CInputMapperImplementation::SetOSAxisValue(EOSInputAxis axis,
 		if(context->MapAxisToRange(axis, range))
 		{
 			m_CurrentMappedInput.Ranges[range] = context->GetConversions().Convert(range, value * context->GetSensitivity(range));
-			break;
+			return (float)m_CurrentMappedInput.Ranges[range];
 		}
 	}
+	return 0.0f;
 }
 
 

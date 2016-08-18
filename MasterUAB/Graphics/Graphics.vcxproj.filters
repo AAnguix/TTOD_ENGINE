@@ -232,15 +232,6 @@
     <ClInclude Include="Camera\ThirdPersonCameraController.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Particles\ParticleManager.h">
-      <Filter>Render\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Particles\ParticleSystemInstance.h">
-      <Filter>Render\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Particles\ParticleSystemType.h">
-      <Filter>Render\Particles</Filter>
-    </ClInclude>
     <ClInclude Include="Effects\EffectGeometryShader.h">
       <Filter>Effects</Filter>
     </ClInclude>
@@ -259,12 +250,32 @@
     <ClInclude Include="SceneRendererCommands\CaptureStencilBufferTexture.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Render\Frustum.h">
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\CameraSmoother.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles\ParticleManager.h">
+      <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles\ParticleSystemInstance.h">
+      <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles\ParticleSystemType.h">
+      <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsManager\GraphicsManager.h">
+      <Filter>GraphicsManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\Shaker\CameraShaker.h">
+      <Filter>Camera\Shaker</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\Shaker\Shaker.h">
+      <Filter>Camera\Shaker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -484,15 +495,6 @@
     <ClCompile Include="Camera\ThirdPersonCameraController.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Particles\ParticleManager.cpp">
-      <Filter>Render\Particles</Filter>
-    </ClCompile>
-    <ClCompile Include="Particles\ParticleSystemInstance.cpp">
-      <Filter>Render\Particles</Filter>
-    </ClCompile>
-    <ClCompile Include="Particles\ParticleSystemType.cpp">
-      <Filter>Render\Particles</Filter>
-    </ClCompile>
     <ClCompile Include="Effects\EffectGeometryShader.cpp">
       <Filter>Effects</Filter>
     </ClCompile>
@@ -511,12 +513,32 @@
     <ClCompile Include="SceneRendererCommands\CaptureStencilBufferTexture.cpp">
       <Filter>SceneRendererCommands</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Render\Frustum.cpp">
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.cpp">
       <Filter>SceneRendererCommands</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\CameraSmoother.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Particles\ParticleManager.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Particles\ParticleSystemInstance.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Particles\ParticleSystemType.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsManager\GraphicsManager.cpp">
+      <Filter>GraphicsManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\Shaker\CameraShaker.cpp">
+      <Filter>Camera\Shaker</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\Shaker\Shaker.cpp">
+      <Filter>Camera\Shaker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -556,8 +578,14 @@
     <Filter Include="Vertex">
       <UniqueIdentifier>{d5f23a74-f512-46e6-8c64-59999d2ce699}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Render\Particles">
-      <UniqueIdentifier>{2427e230-fa46-48ca-abe8-3e5306dfdd3f}</UniqueIdentifier>
+    <Filter Include="Particles">
+      <UniqueIdentifier>{51d95a9a-45b7-416c-a377-b27e2c92c6df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsManager">
+      <UniqueIdentifier>{dd984ed5-987b-421e-8378-216566796126}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera\Shaker">
+      <UniqueIdentifier>{8c38cce6-20e5-4521-90d0-f742d51f201f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

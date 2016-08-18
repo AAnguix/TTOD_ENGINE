@@ -79,7 +79,7 @@ namespace InputMapping
 
 		bool operator<(SOSInputButtons const& Right) const
 		{
-			return m_Button < Right.m_Button;
+			//return m_Button < Right.m_Button;
 			bool b = ((m_Button < Right.m_Button) 
 					|| ((m_Button == Right.m_Button) && ((m_Alt && !Right.m_Alt) || (m_Ctrl && !Right.m_Ctrl)) ));
 			return b;

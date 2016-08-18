@@ -6,6 +6,8 @@
 #include "Materials\TemplatedMaterialParameter.h"
 #include "Effects\EffectManager.h"
 #include "PhysXManager.h"
+#include "Log\Log.h"
+#include "Engine\Engine.h"
 
 CMaterial::CMaterial(CXMLTreeNode &TreeNode)
 :m_Textures(NULL)
@@ -103,7 +105,6 @@ void CMaterial::Apply(CRenderableObjectTechnique* RenderableObjectTechnique)
 
 	for(size_t i = 0;i < m_Parameters.size();++i)
 	{
-		//CEffectManager::m_MaterialEffectParameters.m_RawData[i]=GetNextParameterAddress(sizeof(float));
 		m_Parameters[i]->Apply();
 	}
 	CRenderableObjectTechnique *l_RenderableObjectTechnique=RenderableObjectTechnique;
@@ -148,6 +149,58 @@ void CMaterial::ChangeTexture(const std::string Texture, size_t Index)
 { 
 	bool l_UsedInGui = m_Textures[Index]->UsedInGui();
 	m_Textures[Index] = CEngine::GetSingleton().GetTextureManager()->GetTexture(Texture, l_UsedInGui);
+}
+
+void CMaterial::AddTexture(const std::string TextureFileName, bool GuiTexture)
+{
+	CTexture *l_Texture = CEngine::GetSingleton().GetTextureManager()->GetTexture(TextureFileName, GuiTexture);
+	if (l_Texture != nullptr)
+		m_Textures.push_back(l_Texture);
+}
+
+void CMaterial::SetFloatParameterValue(const std::string &ParameterName, float Value)
+{
+	for (size_t i = 0; i < m_Parameters.size(); ++i)
+	{
+		if (m_Parameters[i]->GetName() == ParameterName && m_Parameters[i]->GetMaterialType() == CMaterialParameter::FLOAT)
+		{
+			CTemplatedMaterialParameter<float> *l_MaterialParameterPtr = static_cast<CTemplatedMaterialParameter<float> *>(m_Parameters[i]);
+			l_MaterialParameterPtr->SetValue(Value);
+		}
+	}
+}
+void CMaterial::SetVect2fParameterValue(const std::string &ParameterName, Vect2f Value)
+{
+	for (size_t i = 0; i < m_Parameters.size(); ++i)
+	{
+		if (m_Parameters[i]->GetName() == ParameterName && m_Parameters[i]->GetMaterialType() == CMaterialParameter::VECT2F)
+		{
+			CTemplatedMaterialParameter<Vect2f> *l_MaterialParameterPtr = static_cast<CTemplatedMaterialParameter<Vect2f> *>(m_Parameters[i]);
+			l_MaterialParameterPtr->SetValue(Value);
+		}
+	}
+}
+void CMaterial::SetVect3fParameterValue(const std::string &ParameterName, Vect3f Value)
+{
+	for (size_t i = 0; i < m_Parameters.size(); ++i)
+	{
+		if (m_Parameters[i]->GetName() == ParameterName && m_Parameters[i]->GetMaterialType() == CMaterialParameter::VECT3F)
+		{
+			CTemplatedMaterialParameter<Vect3f> *l_MaterialParameterPtr = static_cast<CTemplatedMaterialParameter<Vect3f> *>(m_Parameters[i]);
+			l_MaterialParameterPtr->SetValue(Value);
+		}
+	}
+}
+void CMaterial::SetVect4fParameterValue(const std::string &ParameterName, Vect4f Value)
+{
+	for (size_t i = 0; i < m_Parameters.size(); ++i)
+	{
+		if (m_Parameters[i]->GetName() == ParameterName && m_Parameters[i]->GetMaterialType() == CMaterialParameter::VECT4F)
+		{
+			CTemplatedMaterialParameter<Vect4f> *l_MaterialParameterPtr = static_cast<CTemplatedMaterialParameter<Vect4f> *>(m_Parameters[i]);
+			l_MaterialParameterPtr->SetValue(Value);
+		}
+	}
 }
 
 CEmptyPointerClass* CMaterial::GetThisLuaAddress() const { return (CEmptyPointerClass *)((void*)this); }

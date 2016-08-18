@@ -1,7 +1,25 @@
+function CPlayerComponent:WalkController()
+	if(self.m_Forward == (not self.m_Backwards))then
+		self.m_Walk = true
+	elseif(self.m_Right == (not self.m_Left))then
+		self.m_Walk = true
+	else self.m_Walk = false
+	end
+	g_Player:SetBool("Walk", self.m_Walk)
+end
+
+function CPlayerComponent:MovementEquation(Acceleration, ElapsedTime)
+	local l_SquaredElapsedTime = ElapsedTime*ElapsedTime
+	return ((Acceleration*0.5)*(l_SquaredElapsedTime))
+end
+
 function CPlayerComponent:PlayerController(ElapsedTime)
 	
 	if (self:IsLocked() == false) then
 		
+		if self.mBeeingTossed then
+			self.m_Velocity = self.m_TossedDirection
+		end
 		self:AddGravity(ElapsedTime)
 		
 		local l_Pos = SGUIPosition(0.4,0.4,0.2,0.2,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
@@ -13,10 +31,11 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 			else 
 				self.m_Velocity = g_PhysXManager:DisplacementCharacterController(g_Player:GetName(), (self.m_Velocity), ElapsedTime)
 			end 
-			g_Player:SetBool("Walk", self.m_Walk)
+			self:WalkController()
 		end
 		
 		self.m_Velocity.x = 0
+		self.m_Velocity.y = 0
 		self.m_Velocity.z = 0
 		
 		self.m_Walk = false
@@ -26,7 +45,6 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 		self.m_Left = false
 		
 	end --END CharBlock
-	
 end
 
 function CPlayerComponent:MatchPlayerYawToCameraYaw (CameraController, ElapsedTime, Forward, Backwards, Right, Left)

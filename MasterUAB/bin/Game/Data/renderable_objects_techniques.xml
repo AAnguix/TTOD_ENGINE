@@ -14,6 +14,10 @@
 		<renderable_object_technique name="raycast_renderable_object_technique" technique="raycast_technique"/>
 	</pool_renderable_object_technique>	
 	
+	<pool_renderable_object_technique name="fade_out">
+		<default_technique vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" technique="fade_out_technique"/>
+	</pool_renderable_object_technique>
+	
 	<pool_renderable_object_technique name="generate_g_buffer">
 		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX" technique="gbuffer_diffuse_technique"/>
 		<default_technique vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX" technique="gbuffer_diffuse_normal_technique"/>

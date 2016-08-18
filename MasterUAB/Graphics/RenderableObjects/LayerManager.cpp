@@ -7,6 +7,7 @@
 #include "Particles\ParticleSystemInstance.h"
 #include "Engine\Engine.h"
 #include "GameObject\GameObjectManager.h"
+#include "Log\Log.h"
 
 CRenderableObjectsManager* CLayerManager::GetLayer(CXMLTreeNode &Node)
 {
@@ -266,4 +267,31 @@ bool CLayerManager::AddElementToLayer(const std::string &Layer, CRenderableObjec
 	}
 
 	return true;
+}
+
+void CLayerManager::ChangeElementFromLayer(const std::string &RenderableObjectName, const std::string &CurrentLayer, const std::string &NewLayer)
+{
+	CRenderableObjectsManager* l_NewLayer = GetResource(NewLayer);
+	CRenderableObjectsManager* l_CurrentLayer = GetResource(CurrentLayer);
+
+	if (!l_NewLayer)
+	{
+		#ifdef _DEBUG
+			LOG("Can't find layer " + NewLayer); 
+		#endif
+		assert(false);
+	}
+
+	if (!l_CurrentLayer)
+	{
+		#ifdef _DEBUG
+			LOG("Can't find layer " + CurrentLayer);
+		#endif
+		assert(false);
+	}
+	CRenderableObject* l_RenderableObject = l_CurrentLayer->GetResource(RenderableObjectName);
+	l_CurrentLayer->RemoveRenderableObjectFromContainers(RenderableObjectName);
+	l_NewLayer->AddResource(RenderableObjectName,l_RenderableObject);
+
+	//Setear al gobject su nuevo robject
 }

@@ -2,6 +2,10 @@
 #include "Utils.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
+#include <ScreenGrab.h>
+#include "Render\RenderManager.h"
+#include "Lights\LightManager.h"
+#include "Textures\DynamicTexture.h"
 
 CTextureManager::CTextureManager(){}
 
@@ -53,5 +57,29 @@ void CTextureManager::Reload()
 	for ( itMap = m_Resources.begin(); itMap != m_Resources.end(); itMap++)
 	{
 		itMap->second->Reload();
+	}
+}
+
+bool CTextureManager::SaveToFile(std::string& Path, ID3D11Resource* Texture)
+{
+	ID3D11DeviceContext *l_DeviceContext = CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetDeviceContext();
+	std::wstring l_WStr(Path.begin(), Path.end());
+	HRESULT l_Result = DirectX::SaveDDSTextureToFile(l_DeviceContext, Texture, l_WStr.c_str());
+	if (FAILED(l_Result))
+		return false;
+	return true;
+}
+
+void CTextureManager::SaveBlackAndWhiteTexturesToFile()
+{
+	CLightManager* l_LManager = CEngine::GetSingleton().GetLightManager();
+	for (size_t i = 0; i <l_LManager->GetResourcesVector().size(); ++i)
+	{
+		ID3D11Texture2D* l_TextureToSave = l_LManager->GetResourceById(i)->GetBlackAndWhiteMap()->GetRenderTargetTexture();
+		ID3D11Texture2D* l_TextureToSave2 = l_LManager->GetResourceById(i)->GetShadowMap()->GetRenderTargetTexture();
+		//ID3D11Texture2D* l_TextureToSave = ((CDynamicTexture*)CEngine::GetSingleton().GetTextureManager()->GetResource("DiffuseMapTexture"))->GetRenderTargetTexture();
+		std::string l_Path = "./Data/Light"+i+std::string("_BlackAndWhiteTexture.dds");
+		CEngine::GetSingleton().GetTextureManager()->SaveToFile(l_Path, l_TextureToSave);
+		CEngine::GetSingleton().GetTextureManager()->SaveToFile("./Data/Light" + i + std::string("_ShadowMapTexture.dds"), l_TextureToSave2);
 	}
 }

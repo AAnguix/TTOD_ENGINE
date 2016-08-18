@@ -13,6 +13,8 @@ public:
 	static float GetAngleToFacePoint(const Vect3f &Forward, const Vect3f &OriginPoint, const Vect3f &PointToFace);
 	static bool PointInsideCircle(const Vect3f &Point, const Vect3f &CircunferenceCenter, float Radius);
 	static float CalculateNewAngle(float Angle, float CurrentYaw, float Velocity, float ElapsedTime);
+
+	static float LogBaseBofX(float X, float Base);
 };
 
 #endif

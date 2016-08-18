@@ -3,6 +3,7 @@
 #include <vld.h> //Visual Leak Detector
 
 #include "Game.h"
+#include "GraphicsManager\GraphicsManager.h"
 #include "Engine\EngineSettings.h"
 #include "Render\GraphicsStats.h"
 #include "Engine\Engine.h"
@@ -95,7 +96,7 @@ bool CGame::Initialize()
 		LOG("Unable to initialize graphics module");
 		return false;
 	}
-	ShowWindow(m_hwnd, SW_SHOWDEFAULT);
+	//ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 
 	l_Engine.SetEngineSettings(m_EngineSettings);
 	l_Engine.GetInputMapper()->Initialize(L"./Data/InputContexts.txt",m_hwnd);
@@ -349,14 +350,16 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			CContextManager* l_ContextManager = CEngine::GetSingleton().GetRenderManager()->GetContextManager();
 			if (l_ContextManager)
 			{
-				//if (wParam != SIZE_MINIMIZED)
+				if (SIZE_MINIMIZED != wParam)
 				{
 					// TODO: Resetear el AntTeakBar
-					TwWindowSize(0, 0);
+					//TwWindowSize(0, 0);
 					l_ContextManager->ResizeBuffers(hWnd, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
 					TwWindowSize((UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
 				}
 			}
+
+
 			return 0;
 		}
 		case WM_CLOSE:
@@ -372,7 +375,6 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_CHAR:
 		{
 			CEngine::GetSingleton().GetInputMapper()->GetKeyBoard()->SetLastChar(wParam);
-			//CEngine::GetSingleton().GetInputManager()->GetKeyBoard()->SetLastChar(wParam);
 			break;
 		}
 		case WM_SETCURSOR:
@@ -385,10 +387,9 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			int l_X = LOWORD(lParam);
 			int l_Y = HIWORD(lParam);
 
-		/*	CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(l_X - LastX));
+			/*CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(l_X - LastX));
 			CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(l_Y - LastY));
-
-*/
+			*/
 			LastX = l_X;
 			LastY = l_Y;
 

@@ -35,6 +35,7 @@ public:
 	void Render(CRenderManager &RenderManager);  
 	void Render(CRenderManager &RenderManager, const std::string &LayerName);
 
+	void ChangeElementFromLayer(const std::string &RenderableObjectName, const std::string &CurrentLayer, const std::string &NewLayer);
 	
 	/*CRenderableObject* AddMeshInstance(const std::string &Layer, std::string &CoreMeshName, const std::string &InstanceMeshName, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	CRenderableObject* AddAnimatedInstanceModel(const std::string &Layer, const std::string &CoreModelName, const std::string &InstanceModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll);

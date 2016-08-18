@@ -1,8 +1,11 @@
 class 'CDragonPhysicsPiece' (CLUAComponent)
-function CDragonPhysicsPiece:__init(ParentLuaGameObject, BoneName, BoneType, BoneSize)
-	g_LogManager:Log("Creando Dragon Piece")
+function CDragonPhysicsPiece:__init(ParentLuaGameObject,LuaGameObject, BoneName, BoneType, BoneSize)
+	--CLUAComponent.__init(self,BoneName.."Script")
+	CLUAComponent.__init(self,BoneName)
+	--g_LogManager:Log("Creating Dragon Piece "..BoneName)
 	self.m_ParentLuaGameObject = ParentLuaGameObject --The A.Model that is going to use this weapon
 	self.m_BoneName = BoneName
+	self.m_LuaGameObject = LuaGameObject 
 	self.m_BoneID = self.m_ParentLuaGameObject:GetAnimatedCoreModel():GetBoneId(BoneName)
 	self.m_BoneSize = BoneSize
 	self.m_BoneType = BoneType
@@ -18,7 +21,8 @@ end
 function CDragonPhysicsPiece:Update(ElapsedTime)
 	self:SetTransform()
 	--g_LogManager:Log("Actualizando arma")
-	
+	local Ray =  SRaycastData()
+	local Raycast = g_PhysXManager:Raycast(self:GetWorldPos(), Vect3f(0.0,1.0,0.0), 7.0, Ray)
 	
 end
 
@@ -120,17 +124,27 @@ end
 
 
 function CDragonPhysicsPiece:OnTriggerEnter(Actor)
-	if Subject == "Player" then
+	--g_LogManager:Log(BoneName.." Colisionando con "..Actor)
+	g_LogManager:Log("OnTriggerEnter "..self.m_BoneName..". Actor:"..Actor)
+	if Actor == "Player" then
 		
-		g_Player:SetTrigger("TossedByDragon")
 		local l_bonePos = self:GetWorldPos()
-		local l_PlayerPos = g_Player:GetPosition()
-		local l_Direction = (l_PlayerPos - l_bonePos) * 3.0 
-		l_Direction:Normalize(1)
-		g_PlayerComponent:SetTossedDirection(l_Direction)
+		g_PlayerComponent:ClosestHit(l_bonePos)
+		g_Player:SetTrigger("TossedByDragon")
+		g_DragonComponent:ChangeTailState(false)
 	end	
 end
 
 function CDragonPhysicsPiece:OnTriggerExit(Actor)
 	
 end
+
+function CDragonPhysicsPiece:ChangeTriggerState(State)
+	g_PhysXManager:ChangeShapeTriggerState(self.m_BoneName, State)
+end	
+
+function CDragonPhysicsPiece:DrawRaycast()
+	local l_bonePos = self:GetWorldPos()
+	local Ray =  SRaycastData()
+	local Raycast = g_PhysXManager:Raycast(l_bonePos, l_Direction, 20.0, Ray)
+end	

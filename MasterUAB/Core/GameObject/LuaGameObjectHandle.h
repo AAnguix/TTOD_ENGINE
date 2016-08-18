@@ -2,12 +2,15 @@
 #define _LUAGAMEOBJECTHANDLE_H
 #include <string>
 #include "Math\Vector3.h"
+#include <vector>
 
 class CGameObject;
 class CState;
 class CMaterial;
 class CAnimatedCoreModel;
-class CAnimatedInstanceModel;
+#include "Animation\AnimatedInstanceModel.h"
+class CRenderableObjectTechnique;
+class CTransition;
 
 /*Encapsulates components to LUA*/
 class CLuaGameObjectHandle {
@@ -28,6 +31,7 @@ public:
 	CGameObject* GetGameObject() const;
 
 	/*Graphics*/
+	void EnableRenderableObject(bool Value);
 	const Vect3f & GetPosition() const;
 	void SetPosition(const Vect3f& Position);
 	Vect3f GetForward() const;
@@ -44,9 +48,16 @@ public:
 	void SetParent(CLuaGameObjectHandle* Parent, const std::string &BoneName);
 	Mat44f GetBoneTransformationMatrix(const int BoneID) const;
 	const Mat44f & GetTransform();
+	std::vector<CMaterial*> CreateCopyMaterialsFromCore();
+	void SetTemporalRenderableObjectTechnique(CRenderableObjectTechnique* RenderableObjectTechnique);
 
 	/*Animations*/
+	void EnableAnimatorController(bool Value);
 	CState* AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
+	CState* AddState(const std::string &Name, std::vector<const std::string> Animations, float RestartAnimationsTime, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
+	CTransition* AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut);
+	CTransition* AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn);
+
 	bool AddInteger(const std::string &Name, int Value);
 	bool AddFloat(const std::string &Name, float Value);
 	bool AddBool(const std::string &Name, bool Value);
@@ -60,6 +71,7 @@ public:
 	CMaterial* GetPhysxMaterial() const;
 
 	/*Audio*/
+	void EnableAudioSource(bool Value);
 	bool AddSound(const std::string &Key, const std::string &SoundEventName);
 	void PlayEvent(const std::string &Key);
 };

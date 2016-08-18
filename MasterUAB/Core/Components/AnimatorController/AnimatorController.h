@@ -34,10 +34,14 @@ public:
 	CState* GetCurrentState() const { return m_CurrentState; };
 	CState* GetPreviousState() const { return m_PreviousState; };
 	CState* GetState(const std::string &Name);
+
 	CState* AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
+	CState* AddState(const std::string &Name, std::vector<const std::string> Animations, float RestartAnimationsTime, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
+	
 	void ChangeCurrentState(CState* NewState, CTransition* Transition);
 
 	CTransition* AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut);
+	CTransition* AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn);
 
 	bool AddInteger(const std::string &Name, int Value);
 	bool AddFloat(const std::string &Name, float Value);

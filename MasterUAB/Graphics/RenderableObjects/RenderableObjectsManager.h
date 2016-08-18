@@ -21,6 +21,8 @@ public:
 	void Render(CRenderManager *RM);
 	bool RemoveRenderableObject(const std::string& RenderableObjectName);
 
+	void RemoveRenderableObjectFromContainers(const std::string& RenderableObjectName);
+
 	void AddParticleSystemInstance(const std::string &ParticleSystemTypeName, const std::string &ParticleSystemInstanceName, CGameObject* GameObject, const Vect3f &Position, float Yaw, float Pitch, float Roll);
 	size_t GetObjectsInsideFrustrum() const{ return m_ObjectsInsideFrustrum; };
 	void IncrementObjects();

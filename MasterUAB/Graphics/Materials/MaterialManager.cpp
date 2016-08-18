@@ -20,6 +20,8 @@ CMaterialManager::~CMaterialManager()
 
 void CMaterialManager::Destroy()
 {
+	std::vector<std::string> m_RemovedFileNames;
+
 	std::map<const std::string, std::vector<CMaterial*>>::iterator itMap;
 	for (itMap = m_MaterialsPerFileName.begin(); itMap != m_MaterialsPerFileName.end(); ++itMap)
 	{
@@ -40,8 +42,16 @@ void CMaterialManager::Destroy()
 				}
 			}
 			l_MaterialsVector.clear();
+
+			m_RemovedFileNames.push_back(itMap->first);
 		}
 	}
+
+	for (size_t i = 0; i < m_RemovedFileNames.size(); ++i)
+	{
+		m_MaterialsPerFileName.erase(m_RemovedFileNames[i]);
+	}
+	m_RemovedFileNames.clear();
 }
 
 void CMaterialManager::Load(const std::string &Filename)
@@ -79,8 +89,8 @@ void CMaterialManager::Load(const std::string &Filename)
 			std::string l_GuiMaterials = CEngine::GetSingleton().GetEngineSettings()->GetGuiMaterialsFileName();
 			std::string l_EffectsMaterials = CEngine::GetSingleton().GetEngineSettings()->GetEffectsMaterialsFileName();
 
-			if (Filename == l_GuiMaterials) m_GuiMaterialsLoaded = true;
-			if (Filename == l_EffectsMaterials) m_EffectsMaterialsLoaded = true;
+			if (!m_GuiMaterialsLoaded && Filename == l_GuiMaterials) m_GuiMaterialsLoaded = true;
+			if (!m_EffectsMaterialsLoaded && Filename == l_EffectsMaterials) m_EffectsMaterialsLoaded = true;
 
 			m_MaterialsPerFileName.insert(std::pair<std::string, std::vector<CMaterial*>>(Filename, l_FileMaterials));
 		} 

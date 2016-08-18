@@ -13,7 +13,6 @@ function StartLevelOne()
 	
 	g_LuaGuiManager:SetGui(2)
 	--g_CameraControllerManager:SetCurrentCameraController("DebugCamera")
-	
 	g_CameraControllerManager:SetCurrentCameraController("ThirdPersonCamera")
 	g_SceneRendererCommandManager:Reload()
 	

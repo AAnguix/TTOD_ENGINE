@@ -44,3 +44,11 @@ function CEventManager:Unsubscribe( unsubscriber, eventName, bUpdating )
 		self.PendingUnsubscribe[ eventName ][ unsubscriber ] = nil
 	end
 end
+function CEventManager:PrintEvents()
+	-- for i=1, (#self.Events) do
+		-- local l_EventName = self.Events[i]
+		-- for subscriber,_ in pairs( self.Events[ l_EventName ] ) do
+			-- subscriber[ l_EventName ]( subscriber, ... )
+		-- end
+	-- end
+end

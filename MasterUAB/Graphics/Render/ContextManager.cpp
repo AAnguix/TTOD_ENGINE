@@ -31,6 +31,7 @@ CContextManager::CContextManager()
 ,m_Width(0)
 ,m_NumViews(0)
 ,m_StencilTexture(nullptr)
+,m_FullScreenEnabled(false)
 {
 
 	for (int i = 0; i < RS_COUNT; ++i)
@@ -52,6 +53,12 @@ CContextManager::CContextManager()
 
 void CContextManager::Shutdown()
 {
+	if (m_DisplayModeList)
+	{
+		delete[] m_DisplayModeList;
+		m_DisplayModeList = 0;
+	}
+
 	if (m_SwapChain)
 	{
 		m_SwapChain->SetFullscreenState(false, nullptr);
@@ -96,6 +103,17 @@ void CContextManager::Shutdown()
 	CHECKED_RELEASE(m_SwapChain);
 }
 
+DXGI_MODE_DESC CContextManager::GetDxgiModeDesc(unsigned int ScreenWidth, unsigned int ScreenHeight)
+{
+	for (size_t i = 0; i < m_NumDisplayModes; ++i)
+	{
+		if (m_DisplayModeList[i].Width == ScreenWidth && m_DisplayModeList[i].Height == ScreenHeight)
+			return m_DisplayModeList[i];
+	}
+	assert(false);
+	return m_DisplayModeList[0];
+}
+
 bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned int ScreenHeight, bool FullScreen, bool VSync, bool DebugMode)
 {
 	m_VSyncEnabled = VSync;
@@ -106,8 +124,7 @@ bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned i
 	IDXGIAdapter* l_Adapter;
 	IDXGIOutput* l_AdapterOutput;
 
-	unsigned int l_NumModes, l_Numerator=0, l_Denominator=0;
-	DXGI_MODE_DESC* l_DisplayModeList;
+	unsigned int l_Numerator=0, l_Denominator=0;
 	DXGI_ADAPTER_DESC l_AdapterDesc;
 	
 	l_Result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&l_Factory);
@@ -119,23 +136,23 @@ bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned i
 	l_Result = l_Adapter->EnumOutputs(0, &l_AdapterOutput);
 	if (FAILED(l_Result)){ return false; }
 
-	l_Result = l_AdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &l_NumModes, NULL);
+	l_Result = l_AdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &m_NumDisplayModes, NULL);
 	if (FAILED(l_Result)){ return false; }
 
-	l_DisplayModeList = new DXGI_MODE_DESC[l_NumModes];
-	if (!l_DisplayModeList){return false;}
+	m_DisplayModeList = new DXGI_MODE_DESC[m_NumDisplayModes];
+	if (!m_DisplayModeList){ return false; }
 
-	l_Result = l_AdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &l_NumModes, l_DisplayModeList);
+	l_Result = l_AdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &m_NumDisplayModes, m_DisplayModeList);
 	if (FAILED(l_Result)){ return false; }
 
-	for (unsigned int i = 0; i<l_NumModes; ++i)
+	for (unsigned int i = 0; i<m_NumDisplayModes; ++i)
 	{
-		if (l_DisplayModeList[i].Width == (unsigned int)ScreenWidth)
+		if (m_DisplayModeList[i].Width == (unsigned int)ScreenWidth)
 		{
-			if (l_DisplayModeList[i].Height == (unsigned int)ScreenHeight)
+			if (m_DisplayModeList[i].Height == (unsigned int)ScreenHeight)
 			{
-				l_Numerator = l_DisplayModeList[i].RefreshRate.Numerator;
-				l_Denominator = l_DisplayModeList[i].RefreshRate.Denominator;
+				l_Numerator = m_DisplayModeList[i].RefreshRate.Numerator;
+				l_Denominator = m_DisplayModeList[i].RefreshRate.Denominator;
 				l_Result = S_OK;
 			}
 		}
@@ -152,9 +169,6 @@ bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned i
 	
 	int l_Error = wcstombs_s(&l_StringLength, m_VideoCardDescription, 128, l_AdapterDesc.Description, 128);
 	if (l_Error != 0) {	return false; }
-
-	delete[] l_DisplayModeList;
-	l_DisplayModeList = 0;
 
 	l_AdapterOutput->Release();
 	l_AdapterOutput = 0;
@@ -182,13 +196,15 @@ bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned i
 	l_SwapChainDesc.SampleDesc.Count = 1;
 	l_SwapChainDesc.SampleDesc.Quality = 0;
 	if (FullScreen)
+	{
 		l_SwapChainDesc.Windowed = false;
+		m_FullScreenEnabled = true;
+	}
 	else l_SwapChainDesc.Windowed = true;
 	
 	l_SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	l_SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	//l_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
 	l_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	D3D_FEATURE_LEVEL l_FeatureLevels[] =
@@ -211,8 +227,11 @@ bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned i
 	D3D11_SDK_VERSION, &l_SwapChainDesc, &m_SwapChain, &m_D3DDevice, NULL, &m_DeviceContext));
 	if (FAILED(l_Result)){ return false; }
 
-	m_SwapChain->SetFullscreenState(FullScreen, nullptr); //FullScreen
-
+	/*if (FullScreen)
+	{
+		SetFullScreen(true, ScreenWidth, ScreenHeight);
+		m_FullScreenEnabled = true;
+	}*/
 	/*
 	#if _DEBUG
 	HRESULT hr = m_D3DDevice->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&m_D3DDebug));
@@ -221,12 +240,12 @@ bool CContextManager::Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned i
 	#endif*/
 
 	//Alt+Enter
-	/*l_Result = m_SwapChain->GetParent(__uuidof(IDXGIFactory), (void **)&l_Factory);
-	if (FAILED(l_Result)){return false;}*/
+	//l_Result = m_SwapChain->GetParent(__uuidof(IDXGIFactory), (void **)&l_Factory);
+	//if (FAILED(l_Result)){return false;}
 
-	//l_Result = l_Factory->MakeWindowAssociation(Hwnd, DXGI_MWA_NO_ALT_ENTER);
+	l_Result = l_Factory->MakeWindowAssociation(Hwnd, DXGI_MWA_NO_ALT_ENTER);
 	// Prevent DXGI from responding to an alt-enter sequence.
-	//if (FAILED(l_Result)){ return false; }
+	if (FAILED(l_Result)){ return false; }
 
 	l_Factory->Release();
 	l_Factory = 0;
@@ -248,6 +267,20 @@ void CContextManager::GetVideoCardInfo(char* cardName, int& memory)
 	strcpy_s(cardName, 128, m_VideoCardDescription);
 	memory = m_VideoCardMemory;
 	return;
+}
+
+void CContextManager::SetFullScreen(bool Value, int ScreenWidth, int ScreenHeight)
+{
+	if (m_SwapChain)
+	{
+		if ((m_FullScreenEnabled && !Value) || (!m_FullScreenEnabled && Value))
+		{
+			DXGI_MODE_DESC l_NewTargetParameters = GetDxgiModeDesc(ScreenWidth, ScreenHeight);
+			m_SwapChain->SetFullscreenState(Value, NULL);
+			m_SwapChain->ResizeTarget(&l_NewTargetParameters);
+			m_FullScreenEnabled = !m_FullScreenEnabled;
+		}
+	}
 }
 
 DXGI_FORMAT CContextManager::GetDepthResourceFormat(DXGI_FORMAT DepthFormat)
@@ -295,19 +328,20 @@ DXGI_FORMAT CContextManager::GetDepthShaderResourceViewFormat(DXGI_FORMAT Depthf
 
 bool CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height)
 {
-	if (m_D3DDevice)
+	if (m_SwapChain)
 	{
-		m_DeviceContext->OMSetRenderTargets(0, 0, 0);
+		if (m_DeviceContext)
+			m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 		/*for(int i=0;i<MAX_RENDER_TARGETS;++i)
 		CHECKED_RELEASE(m_CurrentRenderTargetViews[i]);*/
 		CHECKED_RELEASE(m_RenderTargetView);
 		CHECKED_RELEASE(m_DepthStencil);
 		CHECKED_RELEASE(m_DepthStencilView);
-		CHECKED_RELEASE(m_StencilTexture);
 
 		HRESULT l_Hr = m_SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
 		assert(!FAILED(l_Hr));
+
 		bool l_Result = CreateBackBuffer(hWnd, Width, Height);
 		
 		return l_Result;
@@ -727,8 +761,6 @@ void CContextManager::BeginRender(CColor backgroundColor)
 
 void CContextManager::EndRender()
 {
-	//First parameter: 0 = VSync not enabled.
-	//First parameter: 1 = VSync enabled.
 	m_SwapChain->Present(1, 0);
 }
 
@@ -739,19 +771,27 @@ void CContextManager::Clear(bool RenderTarget, bool DepthStencil)
 	color[1] = 1.0;
 	color[2] = 1.0;
 	color[3] = 1.0;
-	
+
 	if (RenderTarget)
 	{
-		for (int i = 0; i<m_NumViews; ++i)
+		for (int i = 0; i < m_NumViews; ++i)
 			m_DeviceContext->ClearRenderTargetView(m_CurrentRenderTargetViews[i], color);
 	}
+
 	if (DepthStencil)
+	{
+		assert(m_CurrentDepthStencilView);
 		m_DeviceContext->ClearDepthStencilView(m_CurrentDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
 }
 
 void CContextManager::Present()
 {
-	m_SwapChain->Present(1, 0);
+	//First parameter: 0 = VSync not enabled.
+	//First parameter: 1 = VSync enabled.
+	if (m_VSyncEnabled)
+		m_SwapChain->Present(1, 0);
+	else m_SwapChain->Present(0, 0);
 }
 
 void CContextManager::SetMatrices(const CCamera& Camera)
@@ -768,11 +808,10 @@ void CContextManager::SetMatrices(const CCamera& Camera)
 	CEffectManager::m_SceneEffectParameters.m_CameraProjectionInfo = Vect4f(Camera.GetZNear(), Camera.GetZFar(), Camera.GetFOV(), Camera.GetAspectRatio());
 }
 
-void CContextManager::SetTimes(float ElapsedTime)
+void CContextManager::SetTimeParameters(float ElapsedTime)
 {
-	float l_TimeSinceRun = CEffectManager::m_SceneEffectParameters.m_Times.y;
-	l_TimeSinceRun += ElapsedTime;
-
+	CEngine &l_Engine = CEngine::GetSingleton();
+	float l_TimeSinceRun = l_Engine.GetRealTimeSinceStartup();
 	CEffectManager::m_SceneEffectParameters.m_Times = Vect4f(ElapsedTime, l_TimeSinceRun, (float)m_Width, (float)m_Height);
 }
 

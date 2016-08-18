@@ -160,7 +160,7 @@ bool CTransition::MeetsTriggerConditions()
 	for (unsigned int i = 0; i < m_TriggerConditions.size(); ++i)
 	{
 		CAnimatorControllerTriggerParameter* l_Parameter = ((CAnimatorControllerTriggerParameter*)m_NewState->GetOwnAnimatorController()->GetParameter(m_TriggerConditions[i]->m_ParameterName));
-
+		
 		if (!l_Parameter->Triggered())
 		{
 			return false;

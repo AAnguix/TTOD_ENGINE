@@ -4,8 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "GraphicsManager.h"
-
+class CGraphicsManager;
 class CEngineSettings;
 
 class CGame
@@ -36,7 +35,6 @@ private:
 	//InputClass* m_Input;
 	CGraphicsManager* m_Graphics;
 	CEngineSettings* m_EngineSettings;
-	CCamera m_Camera;
 	int m_CurrentCamera;
 
 };

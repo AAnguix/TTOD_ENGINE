@@ -10,17 +10,38 @@
 #include "Transition.h"
 #include "Log\Log.h"
 
-
+/*
+Generates a state that has one animation.
+*/
 CState::CState(CAnimatorController* AnimatorController, const std::string &Name, const EAnimation &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
 :m_AnimatorController(AnimatorController)
 ,m_Name(Name)
-,m_Animation(Animation)
 ,m_Speed(Speed)
 ,m_OnEnter(OnEnter)
 ,m_OnUpdate(OnUpdate)
 ,m_OnExit(OnExit)
+,m_CurrentAnimationIndex(0)
+,m_RestartAnimationsTime(0.0f)
+,m_LastTimeSinceStart(CEngine::GetSingleton().GetRealTimeSinceStartup())
 {
-	
+	m_Animations.push_back(Animation);
+}
+
+/*
+Generates a state that has an array animations.
+*/
+CState::CState(CAnimatorController* AnimatorController, const std::string &Name, const std::vector<EAnimation> &Animations, float RestartAnimationsTime, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit)
+:m_AnimatorController(AnimatorController)
+,m_Name(Name)
+,m_Speed(Speed)
+,m_OnEnter(OnEnter)
+,m_OnUpdate(OnUpdate)
+,m_OnExit(OnExit)
+,m_CurrentAnimationIndex(0)
+,m_RestartAnimationsTime(RestartAnimationsTime)
+,m_LastTimeSinceStart(CEngine::GetSingleton().GetRealTimeSinceStartup())
+{
+	m_Animations = Animations;
 }
 
 CState::~CState()
@@ -33,20 +54,40 @@ CState::~CState()
 	}
 	
 	m_Transitions.clear();
+	m_Animations.clear();
 }
 
 void CState::OnEnter(CTransition* Transition)
 {
 	float l_DelayIn = Transition != nullptr ? Transition->GetDelayIn() : 0.0f;
+	
+	unsigned int l_AnimationsCount = m_Animations.size();
 
-	if (m_Animation.m_Loop)
+	if (l_AnimationsCount > 1)
 	{
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->BlendCycle(m_Animation.m_ID, m_Animation.m_Weight, l_DelayIn);
+		float l_TimeSinceStart = CEngine::GetSingleton().GetRealTimeSinceStartup();
+
+		if (l_TimeSinceStart - m_LastTimeSinceStart > m_RestartAnimationsTime)
+		{
+			m_CurrentAnimationIndex = 0;
+		}
+		else
+		{
+			++m_CurrentAnimationIndex;
+			if (m_CurrentAnimationIndex >= l_AnimationsCount)
+				m_CurrentAnimationIndex = 0;
+		}
+		m_LastTimeSinceStart = l_TimeSinceStart;
+	}
+
+	if (m_Animations[m_CurrentAnimationIndex].m_Loop)
+	{
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->BlendCycle(m_Animations[m_CurrentAnimationIndex].m_ID, m_Animations[m_CurrentAnimationIndex].m_Weight, l_DelayIn);
 	}
 	else
 	{
 		float l_DelayOut = Transition != nullptr ? Transition->GetDelayOut() : 0.0f;
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ExecuteAction(m_Animation.m_ID, l_DelayIn, l_DelayOut, m_Animation.m_Weight, false);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ExecuteAction(m_Animations[m_CurrentAnimationIndex].m_ID, l_DelayIn, l_DelayOut, m_Animations[m_CurrentAnimationIndex].m_Weight, false);
 	}
 
 	try
@@ -59,7 +100,6 @@ void CState::OnEnter(CTransition* Transition)
 				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
 				assert(l_LuaComponent != nullptr);
 				l_LuaComponent->ResetTimer();
-				LOG("entrando a " + m_OnEnter);
 				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnEnter.c_str(), l_LuaComponent);
 			}
 		}
@@ -72,10 +112,10 @@ void CState::OnEnter(CTransition* Transition)
 
 void CState::OnExit(CTransition* Transition)
 {
-	if (m_Animation.m_Loop)
+	if (m_Animations[m_CurrentAnimationIndex].m_Loop)
 	{
 		float l_DelayOut = Transition != nullptr ? Transition->GetDelayOut() : 0.0f;
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ClearCycle(m_Animation.m_ID, l_DelayOut);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ClearCycle(m_Animations[m_CurrentAnimationIndex].m_ID, l_DelayOut);
 	}
 
 	try
@@ -87,7 +127,6 @@ void CState::OnExit(CTransition* Transition)
 			{
 				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
 				assert(l_LuaComponent != nullptr);
-				LOG("saliendo de " + m_OnEnter);
 				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnExit.c_str(), l_LuaComponent);
 			}
 		}
@@ -159,7 +198,7 @@ void CState::OnUpdate(float ElapsedTime)
 
 	if (m_Transitions.empty())
 	{
-		if (!m_Animation.m_Loop)
+		if (!m_Animations[m_CurrentAnimationIndex].m_Loop)
 		{
 			CheckStateChange(false, l_Timer, m_AnimatorController->GetPreviousState(), nullptr);
 		}
@@ -184,7 +223,7 @@ bool CState::CheckStateChange(bool HasExitTime, float Timer, CState* NewState, C
 {
 	if (HasExitTime)
 	{
-		float l_AnimDuration = m_Animation.m_Duration - 0.075f;
+		float l_AnimDuration = m_Animations[m_CurrentAnimationIndex].m_Duration - 0.075f;
 		if (Timer >= l_AnimDuration)
 		{
 			m_AnimatorController->ChangeCurrentState(NewState, Transition);

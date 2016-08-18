@@ -28,6 +28,7 @@ public:
 
 	virtual void OnTriggerEnter(const std::string& Actor){};
 	virtual void OnTriggerExit(const std::string& Actor){};
+	virtual void OnShapeHit(const std::string& Actor){};
 
 	CEmptyPointerClass* GetThisLuaAddress() const;
 	CEmptyPointerClass* GetEnabledLuaAddress() const;

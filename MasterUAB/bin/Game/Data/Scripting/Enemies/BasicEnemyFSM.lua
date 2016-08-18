@@ -31,7 +31,7 @@ end
 
 function OnEnter_Patrol_BasicEnemy(Enemy)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." enters patrol")
-	Enemy:SetFTWP(true)
+	Enemy:SetFollowTriangleWayPointsState(true)
 end
 function OnUpdate_Patrol_BasicEnemy(Enemy, ElapsedTime)
 	--Enemy:FollowTriangleWayPoints(ElapsedTime)
@@ -41,7 +41,7 @@ function OnUpdate_Patrol_BasicEnemy(Enemy, ElapsedTime)
 	--g_LogManager:Log("Patroling...")
 end
 function OnExit_Patrol_BasicEnemy(Enemy)
-	Enemy:SetFTWP(false)
+	Enemy:SetFollowTriangleWayPointsState(false)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." exits Patrol")		
 end
 
@@ -57,15 +57,14 @@ function OnUpdate_MoveToAttack_BasicEnemy(Enemy, ElapsedTime)
 		if CTTODMathUtils.PointInsideCircle(l_PlayerPos, l_Pos, Enemy.m_AttackRange) then
 			Enemy:GetLuaGameObject():SetTrigger("AttackPlayer")
 		else
-			Enemy:SetMAM(true)
-			--Enemy:MoveToPlayerNearestPoint(l_PlayerPos,ElapsedTime)
+			Enemy:SetMoveToAttackMovement(true)
 		end
 	else
 		Enemy:GetLuaGameObject():SetBool("IsPlayerInsideVisionRange", false)
 	end
 end
 function OnExit_MoveToAttack_BasicEnemy(Enemy)
-	Enemy:SetMAM(false)
+	 Enemy:SetMoveToAttackMovement(false)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." exits MoveToAttack")	
 end
 
@@ -88,6 +87,7 @@ function OnExit_Attack_BasicEnemy(Enemy)
 	--g_PlayerComponent:TakeDamage("knife",15.0)
 	--g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Attack")
 	Enemy:GetLuaGameObject():SetBool("IsPlayerInsideVisionRange", false)
+	g_PlayerComponent:TakeDamage(nil,10)
 end
 
 

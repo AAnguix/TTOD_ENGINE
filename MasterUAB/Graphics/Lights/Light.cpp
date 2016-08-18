@@ -59,7 +59,7 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 		int l_ShadowMapHeight = TreeNode.GetIntProperty("shadow_map_height",0);		
 
 		m_ShadowMap = new CDynamicTexture(GetName()+"_ShadowMap",l_ShadowMapWidth,l_ShadowMapHeight,true,CDynamicTexture::R32_FLOAT);
-		m_BlackAndWhiteMap = new CDynamicTexture(GetName() + "_BlackAndWhiteMap", l_ShadowMapWidth, l_ShadowMapHeight, true, CDynamicTexture::R32_FLOAT);
+		m_BlackAndWhiteMap = new CDynamicTexture(GetName() + "_BlackAndWhiteMap", l_ShadowMapWidth, l_ShadowMapHeight, true, CDynamicTexture::R32G32B32A32_FLOAT);
 
 		for (int i = 0; i < TreeNode.GetNumChildren(); ++i)
 		{

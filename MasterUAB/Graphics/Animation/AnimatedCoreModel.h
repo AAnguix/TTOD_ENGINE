@@ -12,6 +12,7 @@ class CAnimatedCoreModel : public CNamed
 { 
 
 private:  
+	/*Cal3D Model interface*/
 	CalCoreModel *m_CalCoreModel;  
 	std::vector<CMaterial *> m_Materials;  
 	std::string m_Path;

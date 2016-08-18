@@ -3,7 +3,7 @@ function CGameController:LoadDragon(XMLTreeNode)
 	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
 	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
 	if l_LuaGameObject ~= nil then
-		local l_ComponentName = l_LuaGameObject:GetName().."_Script"
+		local l_ComponentName = l_LuaGameObject:GetName()
 		--local l_ParticleEmitter = GetParticleEmitter(XMLTreeNode)
 		local l_BoneName = XMLTreeNode:GetPszProperty("bone_name", "", false)
 		local l_ModelName = XMLTreeNode:GetPszProperty("model_name", "", false)
@@ -23,6 +23,7 @@ function CGameController:LoadDragon(XMLTreeNode)
 			
 			CGameController:LoadSkeleton(l_DragonComponent,XMLTreeNode)
 			l_DragonComponent:Initialize()
+			g_DragonComponent = l_DragonComponent
 			table.insert(self.m_Entities,l_DragonComponent)
 			g_LogManager:Log("Se crea el dragon bien")
 		else
@@ -34,7 +35,6 @@ function CGameController:LoadDragon(XMLTreeNode)
 end
 
 function CGameController:LoadSkeleton(EntityComponent,XMLTreeNode)
-	g_LogManager:Log("Entra a crear esqueleto"..XMLTreeNode:GetNumChildren())
 	for i=0, XMLTreeNode:GetNumChildren()-1 do
 		
 		local l_Element=XMLTreeNode:GetChild(i)
@@ -44,26 +44,35 @@ function CGameController:LoadSkeleton(EntityComponent,XMLTreeNode)
 			
 			for j=0, l_Element:GetNumChildren()-1 do
 				local l_ElementEmbedded=l_Element:GetChild(j)
-				g_LogManager:Log("Entra esqueleto Tail")
 				local l_BoneName = l_ElementEmbedded:GetPszProperty("bone_name", "", false)
+				--g_LogManager:Log("LoadSkeleton Bone: "..l_BoneName)
 				local l_PhysicsType = l_ElementEmbedded:GetPszProperty("type", "", false)
 				local l_PhysicsSize = nil
 				
+				local l_GameObject = g_Engine:GetGameObjectManager():AddGameObject(l_BoneName);
 				local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(l_BoneName)
+				local l_ComponentName = l_LuaGameObject:GetName()
 				
-				if l_PhysicsType == "box" then
-					l_PhysicsSize = l_ElementEmbedded:GetVect3fProperty("size", Vect3f(0.0,0.0,0.0), false)
-				elseif l_PhysicsType == "sphere" then
-					l_PhysicsSize = l_ElementEmbedded:GetFloatProperty("size", 0.0, false)
+				if l_LuaGameObject ~= nil then
+				
+					
+					if l_PhysicsType == "box" then
+						l_PhysicsSize = l_ElementEmbedded:GetVect3fProperty("size", Vect3f(0.0,0.0,0.0), false)
+					elseif l_PhysicsType == "sphere" then
+						l_PhysicsSize = l_ElementEmbedded:GetFloatProperty("size", 0.0, false)
+					else
+						g_LogManager:Log("Error al setear el tipo de fisica para el hueso: "..l_BoneName)
+					end
+					l_DragonPhysicsPiece = CDragonPhysicsPiece(EntityComponent.m_LuaGameObject,l_LuaGameObject, l_BoneName, l_PhysicsType, l_PhysicsSize)
+					if l_DragonPhysicsPiece ~= nil then
+						EntityComponent:AddPxPiece(l_ElemName, l_DragonPhysicsPiece)
+						--g_ScriptManager:AddComponent("PUPU",nil,nil)
+						g_ScriptManager:AddComponent(l_BoneName,l_LuaGameObject,l_DragonPhysicsPiece)
+					else
+						g_LogManager:Log("Error al hacer AddPxPiece para el hueso: "..l_BoneName)
+					end
 				else
-					g_LogManager:Log("Error al setear el tipo de fisica para el hueso: "..l_BoneName)
-				end
-				l_DragonPhysicsPiece = CDragonPhysicsPiece(EntityComponent.m_LuaGameObject, l_BoneName, l_PhysicsType, l_PhysicsSize)
-				if l_DragonPhysicsPiece ~= nil then
-					EntityComponent:AddPxPiece(l_ElemName, l_DragonPhysicsPiece)
-					g_ScriptManager:AddComponent(l_LuaGameObject:GetName().."_Script",l_LuaGameObject,l_DragonPhysicsPiece)
-				else
-					g_LogManager:Log("Error al hacer AddPxPiece para el hueso: "..l_BoneName)
+					g_LogManager:Log("Unable to create LuaGameObject for: "..l_BoneName)	
 				end
 			end	
 		end 
@@ -77,7 +86,7 @@ end
 function CGameController:LoadPlayer(XMLTreeNode)
 	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
 	g_Player = g_GameController:AddLuaGameObjectHandle(l_Name)
-	local l_ComponentName = g_Player:GetName().."_Script"
+	local l_ComponentName = g_Player:GetName()
 	g_Engine:GetGameObjectManager():SetPlayer(g_Player:GetGameObject()) --Tells layer manager who is the player.
 	
 	local l_PlayerComponent=CPlayerComponent(g_Player)
@@ -110,6 +119,7 @@ function CGameController:LoadEnemy(XMLTreeNode)
 	if l_LuaGameObject ~= nil then
 		local l_EnemyType = XMLTreeNode:GetPszProperty("enemy_type", "basic_enemy", false)
 		local l_EnemyComponent = nil
+		local l_DeadEvent = XMLTreeNode:GetPszProperty("dead_event", "", false)
 		
 		if l_EnemyType == "basic_enemy" then
 			l_EnemyComponent  = CBasicEnemyComponent(l_LuaGameObject)
@@ -119,9 +129,10 @@ function CGameController:LoadEnemy(XMLTreeNode)
 			l_EnemyComponent  = CBruteEnemyComponent(l_LuaGameObject)
 		end
 		
-		local l_ComponentName = l_LuaGameObject:GetName().."_Script"
+		local l_ComponentName = l_LuaGameObject:GetName()
 		g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_EnemyComponent)
 		l_EnemyComponent:Initialize()
+		l_EnemyComponent:SetDeadEvent(l_DeadEvent)
 		CGameController:LoadEnemyChilds(l_EnemyComponent,XMLTreeNode)
 		table.insert(self.m_Entities,l_EnemyComponent)
 		table.insert(self.m_Enemies,l_EnemyComponent)
@@ -149,7 +160,7 @@ function CGameController:LoadShowHealthBarManager(XMLTreeNode)
 	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
 	if l_LuaGameObject ~= nil then
 		local l_ShowHealthBarComponent  = CShowHealthBarManagerComponent(l_LuaGameObject)
-		local l_ComponentName = l_LuaGameObject:GetName().."_Script"
+		local l_ComponentName = l_LuaGameObject:GetName()
 		g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_ShowHealthBarComponent)
 		g_ShowHealthBarManager = l_ShowHealthBarComponent
 		table.insert(self.m_Entities,l_ShowHealthBarComponent)

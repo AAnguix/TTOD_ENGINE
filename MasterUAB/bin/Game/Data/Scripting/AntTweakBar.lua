@@ -36,7 +36,7 @@ function OpenEffects()
 	ClickOnElement("Effects","InitializeDebugBar()")
 	local l_Effects=g_EffectManager:GetLUAEffects()
 	for l_Effect in l_Effects do
-		g_DebugHelper:RegisterButton(l_Effect:GetName(),"ReloadEffectTechnique('"..l_Effect:GetName().."')")
+		g_DebugHelper:RegisterButton(l_Effect:GetName(),"g_AntTweakbarReloader:ReloadEffectTechnique('"..l_Effect:GetName().."')")
 	end
 end
 
@@ -65,11 +65,9 @@ function OpenStaticMeshes()
 	ClickOnElement("Static Meshes","InitializeDebugBar()")
 	local l_SMeshes=g_StaticMeshManager:GetLUAStaticMeshes()
 	for l_SMesh in l_SMeshes do
-		g_DebugHelper:RegisterExtendedButton(l_SMesh:GetName(),"ReloadStaticMesh",l_SMesh:GetThisLuaAddress(),"static_mesh")
+		g_DebugHelper:RegisterExtendedButton(l_SMesh:GetName(),"g_AntTweakbarReloader:ReloadStaticMesh",l_SMesh:GetThisLuaAddress(),"static_mesh")
 	end
 end
-
-function ReloadStaticMesh(CStaticMesh) CStaticMesh:Reload() end
 
 function OpenLayers()
 	ClickOnElement("Layers","InitializeDebugBar()")

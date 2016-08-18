@@ -35,12 +35,13 @@ end
 
 function CDragonComponent:Initialize()
 	
-	local l_GameObject = self.m_LuaGameObject:GetGameObject()
-	local l_CColliderName = self.m_LuaGameObject:GetName().."_CharacterCollider"	
-	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, l_GameObject, self.m_Height, self.m_Radius, self.m_Density)
+	--local l_GameObject = self.m_LuaGameObject:GetGameObject()
+	local l_CColliderName = self.m_LuaGameObject:GetName().."_CharacterCollider"
+	self:CreateSkeleton()
+	--g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, l_GameObject, self.m_Height, self.m_Radius, self.m_Density)
 	
 	l_ACName = self.m_LuaGameObject:GetName().."_AnimatorController"
-	g_AnimatorControllerManager:AddComponent(l_ACName, l_GameObject)
+	g_AnimatorControllerManager:AddComponent(l_ACName, self.m_LuaGameObject)
 	
 	-- if l_CharacterCollider ~= nil then 
 		-- local l_Material = l_CharacterCollider:GetPhysxMaterial()
@@ -102,84 +103,113 @@ function CDragonComponent:Initialize()
 	self:AddState(2.0, 15.0, 2.0, 30.0, 3.0, 4.0)
 	self:AddState(1.0, 20.0, 2.0, 50.0, 3.0, 4.0)
 	
-	--g_LogManager:Log("Dragon "..self.m_GameObject:GetName().." created...")
+	g_LogManager:Log("Dragon created...")
 	
-	self:CreateSkeleton()
+	
 end
 
 function CDragonComponent:Update(ElapsedTime)
 	self:CheckLife()
 	local l_Stuned = self:CheckStuned()
+	
 	self:UpdatePxSkeleton()
 end
 
 function CDragonComponent:CreateSkeleton()
- g_LogManager:Log("CreateSkeleton Method")
-  g_LogManager:Log("tamano de huesos"..#self.m_PhysicsTail)
- if  #self.m_PhysicsTail > 0 then
-	for i, value in ipairs(self.m_PhysicsTail) do
-		 g_LogManager:Log("Entra en m_PhysicsTail")
-		if self.m_PhysicsTail[i].m_BoneType == "box" then
-			local l_bone = self.m_PhysicsTail[i]
-			g_LogManager:Log("Entra en Box")
-			--CreateBox(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
-			--CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
-			 g_LogManager:Log(l_bone.m_BoneSize)
-
-			local l_BoneSize = l_bone.m_BoneSize * 2
-			local l_BoneWorldPos = l_bone:GetWorldPos()
-			--local l_BoneRotation = l_bone:GetRotation()
-			local l_BoneRotation = Quatf(-0.688528, -0.161031, 0.146242, -0.691818)
-			local l_result = g_PhysXManager:CreateBoxTrigger(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneSize ,l_bone.m_BoneName.."mat", "GROUP3",l_BoneWorldPos,l_BoneRotation, "kinematic")
-			if l_result then
-				 g_LogManager:Log("BoxSkeleton Creado OK ")
-			else
-				 g_LogManager:Log("BoxSkeleton Creado Mal ")
+	
+	if  #self.m_PhysicsHead > 0 then
+		for i, value in ipairs(self.m_PhysicsHead) do
+			if self.m_PhysicsHead[i].m_BoneType == "box" then
+				self:CreateBoxTypeBone(self.m_PhysicsHead[i])
+			elseif self.m_PhysicsHead[i].m_BoneType == "sphere" then
+				self:CreateSphereTypeBone(self.m_PhysicsHead[i])
 			end
-		elseif self.m_PhysicsTail[i].m_BoneType == "sphere" then
-			local l_bone = self.m_PhysicsTail[i]
-			g_LogManager:Log("Entra en Sphere")
-			
-			local l_BoneSize = l_bone.m_BoneSize
-			local l_BoneWorldPos = l_bone:GetWorldPos()
-			local l_BoneRotation = l_bone:GetRotation()		
-			local l_result = g_PhysXManager:CreateSphereTrigger(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneSize ,l_bone.m_BoneName.."mat", "GROUP3",l_BoneWorldPos,l_BoneRotation, "kinematic")
-			if l_result then
-				 g_LogManager:Log("SphereSkeleton Creado OK ")
-			else
-				 g_LogManager:Log("SphereSkeleton Creado Mal ")
+		end	
+	end	
+	
+	if  #self.m_PhysicsTail > 0 then
+		for i, value in ipairs(self.m_PhysicsTail) do 
+			if self.m_PhysicsTail[i].m_BoneType == "box" then
+				self:CreateBoxTypeBone(self.m_PhysicsTail[i])
+			elseif self.m_PhysicsTail[i].m_BoneType == "sphere" then
+				self:CreateSphereTypeBone(self.m_PhysicsTail[i])
 			end
 		end
 	end
- end 
-
+	
+	if  #self.m_PhysicsBody > 0 then
+		for i, value in ipairs(self.m_PhysicsBody) do
+			if self.m_PhysicsBody[i].m_BoneType == "box" then
+				self:CreateBoxTypeBone(self.m_PhysicsBody[i])
+			elseif self.m_PhysicsBody[i].m_BoneType == "sphere" then
+				self:CreateSphereTypeBone(self.m_PhysicsBody[i])
+			end
+		end
+	end	
 
 end
 
+function CDragonComponent:CreateBoxTypeBone(Bone)
+	local l_bone = Bone
+	local l_BoneSize = l_bone.m_BoneSize * 2
+	local l_BoneWorldPos = l_bone:GetWorldPos()
+	--local l_BoneRotation = l_bone:GetRotation()
+	local l_BoneRotation = Quatf(-0.688528, -0.161031, 0.146242, -0.691818)	
+	
+	--local l_result = g_PhysXManager:CreateBoxTrigger(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneSize ,l_bone.m_BoneName.."mat", "GROUP3",l_BoneWorldPos,l_BoneRotation, "kinematic")
+	--CreateBoxLua(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
+	g_PhysXManager:CreateBoxLua(l_bone.m_BoneName, l_BoneSize, l_bone.m_BoneName.."mat", 10.0, 20.0, 1.0, "", true)
+	local l_result = g_PhysXManager:CreateDynamicActor(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneWorldPos, l_BoneRotation, 5.0, true);
+	if l_result then
+		-- g_LogManager:Log(l_bone.m_BoneName.." BoxSkeleton Creado OK ") 
+	else
+		 g_LogManager:Log(l_bone.m_BoneName.." BoxSkeleton Creado Mal ")
+	end
+end
+
+function CDragonComponent:CreateSphereTypeBone(Bone)
+	
+	local l_bone = Bone
+	local l_BoneSize = l_bone.m_BoneSize
+	local l_BoneWorldPos = l_bone:GetWorldPos()
+	local l_BoneRotation = l_bone:GetRotation()		
+	--local l_result = g_PhysXManager:CreateSphereTrigger(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneSize ,l_bone.m_BoneName.."mat", "GROUP3",l_BoneWorldPos,l_BoneRotation, "kinematic")
+	g_PhysXManager:CreateSphereLua(l_bone.m_BoneName, l_BoneSize, l_bone.m_BoneName.."mat", 10.0, 20.0, 1.0, "", true)
+	local l_result = g_PhysXManager:CreateDynamicActor(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneWorldPos, l_BoneRotation, 5.0, true);
+	if l_result then
+		 --g_LogManager:Log(l_bone.m_BoneName.." SphereSkeleton Creado OK ")
+	else
+		 g_LogManager:Log(l_bone.m_BoneName.." SphereSkeleton Creado Mal ")
+	end
+end	
+
 function CDragonComponent:UpdatePxSkeleton()
 	
-	if  #self.m_PhysicsTail > 0 then
-		for i, value in ipairs(self.m_PhysicsTail) do
+	--if  #self.m_PhysicsTail > 0 then
+		--for i, value in ipairs(self.m_PhysicsTail) do
 			--if self.m_PhysicsTail[i].m_BoneType == "box" then
-				self.m_PhysicsTail[i]:SetTransform()
+				--self.m_PhysicsTail[i]:SetTransform()
 			--end
-		end
-	end 
+		--end
+	--end 
 	
 end
 
 function CDragonComponent:AddPxPiece(Index, Piece)
-	g_LogManager:Log("Agregando Dragon Piece")
+	
 	if Index == "head" then
+		--g_LogManager:Log("Agregando Dragon Piece: "..Piece.m_BoneName.." Tipo: "..Index)
 		table.insert(self.m_PhysicsHead, Piece)
 	elseif Index == "body" then
+		--g_LogManager:Log("Agregando Dragon Piece: "..Piece.m_BoneName.." Tipo: "..Index)
 		table.insert(self.m_PhysicsBody, Piece)
 	elseif Index == "tail" then
+		--g_LogManager:Log("Agregando Dragon Piece: "..Piece.m_BoneName.." Tipo: "..Index)
 		table.insert(self.m_PhysicsTail, Piece)
 	else
 		g_LogManager:Log("Error al crear un hueso del dragon, indice no reconocido")
 	end 
-	
+	--g_LogManager:Log("Dragon Piece: "..Piece.m_BoneName.." Agregada")
 end
 
 function CDragonComponent:GetBone(BoneName)
@@ -206,6 +236,14 @@ function CDragonComponent:GetBone(BoneName)
 		g_LogManager:Log("Metodo CDragonComponent:GetBone(BoneName) invocado pero no consiguio el hueso")
 	end 
 	
+end
+
+function CDragonComponent:ChangeTailState(State)
+	if  #self.m_PhysicsTail > 0 then
+		for i, value in ipairs(self.m_PhysicsTail) do
+			self.m_PhysicsTail[i]:ChangeTriggerState(State)
+		end
+	end
 end
 
 function CDragonComponent:GetLuaGameObject() return self.m_LuaGameObject end
@@ -251,9 +289,6 @@ function CDragonComponent:CreatePhysxSqueleton()
 	g_LogManager:Log("Dragon physx squeleton generated...")
 end
 
-function CDragonComponent:MovePhysxSqueleton()
-
-end
 
 function CDragonComponent:SpitFire()
 	--g_LogManager:Log("Escupiendo fuego: "..self.m_FireParticles:GetName())

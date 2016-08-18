@@ -112,6 +112,7 @@ void CLuabindManager::RegisterRender()
 	
 		.def("GetFrameBufferWidth", &CContextManager::GetFrameBufferWidth)
 		.def("GetFrameBufferHeight", &CContextManager::GetFrameBufferHeight)
+		.def("SetFullScreen", &CContextManager::SetFullScreen)
 		/*.def("CaptureStencilBuffer", &CContextManager::CaptureStencilBuffer)*/
 	];
 
@@ -144,7 +145,6 @@ void CLuabindManager::RegisterAnimations()
 		.def("GetMaterials", &CAnimatedCoreModel::GetMaterials)
 		.def("GetCoreModel", &CAnimatedCoreModel::GetCoreModel)
 		.def("GetBoneId", &CAnimatedCoreModel::GetBoneId)
-		.def("Load", &CAnimatedCoreModel::Load)
 	];
 
 	module(LUA_STATE)
@@ -154,12 +154,6 @@ void CLuabindManager::RegisterAnimations()
 		.def(constructor<CGameObject*, const std::string, const std::string, const Vect3f, float, float, float>())
 		.def("GetAnimatedCoreModel", &CAnimatedInstanceModel::GetAnimatedCoreModel)
 		.def("Initialize", &CAnimatedInstanceModel::Initialize)
-		.def("Render", &CAnimatedInstanceModel::Render)
-		.def("Update", &CAnimatedInstanceModel::Update)
-		.def("Destroy", &CAnimatedInstanceModel::Destroy)
-		.def("ExecuteAction", &CAnimatedInstanceModel::ExecuteAction)
-		.def("BlendCycle", &CAnimatedInstanceModel::BlendCycle)
-		.def("ClearCycle", &CAnimatedInstanceModel::ClearCycle)
 		.def("IsCycleAnimationActive", &CAnimatedInstanceModel::IsCycleAnimationActive)
 		.def("IsActionAnimationActive", &CAnimatedInstanceModel::IsActionAnimationActive)
 		.def("GetBoneTransformationMatrix", &CAnimatedInstanceModel::GetBoneTransformationMatrix)
@@ -281,6 +275,9 @@ void CLuabindManager::RegisterCamera()
 		.def("Move", &CThirdPersonCameraController::Move)
 		//.def("AddYaw", &CThirdPersonCameraController::AddYaw)
 		//.def("AddPitch", &CThirdPersonCameraController::AddPitch)
+		.def("StartShaking", &CThirdPersonCameraController::StartShaking)
+		.def("StartSmoothing", &CThirdPersonCameraController::StartSmoothing)
+		.def("StartSmoothing", &CThirdPersonCameraController::StartSmoothing)
 		.def("GetDirection", &CThirdPersonCameraController::GetDirection)
 		.def("GetType", &CThirdPersonCameraController::GetType)
 		.def("GetPlayerCameraAngleDif", &CThirdPersonCameraController::GetPlayerCameraAngleDif)
@@ -574,8 +571,13 @@ void CLuabindManager::RegisterMaterials()
 		.def("Apply", &CMaterial::Apply)
 		.def("GetRenderableObjectTechnique", &CMaterial::GetRenderableObjectTechnique)
 		.def("GetParameters", &CMaterial::GetParameters, return_stl_iterator)
+		.def("SetFloatParameterValue", &CMaterial::SetFloatParameterValue)
+		.def("SetVect2fParameterValue", &CMaterial::SetVect2fParameterValue)
+		.def("SetVect3fParameterValue", &CMaterial::SetVect3fParameterValue)
+		.def("SetVect4fParameterValue", &CMaterial::SetVect4fParameterValue)
 		.def("GetTextures", &CMaterial::GetTextures, return_stl_iterator)
 		.def("ChangeTexture", &CMaterial::ChangeTexture)
+		.def("AddTexture", &CMaterial::AddTexture)
 		.def("ApplyLuaPhysxProperties", &CMaterial::ApplyLuaPhysxProperties)
 		.def("GetThisLuaAddress", &CMaterial::GetThisLuaAddress)
 		.def("GetStaticFrictionLuaAddress", &CMaterial::GetStaticFrictionLuaAddress)
@@ -707,6 +709,8 @@ void CLuabindManager::RegisterMaterials()
 		class_< CTextureManager, CTemplatedMapManager<CTexture>>("CTextureManager")
 		.def("GetTexture", &CTextureManager::GetTexture)
 		.def("Reload", &CTextureManager::Reload)
+		.def("SaveBlackAndWhiteTexturesToFile", &CTextureManager::SaveBlackAndWhiteTexturesToFile)
+
 	];
 	/*luabind::module(LUA_STATE) [ luabind::def("GetHardCodeMaterials",&GetHardCodeMaterials, return_stl_iterator) ];*/
 	//REGISTER_LUA_FUNCTION("GetHardCodeMaterials", &GetHardCodeMaterials);
@@ -865,6 +869,41 @@ void CLuabindManager::RegisterRenderableObjects()
 {
 	module(LUA_STATE)
 	[
+		class_<CRenderableObjectTechnique, CNamed>("CRenderableObjectTechnique")
+		.def(constructor<const std::string, CEffectTechnique*>())
+		.def("SetEffectTechnique", &CRenderableObjectTechnique::SetEffectTechnique)
+		.def("GetEffectTechnique", &CRenderableObjectTechnique::GetEffectTechnique)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedMapManager<CRenderableObjectTechnique>::TMapResource::iterator>("iterator")
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedMapManager<CRenderableObjectTechnique>::TMapResource>("TMapResource")
+		.def("size", &CTemplatedMapManager<CRenderableObjectTechnique>::TMapResource::size)
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CTemplatedMapManager<CRenderableObjectTechnique>>("CTemplatedMapManager")
+		.def("GetResource", &CTemplatedMapManager<CRenderableObjectTechnique>::GetResource)
+		.def("AddResource", &CTemplatedMapManager<CRenderableObjectTechnique>::AddResource)
+		.def("GetResourcesMap", &CTemplatedMapManager<CRenderableObjectTechnique>::GetResourcesMap)
+	];
+
+	module(LUA_STATE)
+	[
+		class_< CRenderableObjectTechniqueManager, CTemplatedMapManager<CRenderableObjectTechnique>>("CRenderableObjectTechniqueManager")
+		.def("Destroy", &CRenderableObjectTechniqueManager::Destroy)
+		.def("Load", &CRenderableObjectTechniqueManager::Load)
+		.def("Reload", &CRenderableObjectTechniqueManager::Reload)
+	];
+
+	module(LUA_STATE)
+	[
 		class_<CTemplatedVectorMapManager<CRenderableObjectsManager>::TVectorResources>("TMapResources")
 		.def("size", &CTemplatedVectorMapManager<CRenderableObjectsManager>::TVectorResources::size)
 	];
@@ -890,6 +929,9 @@ void CLuabindManager::RegisterRenderableObjects()
 		.def("Load", &CLayerManager::Load)
 		.def("Reload", &CLayerManager::Reload)
 		.def("AddParticleSystemInstance", &CLayerManager::AddParticleSystemInstance)
+		.def("AddParticleSystemInstance", &CLayerManager::AddParticleSystemInstance)
+		.def("ChangeElementFromLayer", &CLayerManager::ChangeElementFromLayer)
+		
 		/*.def("AddMeshInstance", &CLayerManager::AddMeshInstance)
 		.def("AddAnimatedInstanceModel", &CLayerManager::AddAnimatedInstanceModel)*/
 		
@@ -902,31 +944,6 @@ void CLuabindManager::RegisterRenderableObjects()
 		.def("RemoveLuaComponents", &CLayerManager::RemoveLuaComponents)*/
 		
 		
-	];
-
-	module(LUA_STATE)
-	[
-		class_<CRenderableObjectTechnique, CNamed>("CRenderableObjectTechnique")
-		.def(constructor<const std::string, CEffectTechnique*>())
-		.def("SetEffectTechnique", &CRenderableObjectTechnique::SetEffectTechnique)
-		.def("GetEffectTechnique", &CRenderableObjectTechnique::GetEffectTechnique)
-
-	];
-
-	module(LUA_STATE)
-	[
-		class_<CRenderableObjectTechniqueManager>("CRenderableObjectTechniqueManager")
-		.def("InsertRenderableObjectTechnique", &CRenderableObjectTechniqueManager::InsertRenderableObjectTechnique)
-		.def("Destroy", &CRenderableObjectTechniqueManager::Destroy)
-		.def("Load", &CRenderableObjectTechniqueManager::Load)
-		.def("Reload", &CRenderableObjectTechniqueManager::Reload)
-	];
-
-	module(LUA_STATE)
-	[
-		class_<CTemplatedMapManager<CRenderableObjectTechniqueManager>>("CTemplatedMapManager")
-		.def("GetResource", &CTemplatedMapManager<CRenderableObjectTechniqueManager>::GetResource)
-		.def("AddResource", &CTemplatedMapManager<CRenderableObjectTechniqueManager>::AddResource)
 	];
 
 	module(LUA_STATE)
@@ -955,6 +972,7 @@ void CLuabindManager::RegisterRenderableObjects()
 		.def("Render", &CMeshInstance::Render)
 		.def("SetParent", &CMeshInstance::SetParent)
 		.def("GetStaticMesh", &CMeshInstance::GetStaticMesh)
+		.def("SetTemporalRenderableObjectTechnique", &CMeshInstance::SetTemporalRenderableObjectTechnique)
 	];
 
 	//GUIA TEMPLATED VECTOR

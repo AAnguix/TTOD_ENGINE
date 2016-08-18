@@ -10,7 +10,7 @@ CScript::CScript(const std::string& Name, CGameObject* Owner, CLUAComponent* Com
 
 CScript::~CScript()
 {
-	m_LuaComponent = nullptr;
+	//m_LuaComponent = nullptr;
 }
 
 void CScript::Update(float ElapsedTime)

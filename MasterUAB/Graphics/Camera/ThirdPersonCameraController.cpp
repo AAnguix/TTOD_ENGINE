@@ -1,10 +1,13 @@
+#include "XML\XMLTreeNode.h"
 #include "Camera\ThirdPersonCameraController.h"
 #include "Camera\Camera.h"
-#include "XML\XMLTreeNode.h"
+#include "Camera\Shaker\CameraShaker.h"
 #include "Engine\Engine.h"
 #include "GameObject\GameObjectManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "PhysXManager.h"
+#include "PerlinNoise.h"
+#include "Log\Log.h"
 
 const float YAW_SPEED = 1.0f;
 const float PITCH_SPEED = 60.0f;
@@ -37,7 +40,9 @@ CThirdPersonCameraController::CThirdPersonCameraController()
 ,m_LookAtPitch(LOOK_AT_PITCH)
 ,m_PlayerPos(Vect3f(0.0, 0.0, 0.0))
 ,m_NewCameraPosition(Vect3f(0.0, 0.0, 0.0))
+,m_Shaking(false)
 {
+	m_Shaker = new CCameraShaker();
 }
 
 CThirdPersonCameraController::CThirdPersonCameraController(CXMLTreeNode &TreeNode)
@@ -56,7 +61,11 @@ CThirdPersonCameraController::CThirdPersonCameraController(CXMLTreeNode &TreeNod
 ,m_MinLookAtPitch(TreeNode.GetFloatProperty("min_look_at_pitch", MIN_PITCH))
 ,m_PlayerPos(Vect3f(0.0, 0.0, 0.0))
 ,m_NewCameraPosition(Vect3f(0.0, 0.0, 0.0))
+,m_Shaking(false)
 {
+	m_Shaker = new CCameraShaker();
+	//m_Shaker.Initialize("./Data/Cameras/camera_shaker.txt");
+
 	/*CEngine::GetSingleton().GetPhysXManager()->RegisterMaterial("Camera_Mat", 30.0, 40.0, 0.0);
 	Quatf l_QuatCamera = Quatf(0.0, 0.0, 0.0, 1.0);
 	CEngine::GetSingleton().GetPhysXManager()->CreateRigidDynamicSphere("CamPhysX", 0.1, "Camera_Mat", m_NewCameraPosition, l_QuatCamera, 0, 1.0, true);
@@ -65,8 +74,23 @@ CThirdPersonCameraController::CThirdPersonCameraController(CXMLTreeNode &TreeNod
 
 CThirdPersonCameraController::~CThirdPersonCameraController()
 {
+	if (m_Shaker)
+	{
+		delete m_Shaker;
+		m_Shaker = nullptr;
+	}
 }
 
+void CThirdPersonCameraController::StartSmoothing()
+{
+	Vect3f l_CameraRotation = Vect3f(m_Yaw, m_Pitch, 0.0f);
+	m_Smoother.Start(m_Position, l_CameraRotation, Vect3f(1.2f, 0.3f, 0.0f), Quatf(0.1f, 0.2f, 0.1f), 60.0f, 0.5f, 8);
+}
+
+void CThirdPersonCameraController::StopSmoothing()
+{
+	m_Smoother.Stop();
+}
 
 void CThirdPersonCameraController::Move(float Strafe, float Forward, bool Speed, float ElapsedTime)
 {
@@ -90,8 +114,28 @@ void CThirdPersonCameraController::Move(float Strafe, float Forward, bool Speed,
 	}
 }
 
+
+void CThirdPersonCameraController::StartShaking(Vect3f CameraRotation, int Duration, int YawFrequency, float MinYawRandom, float MaxYawRandom, int PitchFrequency, float MinPitchRandom, float MaxPitchRandom)
+{
+	if (!m_Shaking)
+	{
+		m_Shaker->Start(CameraRotation, Duration, YawFrequency, MinYawRandom, MaxYawRandom, PitchFrequency, MinPitchRandom, MaxPitchRandom);
+		m_Shaking = true;
+	}
+}
+
 void CThirdPersonCameraController::Update(float ElapsedTime)
 {
+	//m_Smoother.Update(ElapsedTime, this);
+	if (m_Shaking)
+		m_Shaker->Update(ElapsedTime, this);
+
+	if (m_Shaking && m_Shaker->Finish())
+	{
+		m_Shaker->Stop(m_Yaw, m_Pitch);
+		m_Shaking = false;
+	}
+
 	m_CurrentTime += ElapsedTime;
 	m_PlayerPos = m_Position;
 
@@ -129,7 +173,7 @@ void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 	Camera->SetMatrixs();
 
 	#ifdef _DEBUG
-		CEngine::GetSingleton().GetPhysXManager()->MoveKinematicActor("DebugPhysxCamera", Camera->GetPosition());
+		//CEngine::GetSingleton().GetPhysXManager()->MoveKinematicActor("DebugPhysxCamera", Camera->GetPosition());
 	#endif
 }
 
@@ -162,6 +206,12 @@ void CThirdPersonCameraController::AddPitch(float Radians)
 {
 	CCameraController::AddPitch(Radians*m_PitchSpeed);
 }
+
+void CThirdPersonCameraController::AddRoll(float Radians)
+{
+	//CCameraController::AddRoll(Radians*m_RollSpeed);
+}
+
 
 Vect3f CThirdPersonCameraController::GetDirection() const
 {

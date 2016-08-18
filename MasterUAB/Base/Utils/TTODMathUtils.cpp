@@ -75,3 +75,8 @@ float CTTODMathUtils::CalculateNewAngle(float Angle, float CurrentYaw, float Vel
 	}
 	return l_Result;
 }
+
+float CTTODMathUtils::LogBaseBofX(float X, float Base)
+{
+	return log10(X) / log10(Base);
+}

@@ -1,8 +1,8 @@
 g_PlayerComponent = nil --Store the instance to the player component
+g_DragonComponent = nil
 g_Player = nil -- ... player LuaGameObjectHandle
 
 g_MagicBall = nil
-g_Dragon = nil
 
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainStartScreen.lua"
 
@@ -21,6 +21,7 @@ g_EffectManager = g_Engine:GetEffectManager()
 g_ParticleSystemManager = g_Engine:GetParticleSystemManager()
 g_LightManager = g_Engine:GetLightManager()
 g_MaterialManager = g_Engine:GetMaterialManager()
+g_RenderableObjectTechniqueManager = g_Engine:GetRenderableObjectTechniqueManager()
 
 g_LayerManager = g_Engine:GetLayerManager()
 g_PhysXManager = g_Engine:GetPhysXManager()
@@ -38,11 +39,14 @@ g_LogManager = g_Engine:GetLogManager()
 g_GraphicsStats = g_Engine:GetGraphicsStats()
 g_Profiler = g_Engine:GetProfiler()
 
-g_EventManager = CEventManager()
 g_CinematicActionManager = CCinematicsActionManager()
 g_AIManager = CAIManager()
+g_EventManager = CEventManager()
 g_GameController = CGameController()
 g_DamageCalculator = CDamageCalculator()
+
+dofile("./Data/Scripting/Main/ItemManager.lua")
+g_ItemManager = CItemManager()
 
 dofile("./Data/Scripting/AntTweakbarReloader.lua")
 g_AntTweakbarReloader = CAntTweakBarReloader()

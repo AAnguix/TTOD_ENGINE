@@ -56,7 +56,10 @@ class CPhysXManager
 
 private:
 	float m_LeftOverSeconds;
-	
+	std::vector<const std::string> m_ActorsToBeDeleted;
+	void RemoveActors();
+	bool RemoveActorToBeDeleted(const std::string &ActorName);
+
 	void UpdateComponents(float ElapsedTime);
 
 	physx::PxShape* GetShape(const std::string &ShapeName);
@@ -171,14 +174,15 @@ public:
 	size_t AddActor(const std::string &ActorName, const Vect3f &Position, const Quatf &Orientation, physx::PxActor* Actor);
 	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidActor* Body, Vect3f Position, Quatf Orientation);
 	void RegisterActor(const std::string &ActorName, physx::PxShape* Shape, physx::PxRigidBody* Body, Vect3f Position, Quatf Orientation, float Density, bool IsKinematic);
-	bool RemoveActor(const std::string &ActorName);
+	void RemoveActor(const std::string &ActorName);
 
 	/*Triggers*/
 	bool CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
 	bool CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
 	bool CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
 	bool CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
-
+	void CreateBoxLua(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	void CreateSphereLua(const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 
 	/*Shapes*/
 	physx::PxShape* CreateBox(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
@@ -187,7 +191,7 @@ public:
 	physx::PxShape* CreatePlane(const std::string &ShapeName, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 	physx::PxShape* CreateConvexMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 	physx::PxShape* CreateTriangleMesh(const std::string &ShapeName, std::vector<Vect3f> Vertices, std::vector<unsigned short> Indices, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
-	physx::PxShape* CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group);
+	physx::PxShape* CreateTriangleMeshFromFile(const std::string &ShapeName, std::string &Filename, const Vect3f Pos, const float Yaw, const float Pitch, const float Roll, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group);
 	/*Triangle meshes can't be dynamic*/
 	/*Triangle,heightField cant be trigger*/
 	/*Plane,triangle,height must be kinematic*/
@@ -208,12 +212,13 @@ public:
 	void MoveKinematicActor(const std::string& ActorName, const Vect3f &Position, const Quatf &Rotation);
 
 	/*Gameplay*/
-	bool Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* result_ = nullptr);
-	std::string RaycastOutName(const Vect3f& Origin, const Vect3f& Direction, const float& Length);
+	//bool Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* result_ = nullptr);
+	bool Raycast(const Vect3f& Origin, const Vect3f& Direction, const float& Length, SRaycastData* Result_);
+	void ChangeShapeTriggerState(const std::string &ShapeName, bool State);
+	bool GeometryQuery(const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_);
 
-	void SetShapeAsTrigger(const std::string &ShapeName);
+
 	void ApplyForce(const std::string &ActorName, const Vect3f &Force);
-	void RemoveTriggerState(const std::string &ActorName);
 	void ChangeGravityState(const std::string& ActorName, bool State);
 	void ChangeKinematicState(const std::string& ActorName, bool State);
 	

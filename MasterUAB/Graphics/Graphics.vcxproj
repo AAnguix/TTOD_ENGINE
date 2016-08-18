@@ -18,11 +18,13 @@
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Camera\CameraController.h" />
     <ClInclude Include="Camera\CameraControllerManager.h" />
+    <ClInclude Include="Camera\CameraSmoother.h" />
     <ClInclude Include="Camera\FixedCameraController.h" />
     <ClInclude Include="Camera\FPSCameraController.h" />
+    <ClInclude Include="Camera\Shaker\CameraShaker.h" />
+    <ClInclude Include="Camera\Shaker\Shaker.h" />
     <ClInclude Include="Camera\SphericalCameraController.h" />
     <ClInclude Include="Camera\ThirdPersonCameraController.h" />
-    <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Cinematics\CameraInfo.h" />
     <ClInclude Include="Cinematics\CameraKey.h" />
     <ClInclude Include="Cinematics\CameraKeyController.h" />
@@ -40,6 +42,7 @@
     <ClInclude Include="Effects\EffectShader.h" />
     <ClInclude Include="Effects\EffectTechnique.h" />
     <ClInclude Include="Effects\EffectVertexShader.h" />
+    <ClInclude Include="GraphicsManager\GraphicsManager.h" />
     <ClInclude Include="Lights\DirectionalLight.h" />
     <ClInclude Include="Lights\Light.h" />
     <ClInclude Include="Lights\LightManager.h" />
@@ -49,18 +52,9 @@
     <ClInclude Include="Materials\MaterialManager.h" />
     <ClInclude Include="Materials\MaterialParameter.h" />
     <ClInclude Include="Materials\TemplatedMaterialParameter.h" />
-    <ClInclude Include="Particles\ParticleManager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Particles\ParticleSystemInstance.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Particles\ParticleSystemType.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="Particles\ParticleManager.h" />
+    <ClInclude Include="Particles\ParticleSystemInstance.h" />
+    <ClInclude Include="Particles\ParticleSystemType.h" />
     <ClInclude Include="RenderableObjects\LayerManager.h" />
     <ClInclude Include="RenderableObjects\PoolRenderableObjectTechnique.h" />
     <ClInclude Include="RenderableObjects\MeshInstance.h" />
@@ -124,11 +118,13 @@
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Camera\CameraController.cpp" />
     <ClCompile Include="Camera\CameraControllerManager.cpp" />
+    <ClCompile Include="Camera\CameraSmoother.cpp" />
     <ClCompile Include="Camera\FixedCameraController.cpp" />
     <ClCompile Include="Camera\FPSCameraController.cpp" />
+    <ClCompile Include="Camera\Shaker\CameraShaker.cpp" />
+    <ClCompile Include="Camera\Shaker\Shaker.cpp" />
     <ClCompile Include="Camera\SphericalCameraController.cpp" />
     <ClCompile Include="Camera\ThirdPersonCameraController.cpp" />
-    <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Cinematics\CameraInfo.cpp" />
     <ClCompile Include="Cinematics\CameraKey.cpp" />
     <ClCompile Include="Cinematics\CameraKeyController.cpp" />
@@ -142,6 +138,7 @@
     <ClCompile Include="Effects\EffectShader.cpp" />
     <ClCompile Include="Effects\EffectTechnique.cpp" />
     <ClCompile Include="Effects\EffectVertexShader.cpp" />
+    <ClCompile Include="GraphicsManager\GraphicsManager.cpp" />
     <ClCompile Include="Lights\DirectionalLight.cpp" />
     <ClCompile Include="Lights\Light.cpp" />
     <ClCompile Include="Lights\LightManager.cpp" />
@@ -150,18 +147,9 @@
     <ClCompile Include="Materials\Material.cpp" />
     <ClCompile Include="Materials\MaterialManager.cpp" />
     <ClCompile Include="Materials\MaterialParameter.cpp" />
-    <ClCompile Include="Particles\ParticleManager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Particles\ParticleSystemInstance.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Particles\ParticleSystemType.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="Particles\ParticleManager.cpp" />
+    <ClCompile Include="Particles\ParticleSystemInstance.cpp" />
+    <ClCompile Include="Particles\ParticleSystemType.cpp" />
     <ClCompile Include="RenderableObjects\LayerManager.cpp" />
     <ClCompile Include="RenderableObjects\PoolRenderableObjectTechnique.cpp" />
     <ClCompile Include="RenderableObjects\MeshInstance.cpp" />

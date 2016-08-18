@@ -1,20 +1,18 @@
 class 'EItemButton'
-function EItemButton:__init(GuiID,ButtonID,Normal,Highlight,Pressed,GuiPosition,Color)
+function EItemButton:__init(GuiID,ButtonID,Normal,Highlight,Pressed,Color)
 	self.m_GuiID = GuiID
 	self.m_ButtonID = ButtonID
 	self.m_Normal = Normal
 	self.m_Highlight = Highlight
 	self.m_Pressed = Pressed
-	self.m_GuiPosition = GuiPosition
 	self.m_Color = Color
 end
 
 class 'EItemText'
-function EItemText:__init(GuiID,FontName,FontPath,Position,Sprite,Text)
+function EItemText:__init(GuiID,FontName,FontPath,Sprite,Text)
 	self.m_GuiID = GuiID
 	self.m_FontName = FontName
 	self.m_FontPath = FontPath
-	self.m_Position = Position
 	self.m_Sprite = Sprite
 	self.m_Text = Text
 end

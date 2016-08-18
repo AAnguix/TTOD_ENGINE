@@ -34,9 +34,9 @@ float4 GetZBlurColor(float Distance, float4 SourceColor, float4 BlurColor)
 {
 	float l_Blur=1.0;
 	if(Distance<m_ZBlurFocalStart)
-		l_Blur=max(Distance/m_ZBlurFocalStart, m_ZBlurConstantBlur);
+		l_Blur=max(Distance/m_ZBlurFocalStart, m_MouseXDisplacement); //m_ZBlurConstantBlur m_MouseXDisplacement
 	else if(Distance>m_ZBlurFocalEnd)
-		l_Blur=max(1.0-(Distance-m_ZBlurFocalEnd)/m_ZBlurEnd, m_ZBlurConstantBlur);
+		l_Blur=max(1.0-(Distance-m_ZBlurFocalEnd)/m_ZBlurEnd, m_MouseXDisplacement);
 	
 	if(l_Blur<1.0)
 		return BlurColor*(1-l_Blur)+l_Blur*SourceColor;

@@ -20,7 +20,7 @@ public:
 	CScript* AddComponent(const std::string& Name, CLuaGameObjectHandle* Owner, CLUAComponent* Component);
 	void RemoveComponent(CGameObject* Owner);
 	void RemoveComponents();
-	CScript* GetScript(const std::string& LuaComponentName) const;
+	CScript* GetScript(const std::string& ScriptName) const;
 	const std::vector<CScript *> & GetLUAScripts();
 };
 

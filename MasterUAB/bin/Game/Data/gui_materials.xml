@@ -33,6 +33,9 @@
 <material name="pedestal_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\pedestal_button.png"/>
 </material>
+<material name="dynamite_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+	<texture filename="Data\GUI\textures\dynamite.dds"/>
+</material>
 
 <!-- HEALTH -->
 <material name="healthBar_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">

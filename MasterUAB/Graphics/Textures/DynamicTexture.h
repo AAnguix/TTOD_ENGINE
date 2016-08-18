@@ -20,10 +20,10 @@ protected:
 
 	bool  m_CreateDepthStencilBuffer;
 
-	ID3D11Texture2D   *m_RenderTargetTexture;  
-	ID3D11RenderTargetView  *m_RenderTargetView;  
-	ID3D11Texture2D   *m_DepthStencilBuffer;  
-	ID3D11DepthStencilView  *m_DepthStencilView;  
+	ID3D11Texture2D* m_RenderTargetTexture;  
+	ID3D11RenderTargetView* m_RenderTargetView;  
+	ID3D11Texture2D* m_DepthStencilBuffer;  
+	ID3D11DepthStencilView* m_DepthStencilView;  
 		
 	void Unload();  
 	void Init();  
@@ -39,6 +39,9 @@ public:
 		
 	ID3D11RenderTargetView* GetRenderTargetView(){return m_RenderTargetView;}; 
 	ID3D11DepthStencilView* GetDepthStencilView(){return m_DepthStencilView;};
+
+	/*SaveToFile*/
+	ID3D11Texture2D* GetRenderTargetTexture(){ return m_RenderTargetTexture; };
 
 	static DXGI_FORMAT GetD3D11FormatType(TFormatType FormatType);
 

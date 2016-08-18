@@ -77,6 +77,11 @@
 	<pixel_shader name="gbuffer_animated_models_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS"/>
 	<effect_technique name="gbuffer_animated_models_technique" vertex_shader="gbuffer_animated_models_vs" pixel_shader="gbuffer_animated_models_ps"/>
 	
+	<vertex_shader name="fade_out_vs" file="./Data/Effects/Fadeout.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX"/>
+	<pixel_shader name="fade_out_ps" file="./Data/Effects/Fadeout.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="fade_out_technique" vertex_shader="fade_out_vs" pixel_shader="fade_out_ps"/>
+	
+	
 	<!-- <vertex_shader name="gbuffer_animated_models_normal_vs" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX" macro="HAS_WEIGHTS;HAS_NORMAL"/>
 	<pixel_shader name="gbuffer_animated_models_normal_ps" file="./Data/Effects/UBERSHADER_GENERATE_GBUFFER.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS;HAS_NORMAL"/>
 	<effect_technique name="gbuffer_animated_models_normal_technique" vertex_shader="gbuffer_animated_models_normal_vs" pixel_shader="gbuffer_animated_models_normal_ps"/>
@@ -111,26 +116,11 @@
 		<pixel_shader name="shadowmap_animated_models_ps" file="./Data/Effects/UBERSHADER_SHADOWMAP.fx" shader_model="ps_5_0" entry_point="PS"  macro="HAS_WEIGHTS"/>
 		<effect_technique name="shadowmap_animated_models_technique" vertex_shader="shadowmap_animated_models_vs" pixel_shader="shadowmap_animated_models_ps"/>
 		
-	<!--UBERSHADER BLACK_AND_WHITE_MAP -->
-		<vertex_shader name="black_and_white_map_vs" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX"/>
-		<pixel_shader name="black_and_white_map_ps" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="ps_5_0" entry_point="PS"/>
-		<effect_technique name="black_and_white_map_technique" vertex_shader="black_and_white_map_vs" pixel_shader="black_and_white_map_ps"/>
-		
-		<vertex_shader name="black_and_white_map_normal_vs" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>
-		<pixel_shader name="black_and_white_map_normal_ps" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="ps_5_0" entry_point="PS"/>
-		<effect_technique name="black_and_white_map_normal_technique" vertex_shader="black_and_white_map_normal_vs" pixel_shader="black_and_white_map_normal_ps"/>
-		
-		<vertex_shader name="black_and_white_map_environment_vs" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX"/>
-		<pixel_shader name="black_and_white_map_environment_ps" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="ps_5_0" entry_point="PS"/>
-		<effect_technique name="black_and_white_map_environment_technique" vertex_shader="black_and_white_map_environment_vs" pixel_shader="black_and_white_map_environment_ps"/>
-		
-		<vertex_shader name="black_and_white_map_normal_environment_vs" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>
-		<pixel_shader name="black_and_white_map_normal_environment_ps" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="ps_5_0" entry_point="PS"/>
-		<effect_technique name="black_and_white_map_normal_environment_technique" vertex_shader="black_and_white_map_normal_environment_vs" pixel_shader="black_and_white_map_normal_environment_ps"/>
-		
-		<vertex_shader name="black_and_white_map_animated_models_vs" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX"  macro="HAS_WEIGHTS"/>
-		<pixel_shader name="black_and_white_map_animated_models_ps" file="./Data/Effects/UBERSHADER_BLACK_AND_WHITE.fx" shader_model="ps_5_0" entry_point="PS"  macro="HAS_WEIGHTS"/>
-		<effect_technique name="black_and_white_map_animated_models_technique" vertex_shader="black_and_white_map_animated_models_vs" pixel_shader="black_and_white_map_animated_models_ps"/>
+		<!--BLACK AND WHITE-->
+		<vertex_shader name="generate_black_and_white_map_vs" file="./Data/Effects/GENERATE_BLACK_AND_WHITE.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
+		<pixel_shader name="generate_black_and_white_map_ps" file="./Data/Effects/GENERATE_BLACK_AND_WHITE.fx" shader_model="ps_5_0" entry_point="PS"/>
+		<effect_technique name="generate_black_and_white_map_technique" vertex_shader="generate_black_and_white_map_vs" pixel_shader="generate_black_and_white_map_ps"/>
+			
 		
 	
 	<!--UBERSHADER FORWARD-->

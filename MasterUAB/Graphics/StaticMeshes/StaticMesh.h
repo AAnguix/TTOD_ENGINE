@@ -9,6 +9,7 @@ class CRenderableVertexs;
 class CRenderManager;
 class CMaterial;
 class CRenderableObjectTechnique;
+
 namespace physx
 {
 	class PxShape;

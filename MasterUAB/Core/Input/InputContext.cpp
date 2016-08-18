@@ -236,13 +236,11 @@ CInputContext::~CInputContext()
 
 bool CInputContext::MapButtonToAction(SOSInputButtons Button, EAction& Out) const
 {
-	if (Button.m_Button == OS_INPUT_BUTTON_EIGHT)	 
+	if (Button.m_Button == OS_INPUT_BUTTON_C)	 
 	{
 		int x = 0;
 	}
 	std::map<SOSInputButtons, EAction>::const_iterator iter = m_ActionMap.find(Button);
-	
-	int l_Count = m_ActionMap.count(Button);
 	
 	if (iter == m_ActionMap.end())
 	{

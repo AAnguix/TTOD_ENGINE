@@ -3,7 +3,7 @@
 	<data_path value="./Data/"/> 	
 	<window full_screen="false" screen_position="0 0" screen_size="1280 720" screen_resolution="1280 720"/> 
 	<fps value="30"/> 
-	<vsync value="false"/> 
+	<vsync value="true"/> 
 	<d3d_debug value="false"/>
 	<gui_materials value="./Data/gui_materials.xml"/>
 	<effects_materials value="./Data/effects_materials.xml"/>

@@ -51,6 +51,7 @@ public:
 	bool ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int Height);
 
 	bool Initialize(HWND Hwnd, unsigned int ScreenWidth, unsigned int ScreenHeight, bool FullScreen, bool VSync, bool DebugMode);
+	void SetFullScreen(bool Value, int ScreenWidth, int ScreenHeight);
 	void Shutdown();
 	
 	bool CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned int Height);
@@ -77,7 +78,7 @@ public:
 	void Clear(bool RenderTarget, bool DepthStencil);
 	void Present();
 	void SetMatrices(const CCamera& Camera);
-	void SetTimes(float ElapsedTime);
+	void SetTimeParameters(float ElapsedTime);
 	D3D11_VIEWPORT GetViewPort();
 	void SetDefaultViewPort();
 
@@ -113,6 +114,8 @@ private:
 	bool InitDepthStencilStates();
 	bool InitBlendingStates();
 
+	DXGI_MODE_DESC GetDxgiModeDesc(unsigned int ScreenWidth, unsigned int ScreenHeight);
+
 	DXGI_FORMAT GetDepthResourceFormat(DXGI_FORMAT DepthFormat);
 	DXGI_FORMAT GetDepthShaderResourceViewFormat(DXGI_FORMAT Depthformat);
 
@@ -143,6 +146,11 @@ private:
 	int m_VideoCardMemory;
 	char m_VideoCardDescription[128];
 	bool m_VSyncEnabled;
+
+	unsigned int m_NumDisplayModes;
+	DXGI_MODE_DESC* m_DisplayModeList;
+
+	bool m_FullScreenEnabled;
 };
 
 #endif

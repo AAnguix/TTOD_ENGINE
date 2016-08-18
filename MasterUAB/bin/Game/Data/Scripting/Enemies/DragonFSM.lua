@@ -64,6 +64,7 @@ function OnEnter_Scratch_Dragon(Dragon, ElapsedTime)
 	--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." Enters Scartch")
 	local l_PlayerPos = g_Player:GetPosition()
 	--Dragon:SetTarget(l_PlayerPos)
+	Dragon:ChangeTailState(true)
 end
 function OnUpdate_Scratch_Dragon(Dragon, ElapsedTime)
 	--Dragon:Attack(l_PlayerPos)
@@ -72,7 +73,8 @@ function OnUpdate_Scratch_Dragon(Dragon, ElapsedTime)
 end
 function OnExit_Scratch_Dragon(Dragon, ElapsedTime)
 	local l_Lgo = Dragon:GetLuaGameObject()
-	l_Lgo:SetBool("IsPlayerInsideScratchRange", false)  
+	l_Lgo:SetBool("IsPlayerInsideScratchRange", false) 
+	Dragon:ChangeTailState(false)
 end
 
 ------------------------------------------------------------

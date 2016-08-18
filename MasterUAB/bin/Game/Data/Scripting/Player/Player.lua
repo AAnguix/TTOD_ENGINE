@@ -18,8 +18,8 @@ class 'CPlayerComponent' (CLUAComponent)
 function CPlayerComponent:__init(CLuaGameObject)
 	CLUAComponent.__init(self,CLuaGameObject:GetName().."_PlayerScript")
 	self.m_LuaGameObject = CLuaGameObject 
-	self.m_MaxHealth=400.0
-	self.m_Health=400.0
+	self.m_MaxHealth=20.0
+	self.m_Health=20.0
 	self.m_Speed=1.0
 	self.m_AttackDelay = 1.0
 	self.m_MinBlockAngle = 1.74
@@ -50,6 +50,10 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_Left = false
 	
 	self.m_RotationVelocity = 4.0
+	self.m_AngleMargin = 0.05
+	self.m_AttackDirection = Vect3f(0.0,0.0,0.0)
+	self.m_AttackDisplacement = 0.01
+	
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	self.m_Speed = 3.0
 	
@@ -57,8 +61,8 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_MapOpened = false
 	self.m_IsBlocking = false
 	self.m_Attacking = false
-	
 	self.m_AttackFinished = true
+	self.m_BeeingTossed = false
 	
 	self:SubscribeEvents()
 end
@@ -88,7 +92,11 @@ function CPlayerComponent:AddVelocity(Vector)
 end
 
 function CPlayerComponent:AddGravity(ElapsedTime)
-	self.m_Velocity = self.m_Velocity + Vect3f(0,-10.0,0) * ElapsedTime
+	self.m_Velocity = self.m_Velocity + Vect3f(0.0,-10.0,0.0) * ElapsedTime
+end
+
+function CPlayerComponent:SetAttackDirection(Value)
+	self.m_AttackDirection = Value
 end
 
 function CPlayerComponent:Initialize()
@@ -109,10 +117,22 @@ function CPlayerComponent:Initialize()
 	
 	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Player", "OnUpdate_Idle_Player", "OnExit_Idle_Player")
 	local l_Walk = self.m_LuaGameObject:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
+	
+	local l_AttacksAnimations = stringVector()
+	local l_AnimationOne = "normalAttack"
+	local l_AnimationTwo = "iraAttack"
+	local l_AnimationThree = "die"
+	l_AttacksAnimations:push_back(l_AnimationOne)
+	l_AttacksAnimations:push_back(l_AnimationTwo)
+	l_AttacksAnimations:push_back(l_AnimationThree)
+	local l_RestartAnimationsTime = 1.5
+	
+	--local l_Attack = self.m_LuaGameObject:AddState("Attack_State", l_AttacksAnimations, l_RestartAnimationsTime, 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
 	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
-	local l_Block = self.m_LuaGameObject:AddState("Block_State", "normalAttack", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
+	
+	local l_Block = self.m_LuaGameObject:AddState("Block_State", "block", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
 	local l_Injured = self.m_LuaGameObject:AddState("Injured_State", "die", 1.0, "OnEnter_Injured_Player", "OnUpdate_Injured_Player", "OnExit_Injured_Player")
-	local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_Player", "OnUpdate_Dead_Player", "OnExit_Dead_Player")
+	-- local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_Player", "OnUpdate_Dead_Player", "OnExit_Dead_Player")
 	local l_Tossed = self.m_LuaGameObject:AddState("Tossed_State", "idle", 1.0, "OnEnter_Tossed_Player", "OnUpdate_Tossed_Player", "OnExit_Tossed_Player")
 	
 	self.m_LuaGameObject:AddBool("Walk", false)
@@ -139,9 +159,12 @@ function CPlayerComponent:Initialize()
 	local l_BlockToIdle = l_Block:AddTransition("BlockToIdle", l_Idle, true, 0.1)
 	
 	local l_IdleToTossed = l_Idle:AddTransition("IdleToTossed", l_Tossed, false, 0.2)
-	l_IdleToTossed:AddBoolCondition("TossedByDragon",true)
+	l_IdleToTossed:AddTriggerCondition("TossedByDragon")
 	local l_TossedToIdle = l_Tossed:AddTransition("TossedToIdle", l_Idle, true, 0.2)
 
+	local l_WalkToTossed = l_Walk:AddTransition("WalkToTossed", l_Tossed, false, 0.2)
+	l_WalkToTossed:AddTriggerCondition("TossedByDragon")
+	
 	-- local l_IdleToBlock = l_Idle:AddTransition("IdleToBlock", l_Block, true, 0.5, 1.0)
 	-- l_IdleToBlock:AddTriggerCondition("Block")
 
@@ -153,14 +176,14 @@ function CPlayerComponent:InitializePlayerStats()
 	local l_HealthPotion = CHealthPotion(4.0,50.0)
 	local l_ButtonGuiPosition = SGUIPosition(0.95, 0.85, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
 	local l_TextGuiPosition = SGUIPosition(0.968, 0.785, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed", l_ButtonGuiPosition,CColor(1.0,1.0,1.0,1.0))
-	l_HealthPotion:AddCooldownButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed", l_ButtonGuiPosition,CColor(0.6,1.0,1.0,0.85))
-	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", l_TextGuiPosition, "health_potion_font_0.png", "")
+	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(1.0,1.0,1.0,1.0))
+	l_HealthPotion:AddCooldownButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(0.6,1.0,1.0,0.85))
+	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", "health_potion_font_0.png", "")
 	
 	self.m_Inventory:AddItem(l_HealthPotion,5)
 end 
 
-dofile("./Data/Scripting/PlayerController.lua")
+dofile("./Data/Scripting/Player/PlayerController.lua")
 
 function CPlayerComponent:Update(ElapsedTime)
 	self.m_Inventory:Update(ElapsedTime)
@@ -184,6 +207,8 @@ end
 function CPlayerComponent:IsLocked()
 	return self.m_Locked
 end
+
+function CPlayerComponent:IsBeingTossed(Value) self.m_BeeingTossed = Value end
 
 function CPlayerComponent:Health(Health) 
 	if((self.m_Health + Health)>self.m_MaxHealth) then
@@ -227,66 +252,7 @@ function CPlayerComponent:GetWeapon(Index) return m_Weapons[Index] end
 function CPlayerComponent:IsBlocking() return self.m_IsBlocking end
 function CPlayerComponent:SetBlockingState(state) self.m_IsBlocking = state end
 
--- Prevents player from hitting multiple times an enemy in a single attack
-function CPlayerComponent:IsAttacking() return self.m_Attacking end
-function CPlayerComponent:SetAttacking(state) self.m_Attacking = state end
-
--- Disables multiple attacksw input instructions while player is attacking
-function CPlayerComponent:IsAttackFinished() return self.m_AttackFinished end
-function CPlayerComponent:SetAttackFinished(Value) self.m_AttackFinished = Value end
-
-function CPlayerComponent:TakeDamage(EnemyWeapon, EnemyDamage)
-	--self.m_AudioSource:PlayEvent("SonidoDePrueba")
-	local l_Armor = "heroic"
-	if( self.m_CurrentArmor~=nil) then
-		l_Armor = self.m_CurrentArmor:GetType()
-	end
-	
-	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyDamage)
-	if self.m_Health > 0.0 then
-		if((self.m_Health - l_DamageCalculated)<=0.0) then
-			self.m_Health = 0.0
-			g_EventManager:FireEvent("PLAYER_IS_DEAD")
-		else
-			self.m_Health = self.m_Health - l_DamageCalculated
-		end
-	end
-end
-
-function CPlayerComponent:GetClosestEnemy(Enemies)
-	local l_ClosestEnemy = nil
-	local l_MinDistance = 0.0
-	for i=1, (#Enemies) do
-		local l_EnemyPos = Enemies[i]:GetLuaGameObject():GetPosition()
-		local l_Distance = (l_EnemyPos-self.m_LuaGameObject:GetPosition()):Length()
-		if ((l_MinDistance==0.0)or(l_Distance <= l_MinDistance)) then
-			l_ClosestEnemy = Enemies[i]
-			l_MinDistance = l_Distance
-		end
-	end
-	return l_ClosestEnemy
-end
-
-function CPlayerComponent:FaceEnemy(ElapsedTime)
-	local l_ClosestEnemy = self:GetClosestEnemy(g_GameController:GetEnemies())
-	if l_ClosestEnemy~=nil then
-	    local l_EnemyPos = l_ClosestEnemy:GetLuaGameObject():GetPosition()
-		local l_Distance = (l_EnemyPos-self.m_LuaGameObject:GetPosition()):Length()
-		if l_Distance < self.m_AttackingFacingDistance then
-			local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)    
-			--g_LogManager:Log("Angle del FaceEnemy: ".. l_Angle)
-			local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-			local l_Velocity = self.m_RotationVelocity
-			self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
-		end
-	end
-end
-
-function CPlayerComponent:FaceAttackDirection(ElapsedTime)
-	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-	local l_Angle = g_CameraControllerManager:GetCurrentCameraController():GetYaw() - l_CurrentYaw
-	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
-end
+dofile("./Data/Scripting/Player/PlayerCombatMechanics.lua")
 
 function CPlayerComponent:OpenMap()
 	self.m_MapOpened = not self.m_MapOpened
