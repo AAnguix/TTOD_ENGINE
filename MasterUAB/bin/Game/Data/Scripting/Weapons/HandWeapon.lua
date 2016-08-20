@@ -1,7 +1,11 @@
 class 'CHandWeaponComponent' (CWeaponComponent)
-function CHandWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType, OnPlayerContactParticlesName)
+function CHandWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType, ColliderAdjustment, ColliderRadius)
 	CWeaponComponent.__init(self,ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType)
-	--self.m_LuaGameObject:SetParent(self.m_ParentLuaGameObject,ParentBoneName)
+	
+	self.m_ColliderAdjust = ColliderAdjustment
+	self.m_ColliderRadious = ColliderRadius
+	
+	g_PhysXManager:CreateSphereTrigger(ComponentType,ComponentType,ColliderRadius,ComponentType.."_Material","",Vect3f(0.0,1.0,0.0),Quatf(0.0,0.0,0.0,1.0),"kinematic")
 end
 
 function CHandWeaponComponent:GetLuaGameObject() return self.m_LuaGameObject end
@@ -15,10 +19,12 @@ end
 
 function CHandWeaponComponent:OnTriggerEnter(Actor)
 	CWeaponComponent.OnTriggerEnter(self,Actor)
+	
 	local l_ParentName = self.m_ParentLuaGameObject:GetName()
 	
 	if (l_ParentName=="Player") then
 		if Actor ~= "Player"  then
+			g_LogManager:Log("entra2")
 			self:PlayerAttacksEnemy(Actor)
 		end
 	else --Parent is an enemy
@@ -107,12 +113,8 @@ function CHandWeaponComponent:Get3DMaxTransform()
 end
 
 function CHandWeaponComponent:WeaponAjustment()
-
 	local l_Translation = Mat44f()
 	l_Translation:SetIdentity()
-	local l_Position = Vect3f(0.15,-0.147002,-1.27)
-	l_Translation:Translate(l_Position)
-	--l_Translation:Translate(self.m_LuaGameObject:GetPosition())
+	l_Translation:Translate(self.m_ColliderAdjust)
 	return l_Translation
-
 end

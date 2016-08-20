@@ -17,7 +17,7 @@ public:
 	UAB_GET_SET_STANDARD_PROPERTY(float, FallOff);
 	void Render(CRenderManager *RenderManager); 
 	void SetShadowMap(CRenderManager &RenderManager);
-	void SetBlackAndWhiteMap(CRenderManager &RenderManager);
+	void SetBlackAndWhiteMap(CRenderManager &RenderManager, bool Blurred);
 
 	CEmptyPointerClass* GetAngleLuaAddress() const;
 	CEmptyPointerClass* GetFallOffLuaAddress() const;

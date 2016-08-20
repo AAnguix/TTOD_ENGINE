@@ -31,7 +31,6 @@ function CWeaponComponent:PlayerAttacksEnemy(EnemyActor)
 		local l_Enemy = g_GameController:GetEnemy(EnemyActor)
 		if l_Enemy ~=  nil then
 			l_Enemy:TakeDamage(self)
-			l_Enemy:SetHitState(true)
 			g_PlayerComponent:SetAttacking(false) 
 		end
 	end

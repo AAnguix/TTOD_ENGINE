@@ -5,9 +5,10 @@ function CBasicEnemyComponent:__init(CGameObject)
 	self.m_MaxHealth=100.0
 	self.m_Speed=1.2
 	self.m_AttackDelay=2.5
-	self.m_AttackRange=1.3
+	self.m_AttackRange=2.0
 	self.m_VisionRange=5.0
 	self.m_DelayToPatrol = 3.0
+	self.m_HitDisplacement = 0.4
 	
 	self.m_GuiAvatar = "basic_enemy_avatar_image"
 end
@@ -19,7 +20,7 @@ function CBasicEnemyComponent:Initialize()
 	local l_MoveToAttack = self.m_LuaGameObject:AddState("MoveToAttack_State", "walk", 1.0, "OnEnter_MoveToAttack_BasicEnemy", "OnUpdate_MoveToAttack_BasicEnemy", "OnExit_MoveToAttack_BasicEnemy")
 	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_BasicEnemy", "OnUpdate_Attack_BasicEnemy", "OnExit_Attack_BasicEnemy")
 	local l_Patrol = self.m_LuaGameObject:AddState("Patrol_State", "walk", 1.0, "OnEnter_Patrol_BasicEnemy", "OnUpdate_Patrol_BasicEnemy", "OnExit_Patrol_BasicEnemy")
-    local l_Hit = self.m_LuaGameObject:AddState("Hit_State", "die", 1.0, "OnEnter_Hit_BasicEnemy", "OnUpdate_Hit_BasicEnemy", "OnExit_Hit_BasicEnemy")
+    local l_Hit = self.m_LuaGameObject:AddState("Hit_State", "injured", 1.0, "OnEnter_Hit_BasicEnemy", "OnUpdate_Hit_BasicEnemy", "OnExit_Hit_BasicEnemy")
 	
 	self.m_LuaGameObject:AddBool("IsPlayerInsideVisionRange", false)
 	self.m_LuaGameObject:AddBool("DelayToPatrol", false)
@@ -33,6 +34,12 @@ function CBasicEnemyComponent:Initialize()
 	local l_IdleToMoveToAttack = l_Idle:AddTransition("IdleToMoveToAttack", l_MoveToAttack, false, 0.1)
 	l_IdleToMoveToAttack:AddBoolCondition("IsPlayerInsideVisionRange", true)
 	
+	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false,  0.1, 0.25)
+	l_IdleToAttack:AddTriggerCondition("AttackPlayer")
+	
+	local l_IdleToHit = l_Idle:AddTransition("IdleToHit", l_Hit, false,  0.1, 0.25)
+	l_IdleToHit:AddTriggerCondition("GotHit")
+	
 	local l_PatrolToMoveToAttack = l_Patrol:AddTransition("PatrolToMoveToAttack", l_MoveToAttack, false, 0.1)
 	l_PatrolToMoveToAttack:AddBoolCondition("IsPlayerInsideVisionRange", true)
 	
@@ -41,17 +48,14 @@ function CBasicEnemyComponent:Initialize()
 	
 	local l_MoveToAttackToIdle = l_MoveToAttack:AddTransition("MoveToAttackToIdle", l_Idle, false, 0.1)
 	l_MoveToAttackToIdle:AddBoolCondition("IsPlayerInsideVisionRange", false)
-	
-	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false,  0.1, 0.25)
-	l_IdleToAttack:AddTriggerCondition("AttackPlayer")	
 
 	local l_AttacktoIdle = l_Attack:AddTransition("AttacktoIdle", l_Idle, true, 0.1)
 	--l_AttacktoIdle:AddTriggerCondition("GoBackToIdle")
 	
-	local l_HittoIdle = l_Hit:AddTransition("HittoIdle", l_Idle, true, 0.5)
-	
 	local l_AttacktoHit = l_Attack:AddTransition("AttacktoHit", l_Hit, false, 0.5, 0.5)
 	l_AttacktoHit:AddTriggerCondition("GotHit")
+	
+	local l_HittoIdle = l_Hit:AddTransition("HittoIdle", l_Idle, true, 0.5)
 	
 	self.m_AStar = CAStar()
 end

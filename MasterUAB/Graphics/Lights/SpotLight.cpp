@@ -54,19 +54,23 @@ void CSpotLight::SetShadowMap(CRenderManager &RenderManager)
 	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, m_ShadowMap->GetDepthStencilView());
 }
 
-void CSpotLight::SetBlackAndWhiteMap(CRenderManager &RenderManager)
+void CSpotLight::SetBlackAndWhiteMap(CRenderManager &RenderManager, bool Blurred)
 {
-	if (m_BlackAndWhiteMap == NULL)
+	CDynamicTexture* l_Texture = m_BlackAndWhiteMap;
+	if (Blurred)
+		l_Texture = m_BlackAndWhiteBlurredMap;
+
+	if (l_Texture == NULL)
 	{
 		assert(false);
 		return;
 	}
 
-	unsigned int l_ShadowMapWidth = m_BlackAndWhiteMap->GetWidth();
-	unsigned int l_ShadowMapHeight = m_BlackAndWhiteMap->GetHeight();
+	unsigned int l_ShadowMapWidth = l_Texture->GetWidth();
+	unsigned int l_ShadowMapHeight = l_Texture->GetHeight();
 	
 	ID3D11RenderTargetView *l_RenderTargetViews[1];
-	l_RenderTargetViews[0] = m_BlackAndWhiteMap->GetRenderTargetView();
+	l_RenderTargetViews[0] = l_Texture->GetRenderTargetView();
 	D3D11_VIEWPORT m_viewport;
 	m_viewport.Width = (float)l_ShadowMapWidth;
 	m_viewport.Height = (float)l_ShadowMapHeight;
@@ -75,7 +79,7 @@ void CSpotLight::SetBlackAndWhiteMap(CRenderManager &RenderManager)
 	m_viewport.TopLeftX = 0.0f;
 	m_viewport.TopLeftY = 0.0f;
 	RenderManager.GetContextManager()->GetDeviceContext()->RSSetViewports(1, &m_viewport);
-	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, m_BlackAndWhiteMap->GetDepthStencilView());
+	RenderManager.GetContextManager()->SetRenderTargets(1, l_RenderTargetViews, l_Texture->GetDepthStencilView());
 }
 
 CEmptyPointerClass* CSpotLight::GetFallOffLuaAddress() const  { return (CEmptyPointerClass *)((void*)&m_FallOff); }

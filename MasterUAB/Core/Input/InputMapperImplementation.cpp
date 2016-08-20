@@ -43,20 +43,12 @@ InputMapping::CInputMapperImplementation::CInputMapperImplementation()
 	
 }
 
-void InputMapping::CInputMapperImplementation::Initialize(const std::wstring &InputManagerContextsFileName, HWND Hwnd)
+void InputMapping::CInputMapperImplementation::Initialize(HWND Hwnd)
 {
 	m_Hwnd = Hwnd;
 
-	unsigned l_Count;
-	std::wifstream l_ContextFile(InputManagerContextsFileName);
-	if (!(l_ContextFile >> l_Count)){ assert(false); }
-
-	for (unsigned i = 0; i < l_Count; ++i)
-	{
-		std::wstring l_Name = ReadValue<std::wstring>(l_ContextFile);
-		std::wstring l_File = ReadValue<std::wstring>(l_ContextFile);
-		m_InputContexts[l_Name] = new CInputContext("Data\\MainInputContext.xml");
-	}
+	std::wstring l_Name = L"maincontext";
+	m_InputContexts[l_Name] = new CInputContext("Data\\MainInputContext.xml");
 
 	bool l_Result = InitializeDirectXInput();
 	if (!l_Result)

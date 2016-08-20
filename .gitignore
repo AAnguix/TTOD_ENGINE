@@ -11,6 +11,7 @@ MasterUAB/bin/Game/Data/*
 !MasterUAB/bin/Game/Data/Scripting/
 !MasterUAB/bin/Game/Data/Effects/
 MasterUAB/bin/Game/Data/Effects/compiled/
+!MasterUAB/bin/Game/Data/Cameras/
 
 !MasterUAB/bin/Game/Data/start_screen_scene_renderer_commands.xml
 !MasterUAB/bin/Game/Data/basic_scene_renderer_commands.xml
@@ -20,6 +21,9 @@ MasterUAB/bin/Game/Data/Effects/compiled/
 !MasterUAB/bin/Game/Data/input.xml
 !MasterUAB/bin/Game/Data/cameras.xml
 !MasterUAB/bin/Game/Data/engine_settings.xml
+
+!MasterUAB/bin/Game/Data/damage_reduction_percentages.xml
+!MasterUAB/bin/Game/Data/MainInputContext.xml
 
 !MasterUAB/bin/Game/Data/effects.xml
 !MasterUAB/bin/Game/Data/effects_materials.xml

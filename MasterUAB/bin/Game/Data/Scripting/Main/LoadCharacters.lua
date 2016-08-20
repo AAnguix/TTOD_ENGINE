@@ -153,17 +153,3 @@ function CGameController:LoadEnemyChilds(Enemy, XMLTreeNode)
 		end
 	end
 end	
-
-function CGameController:LoadShowHealthBarManager(XMLTreeNode)
-	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
-	
-	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
-	if l_LuaGameObject ~= nil then
-		local l_ShowHealthBarComponent  = CShowHealthBarManagerComponent(l_LuaGameObject)
-		local l_ComponentName = l_LuaGameObject:GetName()
-		g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_ShowHealthBarComponent)
-		g_ShowHealthBarManager = l_ShowHealthBarComponent
-		table.insert(self.m_Entities,l_ShowHealthBarComponent)
-	end
-end
-

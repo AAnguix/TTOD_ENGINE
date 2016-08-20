@@ -17,7 +17,7 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 	
 	if (self:IsLocked() == false) then
 		
-		if self.mBeeingTossed then
+		if self.m_BeeingTossed then
 			self.m_Velocity = self.m_TossedDirection
 		end
 		self:AddGravity(ElapsedTime)

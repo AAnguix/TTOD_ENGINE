@@ -6,6 +6,19 @@ function CPlayerComponent:SetAttacking(state) self.m_Attacking = state end
 function CPlayerComponent:IsAttackFinished() return self.m_AttackFinished end
 function CPlayerComponent:SetAttackFinished(Value) self.m_AttackFinished = Value end
 
+-- Check if an enemy is close to switch to Combat Idle
+function CPlayerComponent:CheckForSurroundingEnemies()
+	local l_Enemies = g_GameController:GetEnemies()
+	for i=1, (#l_Enemies) do
+		local l_EnemyPos = l_Enemies[i]:GetLuaGameObject():GetPosition()
+		local l_Distance = (l_EnemyPos-self.m_LuaGameObject:GetPosition()):Length()
+		if (l_Distance < self.m_DistanceToEnterCombatIdle) then
+			self.m_LuaGameObject:SetBool("SurroundingEnemies", true) 
+		end
+	end
+	self.m_LuaGameObject:SetBool("SurroundingEnemies", false) 
+end
+
 function CPlayerComponent:TakeDamage(EnemyWeapon)
 	--self.m_AudioSource:PlayEvent("SonidoDePrueba")
 	local l_Armor = "heroic"
@@ -17,7 +30,7 @@ function CPlayerComponent:TakeDamage(EnemyWeapon)
 	if self.m_Health > 0.0 then
 		if((self.m_Health - l_DamageCalculated)<=0.0) then
 			self.m_Health = 0.0
-			g_EventManager:FireEvent("PLAYER_IS_DEAD")
+			self:Die()
 		else
 			self.m_Health = self.m_Health - l_DamageCalculated
 			local l_Camera = g_CameraControllerManager:GetCurrentCameraController()
@@ -98,24 +111,26 @@ function CPlayerComponent:ClosestHit(ObjectPos)
         
         local l_Position = self.m_LuaGameObject:GetPosition() + l_Directions[i]        
         local l_Distance = (ObjectPos-l_Position):Length()
-        g_LogManager:Log("Pos Hueso")
-        g_LogManager:Log(ObjectPos)
-        g_LogManager:Log("Pos Player")
-        g_LogManager:Log(l_PlayerPos)
-        g_LogManager:Log("Pos+ Direccion")
-        g_LogManager:Log(l_Position)
-        g_LogManager:Log("Distancia: "..l_Distance)
+        --g_LogManager:Log("Pos Hueso")
+        --g_LogManager:Log(ObjectPos)
+        --g_LogManager:Log("Pos Player")
+        --g_LogManager:Log(l_PlayerPos)
+        --g_LogManager:Log("Pos+ Direccion")
+        --g_LogManager:Log(l_Position)
+        --g_LogManager:Log("Distancia: "..l_Distance)
     --if l_Distance > l_FarthestDistance then
         if l_Distance < l_FarthestDistance then
             l_FarthestDistance = l_Distance
             --self.m_TossedDirection = l_Directions[i]*3.0
             local Ray =  SRaycastData()
-            local Raycast = g_PhysXManager:Raycast(self.m_LuaGameObject:GetPosition(), l_Directions[i]*(-1.0), 15.0, Ray)
+            local Raycast = g_PhysXManager:Raycast(self.m_LuaGameObject:GetPosition(), l_Directions[i]*(-1.0), 5.0, Ray)
             self.m_TossedDirection = (l_Directions[i]*(-1.0))*3.0
+			
         end
         
     end
-        
-    local Ray =  SRaycastData()
-    local Raycast = g_PhysXManager:Raycast(self.m_LuaGameObject:GetPosition(), self.m_TossedDirection , 40.0, Ray)
+    g_LogManager:Log("m_TossedDirection en ClosestHit")
+	g_LogManager:Log(self.m_TossedDirection)    
+    local Ray2 =  SRaycastData()
+    local Raycast = g_PhysXManager:Raycast(self.m_LuaGameObject:GetPosition(), self.m_TossedDirection , 40.0, Ray2)
 end

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <gui_elements>
+	<gui_spritemap name="dead_black_texture_spritemap" width="1280" height="720" material="dead_black_texture_material">
+		<sprite name="dead_black_texture_sprite" x="0" y="0" w="1280" h="720" />
+	</gui_spritemap>
 	<gui_spritemap name="play_button" width="512" height="512" material="play_button_material">
 		<sprite name="play_button_normal" x="0" y="0" w="512" h="512" />
 		<sprite name="play_button_highlight" x="0" y="0" w="200" h="200" />
@@ -20,6 +23,11 @@
 		<sprite name="exit_button_highlight" x="0" y="0" w="200" h="200" />
 		<sprite name="exit_button_pressed" x="0" y="0" w="100" h="100" />
 	</gui_spritemap>	
+	<gui_spritemap name="restart_game_button" width="512" height="512" material="restart_game_button_material">
+		<sprite name="restart_game_button_normal" x="0" y="0" w="256" h="64" />
+		<sprite name="restart_game_button_highlight" x="0" y="0" w="256" h="64" />
+		<sprite name="restart_game_button_pressed" x="0" y="0" w="256" h="64" />
+	</gui_spritemap>
 	<gui_spritemap name="background_image" width="1280" height="720" material="background_material">
 		<sprite name="background_sprite" x="0" y="0" w="1280" h="720" />
 	</gui_spritemap>
@@ -96,5 +104,4 @@
 	<gui_spritemap name="slide14_spritemap" width="1920" height="1080" material="slide14_material">
 		<sprite name="slide14_sprite" x="0" y="0" w="1920" h="1080" />
 	</gui_spritemap> -->
-	
 </gui_elements>

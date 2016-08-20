@@ -18,7 +18,7 @@ public:
 	UAB_GET_SET_PROPERTY_REFERENCE(Vect3f,Direction);
 	virtual void Render(CRenderManager *RM); 
 	void SetShadowMap(CRenderManager &RenderManager);
-	void SetBlackAndWhiteMap(CRenderManager &RenderManager);
+	void SetBlackAndWhiteMap(CRenderManager &RenderManager, bool Blurred);
 	UAB_GET_VAR_ADDRESS(Direction);
 }; 
 

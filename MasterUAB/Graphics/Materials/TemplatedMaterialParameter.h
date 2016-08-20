@@ -21,6 +21,13 @@ public:
 		m_Description=TreeNode.GetPszProperty("description","");
 		m_EffectAddress=Material->GetNextParameterAddress(sizeof(T));
 	};
+	CTemplatedMaterialParameter(CMaterial *Material, const std::string &Name, const std::string &Description, const T &Value, CMaterialParameter::TMaterialType MaterialType) : CMaterialParameter(Material, Name, MaterialType)
+	{
+		//m_EffectAddress=CEffectManager::AddMaterialParameter(MaterialType);
+		m_Value = Value;
+		m_Description = Description;
+		m_EffectAddress = Material->GetNextParameterAddress(sizeof(T));
+	};
 	virtual ~CTemplatedMaterialParameter(){};
 	void Apply()
 	{ 

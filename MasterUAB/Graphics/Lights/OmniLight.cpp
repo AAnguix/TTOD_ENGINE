@@ -23,6 +23,6 @@ void COmniLight::SetShadowMap(CRenderManager &RenderManager)
 {
 }
 
-void COmniLight::SetBlackAndWhiteMap(CRenderManager &RenderManager)
+void COmniLight::SetBlackAndWhiteMap(CRenderManager &RenderManager, bool Blurred)
 {
 }

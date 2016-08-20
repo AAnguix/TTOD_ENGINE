@@ -1,0 +1,52 @@
+<input_context>
+	<ranges>
+		<range axis="0" range="0"/>
+		<range axis="1" range="1"/>
+		<range axis="2" range="2"/>
+	</ranges>
+	<states>
+		<state button="W" state="0"/>
+		<state button="A" state="1"/>
+		<state button="S" state="2"/>
+		<state button="D" state="3"/>
+	</states>
+	<actions>
+		<action button="C" action="11"/>
+		<action button="C" action="12" alt="true"/>
+	
+		<action button="MOUSE_LEFT" action="0"/>
+		<action button="MOUSE_RIGHT" action="1"/>
+		<action button="1" action="2"/>
+		<action button="M" action="3"/>
+		<action button="E" action="4"/>
+		
+		<action button="L" action="9"/>
+		<action button="B" action="10"/>
+		
+		
+		<action button="8" action="13" alt="true"/>
+		
+		<action button="ESC" action="20" />
+		
+		<action button="1" action="21" alt="true"/>
+		<action button="2" action="22" alt="true"/>
+		<action button="3" action="23" alt="true"/>
+		<action button="4" action="24" alt="true"/>
+		<action button="5" action="25" alt="true"/>
+		<action button="6" action="26" alt="true"/>
+		<action button="7" action="27" alt="true"/>
+		<action button="8" action="28" alt="true"/>
+		<action button="9" action="29" alt="true"/>
+		<action button="L" action="30" alt="true"/>
+		
+	</actions>
+	<conversions>
+		<conversion range="0" min_input="-1000" max_input="1000" min_output="-1" max_output="1"/>
+		<conversion range="1" min_input="-1000" max_input="1000" min_output="-1" max_output="1"/>
+	</conversions>
+
+	<sensivities>	
+		<sensivity range="0" sensivity="100"/>
+		<sensivity range="1" sensivity="100"/>
+	</sensivities>
+</input_context>

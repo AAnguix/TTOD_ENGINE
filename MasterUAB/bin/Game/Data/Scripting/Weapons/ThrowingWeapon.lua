@@ -44,8 +44,6 @@ function CThrowingWeaponComponent:OnTriggerEnter(Actor)
 	CWeaponComponent.OnTriggerEnter(self,Actor)
 	local l_ParentName = self.m_ParentLuaGameObject:GetName()
 	
-	g_LogManager:Log("Chocando "..Actor)
-	
 	if (l_ParentName=="Player") then
 		if Actor ~= "Player"  then
 			self:PlayerAttacksEnemy(Actor)

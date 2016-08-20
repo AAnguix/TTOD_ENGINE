@@ -8,13 +8,14 @@
 
 CGenerateBlackAndWhiteMapsSceneRendererCommand::CGenerateBlackAndWhiteMapsSceneRendererCommand(CXMLTreeNode &TreeNode) : CStagedTexturedSceneRendererCommand(TreeNode)
 {
-
+	m_RenderableObjectTechnique = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("generate_black_and_white_map_renderable_object_technique");
 }
 
 CGenerateBlackAndWhiteMapsSceneRendererCommand::~CGenerateBlackAndWhiteMapsSceneRendererCommand(){
 
 }
 
+bool x = true;
 void CGenerateBlackAndWhiteMapsSceneRendererCommand::Execute(CRenderManager &RenderManager)
 {
 	CLightManager* l_LightManager = CEngine::GetSingleton().GetLightManager();
@@ -30,29 +31,29 @@ void CGenerateBlackAndWhiteMapsSceneRendererCommand::Execute(CRenderManager &Ren
 	{
 		if (l_Lights[i]->GetActive() && l_Lights[i]->GetGenerateShadowMap())
 		{
-			l_Lights[i]->SetBlackAndWhiteMap(RenderManager); //Set BlackAndWhiteTexture as rendertarget
+			l_Lights[i]->SetBlackAndWhiteMap(RenderManager, false); //Set BlackAndWhiteTexture as rendertarget
 			//Doens't change matrix, beacuse we must render from camera perspective
 
 			CEngine::GetSingleton().GetEffectManager()->SetBlackAndWhiteLightConstants(l_Lights[i]);
-			//RenderManager.GetContextManager()->Clear(false,true);
+			RenderManager.DrawScreenQuad(m_RenderableObjectTechnique->GetEffectTechnique(), NULL, 0, 0, 1.0f, 1.0f, CColor(1.0f, 1.0f, 1.0f, 1.0f));
 
-			std::vector<CRenderableObjectsManager*> m_ROManager = l_Lights[i]->GetLayers();
-
-#ifdef _DEBUG
-			if (m_ROManager.size() == 0)
+			//MIO
+			if (x)
 			{
-				LOG("Error. Can't generate shadows because there must be at least one layer");
+				CMaterial* l_GaussianFilterMaterial = CEngine::GetSingleton().GetMaterialManager()->GetResource("GaussianFilterMaterial");
+				CMaterial* l_GuiMaterial = CEngine::GetSingleton().GetMaterialManager()->GetResource("GUIMaterial");
+
+				RenderManager.GetContextManager()->UnsetRenderTargets();
+				RenderManager.GetContextManager()->SetDefaultViewPort();
+
+				l_Lights[i]->SetBlackAndWhiteMap(RenderManager, true);
+				CPoolRenderableObjectTechnique* l_GaussianFilterPool = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetPoolRenderableObjectTechniques().GetResource("gaussian_filter_pool_renderable_object_technique");
+				l_GaussianFilterPool->Apply();
+				l_Lights[i]->GetBlackAndWhiteMap()->Activate(0);
+				l_GaussianFilterMaterial->Apply();
+
+				RenderManager.DrawScreenQuad(l_GaussianFilterMaterial->GetRenderableObjectTechnique()->GetEffectTechnique(), NULL, 0, 0, 1.0f, 1.0f, CColor(0.0, 0.0, 0.0, 0.0));
 			}
-#endif
-
-			/*for(size_t j=0;j<m_ROManager.size();j++)
-			{
-			CLayerManager* l_Layer = CEngine::GetSingleton().GetLayerManager();
-			l_Layer->Render(RenderManager, m_ROManager[j]->GetName());
-			}*/
-#pragma warning("Arturo hay que hacer bien el renderable object que no lo coja cada frame")
-			CEffectTechnique *l_EffectTechnique = CEngine::GetSingleton().GetEffectManager()->GetResource("generate_black_and_white_map_technique");
-			RenderManager.DrawScreenQuad(l_EffectTechnique, NULL, 0, 0, 1.0f, 1.0f, CColor(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 	}
 

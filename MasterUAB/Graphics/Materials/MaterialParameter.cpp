@@ -6,6 +6,11 @@ CMaterialParameter::CMaterialParameter(CMaterial *Material, CXMLTreeNode &TreeNo
 	m_MaterialType=MaterialType;
 }
 
+CMaterialParameter::CMaterialParameter(CMaterial *Material, const std::string &Name, CMaterialParameter::TMaterialType MaterialType) : CNamed(Name)
+{
+	m_MaterialType = MaterialType;
+}
+
 CMaterialParameter::~CMaterialParameter()
 {
 

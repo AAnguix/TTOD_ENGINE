@@ -10,7 +10,7 @@ public:
 	COmniLight(CXMLTreeNode &TreeNode);
 	void Render(CRenderManager *RenderManager); 
 	void SetShadowMap(CRenderManager &RenderManager);
-	void SetBlackAndWhiteMap(CRenderManager &RenderManager);
+	void SetBlackAndWhiteMap(CRenderManager &RenderManager, bool Blurred);
 
 };  
  

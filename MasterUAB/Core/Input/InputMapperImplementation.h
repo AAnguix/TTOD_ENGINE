@@ -45,7 +45,7 @@ namespace InputMapping
 	public:
 		CInputMapperImplementation();
 		~CInputMapperImplementation();
-		void Initialize(const std::wstring &InputManagerContextsFileName, HWND Hwnd);
+		void Initialize(HWND Hwnd);
 
 	public:
 		void Clear();

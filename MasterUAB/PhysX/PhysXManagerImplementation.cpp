@@ -84,8 +84,8 @@ CPhysXManagerImplementation::CPhysXManagerImplementation()
 	physx::PxSceneDesc sceneDesc(m_PhysX->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
-	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-	sceneDesc.filterShader = contactReportFilterShader;
+	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	//sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
 	m_Scene = m_PhysX->createScene(sceneDesc);
 	assert(m_Scene);

@@ -523,6 +523,21 @@ void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, 
 	}
 }
 
+void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position, const CColor &Color)
+{
+	CheckInput();
+
+	SImageInfo* l_Image = GetImage(ImageID);
+	SSpriteInfo* l_Sprite = l_Image->sprite;
+
+	{
+		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
+		, 0.0f, 0.0f, 1.0f, 1.0f,
+		Color };
+		m_Commands.push_back(l_Command);
+	}
+}
+
 bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position)
 {
 	CheckInput();

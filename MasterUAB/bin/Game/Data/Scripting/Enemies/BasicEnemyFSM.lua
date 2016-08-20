@@ -1,12 +1,10 @@
-BE_StateTotalTime = 0.0
+
 function OnEnter_Idle_BasicEnemy(Enemy)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." enters idle")
 	Enemy:SetAttacking(false)
-	BE_StateTotalTime = 0.0
 end
 function OnUpdate_Idle_BasicEnemy(Enemy, ElapsedTime)
 	local l_Lgo = Enemy:GetLuaGameObject()
-	BE_StateTotalTime = BE_StateTotalTime + ElapsedTime
 	local l_PlayerPos = g_Player:GetPosition()
 	local l_Pos = l_Lgo:GetPosition()
 	if (CTTODMathUtils.PointInsideCircle(l_PlayerPos, l_Pos, Enemy.m_VisionRange) and Enemy:GetTimer() > Enemy:GetAttackDelay())  then 
@@ -73,35 +71,26 @@ end
 function OnEnter_Attack_BasicEnemy(Enemy)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." enters Attack")
 	Enemy:SetAttacking(true)
-	BE_StateTotalTime = 0.0
 end
 function OnUpdate_Attack_BasicEnemy(Enemy, ElapsedTime)
-	BE_StateTotalTime = BE_StateTotalTime + ElapsedTime
-	if Enemy:IsHit() == true then 
-		Enemy:GetLuaGameObject():SetTrigger("GotHit")
-	end
 end
 function OnExit_Attack_BasicEnemy(Enemy)
 	g_LogManager:Log(Enemy:GetLuaGameObject():GetName().." exits Attack")
-	--g_PlayerComponent:TakeDamage(Enemy:GetWeapon():GetType(),Enemy:GetWeapon():GetDamage())	
-	--g_PlayerComponent:TakeDamage("knife",15.0)
-	--g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Attack")
 	Enemy:GetLuaGameObject():SetBool("IsPlayerInsideVisionRange", false)
-	g_PlayerComponent:TakeDamage(nil,10)
 end
 
-
-------------------------------------------------------------
+-------------------- HIT -------------------- 
 
 function OnEnter_Hit_BasicEnemy(Enemy)
-	Enemy:SetHitState(false)
+	--Enemy:SetHitState(false)
 	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters Hit")
-	BE_StateTotalTime = 0.0
 end
 function OnUpdate_Hit_BasicEnemy(Enemy, ElapsedTime)
-	BE_StateTotalTime = BE_StateTotalTime + ElapsedTime
+	local l_EnemyForward = Enemy.m_LuaGameObject:GetForward()    
+	Enemy.m_Velocity = Enemy.m_Velocity + ((l_EnemyForward*(-1.0))*Enemy.m_HitDisplacement)
 end
 function OnExit_Hit_BasicEnemy(Enemy)
+	--Enemy:SetHitState(false)
 	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits Hit")
 	--g_LogManager:Log(BE_StateTotalTime.." Tiempo total dentro del estado Hit")
 end

@@ -6,6 +6,9 @@
 
 class CGenerateBlackAndWhiteMapsSceneRendererCommand : public CStagedTexturedSceneRendererCommand
 {
+	private:
+		CRenderableObjectTechnique *m_RenderableObjectTechnique;
+
 	public:
 		CGenerateBlackAndWhiteMapsSceneRendererCommand(CXMLTreeNode &TreeNode);
 		virtual ~CGenerateBlackAndWhiteMapsSceneRendererCommand();

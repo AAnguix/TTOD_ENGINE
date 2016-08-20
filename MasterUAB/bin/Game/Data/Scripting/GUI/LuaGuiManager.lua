@@ -60,17 +60,14 @@ end
 --Prevents multiple responses to one callback
 function CLuaGuiManager:ESC_PRESSED()
 	self.m_CurrentGui:ESC_PRESSED()
-	-- if (self.m_State==1) then
-		-- ExitGame()
-	-- elseif (self.m_State==2) then
-		-- self.m_CurrentGui:CheckMenu()	
-	-- elseif (self.m_State==3) then
-		-- self:SetGui(1)
-	-- end
+end
+function CLuaGuiManager:PLAYER_IS_DEAD()
+	self.m_CurrentGui:PLAYER_IS_DEAD()
 end
 
 function CLuaGuiManager:SubscribeEvents()
 	g_EventManager:Subscribe(self, "ESC_PRESSED")
+	g_EventManager:Subscribe(self, "PLAYER_IS_DEAD")
 end
 
 function CLuaGuiManager:AddGui(GUI)

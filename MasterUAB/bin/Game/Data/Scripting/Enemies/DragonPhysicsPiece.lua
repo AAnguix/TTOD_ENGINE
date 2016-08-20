@@ -125,7 +125,7 @@ end
 
 function CDragonPhysicsPiece:OnTriggerEnter(Actor)
 	--g_LogManager:Log(BoneName.." Colisionando con "..Actor)
-	g_LogManager:Log("OnTriggerEnter "..self.m_BoneName..". Actor:"..Actor)
+	--g_LogManager:Log("OnTriggerEnter "..self.m_BoneName..". Actor:"..Actor)
 	if Actor == "Player" then
 		
 		local l_bonePos = self:GetWorldPos()

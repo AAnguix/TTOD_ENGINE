@@ -55,6 +55,7 @@ void CAStar::AddNeighbours(TNode* Node, VNodes Neighbours)
 
 bool CAStar::LoadNodes(const std::string &Filename)
 {
+	DestroyMap();
 	m_Filename = Filename;
 	CXMLTreeNode l_XML;
 

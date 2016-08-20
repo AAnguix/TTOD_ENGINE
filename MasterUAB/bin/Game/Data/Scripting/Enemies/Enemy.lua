@@ -32,7 +32,7 @@ function CEnemyComponent:__init(CLuaGameObject,EnemyType)
 	
 	--Conditionals
 	self.m_Attacking = false
-	self_m_GotHit = false
+	-- self.m_GotHit = false
 	
 	self.m_GuiAvatar = nil
 	self.m_DieDelay = 5.0
@@ -66,6 +66,7 @@ function CEnemyComponent:AddWaypoint(WayPoint)
 end
 
 function CEnemyComponent:TakeDamage(PlayerWeapon)
+	if (self:IsAttacking()==false)then self:GetLuaGameObject():SetTrigger("GotHit") end
 	--self.m_AudioSource:PlayEvent("SonidoDePrueba")
 	g_EventManager:FireEvent("ENEMY_TAKES_DAMAGE") 
 	if g_ShowHealthBarManager ~= nil then
@@ -206,11 +207,11 @@ function CEnemyComponent:MoveWithAStar(ElapsedTime)
 		self.m_Velocity = self.m_Velocity + (l_VectorToPlayer*self:GetSpeed())
 		
 		local l_Forward = self.m_LuaGameObject:GetForward()
-		local NameOfHit = g_PhysXManager:RaycastOutName(l_EnemyPos, l_Forward, self.m_DistanceToFacePlayer)
+		--local NameOfHit = g_PhysXManager:RaycastOutName(l_EnemyPos, l_Forward, self.m_DistanceToFacePlayer)
 		
 		local l_RotateView = false
 		local l_Distance = (l_PlayerPos-self.m_LuaGameObject:GetPosition()):Length()
-		if l_Distance < self.m_DistanceToFacePlayer and NameOfHit == "" then 
+		if l_Distance < self.m_DistanceToFacePlayer then 
 			l_RotateView = true
 		end
 		
@@ -240,7 +241,7 @@ function CEnemyComponent:SetWeapon(Weapon) self.m_Weapon = Weapon end
 function CEnemyComponent:GetLuaGameObject() return self.m_LuaGameObject end
 function CEnemyComponent:IsAttacking() return self.m_Attacking end
 function CEnemyComponent:SetAttacking(state) self.m_Attacking = state end
-function CEnemyComponent:IsHit() return self.m_GotHit end
-function CEnemyComponent:SetHitState(state) self.m_GotHit = state end
+-- function CEnemyComponent:IsHit() return self.m_GotHit end
+-- function CEnemyComponent:SetHitState(state) self.m_GotHit = state end
 function CEnemyComponent:SetFollowTriangleWayPointsState(Value) self.M_FollowWaypoints = Value end
 function CEnemyComponent:SetMoveToAttackMovement(Value) self.M_AttackMovement = Value end

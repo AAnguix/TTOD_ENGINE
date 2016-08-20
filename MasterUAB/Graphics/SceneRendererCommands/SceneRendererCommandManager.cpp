@@ -25,6 +25,7 @@
 #include "SceneRendererCommands\RenderDebugLightsSceneRendererCommand.h"
 #include "SceneRendererCommands\RenderDebugGridSceneRendererCommand.h"
 #include "SceneRendererCommands\RenderDebugShadowMapsSceneRendererCommand.h"
+#include "SceneRendererCommands\RenderDebugBlackAndWhiteMapsSceneRendererCommand.h"
 #include "SceneRendererCommands\GenerateShadowMapsSceneRendererCommand.h"
 #include "SceneRendererCommands\GenerateBlackAndWhiteMapsSceneRendererCommand.h"
 #include "SceneRendererCommands\ApplyFiltersSceneRendererCommand.h"
@@ -206,6 +207,14 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 						CHECKED_DELETE(l_RenderDebugShadowmap);
 					}
 				}
+				else if (l_Element.GetName() == std::string("render_debug_black_and_white_map"))
+				{
+					CRenderDebugBlackAndWhiteMapsSceneRendererCommand* l_RenderDebugBlackAndWhiteMap = new CRenderDebugBlackAndWhiteMapsSceneRendererCommand(l_Element);
+					if (!AddResource(l_RenderDebugBlackAndWhiteMap->GetName() + l_S, l_RenderDebugBlackAndWhiteMap))
+					{
+						CHECKED_DELETE(l_RenderDebugBlackAndWhiteMap);
+					}
+				}
 				else if (l_Element.GetName() == std::string("render_draw_quad"))
 				{
 					CDrawQuadRendererCommand* l_DrawQuadCommand = new CDrawQuadRendererCommand(l_Element);
@@ -317,7 +326,13 @@ void CSceneRendererCommandManager::Execute(CRenderManager &RenderManager)
 		if(m_ResourcesVector[i]->GetActive())
 			m_ResourcesVector[i]->Execute(RenderManager);
 	}
-}   
+}
+
+void CSceneRendererCommandManager::ActivateCommand(unsigned int Index, bool Activate)
+{
+	if (Index<m_ResourcesVector.size())
+		m_ResourcesVector[Index]->SetActive(Activate);
+}
 
 const std::vector<CSceneRendererCommand *> & CSceneRendererCommandManager::GetLUASceneRendererCommands()
 {

@@ -277,6 +277,9 @@
     <ClInclude Include="Camera\Shaker\Shaker.h">
       <Filter>Camera\Shaker</Filter>
     </ClInclude>
+    <ClInclude Include="SceneRendererCommands\RenderDebugBlackAndWhiteMapsSceneRendererCommand.h">
+      <Filter>SceneRendererCommands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">
@@ -539,6 +542,9 @@
     </ClCompile>
     <ClCompile Include="Camera\Shaker\Shaker.cpp">
       <Filter>Camera\Shaker</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRendererCommands\RenderDebugBlackAndWhiteMapsSceneRendererCommand.cpp">
+      <Filter>SceneRendererCommands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -26,6 +26,8 @@ protected:
 	bool m_GenerateShadowMap;
 	CDynamicTexture* m_ShadowMap;
 	CDynamicTexture* m_BlackAndWhiteMap;
+	CDynamicTexture* m_BlackAndWhiteBlurredMap;
+
 	CTexture* m_ShadowMaskTexture;
 	std::vector<CRenderableObjectsManager *> m_Layers;
 	Mat44f m_ViewShadowMap, m_ProjectionShadowMap;
@@ -50,6 +52,7 @@ public:
 	UAB_GET_SET_STANDARD_PROPERTY(float, Intensity);  
 	UAB_GET_SET_STANDARD_PROPERTY(TLightType, Type);  
 
+	UAB_GET_PROPERTY_POINTER(CDynamicTexture, BlackAndWhiteBlurredMap);
 	UAB_GET_PROPERTY_POINTER(CDynamicTexture, BlackAndWhiteMap);
 	UAB_GET_PROPERTY_POINTER(CDynamicTexture, ShadowMap);
 	UAB_GET_PROPERTY_POINTER(CTexture, ShadowMaskTexture);
@@ -74,7 +77,7 @@ public:
 	CEmptyPointerClass* GetEndRangeAttenuationLuaAddress() const;
 
 	virtual void SetShadowMap(CRenderManager &RenderManager) = 0;
-	virtual void SetBlackAndWhiteMap(CRenderManager &RenderManager) = 0;
+	virtual void SetBlackAndWhiteMap(CRenderManager &RenderManager, bool Blurred) = 0;
 }; 
 
 #endif

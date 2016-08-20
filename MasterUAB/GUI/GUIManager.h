@@ -243,8 +243,9 @@ public:
 
 	SSliderResult DoSlider(const std::string& GuiID, const std::string& SliderID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);
 	void DoHealthBar(const std::string& GuiID, const std::string& HealthBarID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);
+	
 	void DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position);
-
+	void DoImage(const std::string& GuiID, const std::string& ImageID, const SGUIPosition& Position, const CColor &Color);
 	void AddFont(const std::string& FontName, const std::string& FontPath);
 
 	void DoText(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, const std::string& Text);

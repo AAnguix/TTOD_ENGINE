@@ -62,15 +62,15 @@
 		<sprite name="pedestal_button_highlight" x="0" y="0" w="256" h="256" />
 		<sprite name="pedestal_button_pressed" x="0" y="0" w="256" h="256" />
 	</gui_spritemap>
-	<gui_spritemap name="map_spritemap_1280_720" width="1280" height="720" material="map_material_1280_720">
-		<sprite name="map_sprite_1280_720" x="0" y="0" w="1280" h="720" />
-	</gui_spritemap>
 	<gui_spritemap name="avatars_spritemaps" width="512" height="512" material="avatars_material">
 		<sprite name="basic_enemy_avatar_sprite" x="0" y="0" w="256" h="256" />
 		<sprite name="player_avatar_sprite" x="256" y="0" w="256" h="256" />
-<!-- 		<sprite name="ranged_enemy_avatar_sprite" x="0" y="256" w="256" h="256" /> -->
+		<!--<sprite name="ranged_enemy_avatar_sprite" x="0" y="256" w="256" h="256" /> -->
 		<sprite name="dragon_avatar_sprite" x="256" y="256" w="256" h="256" />
 	</gui_spritemap>
+	<gui_spritemap name="map_spritemap_1280_720" width="1280" height="720" material="map_material_1280_720">
+		<sprite name="map_sprite_1280_720" x="0" y="0" w="1280" h="720" />
+	</gui_spritemap>	
 </gui_elements>
 
 

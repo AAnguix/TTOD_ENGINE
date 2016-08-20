@@ -36,6 +36,10 @@
 <material name="dynamite_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 	<texture filename="Data\GUI\textures\dynamite.dds"/>
 </material>
+<material name="dead_black_texture_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+<texture filename="Data\GUI\textures\dead_black_texture.png"/>
+</material>
+
 
 <!-- HEALTH -->
 <material name="healthBar_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
@@ -60,9 +64,6 @@
 </material>
 <material name="exit_game_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 	<texture filename="Data\GUI\textures\information.dds"/>
-</material>
-<material name="background_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
-	<texture filename="Data\GUI\textures\background.dds"/>
 </material>
 
 <!-- LOADING SCREEN -->
@@ -133,5 +134,8 @@
 </material>
 	<material name="in_game_music_submenu_modify_music_volume_slider_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\slider.dds"/>
+</material>
+	<material name="restart_game_button_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+		<texture filename="Data\GUI\textures\base.dds"/>
 </material>
 </materials>

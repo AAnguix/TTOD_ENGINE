@@ -30,6 +30,7 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 ,C3DElement(TreeNode)
 ,m_ShadowMap(nullptr)
 ,m_BlackAndWhiteMap(nullptr)
+,m_BlackAndWhiteBlurredMap(nullptr)
 ,m_ShadowMaskTexture(nullptr)
 ,m_ViewShadowMap(m44fZERO)
 ,m_ProjectionShadowMap(m44fZERO)
@@ -60,6 +61,7 @@ CLight::CLight(CXMLTreeNode &TreeNode)
 
 		m_ShadowMap = new CDynamicTexture(GetName()+"_ShadowMap",l_ShadowMapWidth,l_ShadowMapHeight,true,CDynamicTexture::R32_FLOAT);
 		m_BlackAndWhiteMap = new CDynamicTexture(GetName() + "_BlackAndWhiteMap", l_ShadowMapWidth, l_ShadowMapHeight, true, CDynamicTexture::R32G32B32A32_FLOAT);
+		m_BlackAndWhiteBlurredMap = new CDynamicTexture(GetName() + "_BlackAndWhiteBlurredMap", l_ShadowMapWidth, l_ShadowMapHeight, true, CDynamicTexture::R32G32B32A32_FLOAT);
 
 		for (int i = 0; i < TreeNode.GetNumChildren(); ++i)
 		{
@@ -83,6 +85,7 @@ CLight::CLight(const std::string &Name)
 ,m_GenerateShadowMap(false)
 ,m_ShadowMap(nullptr)
 ,m_BlackAndWhiteMap(nullptr)
+,m_BlackAndWhiteBlurredMap(nullptr)
 ,m_ShadowMaskTexture(nullptr)
 ,m_Color(v4fZERO)
 ,m_Intensity(0.0f)
@@ -96,6 +99,7 @@ CLight::~CLight()
 {
 	CHECKED_DELETE(m_ShadowMap);
 	CHECKED_DELETE(m_BlackAndWhiteMap);
+	CHECKED_DELETE(m_BlackAndWhiteBlurredMap);
 	m_Layers.clear();
 }
 

@@ -99,7 +99,7 @@ bool CGame::Initialize()
 	//ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 
 	l_Engine.SetEngineSettings(m_EngineSettings);
-	l_Engine.GetInputMapper()->Initialize(L"./Data/InputContexts.txt",m_hwnd);
+	l_Engine.GetInputMapper()->Initialize(m_hwnd);
 	l_Engine.GetInputMapper()->PushContext(L"maincontext");
 	l_Engine.GetInputMapper()->AddCallback(InputCallback, 0);
 

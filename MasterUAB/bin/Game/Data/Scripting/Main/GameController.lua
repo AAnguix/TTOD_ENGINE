@@ -6,7 +6,6 @@ function CGameController:__init()
 	self.m_Armors = {}
 	self.m_Weapons = {}
 	self.m_Filename = ""
-	g_EventManager:Subscribe(self, "PLAYER_IS_DEAD")
 end
 
 -- Includes
@@ -16,7 +15,7 @@ dofile("./Data/Scripting/Main/LoadEntities.lua")
 
 dofile("./Data/Scripting/Main/GameControllerRemover.lua")
 
-function CGameController:PLAYER_IS_DEAD()
+function CGameController:RestartLastCheckPoint()
 	--Reproducir sonido
 	g_LogManager:Log("Player is DEAD")
 	self:Destroy()
@@ -35,9 +34,19 @@ function CGameController:Update(ElapsedTime)
 end
 
 function CGameController:LoadLevel(Level)
+	g_Engine:AddLevel(Level)
+	g_Engine:LoadLevel(Level)
+	LuaMain() --Load new LUA behavior (per frame)
 	self:LoadXML("Data/Level"..Level.."/game_entities.xml")
 	g_AIManager:LoadLevel(Level)
 	g_ItemManager:LoadItems(Level)
+end
+
+function CGameController:LoadLevelIndependentData()
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle("healthBarManager")
+	g_ShowHealthBarManager  = CShowHealthBarManagerComponent(l_LuaGameObject)
+	g_ScriptManager:AddComponent("healthBarManager",l_LuaGameObject,g_ShowHealthBarManager)
+	table.insert(self.m_Entities,g_ShowHealthBarManager)
 end
 
 function CGameController:LoadXML(Filename)
@@ -80,8 +89,6 @@ function CGameController:LoadXML(Filename)
 				self:LoadLightManager(l_Element,l_Pedestal)
 			elseif l_ElemName=="destructible_wall" then
 				self:LoadDestructibleWall(l_Element)
-			elseif l_ElemName=="show_health_bar_manager" then
-				self:LoadShowHealthBarManager(l_Element)
 			end 
 			
 			g_LogManager:Log("Entity "..i.." loaded")

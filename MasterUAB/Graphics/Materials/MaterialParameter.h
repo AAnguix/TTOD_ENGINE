@@ -24,6 +24,7 @@ protected:
 
 public:
 	CMaterialParameter(CMaterial *Material, CXMLTreeNode &TreeNode, CMaterialParameter::TMaterialType MaterialType);
+	CMaterialParameter(CMaterial *Material, const std::string &Name, CMaterialParameter::TMaterialType MaterialType);
 	virtual ~CMaterialParameter();
 	virtual void Apply() = 0;
 	virtual void * GetValueAddress() const = 0;

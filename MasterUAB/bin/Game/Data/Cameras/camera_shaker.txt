@@ -1,0 +1,8 @@
+ShakerRandoms/yaw_randoms_0.txt
+ShakerRandoms/pìtch_randoms_0.txt
+ShakerRandoms/yaw_randoms_1.txt
+ShakerRandoms/pìtch_randoms_1.txt
+ShakerRandoms/yaw_randoms_2.txt
+ShakerRandoms/pìtch_randoms_2.txt
+ShakerRandoms/yaw_randoms_3.txt
+ShakerRandoms/pìtch_randoms_3.txt

@@ -1,6 +1,6 @@
 --EVENTS
 
-function CPlayerComponent:PLAYER_OPENS_MAP() self:OpenMap() end
+function CPlayerComponent:PLAYER_OPENS_MAP() if(g_Engine:IsPaused()==false) then self:OpenMap() end end
 function CPlayerComponent:PLAYER_ATTACKS() if self:IsAttackFinished() then self.m_LuaGameObject:SetTrigger("Attack") end end
 function CPlayerComponent:PLAYER_BLOCKS() self.m_LuaGameObject:SetTrigger("Block") end
 function CPlayerComponent:PLAYER_DRINKS_BEER() self:DrinkBeer() end
