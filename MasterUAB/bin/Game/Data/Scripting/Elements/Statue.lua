@@ -1,51 +1,29 @@
 class 'CStatueComponent' (CActivableElement)
-function CStatueComponent:__init(CLuaGameObject, MagicBallLuaGameObject)
-	CActivableElement.__init(self, CLuaGameObject, 5.0, "Statue")
-	self.m_MagicBall = MagicBallLuaGameObject
-	self.m_MagicBallCasted = false
-	self.m_ShootVelocity = 2.0
-	g_EventManager:Subscribe( self, "PLAYER_INTERACTS" )
-	g_EventManager:Subscribe( self, "DragonImpactedByMagicBall" )
+function CStatueComponent:__init(CLuaGameObject, GrowthTime)
+	CActivableElement.__init(self, CLuaGameObject, 20.0, "Statue","THROW_MAGIC_BALL")   --1.4
+	self.m_Enabled = false
+	self.m_MagicBallThrown = false
+	self.m_GrowthTime = GrowthTime
+	
 	local l_AudioSourceName = self.m_LuaGameObject:GetName().."_AudioSource"
 	g_SoundManager:AddComponent(l_AudioSourceName, self.m_LuaGameObject)
 	--self.m_LuaGameObject:AddSound("MagicBallSound","Play_MagicBallSound")
-end
-
---Event
-function CStatueComponent:PLAYER_INTERACTS()
-	if(CActivableElement.IsActivable(self)) then
-		self:CastMagicBall()
-	end
+	
+	g_EventManager:Subscribe( self, "PLAYER_INTERACTS" )
 end
 
 function CStatueComponent:Update(ElapsedTime)
-	self:AddTime(ElapsedTime)
-	CActivableElement.Update(self,ElapsedTime)
-	if CActivableElement.IsActivable(self) then
-		local l_Pos = SGUIPosition(0.4,0.7,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-		g_GUIManager:DoText("MagicBallText","felix_font",l_Pos,"","Cast Magic Ball [E]")
+	if (self.m_Enabled) then
+		self:AddTime(ElapsedTime)
+		CActivableElement.Update(self,ElapsedTime)
+		if CActivableElement.IsActivable(self) then
+			local l_Pos = SGUIPosition(0.4,0.7,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+			g_GUIManager:DoText("MagicBallText","felix_font",l_Pos,"","Cast Magic Ball [E]")
+		end
+	
 	end
-	if self.m_MagicBallCasted then
-		self:UpdateMagicBall(ElapsedTime)
-	end
 end
 
-function CStatueComponent:UpdateMagicBall(ElapsedTime)
-	--local l_Displacement = g_Dragon:GetPosition() - self.m_MagicBall:GetPosition()
-	local l_Displacement = g_Player:GetPosition() - self.m_MagicBall:GetPosition()
-	l_Displacement:Normalize(1)
-	local l_Constant = 0.3
-	local l_Base = 1.1
-	local l_Exponent = math.sqrt(self:GetTimer())
-	local l_NewPosition = self.m_MagicBall:GetPosition() + ExponentialDisplacement(l_Displacement,l_Constant,l_Base,l_Exponent)
-	self.m_MagicBall:SetPosition(l_NewPosition)
-end
+function CStatueComponent:Enable(Value)	self.m_Enabled = Value end
 
-function CStatueComponent:DragonImpactedByMagicBall()
-	self.m_MagicBallCasted = false
-end
-
-function CStatueComponent:CastMagicBall()
-	self.m_MagicBallCasted = true
-	--g_EventManager:FireEvent("MagicBallCasted")
-end
+function CStatueComponent:GetGrowthTime() return self.m_GrowthTime end

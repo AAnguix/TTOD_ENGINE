@@ -5,14 +5,16 @@
 #include "Render\Frustum.h"
 #include "RenderableObjects\RenderableObject.h"
 #include <vector>
-#include "Render\ContextManager.h"
+#include "Math\Color.h"
 
-#define ENABLE_FRUSTUM 0
-
+class CContextManager;
+class CEffectTechnique;
 class CRenderableObjectsManager;
 class CTexture;
 class CDebugRender;
-class CRenderableVertexs;;
+class CRenderableVertexs;
+
+#define ENABLE_FRUSTUM 0
 
 class CRenderManager
 {
@@ -32,9 +34,9 @@ public:
 
 	void Render(CContextManager* _Context);
 
-	CContextManager * GetContextManager() const {return m_ContextManager;}
+	CContextManager* GetContextManager() const {return m_ContextManager;}
 
-	void DrawScreenQuad(CEffectTechnique *EffectTechnique, CTexture *Texture, float x, float y, float Width, float Height, const CColor &Color);
+	void DrawScreenQuad(CEffectTechnique* EffectTechnique, CTexture *Texture, float x, float y, float Width, float Height, const CColor &Color);
 
 	void RenderDebugLights();
 	void RenderDebugLayer(CRenderableObjectsManager* Layer);
@@ -46,7 +48,7 @@ public:
 	CFrustum GetFrustum() const;
 
 private:
-	CContextManager *m_ContextManager;
+	CContextManager* m_ContextManager;
 	CDebugRender *m_DebugRender;
 
 	CCamera m_CurrentCamera;

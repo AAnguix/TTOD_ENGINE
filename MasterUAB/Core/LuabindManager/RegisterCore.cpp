@@ -160,6 +160,7 @@ void CLuabindManager::RegisterCore()
 		.def("Add", &CLuaGameObjectHandleManager::Add)
 		.def("Get", &CLuaGameObjectHandleManager::Get)
 		.def("Remove", &CLuaGameObjectHandleManager::Remove)
+		.def("RemoveCharacterCollider", &CLuaGameObjectHandleManager::RemoveCharacterCollider)
 	];
 
 	module(LUA_STATE)
@@ -548,12 +549,13 @@ void CLuabindManager::RegisterComponents()
 	module(LUA_STATE)
 	[
 		class_<EAnimation>("EAnimation")
-		.def(constructor<const std::string&, bool, unsigned int, float, float>())
+		.def(constructor<const std::string&, bool, unsigned int, float, float, bool>())
 		.def(constructor<>())
 		.def_readonly("m_Loop", &EAnimation::m_Loop)
 		.def_readonly("m_ID", &EAnimation::m_ID)
 		.def_readonly("m_Weight", &EAnimation::m_Weight)
 		.def_readonly("m_Duration", &EAnimation::m_Duration)
+		.def_readonly("m_AutoLock", &EAnimation::m_AutoLock)
 	];
 
 	module(LUA_STATE)

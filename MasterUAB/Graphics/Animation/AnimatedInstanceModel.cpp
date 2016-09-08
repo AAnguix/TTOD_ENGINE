@@ -5,27 +5,29 @@
 #include "cal3d\model.h"
 #include "cal3d\mixer.h"
 #include "cal3d\animation.h"
+#include "cal3d\animation_action.h"
+#include "cal3d\animation_cycle.h"
 #include "cal3d\skeleton.h"
 #include "cal3d\bone.h"
 
 #include "XML\XMLTreeNode.h"
-#include "Materials\Material.h"
 #include "Vertex\RenderableVertexs.h"
 #include "Vertex\VertexTypes.h"
+#include "Textures\TextureManager.h"
 #include "Engine\Engine.h"
+#include "RenderableObjects\RenderableObjectTechnique.h"
 #include "Animation\AnimatedModelManager.h"
 #include "Animation\tick.h"
-#include "Textures\TextureManager.h"
-#include "RenderableObjects\RenderableObjectTechnique.h"
 #include "Log\Log.h"
+
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(CGameObject* Owner, const std::string &Name, const std::string &ModelName, const Vect3f &Position, float Yaw, float Pitch, float Roll)
 :CRenderableObject(Owner, Name, Position, Yaw, Pitch, Roll)
-,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL), m_TemporalMaterials(NULL)
+,m_CalModel(nullptr), m_AnimatedCoreModel(nullptr), m_CalHardwareModel(nullptr), m_Materials(NULL), m_RenderableVertexs(nullptr), m_TemporalMaterials(NULL)
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
-,m_TemporalRenderbleObjectTechnique(NULL)
+,m_TemporalRenderbleObjectTechnique(nullptr)
 {
 	CAnimatedCoreModel* l_AnimatedCoreModel = CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(ModelName);
 	if (l_AnimatedCoreModel == nullptr)
@@ -40,11 +42,11 @@ CAnimatedInstanceModel::CAnimatedInstanceModel(CGameObject* Owner, const std::st
 
 CAnimatedInstanceModel::CAnimatedInstanceModel(CXMLTreeNode &TreeNode)
 :CRenderableObject(TreeNode)
-,m_CalModel(NULL), m_AnimatedCoreModel(NULL), m_CalHardwareModel(NULL), m_Materials(NULL), m_RenderableVertexs(NULL), m_TemporalMaterials(NULL)
+,m_CalModel(nullptr), m_AnimatedCoreModel(nullptr), m_CalHardwareModel(nullptr), m_Materials(NULL), m_RenderableVertexs(nullptr), m_TemporalMaterials(NULL)
 ,m_NumVertices(0), m_NumFaces(0), m_lastTick(0)
 ,m_fpsDuration(0.0f), m_fpsFrames(0), m_fps(0)
 ,m_bPaused(false), m_blendTime(0.3f)
-,m_TemporalRenderbleObjectTechnique(NULL)
+,m_TemporalRenderbleObjectTechnique(nullptr)
 {
 	std::string l_ModelName = TreeNode.GetPszProperty("model_name");
 	CAnimatedCoreModel* l_AnimatedCoreModel = CEngine::GetSingleton().GetAnimatedModelManager()->GetResource(l_ModelName);
@@ -168,11 +170,6 @@ void CAnimatedInstanceModel::SetTemporalRenderableObjectTechnique(CRenderableObj
 
 void CAnimatedInstanceModel::Render(CRenderManager *RenderManager)
 {	
-	//CalBoundingBox l_BoundingBox = m_CalModel->getBoundingBox();
-	//CalVector* l_CalVector[8];
-
-	//l_BoundingBox.computePoints(l_CalVector[0]);
-
 	if (m_Enabled) //&& (RenderManager->GetFrustum().BoxVisible(l_Max, l_Min))
 	{
 		CEffectManager::m_SceneEffectParameters.m_World = GetTransform();
@@ -247,14 +244,18 @@ void CAnimatedInstanceModel::Update(float ElapsedTime)
 		m_CalModel->update(ElapsedTime);
 }
 
-void CAnimatedInstanceModel::ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget, bool AutoLock)
+void CAnimatedInstanceModel::ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget, float Speed, bool AutoLock)
 {
 	m_CalModel->getMixer()->executeAction(Id, DelayIn, DelayOut,WeightTarget,AutoLock);
+	std::list<CalAnimationAction*> l_AnimationActionList = m_CalModel->getMixer()->getAnimationActionList();
+	if (l_AnimationActionList.size()>0)
+		l_AnimationActionList.front()->setTimeFactor(Speed);
 }
 
-void CAnimatedInstanceModel::BlendCycle(int Id, float Weight, float DelayIn)
+void CAnimatedInstanceModel::BlendCycle(int Id, float Weight, float DelayIn, float Speed)
 {
-	 m_CalModel->getMixer()->blendCycle(Id, Weight, DelayIn);
+	m_CalModel->getMixer()->setTimeFactor(Speed);
+	m_CalModel->getMixer()->blendCycle(Id, Weight, DelayIn);
 }
 
 void CAnimatedInstanceModel::ClearCycle(int Id, float DelayOut)
@@ -264,18 +265,40 @@ void CAnimatedInstanceModel::ClearCycle(int Id, float DelayOut)
 
 bool CAnimatedInstanceModel::IsCycleAnimationActive(int Id) const
 {
-	if(m_CalModel->getMixer()->getAnimationVector().at(Id)->getType()==CalAnimation::TYPE_CYCLE && 
-		m_CalModel->getMixer()->getAnimationVector().at(Id)->getState()==CalAnimation::STATE_IN)
-		return true;
+	CalCoreAnimation* l_CoreAnimation = m_CalModel->getCoreModel()->getCoreAnimation(Id);
+	if (l_CoreAnimation == 0) { return false; }
+
+	std::list<CalAnimationCycle*> l_AnimationCycleList = m_CalModel->getMixer()->getAnimationCycle();
+	if (l_AnimationCycleList.size() == 0)
+		return false;
+
+	for (std::list<CalAnimationCycle*>::iterator it = l_AnimationCycleList.begin(); it != l_AnimationCycleList.end(); ++it)
+	{
+		std::string l_Name = l_CoreAnimation->getName();
+		std::string l_NameIt = (*it)->getCoreAnimation()->getName();
+		if (l_Name == l_NameIt)
+			return true;
+	}
 
 	return false;
 }
 
 bool CAnimatedInstanceModel::IsActionAnimationActive(int Id) const
 {
-	if(m_CalModel->getMixer()->getAnimationVector().at(Id)->getType()==CalAnimation::TYPE_ACTION && 
-		m_CalModel->getMixer()->getAnimationVector().at(Id)->getState()==CalAnimation::STATE_IN)
-		return true;
+	CalCoreAnimation* l_CoreAnimation = m_CalModel->getCoreModel()->getCoreAnimation(Id);
+	if (l_CoreAnimation == 0) { return false; }
+
+	std::list<CalAnimationAction*> l_AnimationActionList = m_CalModel->getMixer()->getAnimationActionList();
+	if (l_AnimationActionList.size() == 0)
+		return false;
+
+	for (std::list<CalAnimationAction*>::iterator it = l_AnimationActionList.begin(); it != l_AnimationActionList.end(); ++it)
+	{
+		std::string l_Name = l_CoreAnimation->getName();
+		std::string l_NameIt = (*it)->getCoreAnimation()->getName();
+		if (l_Name == l_NameIt)
+			return true;
+	}
 
 	return false;
 }
@@ -284,6 +307,9 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 {
 	m_NumVertices = 0;
 	m_NumFaces = 0;
+	unsigned int l_VertexType = 0;
+	if (m_AnimatedCoreModel->GetVertexTypes().size() > 0)
+		l_VertexType = m_AnimatedCoreModel->GetVertexTypes()[0];
 
 	CalCoreModel *l_CalCoreModel = m_AnimatedCoreModel->GetCoreModel();
 	for (int i = 0; i<l_CalCoreModel->getCoreMeshCount(); ++i)
@@ -297,26 +323,54 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 		}
 	}
 
-	MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*l_Vertexs = (MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*)malloc(m_NumFaces * 3 * sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	CalIndex *l_Faces = (CalIndex *)malloc(m_NumFaces * 3 * sizeof(CalIndex));
-	m_CalHardwareModel->setVertexBuffer((char*)l_Vertexs, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setWeightBuffer(((char*)l_Vertexs) + 12, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setMatrixIndexBuffer(((char*)l_Vertexs) + 28, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setNormalBuffer(((char*)l_Vertexs) + 44, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setTextureCoordNum(1);
-	m_CalHardwareModel->setTextureCoordBuffer(0, ((char*)l_Vertexs) + 56, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
-	m_CalHardwareModel->setIndexBuffer(l_Faces);
-	m_CalHardwareModel->load(0, 0, MAXBONES);
-	m_NumFaces = m_CalHardwareModel->getTotalFaceCount();
-	m_NumVertices = m_CalHardwareModel->getTotalVertexCount();
+	if (l_VertexType == MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::GetVertexType())
+	{
+		MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX*l_Vertexs = (MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX*)malloc(m_NumFaces * 3 * sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		CalIndex *l_Faces = (CalIndex *)malloc(m_NumFaces * 3 * sizeof(CalIndex));
+		m_CalHardwareModel->setVertexBuffer((char*)l_Vertexs, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		m_CalHardwareModel->setWeightBuffer(((char*)l_Vertexs) + 12, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		m_CalHardwareModel->setMatrixIndexBuffer(((char*)l_Vertexs) + 28, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		m_CalHardwareModel->setNormalBuffer(((char*)l_Vertexs) + 44, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		m_CalHardwareModel->setTextureCoordNum(1);
+		m_CalHardwareModel->setTextureCoordBuffer(0, ((char*)l_Vertexs) + 88, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		m_CalHardwareModel->setIndexBuffer(l_Faces);
+		m_CalHardwareModel->load(0, 0, MAXBONES);
+		m_NumFaces = m_CalHardwareModel->getTotalFaceCount();
+		m_NumVertices = m_CalHardwareModel->getTotalVertexCount();
 
-	if (sizeof(CalIndex) == 2)
-		m_RenderableVertexs = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
-	else
-		m_RenderableVertexs = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
+		CRenderableVertexs::CalcTangentsAndBinormals(l_Vertexs, (unsigned short*)l_Faces, m_NumVertices, m_NumFaces, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX), 0, 44, 56, 72, 88);
+	
+		if (sizeof(CalIndex) == 2)
+			m_RenderableVertexs = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
+		else
+			m_RenderableVertexs = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
+		
+		free(l_Vertexs);
+		free(l_Faces);
+	}
+	else if (l_VertexType == MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX::GetVertexType())
+	{
+		MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*l_Vertexs = (MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX*)malloc(m_NumFaces * 3 * sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+		CalIndex *l_Faces = (CalIndex *)malloc(m_NumFaces * 3 * sizeof(CalIndex));
+		m_CalHardwareModel->setVertexBuffer((char*)l_Vertexs, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+		m_CalHardwareModel->setWeightBuffer(((char*)l_Vertexs) + 12, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+		m_CalHardwareModel->setMatrixIndexBuffer(((char*)l_Vertexs) + 28, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+		m_CalHardwareModel->setNormalBuffer(((char*)l_Vertexs) + 44, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+		m_CalHardwareModel->setTextureCoordNum(1);
+		m_CalHardwareModel->setTextureCoordBuffer(0, ((char*)l_Vertexs) + 56, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX));
+		m_CalHardwareModel->setIndexBuffer(l_Faces);
+		m_CalHardwareModel->load(0, 0, MAXBONES);
+		m_NumFaces = m_CalHardwareModel->getTotalFaceCount();
+		m_NumVertices = m_CalHardwareModel->getTotalVertexCount();
 
-	free(l_Vertexs);
-	free(l_Faces);
+		if (sizeof(CalIndex) == 2)
+			m_RenderableVertexs = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
+		else
+			m_RenderableVertexs = new CTriangleListRenderableIndexed32Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);
+	
+		free(l_Vertexs);
+		free(l_Faces);
+	}
 
 	return true;
 }

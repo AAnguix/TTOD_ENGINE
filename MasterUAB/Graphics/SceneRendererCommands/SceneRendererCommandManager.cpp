@@ -33,6 +33,7 @@
 #include "Log\Log.h"
 
 CSceneRendererCommandManager::CSceneRendererCommandManager()
+:m_Filename("")
 {
 }
 
@@ -57,236 +58,135 @@ bool CSceneRendererCommandManager::Load(const std::string &Filename)
 			for (int i = 0; i < l_Commands.GetNumChildren(); ++i)
 			{
 				CXMLTreeNode l_Element = l_Commands(i);
+				std::string l_CommandName = l_Element.GetName();
+				CSceneRendererCommand* l_Command = nullptr;
 
-				int l_Size = m_ResourcesVector.size();
-				std::ostringstream ostr;
-				ostr << l_Size;
-				std::string l_S = "_" + ostr.str();
-
-				if (l_Element.GetName() == std::string("set_depth_stencil_state"))
+				if (l_CommandName == std::string("set_depth_stencil_state"))
 				{
-					CSetDepthStencilStateSceneRendererCommand* l_SetDSS = new CSetDepthStencilStateSceneRendererCommand(l_Element);
-					if (!AddResource(l_SetDSS->GetName() + l_S, l_SetDSS))
-					{
-						CHECKED_DELETE(l_SetDSS);
-					}
+					l_Command = new CSetDepthStencilStateSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("set_pool_renderable_objects_technique"))
+				else if (l_CommandName == std::string("set_pool_renderable_objects_technique"))
 				{
-					CSetPoolRenderableObjectsTechniqueSceneRendererCommand* l_PROTechnique = new CSetPoolRenderableObjectsTechniqueSceneRendererCommand(l_Element);
-					if (!AddResource(l_PROTechnique->GetName() + l_S, l_PROTechnique))
-					{
-						CHECKED_DELETE(l_PROTechnique);
-					}
+					l_Command = new CSetPoolRenderableObjectsTechniqueSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("generate_shadow_maps"))
+				else if (l_CommandName == std::string("generate_shadow_maps"))
 				{
-					CGenerateShadowMapsSceneRendererCommand* l_GenerateShadowMap = new CGenerateShadowMapsSceneRendererCommand(l_Element);
-					if (!AddResource(l_GenerateShadowMap->GetName() + l_S, l_GenerateShadowMap))
-					{
-						CHECKED_DELETE(l_GenerateShadowMap);
-					}
+					l_Command = new CGenerateShadowMapsSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("generate_black_and_white_maps"))
+				else if (l_CommandName == std::string("generate_black_and_white_maps"))
 				{
-					CGenerateBlackAndWhiteMapsSceneRendererCommand* l_GenerateBlackAndWhiteMap = new CGenerateBlackAndWhiteMapsSceneRendererCommand(l_Element);
-					if (!AddResource(l_GenerateBlackAndWhiteMap->GetName() + l_S, l_GenerateBlackAndWhiteMap))
-					{
-						CHECKED_DELETE(l_GenerateBlackAndWhiteMap);
-					}
+					l_Command = new CGenerateBlackAndWhiteMapsSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("set_render_target"))
+				else if (l_CommandName == std::string("set_render_target"))
 				{
-					CSetRenderTargetSceneRendererCommand* l_SetRTarget = new CSetRenderTargetSceneRendererCommand(l_Element);
-					if (!AddResource(l_SetRTarget->GetName() + l_S, l_SetRTarget))
-					{
-						CHECKED_DELETE(l_SetRTarget);
-					}
+					l_Command = new CSetRenderTargetSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("unset_render_target"))
+				else if (l_CommandName == std::string("unset_render_target"))
 				{
-					CUnsetRenderTargetSceneRendererCommand* l_UnsetRTarget = new CUnsetRenderTargetSceneRendererCommand(l_Element);
-					if (!AddResource(l_UnsetRTarget->GetName() + l_S, l_UnsetRTarget))
-					{
-						CHECKED_DELETE(l_UnsetRTarget);
-					}
+					l_Command = new CUnsetRenderTargetSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("set_matrices"))
+				else if (l_CommandName == std::string("set_matrices"))
 				{
-					CSetMatricesSceneRendererCommand* l_SetMatricesCommand = new CSetMatricesSceneRendererCommand(l_Element);
-					if (!AddResource(l_SetMatricesCommand->GetName() + l_S, l_SetMatricesCommand))
-					{
-						CHECKED_DELETE(l_SetMatricesCommand);
-					}
+					l_Command = new CSetMatricesSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("clear"))
+				else if (l_CommandName == std::string("clear"))
 				{
-					CClearSceneRendererCommand* l_ClearCommand = new CClearSceneRendererCommand(l_Element);
-					if (!AddResource(l_ClearCommand->GetName() + l_S, l_ClearCommand))
-					{
-						CHECKED_DELETE(l_ClearCommand);
-					}
+					l_Command = new CClearSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("enable_alpha_blend"))
+				else if (l_CommandName == std::string("enable_alpha_blend"))
 				{
-					CEnableAlphaBlendSceneRendererCommand* l_EnableAB = new CEnableAlphaBlendSceneRendererCommand(l_Element);
-					if (!AddResource(l_EnableAB->GetName() + l_S, l_EnableAB))
-					{
-						CHECKED_DELETE(l_EnableAB);
-					}
+					l_Command = new CEnableAlphaBlendSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("enable_additive_alpha_blend"))
+				else if (l_CommandName == std::string("enable_additive_alpha_blend"))
 				{
-					CEnableAdditiveAlphaBlendSceneRendererCommand* l_EnableAdditiveAB = new CEnableAdditiveAlphaBlendSceneRendererCommand(l_Element);
-					if (!AddResource(l_EnableAdditiveAB->GetName() + l_S, l_EnableAdditiveAB))
-					{
-						CHECKED_DELETE(l_EnableAdditiveAB);
-					}
+					l_Command = new CEnableAdditiveAlphaBlendSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("disable_alpha_blend"))
+				else if (l_CommandName == std::string("disable_alpha_blend"))
 				{
-					CDisableAlphaBlendSceneRendererCommand* l_DisableAB = new CDisableAlphaBlendSceneRendererCommand(l_Element);
-					if (!AddResource(l_DisableAB->GetName() + l_S, l_DisableAB))
-					{
-						CHECKED_DELETE(l_DisableAB);
-					}
+					l_Command = new CDisableAlphaBlendSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_layer"))
+				else if (l_CommandName == std::string("render_layer"))
 				{
-					CRenderLayerSceneRendererCommand* l_RenderLayerCommand = new CRenderLayerSceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderLayerCommand->GetName() + l_S, l_RenderLayerCommand))
-					{
-						CHECKED_DELETE(l_RenderLayerCommand);
-					}
+					l_Command = new CRenderLayerSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_debug_layer"))
+				else if (l_CommandName == std::string("render_debug_layer"))
 				{
-					CRenderDebugLayerSceneRendererCommand* l_RenderDebugLayerCommand = new CRenderDebugLayerSceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderDebugLayerCommand->GetName() + l_S, l_RenderDebugLayerCommand))
-					{
-						CHECKED_DELETE(l_RenderDebugLayerCommand);
-					}
+					l_Command = new CRenderDebugLayerSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_debug_grid"))
+				else if (l_CommandName == std::string("render_debug_grid"))
 				{
-					CRenderDebugGridSceneRendererCommand* l_RenderDebugGrid = new CRenderDebugGridSceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderDebugGrid->GetName() + l_S, l_RenderDebugGrid))
-					{
-						CHECKED_DELETE(l_RenderDebugGrid);
-					}
+					l_Command = new CRenderDebugGridSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_gui"))
+				else if (l_CommandName == std::string("render_gui"))
 				{
-					CRenderGUISceneRendererCommand* l_RenderGUI = new CRenderGUISceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderGUI->GetName() + l_S, l_RenderGUI))
-					{
-						CHECKED_DELETE(l_RenderGUI);
-					}
+					l_Command = new CRenderGUISceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_debug_gui"))
+				else if (l_CommandName == std::string("render_debug_gui"))
 				{
-					CRenderDebugGUISceneRendererCommand* l_RenderDebugGUI = new CRenderDebugGUISceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderDebugGUI->GetName() + l_S, l_RenderDebugGUI))
-					{
-						CHECKED_DELETE(l_RenderDebugGUI);
-					}
+					l_Command = new CRenderDebugGUISceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_debug_lights"))
+				else if (l_CommandName == std::string("render_debug_lights"))
 				{
-					CRenderDebugLightsSceneRendererCommand* l_RenderDebugLights = new CRenderDebugLightsSceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderDebugLights->GetName() + l_S, l_RenderDebugLights))
-					{
-						CHECKED_DELETE(l_RenderDebugLights);
-					}
+					l_Command = new CRenderDebugLightsSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_debug_shadowmap"))
+				else if (l_CommandName == std::string("render_debug_shadowmap"))
 				{
-					CRenderDebugShadowMapsSceneRendererCommand* l_RenderDebugShadowmap = new CRenderDebugShadowMapsSceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderDebugShadowmap->GetName() + l_S, l_RenderDebugShadowmap))
-					{
-						CHECKED_DELETE(l_RenderDebugShadowmap);
-					}
+					l_Command = new CRenderDebugShadowMapsSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_debug_black_and_white_map"))
+				else if (l_CommandName == std::string("render_debug_black_and_white_map"))
 				{
-					CRenderDebugBlackAndWhiteMapsSceneRendererCommand* l_RenderDebugBlackAndWhiteMap = new CRenderDebugBlackAndWhiteMapsSceneRendererCommand(l_Element);
-					if (!AddResource(l_RenderDebugBlackAndWhiteMap->GetName() + l_S, l_RenderDebugBlackAndWhiteMap))
-					{
-						CHECKED_DELETE(l_RenderDebugBlackAndWhiteMap);
-					}
+					l_Command = new CRenderDebugBlackAndWhiteMapsSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("render_draw_quad"))
+				else if (l_CommandName == std::string("render_draw_quad"))
 				{
-					CDrawQuadRendererCommand* l_DrawQuadCommand = new CDrawQuadRendererCommand(l_Element);
-					if (!AddResource(l_DrawQuadCommand->GetName() + l_S, l_DrawQuadCommand))
-					{
-						CHECKED_DELETE(l_DrawQuadCommand);
-					}
+					l_Command = new CDrawQuadRendererCommand(l_Element);
 				}
-
-				else if (l_Element.GetName() == std::string("render_deferred_shading"))
+				else if (l_CommandName == std::string("render_deferred_shading"))
 				{
-					CDeferredShadingSceneRendererCommand* l_DeferredShading = new CDeferredShadingSceneRendererCommand(l_Element);
-					if (!AddResource(l_DeferredShading->GetName() + l_S, l_DeferredShading))
-					{
-						CHECKED_DELETE(l_DeferredShading);
-					}
+					l_Command = new CDeferredShadingSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("capture_frame_buffer"))
+				else if (l_CommandName == std::string("capture_frame_buffer"))
 				{
-					CCaptureFrameBufferSceneRendererCommand* l_CaptureFrameCommand = new CCaptureFrameBufferSceneRendererCommand(l_Element);
-					if (!AddResource(l_CaptureFrameCommand->GetName() + l_S, l_CaptureFrameCommand))
-					{
-						CHECKED_DELETE(l_CaptureFrameCommand);
-					}
+					l_Command = new CCaptureFrameBufferSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("capture_stencil_buffer"))
+				else if (l_CommandName == std::string("capture_stencil_buffer"))
 				{
-					CCaptureStencilBufferSceneRendererCommand* l_CaptureStencilBufferCommand = new CCaptureStencilBufferSceneRendererCommand(l_Element);
-					if (!AddResource(l_CaptureStencilBufferCommand->GetName() + l_S, l_CaptureStencilBufferCommand))
-					{
-						CHECKED_DELETE(l_CaptureStencilBufferCommand);
-					}
+					l_Command = new CCaptureStencilBufferSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("set_light_constants"))
+				else if (l_CommandName == std::string("set_light_constants"))
 				{
-					CSetLightConstantsSceneRendererCommand* l_SetLightConstants = new CSetLightConstantsSceneRendererCommand(l_Element);
-					if (!AddResource(l_SetLightConstants->GetName() + l_S, l_SetLightConstants))
-					{
-						CHECKED_DELETE(l_SetLightConstants);
-					}
+					l_Command = new CSetLightConstantsSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("present"))
+				else if (l_CommandName == std::string("present"))
 				{
-					CPresentSceneRendererCommand* l_PresentCommand = new CPresentSceneRendererCommand(l_Element);
-					if (!AddResource(l_PresentCommand->GetName() + l_S, l_PresentCommand))
-					{
-						CHECKED_DELETE(l_PresentCommand);
-					}
+					l_Command = new CPresentSceneRendererCommand(l_Element);
 				}
-				else if (l_Element.GetName() == std::string("apply_filters"))
+				else if (l_CommandName == std::string("apply_filters"))
 				{
-					CApplyFiltersSceneRendererCommand* l_ApplyFilters = new CApplyFiltersSceneRendererCommand(l_Element);
-					if (!AddResource(l_ApplyFilters->GetName() + l_S, l_ApplyFilters))
-					{
-						CHECKED_DELETE(l_ApplyFilters);
-					}
+					l_Command = new CApplyFiltersSceneRendererCommand(l_Element);
 				}
 				else
 				{
-					std::string l_Name = l_Element.GetName();
-					if (l_Name != "comment")
+					if (l_CommandName != "comment")
 					{
 						#ifdef _DEBUG
-							CEngine::GetSingleton().GetLogManager()->Log(std::string(l_Element.GetName()) + " command doesn't exists");
+							CEngine::GetSingleton().GetLogManager()->Log(l_CommandName + " command doesn't exists");
 						#endif
 						assert(false);
+					}
+				}
+
+				if (l_Command != nullptr)
+				{
+					if (!AddResource(l_Command->GetName() + "_" + std::to_string(m_ResourcesVector.size()), l_Command))
+					{
+						CHECKED_DELETE(l_Command);
 					}
 				}
 			}
 
 			#ifdef _DEBUG
-					CEngine::GetSingleton().GetLogManager()->Log(m_Filename+" loaded");
+				CEngine::GetSingleton().GetLogManager()->Log(m_Filename+" loaded");
 			#endif
 
 			return true;
@@ -314,24 +214,26 @@ bool CSceneRendererCommandManager::Reload()
 	return l_Result;
 }
 
-void CSceneRendererCommandManager::Execute(CRenderManager &RenderManager)
+bool CSceneRendererCommandManager::Execute(CRenderManager &RenderManager) const
 {
-	#ifdef _DEBUG
-	if (m_ResourcesVector.size()==0)
-		CEngine::GetSingleton().GetLogManager()->Log("There aren't any renderer commands");
-	#endif
+	if (m_ResourcesVector.size() == 0)
+	{
+		#ifdef _DEBUG 
+			LOG("There aren't any renderer commands"); 
+		#endif
+		return false;
+	}
 
 	for(size_t i=0;i<m_ResourcesVector.size();++i)
 	{
-		if(m_ResourcesVector[i]->GetActive())
-			m_ResourcesVector[i]->Execute(RenderManager);
+		if (m_ResourcesVector[i]->GetActive()){ m_ResourcesVector[i]->Execute(RenderManager); }
 	}
+	return true;
 }
 
 void CSceneRendererCommandManager::ActivateCommand(unsigned int Index, bool Activate)
 {
-	if (Index<m_ResourcesVector.size())
-		m_ResourcesVector[Index]->SetActive(Activate);
+	if (Index < m_ResourcesVector.size()) { m_ResourcesVector[Index]->SetActive(Activate); }
 }
 
 const std::vector<CSceneRendererCommand *> & CSceneRendererCommandManager::GetLUASceneRendererCommands()

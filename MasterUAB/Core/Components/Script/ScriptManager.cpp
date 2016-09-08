@@ -4,10 +4,12 @@
 #include "Components\LuaComponent.h"
 #include "Components\Script\Script.h"
 #include <assert.h>
-#include "Engine\Engine.h"
 #include "Log\Log.h"
+#include "Engine\Engine.h"
+#include "Engine\EngineSettings.h"
 
 CScriptManager::CScriptManager()
+:m_Components(NULL)
 {
 }
 CScriptManager::~CScriptManager()
@@ -24,8 +26,9 @@ void CScriptManager::UpdateComponents(float ElapsedTime)
 {
 	for (size_t i = 0; i < m_Components.size(); ++i)
 	{
-		if (m_Components[i])
-			m_Components[i]->Update(ElapsedTime);
+		if (CEngine::GetSingleton().GetEngineSettings()->GetDebugOptions().m_DebugScriptManager)
+			LOG("Updating component: " + m_Components[i]->GetName());
+		m_Components[i]->Update(ElapsedTime);
 	}
 }
 
@@ -67,8 +70,10 @@ CScript* CScriptManager::AddComponent(const std::string& Name, CLuaGameObjectHan
 	}
 	else
 	{
+		#ifdef _DEBUG
+			if (!Component)	{ LOG("Error. Component "+Name+" already exists"); }
+		#endif
 		assert(false);
-		delete(l_Script); l_Script = NULL;
 	}
 
 	return l_Script;

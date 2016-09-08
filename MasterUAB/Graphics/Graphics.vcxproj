@@ -16,6 +16,7 @@
     <ClInclude Include="Animation\AnimatedModelManager.h" />
     <ClInclude Include="Animation\tick.h" />
     <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Camera\CameraConstants.h" />
     <ClInclude Include="Camera\CameraController.h" />
     <ClInclude Include="Camera\CameraControllerManager.h" />
     <ClInclude Include="Camera\CameraSmoother.h" />
@@ -257,6 +258,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\include;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\include;$(SolutionDir)Core;$(SolutionDir)Base\Utils;$(SolutionDir)Graphics;$(SolutionDir)3rdParty\cal3d-0.11rc2\src\;$(SolutionDir)PhysX;$(SolutionDir)GUI;$(SolutionDir)\3rdParty\DirectXTK\Inc;$(SolutionDir)\3rdParty\boost_1_34_0;$(SolutionDir)\3rdParty\lua\src;$(SolutionDir)\3rdParty\luabind;$(SolutionDir)\bin\Game</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

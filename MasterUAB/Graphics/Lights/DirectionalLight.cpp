@@ -4,6 +4,8 @@
 #include "XML\XMLTreeNode.h"
 #include "GameObject\GameObjectManager.h"
 #include "Engine\Engine.h"
+#include "Effects\EffectManager.h"
+#include "Render\ContextManager.h"
 
 CDirectionalLight::CDirectionalLight(const std::string &Name)
 :CLight(Name)

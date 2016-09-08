@@ -1,22 +1,22 @@
 #ifndef _GRAPHICSMANAGER_H
 #define _GRAPHICSMANAGER_H
 
-#include "Render\ContextManager.h"
+class CContextManager;
 class CRenderManager;
+#include <windows.h>
 
 class CGraphicsManager
 {
 public:
 	CGraphicsManager();
-	CGraphicsManager(const CGraphicsManager&);
 	~CGraphicsManager();
 
 	bool Initialize(int ScreenWidth, int ScreenHeight, HWND, bool FullScreen, bool VSync, bool D3DDebug);
 	void Shutdown();
-	bool Frame();
+	bool Frame() const;
 
 private:
-	bool Render();
+	bool Render() const;
 
 private:
 	CContextManager* m_ContextManager;

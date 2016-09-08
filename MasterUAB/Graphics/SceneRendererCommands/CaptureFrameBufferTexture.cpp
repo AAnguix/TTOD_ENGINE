@@ -2,7 +2,7 @@
 #include "Engine\Engine.h"
 #include "Render\RenderManager.h"
 #include "XML\XMLTreeNode.h"
-
+#include "Render\ContextManager.h"
 
 void CCaptureFrameBufferTexture::Init(const std::string &Name, unsigned int Width, unsigned int Height)
 {
@@ -52,7 +52,6 @@ void CCaptureFrameBufferTexture::Unload()
 {
 	m_DataTexture->Release();
 	m_DataTexture = 0;
-
 	CTexture::Unload();
 }
 

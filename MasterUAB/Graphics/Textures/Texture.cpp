@@ -2,6 +2,7 @@
 //#include <d3dx11tex.h>
 #include "Engine\Engine.h"
 #include "Render\RenderManager.h"
+#include "Render\ContextManager.h"
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
 #include "Log\Log.h"
@@ -120,8 +121,16 @@ bool CTexture::LoadFile()
 
 void CTexture::Unload()
 {
-	CHECKED_RELEASE(m_SamplerState);
-	CHECKED_RELEASE(m_Texture);
+	if (m_SamplerState)
+	{
+		m_SamplerState->Release();
+		m_SamplerState = nullptr;
+	}
+	if (m_Texture)
+	{
+		m_Texture->Release();
+		m_Texture = nullptr;
+	}
 }
 
 void CTexture::Activate(unsigned int StageId) 

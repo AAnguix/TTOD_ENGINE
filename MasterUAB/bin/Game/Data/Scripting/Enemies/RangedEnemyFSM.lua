@@ -1,5 +1,6 @@
-function OnEnter_Idle_RangedEnemy(Enemy)
-	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters idle")		
+-------------------- IDLE --------------------
+
+function OnEnter_Idle_RangedEnemy(Enemy)		
 end
 function OnUpdate_Idle_RangedEnemy(Enemy, ElapsedTime)
 	
@@ -15,14 +16,12 @@ function OnUpdate_Idle_RangedEnemy(Enemy, ElapsedTime)
 end
 function OnExit_Idle_RangedEnemy(Enemy)
 	--Enemy:GetAnimator():SetBool("IsPlayerInsideVisionRange", false)
-	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits idle")
 end
 
-------------------------------------------------------------
+-------------------- ATTACK --------------------
 
 function OnEnter_Attack_RangedEnemy(Enemy)
 	Enemy:SetAttacking(true)
-	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters attack")
 	Enemy:AttachProjectile()
 end
 function OnUpdate_Attack_RangedEnemy(Enemy, ElapsedTime)
@@ -34,12 +33,11 @@ function OnUpdate_Attack_RangedEnemy(Enemy, ElapsedTime)
 	end
 end
 function OnExit_Attack_RangedEnemy(Enemy)
-	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits attack")
 	Enemy:LaunchProjectile(g_Player:GetPosition())--PONER POSICION DEL HUESO
 	Enemy:SetAttacking(false)
 end
 
------------------------------------------------------------
+-------------------- RUN_AWAY --------------------
 
 function OnEnter_RunAway_RangedEnemy(Enemy)
 	
@@ -72,7 +70,7 @@ function OnExit_RunAway_RangedEnemy(Enemy)
 	Enemy:SetMoveToAttackMovement(false)
 end
 
----------------------------------------------------------------
+-------------------- FRIGHTENED --------------------
 
 function OnEnter_Frightened_RangedEnemy(Enemy)
 	-- Reproducir sonido miedo
@@ -85,15 +83,13 @@ function OnExit_Frightened_RangedEnemy(Enemy)
 	--Enemy:LaunchProjectile(g_Player:GetPosition())--PONER POSICION DEL HUESO
 end
 
----------------------------------
+-------------------- DEAD --------------------
 
-function OnEnter_Die_RangedEnemy(Enemy)
-	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters die")	
+function OnEnter_Dead_RangedEnemy(Enemy)
 end
 
-function OnUpdate_Die_RangedEnemy(Enemy, ElapsedTime)
+function OnUpdate_Dead_RangedEnemy(Enemy, ElapsedTime)
 end
 
-function OnExit_Die_RangedEnemy(Enemy)
-	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits die")	
+function OnExit_Dead_RangedEnemy(Enemy)	
 end

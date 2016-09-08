@@ -1,11 +1,10 @@
 #include "StagedTexturedSceneRendererCommand.h"
-//#include "Textures\DynamicTexture.h"
-//#include "Engine\Engine.h"
 #include "Textures\TextureManager.h"
 #include "Render\RenderManager.h"
 #include "CaptureFrameBufferTexture.h"
 #include "CaptureStencilBufferTexture.h"
 #include "XML\XMLTreeNode.h"
+#include "Render\ContextManager.h"
 
 CStagedTexturedSceneRendererCommand::CStagedTexturedSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode)
 {
@@ -129,7 +128,11 @@ CStagedTexturedSceneRendererCommand::~CStagedTexturedSceneRendererCommand()
 	
 	for(size_t i=0;i<m_DynamicTextures.size();++i)
 	{
-	 CHECKED_DELETE(m_DynamicTextures[i]);
+		if(m_DynamicTextures[i])
+		{
+			delete m_DynamicTextures[i];
+			m_DynamicTextures[i] = nullptr;
+		}
 	}
 	m_StageTextures.clear();
 	m_DynamicTextures.clear();

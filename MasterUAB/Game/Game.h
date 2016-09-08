@@ -16,23 +16,21 @@ public:
 
 	bool Initialize();
 	void Shutdown();
-	void Run();
+	void Run() const;
 	void SwitchCamera();
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 
 private:
-	bool Frame();
-	bool Update(float ElapsedTime);
+	bool Frame() const;
+	bool Update(float ElapsedTime) const;
 	void InitializeWindows(int&, int&, bool&, bool&, bool&);
 	void ShutdownWindows();
 
 private:
-	//LPCWSTR m_applicationName;
 	LPCSTR m_ApplicationName;
-	HINSTANCE m_hinstance;
-	HWND m_hwnd;
+	HINSTANCE m_Hinstance;
+	HWND m_Hwnd;
 
-	//InputClass* m_Input;
 	CGraphicsManager* m_Graphics;
 	CEngineSettings* m_EngineSettings;
 	int m_CurrentCamera;
@@ -41,7 +39,7 @@ private:
 
 static LRESULT CALLBACK MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static CGame* ApplicationHandle = 0;
+static CGame* ApplicationHandle = nullptr;
 
 
 #endif

@@ -1,5 +1,7 @@
 #include "StaticMesh.h"
 #include "Render\RenderManager.h"
+#include "Effects\EffectManager.h"
+#include "Render\ContextManager.h"
 #include "Materials\MaterialManager.h"
 #include "Vertex\VertexTypes.h"
 #include "Engine\Engine.h"

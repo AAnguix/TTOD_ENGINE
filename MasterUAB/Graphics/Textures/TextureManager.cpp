@@ -6,6 +6,7 @@
 #include "Render\RenderManager.h"
 #include "Lights\LightManager.h"
 #include "Textures\DynamicTexture.h"
+#include "Render\ContextManager.h"
 
 CTextureManager::CTextureManager(){}
 

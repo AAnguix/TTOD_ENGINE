@@ -5,17 +5,15 @@
 void CheckMemoryLeaks()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(21892); 
+	//_CrtSetBreakAlloc(282314); 
 }
 
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
 	CheckMemoryLeaks();
 
-	CGame* l_Game;
 	bool l_Result;
-
-	l_Game = new CGame;
+	CGame* l_Game = new CGame;
 	if (!l_Game){ return 0; }
 
 	l_Result = l_Game->Initialize();
@@ -23,7 +21,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 
 	l_Game->Shutdown();
 	delete l_Game;
-	l_Game = 0;
+	l_Game = nullptr;
 
 	return 0;
 }

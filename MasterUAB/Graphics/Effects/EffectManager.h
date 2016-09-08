@@ -4,7 +4,12 @@
 #include "Utils\TemplatedMapManager.h"
 #include "Effects\EffectTechnique.h"
 #include "Effects\EffectParameters.h"
+#include <vector>
+
 class CLight;
+class CEffectVertexShader;
+class CEffectPixelShader;
+class CEffectGeometryShader;
 
 class CEffectManager : public CTemplatedMapManager<CEffectTechnique> 
 { 

@@ -3,8 +3,6 @@
 
 #include <map>
 #include <vector>
-//#include <cassert>
-#include <assert.h>
 
 template<class T>
 class CTemplatedVectorMapManager

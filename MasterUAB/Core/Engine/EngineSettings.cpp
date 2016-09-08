@@ -45,6 +45,12 @@ bool CEngineSettings::LoadSettings(const std::string &SettingsFile)
 					m_ScreenSize = l_Element.GetVect2iProperty("screen_size", Vect2i(800, 600));
 					m_ScreenResolution = l_Element.GetVect2iProperty("screen_resolution", Vect2i(1280, 760));
 				}
+				else if (l_Element.GetName() == std::string("debug_options"))
+				{
+					m_DebugOptions.m_DebugAnimatorController = l_Element.GetBoolProperty("animator_controller", true);
+					m_DebugOptions.m_DebugScriptManager = l_Element.GetBoolProperty("script_manager", true);
+					m_DebugOptions.m_DebugInputMapper = l_Element.GetBoolProperty("input_mapper", true);
+				}
 				else if (l_Element.GetName() == std::string("fps"))
 				{
 					m_Fps = l_Element.GetIntProperty("value", 30);

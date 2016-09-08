@@ -3,10 +3,10 @@
 #include "Engine\Engine.h"
 #include "Materials\MaterialManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
+#include "Render\ContextManager.h"
 
 CApplyFiltersSceneRendererCommand::CApplyFiltersSceneRendererCommand(CXMLTreeNode &TreeNode): CStagedTexturedSceneRendererCommand(TreeNode)
 {
-	
 }
 
 void CApplyFiltersSceneRendererCommand::Execute(CRenderManager &RenderManager)
@@ -20,15 +20,12 @@ void CApplyFiltersSceneRendererCommand::Execute(CRenderManager &RenderManager)
 				RenderManager.GetContextManager()->SetRenderTargets(1, &m_RenderTargetViews[i], RenderManager.GetContextManager()->GetDepthStencilView());
 				CMaterial* l_Material=nullptr;
 
-				if(i==0)
-					m_StageTextures[0].Activate();
+				if (i == 0)	{ m_StageTextures[0].Activate(); }
 				else
 				{
 					l_Material = m_DynamicTextures[i-1]->GetMaterial();
 					m_DynamicTextures[i-1]->GetDynamicTexture()->Activate(0);
 				}	
-				
-				//CDynamicTexture* l_DTexture = m_DynamicTextures[i]->GetDynamicTexture();
 				
 				if(l_Material!=NULL)
 				{	

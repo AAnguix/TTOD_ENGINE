@@ -11,16 +11,11 @@
 
 CDeferredShadingSceneRendererCommand::CDeferredShadingSceneRendererCommand(CXMLTreeNode &TreeNode)
 :CStagedTexturedSceneRendererCommand(TreeNode)
-,m_RenderableObjectTechnique(nullptr)
-,m_UseLightVolumes(nullptr)
+,m_RenderableObjectTechnique(CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("MV_POSITION4_COLOR_TEXTURE_VERTEX"))
+,m_UseLightVolumes(TreeNode.GetBoolProperty("use_light_volumes", false))
 ,m_DepthStencilState(nullptr)
-,m_SphereFirstPass(nullptr)
+,m_SphereFirstPass(CEngine::GetSingleton().GetStaticMeshManager()->GetResource("deferred_shading_sphere"))
 {
-	m_UseLightVolumes = TreeNode.GetBoolProperty("use_light_volumes", false);
-	
-	m_RenderableObjectTechnique = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("MV_POSITION4_COLOR_TEXTURE_VERTEX");
-	m_SphereFirstPass = CEngine::GetSingleton().GetStaticMeshManager()->GetResource("deferred_shading_sphere");
-
 	//m_SphereSecondPass = CEngine::GetSingleton().GetStaticMeshManager()->GetResource("deferred_shading_second_sphere");
 	/*if (m_Sphere == nullptr)
 	{
@@ -40,9 +35,8 @@ CDeferredShadingSceneRendererCommand::~CDeferredShadingSceneRendererCommand()
 
 void CDeferredShadingSceneRendererCommand::Execute(CRenderManager &RenderManager)
 {
-	if (m_UseLightVolumes)
-		ExecuteDeferredShadingUsingLightVolumes(RenderManager);
-	else ExecuteDeferredShading(RenderManager);
+	if (m_UseLightVolumes) { ExecuteDeferredShadingUsingLightVolumes(RenderManager); }
+	else { ExecuteDeferredShading(RenderManager); }
 }
 
 static int flag = 0;

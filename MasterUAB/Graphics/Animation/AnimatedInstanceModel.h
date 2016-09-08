@@ -11,6 +11,7 @@ class CalHardwareModel;
 class CalModel;
 class CAnimatorController;
 class CRenderableObjectTechnique;
+#include "Render\ContextManager.h"
 
 #include <vector>
 #include "RenderableObjects\RenderableObject.h"
@@ -81,8 +82,8 @@ public:
 	void Destroy(); 
 
 	CAnimatedCoreModel* GetAnimatedCoreModel() const { return m_AnimatedCoreModel; };
-	void ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget=1.0f, bool AutoLock=true);  
-	void BlendCycle(int Id, float Weight, float DelayIn);  
+	void ExecuteAction(int Id, float DelayIn, float DelayOut, float WeightTarget = 1.0f, float Speed = 1.0f, bool AutoLock = true);
+	void BlendCycle(int Id, float Weight, float DelayIn, float Speed = 1.0f);
 	void ClearCycle(int Id, float DelayOut);  
 	bool IsCycleAnimationActive(int Id) const;  
 	bool IsActionAnimationActive(int Id) const; 

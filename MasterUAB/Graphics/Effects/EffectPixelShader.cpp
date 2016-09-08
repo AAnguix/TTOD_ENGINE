@@ -3,6 +3,7 @@
 #include "Engine\Engine.h"
 #include "Log\Log.h"
 #include "XML\XMLTreeNode.h"
+#include "Render\ContextManager.h"
 
 void CEffectPixelShader::Destroy()
 {

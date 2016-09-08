@@ -54,9 +54,6 @@ bool CLightManager::Load(const std::string &FileName)
 	m_FileName=FileName;
 	CXMLTreeNode l_XML;
 
-	char* l_CurrentWorkingDirectory;
-	l_CurrentWorkingDirectory = _getcwd(NULL, 0);
-
 	if (l_XML.LoadFile(FileName.c_str()))
 	{
 		CXMLTreeNode l_Lights= l_XML["lights"];

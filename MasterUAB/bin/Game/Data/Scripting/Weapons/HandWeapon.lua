@@ -1,11 +1,11 @@
 class 'CHandWeaponComponent' (CWeaponComponent)
 function CHandWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType, ColliderAdjustment, ColliderRadius)
-	CWeaponComponent.__init(self,ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType)
+	CWeaponComponent.__init(self,ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType, "hand")
 	
 	self.m_ColliderAdjust = ColliderAdjustment
 	self.m_ColliderRadious = ColliderRadius
 	
-	g_PhysXManager:CreateSphereTrigger(ComponentType,ComponentType,ColliderRadius,ComponentType.."_Material","",Vect3f(0.0,1.0,0.0),Quatf(0.0,0.0,0.0,1.0),"kinematic")
+	g_PhysXManager:CreateSphereTrigger(self.m_LuaGameObject:GetName(),ColliderRadius,"",Vect3f(0.0,1.0,0.0),Quatf(0.0,0.0,0.0,1.0),"kinematic")
 end
 
 function CHandWeaponComponent:GetLuaGameObject() return self.m_LuaGameObject end
@@ -24,7 +24,6 @@ function CHandWeaponComponent:OnTriggerEnter(Actor)
 	
 	if (l_ParentName=="Player") then
 		if Actor ~= "Player"  then
-			g_LogManager:Log("entra2")
 			self:PlayerAttacksEnemy(Actor)
 		end
 	else --Parent is an enemy

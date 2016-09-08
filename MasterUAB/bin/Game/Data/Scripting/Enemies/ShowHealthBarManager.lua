@@ -1,5 +1,5 @@
 class 'CShowHealthBarManagerComponent' (CLUAComponent)
-function CShowHealthBarManagerComponent:__init()
+function CShowHealthBarManagerComponent:__init(CLuaGameObject)
 CLUAComponent.__init(self,"ShowHealthBarManager")	
 	self.m_LastEnemyHit = nil
 	self.m_X = 0.09
@@ -8,10 +8,10 @@ CLUAComponent.__init(self,"ShowHealthBarManager")
 	self.m_Height = 0.05
 	self.m_HealthBarID = "player_health_bar_0"
 	self.m_HealthBarName = "player_health_bar"
-	self.m_TimeShowingBar = 3.5
+	self.m_TimeShowingBar = 5.0
 	g_EventManager:Subscribe(self, "ENEMY_TAKES_DAMAGE")
 	self.m_Show = false
-	self.m_LuaGameObject = nil
+	self.m_LuaGameObject = CLuaGameObject
 end
 
 function CShowHealthBarManagerComponent:GetLuaGameObject() return self.m_LuaGameObject end

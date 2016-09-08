@@ -21,6 +21,7 @@ private:
 
 	std::string m_Name;
 	float m_Speed;
+
 	std::vector<EAnimation> m_Animations;
 	unsigned int m_CurrentAnimationIndex;
 	std::map<const std::string, CTransition*> m_Transitions;

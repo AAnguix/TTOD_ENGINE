@@ -15,6 +15,7 @@
 #include "Render\RenderManager.h"
 
 #include "Utils\TTODMathUtils.h"
+#include "Render\ContextManager.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dinput8.lib")
@@ -137,11 +138,6 @@ void InputMapping::CInputMapperImplementation::BeginFrame()
 					m_MovementY = l_DIMouseState.lY;
 					m_MovementZ = l_DIMouseState.lZ;
 
-					if (m_MovementX == 0 && m_MovementY == 0)
-						printf("a\n");
-					else
-						printf("b\n");
-
 					m_PreviousButtonLeft = m_ButtonLeft;
 					m_PreviousButtonMiddle = m_ButtonMiddle;
 					m_PreviousButtonRight = m_ButtonRight;
@@ -152,21 +148,21 @@ void InputMapping::CInputMapperImplementation::BeginFrame()
 
 					m_DirectXCursor = Vect2i(m_MovementX, m_MovementY);
 			
+					CInputMapperImplementation* l_InputMapper = CEngine::GetSingleton().GetInputMapper();
 
-					float l_XAsisValue = CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(m_MovementX * m_MouseSpeed));
-					float l_YAsisValue = CEngine::GetSingleton().GetInputMapper()->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(m_MovementY * m_MouseSpeed));
+					float l_XAsisValue = l_InputMapper->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(m_MovementX * m_MouseSpeed));
+					float l_YAsisValue = l_InputMapper->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(m_MovementY * m_MouseSpeed));
 					
 					float l_ZBlurConstant = GetZBlurConstant(0.5f, (float)m_MovementX, (float)CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetFrameBufferWidth(), 0.1f);
 
 					long l_X = m_MouseInput->GetX();
 					long l_Y = m_MouseInput->GetY();
 
-					//LOG(std::to_string(l_XDisplacement) + " " + std::to_string(l_YDisplacement) + " // " + std::to_string(l_X) + " " + std::to_string(l_Y));
 					CEffectManager::m_SceneEffectParameters.m_Mouse = Vect4f((float)l_X, (float)l_Y, l_ZBlurConstant, 0.0f);
 
-					CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_LEFT, false, false), m_ButtonLeft, m_PreviousButtonLeft);
-					CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_RIGHT,false,false), m_ButtonRight, m_PreviousButtonRight);
-					CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_WHEEL, false, false), m_ButtonMiddle, m_PreviousButtonMiddle);
+					l_InputMapper->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_LEFT, false, false), m_ButtonLeft, m_PreviousButtonLeft);
+					l_InputMapper->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_RIGHT,false,false), m_ButtonRight, m_PreviousButtonRight);
+					l_InputMapper->SetOSButtonState(InputMapping::SOSInputButtons(InputMapping::OS_INPUT_BUTTON_MOUSE_WHEEL, false, false), m_ButtonMiddle, m_PreviousButtonMiddle);
 				}
 			}
 		}

@@ -18,8 +18,8 @@ class 'CPlayerComponent' (CLUAComponent)
 function CPlayerComponent:__init(CLuaGameObject)
 	CLUAComponent.__init(self,CLuaGameObject:GetName().."_PlayerScript")
 	self.m_LuaGameObject = CLuaGameObject 
-	self.m_MaxHealth=150.0
-	self.m_Health=150.0
+	self.m_MaxHealth=35.0 --10000
+	self.m_Health=self.m_MaxHealth
 	self.m_Dead = false
 	self.m_CountdownToExtintionTimer = 5.0
 	self.m_CountdownToExtintion = self.m_CountdownToExtintionTimer
@@ -61,10 +61,12 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	self.m_Speed = 3.0
 	
-	--Other
+	--Actions
 	self.m_MapOpened = false
-	self.m_IsBlocking = false
 	self.m_Attacking = false
+	self.m_Blocking = false
+	self.m_Interacting = false
+	
 	self.m_AttackFinished = true
 	self.m_BeeingTossed = false
 	
@@ -97,8 +99,8 @@ function CPlayerComponent:AddVelocity(Vector)
 	self.m_Velocity = self.m_Velocity + (Vector * self.m_Speed)
 end
 
-function CPlayerComponent:AddGravity(ElapsedTime)
-	self.m_Velocity = self.m_Velocity + Vect3f(0.0,-10.0,0.0) * ElapsedTime
+function CPlayerComponent:AddGravity()
+	self.m_Velocity = self.m_Velocity + Vect3f(0.0,-10.0,0.0)
 end
 
 function CPlayerComponent:SetAttackDirection(Value)
@@ -122,7 +124,10 @@ end
 dofile("./Data/Scripting/Player/PlayerController.lua")
 
 function CPlayerComponent:Update(ElapsedTime)
-	self.m_Inventory:Update(ElapsedTime)
+	if(not self.m_Dead) then
+		self.m_Inventory:Update(ElapsedTime)
+	end
+	
 	self:PlayerController(ElapsedTime)
 	self:HandleEvents()
 	if (self.m_Dead) then
@@ -208,17 +213,14 @@ function CPlayerComponent:ChangeWeapon(Index) self.m_CurrentWeapon = m_Weapons[I
 function CPlayerComponent:GetArmor(Index) return m_Armors[Index] end
 function CPlayerComponent:GetWeapon(Index) return m_Weapons[Index] end
 
-function CPlayerComponent:IsBlocking() return self.m_IsBlocking end
-function CPlayerComponent:SetBlockingState(state) self.m_IsBlocking = state end
-
 dofile("./Data/Scripting/Player/PlayerCombatMechanics.lua")
 
 function CPlayerComponent:OpenMap()
 	self.m_MapOpened = not self.m_MapOpened
 	if (self.m_MapOpened) then
-		g_Engine:SetTimeScale(0.0)
+		self:Lock()
 	else
-		g_Engine:SetTimeScale(1.0)
+		self:Unlock()
 	end
 	--self.m_AudioSource:PlayEvent("OpenMapSound")
 end

@@ -14,7 +14,7 @@ public:
 	CNamed(const CXMLTreeNode &TreeNode);
 	CNamed(const std::string &Name);
 	virtual void SetName(const std::string &Name);
-	virtual const std::string &GetName();
+	virtual const std::string &GetName() const;
 	virtual CEmptyPointerClass* GetNameLuaAddress() const;
 };
 

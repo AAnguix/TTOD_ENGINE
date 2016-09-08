@@ -13,6 +13,7 @@ static float m_SpecularFactor=m_RawDataValues[11];
 static float m_Gloss=m_RawDataValues[12];
 static float m_SsrFactor=m_RawDataValues[13];
 static float m_Aspect = m_RawDataValues[14];
+static float m_Scale = m_RawDataValues[15];
 
 struct VS_INPUT
 {
@@ -72,7 +73,7 @@ PS_INPUT VS( VS_INPUT IN )
 	float l_Factor = 0.5;
 	float l_InverseSpeed = 4.0;
 	//float l_NewScale=cos(m_Times.y/l_InverseSpeed)*l_Factor;
-	float l_NewScale=1.0;
+	float l_NewScale=m_Scale;
 	float4 l_Pos=mul(float4(IN.Pos*l_NewScale,1.0), m_World );
 	l_Output.WorldPos = l_Pos.xyz;
 	float4 l_HPos=mul(l_Pos, m_View);

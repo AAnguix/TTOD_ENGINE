@@ -4,9 +4,8 @@
 #include "XML\XMLTreeNode.h"
 
 CSetPoolRenderableObjectsTechniqueSceneRendererCommand::CSetPoolRenderableObjectsTechniqueSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode) 
+,m_Pool(CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetPoolRenderableObjectTechniques().GetResource(TreeNode.GetPszProperty("pool")))
 {
-	std::string l_PoolName = TreeNode.GetPszProperty("pool");
-	m_Pool = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetPoolRenderableObjectTechniques().GetResource(l_PoolName);
 }
 
 void CSetPoolRenderableObjectsTechniqueSceneRendererCommand::Execute(CRenderManager &RenderManager)

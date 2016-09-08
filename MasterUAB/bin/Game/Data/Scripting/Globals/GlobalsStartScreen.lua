@@ -2,8 +2,6 @@ g_PlayerComponent = nil --Store the instance to the player component
 g_DragonComponent = nil
 g_Player = nil -- ... player LuaGameObjectHandle
 
-g_MagicBall = nil
-
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainStartScreen.lua"
 
 g_Engine = CEngine.GetSingleton()

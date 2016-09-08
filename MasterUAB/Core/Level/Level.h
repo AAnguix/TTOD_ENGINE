@@ -1,8 +1,8 @@
 #ifndef _LEVEL_H
 #define _LEVEL_H
 
-#include <string>
 class CEngine;
+#include <string>
 #include "GUIManager.h"
 
 class CLevel

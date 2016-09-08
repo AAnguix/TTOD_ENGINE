@@ -42,9 +42,11 @@ void CLuabindManager::RegisterPhysics()
 
 		.def("CreateBoxLua", &CPhysXManager::CreateBoxLua)
 		.def("CreateSphereLua", &CPhysXManager::CreateSphereLua)
-		.def("CreateBoxTrigger", (bool(CPhysXManager::*)(const std::string&, const std::string&, const Vect3f&, const std::string&, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateBoxTrigger)
-		.def("CreateSphereTrigger", (bool(CPhysXManager::*)(const std::string&, const std::string&, float, const std::string&, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateSphereTrigger)
-
+		
+		.def("CreateBoxTrigger", (bool(CPhysXManager::*)(const std::string&, const Vect3f&, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateBoxTrigger)
+		.def("CreateSphereTrigger", (bool(CPhysXManager::*)(const std::string&, float, const std::string&, const Vect3f&, const Quatf&, const std::string&))&CPhysXManager::CreateSphereTrigger)
+		.def("DeleteTrigger", &CPhysXManager::DeleteTrigger)
+		
 		.def("AddColliderComponent", (CCollider*(CPhysXManager::*)(const std::string&, CLuaGameObjectHandle*))&CPhysXManager::AddColliderComponent)
 
 		.def("AddCharacterColliderComponent", &CPhysXManager::AddCharacterColliderComponent)
@@ -52,13 +54,11 @@ void CLuabindManager::RegisterPhysics()
 		.def("ApplyForce", &CPhysXManager::ApplyForce)
 		.def("ChangeKinematicState", &CPhysXManager::ChangeKinematicState)
 		.def("ChangeGravityState", &CPhysXManager::ChangeGravityState)
-		.def("ChangeShapeTriggerState", &CPhysXManager::ChangeShapeTriggerState)
-		.def("CreateDynamicActor", &CPhysXManager::CreateDynamicActor)
 
-	
+		.def("ChangeShapeTriggerState", (void(CPhysXManager::*)(const std::string&, bool))&CPhysXManager::ChangeShapeTriggerState)
+		.def("ChangeShapeTriggerState", (void(CPhysXManager::*)(const std::string&, bool, bool))&CPhysXManager::ChangeShapeTriggerState)
+
 		.def("CreateDynamicActor", &CPhysXManager::CreateDynamicActor)
-		.def("CreateBoxLua", &CPhysXManager::CreateBoxLua)
-		.def("CreateSphereLua", &CPhysXManager::CreateSphereLua)
 
 		//.def("AddComponent", (CCollider*(CPhysXManager::*)(const std::string&, CMeshInstance*))&CPhysXManager::AddComponent)
 		//.def("AddComponent", (CCharacterCollider*(CPhysXManager::*)(const std::string&, CAnimatedInstanceModel*))&CPhysXManager::AddComponent)

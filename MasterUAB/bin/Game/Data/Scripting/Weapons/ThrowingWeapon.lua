@@ -1,7 +1,7 @@
 class 'CThrowingWeaponComponent' (CWeaponComponent)
 function CThrowingWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, 
 	Damage, WeaponType, OnPlayerContactParticlesName, ProjectileParticlesName)
-	CWeaponComponent.__init(self,ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType)
+	CWeaponComponent.__init(self,ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType, "throwing")
 	--self.m_LuaGameObject:SetParent(self.m_ParentLuaGameObject,ParentBoneName)
 	self.m_BasePosition = self.m_LuaGameObject:GetPosition()
 	self.m_Parented = true

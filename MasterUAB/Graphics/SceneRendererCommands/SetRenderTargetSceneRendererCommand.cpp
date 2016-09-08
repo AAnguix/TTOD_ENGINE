@@ -1,10 +1,10 @@
 #include "SetRenderTargetSceneRendererCommand.h"
 #include "Textures\DynamicTexture.h"
 #include "Render\RenderManager.h"
+#include "Render\ContextManager.h"
 
 CSetRenderTargetSceneRendererCommand::CSetRenderTargetSceneRendererCommand(CXMLTreeNode &TreeNode): CStagedTexturedSceneRendererCommand(TreeNode)
 {
-
 } 
 
 void CSetRenderTargetSceneRendererCommand::Execute(CRenderManager &RenderManager)

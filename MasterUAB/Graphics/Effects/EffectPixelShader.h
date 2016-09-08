@@ -19,7 +19,7 @@ public:
 	bool Load(size_t EffectsStateCode);
 	void SetConstantBuffer(unsigned int IdBuffer, void *ConstantBuffer);
 
-	UAB_GET_PROPERTY_POINTER(ID3D11PixelShader, PixelShader);  
+	ID3D11PixelShader* GetPixelShader() const { return m_PixelShader; } 
 };
 
 #endif

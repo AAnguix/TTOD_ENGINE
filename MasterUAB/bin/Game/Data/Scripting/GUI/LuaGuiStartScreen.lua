@@ -14,6 +14,7 @@ function CLuaGuiStartScreen:Initialize()
 	g_GUIManager:AddButton("exit_button","exit_button_normal","exit_button_highlight","exit_button_pressed")	
 	g_GUIManager:AddImage("background_image","background_sprite")	
 	g_GUIManager:AddFont("freestyle_script_64_font","Data/GUI/Fonts/FreestyleScript64.fnt")
+	g_GUIManager:AddFont("freestyle_script_48_font","Data/GUI/Fonts/FreestyleScript48.fnt")
 	g_GUIManager:AddFont("calibri_font", "Data\\GUI\\Fonts\\calibri.fnt")
 	g_LogManager:Log("Start screen gui initialized")
 end

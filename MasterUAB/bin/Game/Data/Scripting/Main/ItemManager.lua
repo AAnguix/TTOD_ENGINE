@@ -10,6 +10,7 @@ end
 function CItemManager:LoadItems(Level)
 	if (Level=="1") then
 		local l_DynamiteGameObjectHandle = g_GameController:AddLuaGameObjectHandle("dynamite")
+		
 		self.m_Dynamite = CDynamiteComponent(l_DynamiteGameObjectHandle)
 		g_ScriptManager:AddComponent("Dynamite_Script",self.m_Dynamite:GetLuaGameObject(),self.m_Dynamite)
 		table.insert(g_GameController:GetEntities(),self.m_Dynamite)
@@ -30,7 +31,7 @@ function CItemManager:DYNAMITE_EQUIPED()
 	self.m_HasDynamite = true
 	self.m_Dynamite:UnsuscribeEvents()
 	g_EventManager:Unsubscribe(self,"DYNAMITE_EQUIPED", true)
-	g_GameController:RemoveEntity("dynamite")
+	g_GameController:RemoveElementFromTable(g_GameController:GetEntities(),"dynamite")
 	self.m_Dynamite = nil
 end
 

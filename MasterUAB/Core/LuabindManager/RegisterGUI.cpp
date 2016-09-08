@@ -6,6 +6,7 @@
 #include <luabind/iterator_policy.hpp>
 
 #include "Engine\Engine.h"
+#include "Render\ContextManager.h"
 #include "GUIManager.h"
 
 using namespace luabind;

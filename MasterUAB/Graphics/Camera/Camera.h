@@ -7,10 +7,10 @@
 
 class CXMLTreeNode;
 
-const float FOV = 1.047198f;
-const float ASPECT_RATIO = 16.0f/9.0f;
-const float ZNEAR = 0.5f;
-const float ZFAR = 200.0f;
+//const float FOV = 1.047198f;
+//const float ASPECT_RATIO = 16.0f/9.0f;
+//const float ZNEAR = 0.3f;
+//const float ZFAR = 200.0f;
 
 class CCamera : public CNamed
 {	
@@ -30,8 +30,7 @@ private:
 
 public:
 	CCamera();
-	CCamera(const std::string &CameraName);
-	CCamera(CXMLTreeNode &TreeNode);
+	CCamera(const std::string &Name);
 	virtual ~CCamera();
 
 	void SetFOV(float FOV) {m_FOV=FOV;}

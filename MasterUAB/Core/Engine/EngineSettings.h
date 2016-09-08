@@ -26,6 +26,15 @@ private:
 	std::string m_GuiMaterials;
 	std::string m_EffectsMaterials;
 
+	struct SDebugOptions
+	{
+		bool m_DebugScriptManager;
+		bool m_DebugAnimatorController;
+		bool m_DebugInputMapper;
+	};
+
+	SDebugOptions m_DebugOptions;
+
 public:
 	CEngineSettings();
 	virtual ~CEngineSettings();
@@ -35,6 +44,7 @@ public:
 	Vect2i GetScreenPosition() const { return m_ScreenPosition; };
 	Vect2i GetScreenResolution() const { return m_ScreenResolution; };
 	bool VSyncEnabled() const { return m_VSyncEnabled; };
+	SDebugOptions GetDebugOptions() const { return m_DebugOptions; }
 
 	std::string GetEffectsMaterialsFileName() const{ return m_EffectsMaterials; };
 	std::string GetGuiMaterialsFileName() const{ return m_GuiMaterials; };

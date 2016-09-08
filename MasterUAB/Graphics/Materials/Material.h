@@ -28,6 +28,7 @@ private:
 
 public:  
 	CMaterial(CXMLTreeNode &TreeNode);  
+	CMaterial(const CMaterial& Other);
 	virtual ~CMaterial();  
 	virtual void Apply(CRenderableObjectTechnique* RenderableObjectTechnique=NULL);  
 	CRenderableObjectTechnique* GetRenderableObjectTechnique() const { return m_RenderableObjectTechnique; }

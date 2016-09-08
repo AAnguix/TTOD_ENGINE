@@ -5,8 +5,8 @@
 	<damage_reduction_pair armor_type="heavy" weapon_type="axe" percentage = "15.0" />
 	<damage_reduction_pair armor_type="dragon" weapon_type="axe" percentage = "20.0" />
 	                            
-	<damage_reduction_pair armor_type="heroic" weapon_type="knife" percentage="15" /> 
-	<damage_reduction_pair armor_type="heroic" weapon_type="physique_strength" percentage="20" />
-	<damage_reduction_pair armor_type="heroic" weapon_type="bow" percentage="10" />
+	<damage_reduction_pair armor_type="heroic" weapon_type="sword" percentage="10" /> 
+	<damage_reduction_pair armor_type="heroic" weapon_type="physique_strength" percentage="10" />
+	<damage_reduction_pair armor_type="heroic" weapon_type="bow" percentage="5" />
 	<damage_reduction_pair armor_type="heroic" weapon_type="fireball" percentage="5" />
 </damage_reduction_pairs>

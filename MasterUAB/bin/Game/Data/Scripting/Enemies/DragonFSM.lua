@@ -1,6 +1,4 @@
 function OnEnter_Idle_Dragon(Dragon, ElapsedTime)
-	--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." enters idle")
-	
 end
 function OnUpdate_Idle_Dragon(Dragon, ElapsedTime)
 	
@@ -41,7 +39,6 @@ end
 ------------------------------------------------------------
 
 function OnEnter_SpitFire_Dragon(Dragon, ElapsedTime)
-	--g_LogManager:Log(Dragon.m_RObject:GetName().." enters SplitFire")
 	--Mirar al player, para que cuando lanze la animacion le ataque
 end
 function OnUpdate_SpitFire_Dragon(Dragon, ElapsedTime)
@@ -61,7 +58,6 @@ end
 ------------------------------------------------------------
 
 function OnEnter_Scratch_Dragon(Dragon, ElapsedTime)
-	--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." Enters Scartch")
 	local l_PlayerPos = g_Player:GetPosition()
 	--Dragon:SetTarget(l_PlayerPos)
 	Dragon:ChangeTailState(true)
@@ -80,7 +76,6 @@ end
 ------------------------------------------------------------
 
 function OnEnter_Stomp_Dragon(Dragon, ElapsedTime)
-	--g_LogManager:Log(Dragon.m_RObject:GetName().." did special attack. STOMP")
 	local l_PlayerPos = g_Player:GetPosition()
 	Dragon:SetTarget(l_PlayerPos)
 end
@@ -96,7 +91,6 @@ end
 ------------------------------------------------------------
 
 function OnEnter_WhipTale_Dragon(Dragon, ElapsedTime)
-	--g_LogManager:Log(Dragon.m_RObject:GetName().." did special attack. WHIP TALE")
 	local l_PlayerPos = g_Player:GetPosition()
 	Dragon:SetTarget(l_PlayerPos)
 end

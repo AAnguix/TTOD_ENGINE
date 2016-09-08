@@ -1,25 +1,15 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: graphicsclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "GraphicsManager.h"
 #include "Engine\Engine.h"
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
 #include "Render\RenderManager.h"
+#include "Render\ContextManager.h"
 
 CGraphicsManager::CGraphicsManager()
-:m_ContextManager(0)
-,m_RenderManager(0)
+:m_ContextManager(nullptr)
+,m_RenderManager(nullptr)
 {
 	
 }
-
-
-CGraphicsManager::CGraphicsManager(const CGraphicsManager& other)
-:m_ContextManager(0)
-,m_RenderManager(0)
-{
-}
-
 
 CGraphicsManager::~CGraphicsManager()
 {
@@ -72,22 +62,12 @@ void CGraphicsManager::Shutdown()
 }
 
 
-bool CGraphicsManager::Frame()
+bool CGraphicsManager::Frame() const
 {
-	bool l_Result;
-
-	l_Result = Render();
-	if (!l_Result)
-	{
-		return false;
-	}
-
-	return true;
+	return Render();
 }
 
-
-bool CGraphicsManager::Render()
+bool CGraphicsManager::Render() const
 {
-	CEngine::GetSingleton().GetSceneRendererCommandManager()->Execute(*m_RenderManager);
-	return true;
+	return CEngine::GetSingleton().GetSceneRendererCommandManager()->Execute(*m_RenderManager);
 }

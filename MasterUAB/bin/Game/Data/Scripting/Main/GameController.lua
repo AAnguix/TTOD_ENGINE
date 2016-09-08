@@ -1,11 +1,6 @@
 class 'CGameController'
 function CGameController:__init()
-	-- Tables
-	self.m_Entities = {}
-	self.m_Enemies = {}
-	self.m_Armors = {}
-	self.m_Weapons = {}
-	self.m_Filename = ""
+	self:ClearTables()
 end
 
 -- Includes
@@ -14,6 +9,14 @@ dofile("./Data/Scripting/Main/LoadCharacters.lua")
 dofile("./Data/Scripting/Main/LoadEntities.lua")
 
 dofile("./Data/Scripting/Main/GameControllerRemover.lua")
+
+function CGameController:ClearTables()
+	self.m_Entities = {}
+	self.m_Enemies = {}
+	self.m_Armors = {}
+	self.m_Weapons = {}
+	self.m_Filename = ""
+end
 
 function CGameController:RestartLastCheckPoint()
 	--Reproducir sonido
@@ -28,9 +31,6 @@ end
 dofile("./Data/Scripting/Main/GameControllerGets.lua")
 
 function CGameController:Update(ElapsedTime)
-	-- for i=1, (#self.m_Entities) do
-		-- self.m_Entities[i]:Update(ElapsedTime)
-	-- end
 end
 
 function CGameController:LoadLevel(Level)
@@ -50,8 +50,9 @@ function CGameController:LoadLevelIndependentData()
 end
 
 function CGameController:LoadXML(Filename)
+	
+	self:ClearTables()
 	self.m_Filename = Filename
-	self.m_Entities={}
 	
 	local l_Pedestal = nil
 	
@@ -74,10 +75,10 @@ function CGameController:LoadXML(Filename)
 			elseif l_ElemName=="player" then
 				self:LoadPlayer(l_Element)
 			
-			elseif l_ElemName=="magic_ball" then
-				self:LoadMagicBall(l_Element)
-			elseif l_ElemName=="statue" then
-				self:LoadStatue(l_Element)
+			-- elseif l_ElemName=="magic_ball" then
+				-- self:LoadMagicBall(l_Element)
+			-- elseif l_ElemName=="statue" then
+				-- self:LoadStatue(l_Element)
 			elseif l_ElemName=="dragon" then
 				self:LoadDragon(l_Element)
 				
@@ -93,7 +94,6 @@ function CGameController:LoadXML(Filename)
 			
 			g_LogManager:Log("Entity "..i.." loaded")
 		end
-		g_LogManager:Log("Game entities loaded.")
 	else
 		print("File '"..Filename.."'not correctly loaded")
 	end
@@ -105,15 +105,6 @@ function CGameController:Reload()
 	self:LoadXML(self.m_Filename)
 	g_LogManager:Log("GameController reloaded")
 end
-
--- function CGameController:GetLuaGameObjectHandle(XMLTreeNode)
-	-- local l_GameObjectName = XMLTreeNode:GetPszProperty("game_object", "", false)
-	-- local l_LuaGameObjectHandle = g_LuaGameObjectHandleManager:Get(l_GameObjectName)
-	-- if l_LuaGameObjectHandle == nil then
-		-- g_LogManager:Log("NULL. GameobjectHandle "..l_GameObjectName.." doesn't exists")
-	-- end
-	-- return l_LuaGameObjectHandle
--- end
 
 function CGameController:AddLuaGameObjectHandle(GameObjectName)
 	g_LogManager:Log("Adding handle "..GameObjectName)
@@ -141,6 +132,7 @@ function CGameController:GetParticleEmitter(XMLTreeNode)
 end
 
 function CGameController:PrintEnemyNames()
+	g_LogManager:Log("There are "..#self.m_Enemies.." enemies")
 	for i=1, (#self.m_Enemies) do
 		if(self.m_Enemies[i].m_LuaGameObject ~= nil) then
 			g_LogManager:Log(self.m_Enemies[i].m_LuaGameObject:GetName())
@@ -151,9 +143,21 @@ function CGameController:PrintEnemyNames()
 end
 
 function CGameController:PrintEntitiesNames()
-	for i=1, (#self.m_Entities) do
+	g_LogManager:Log("There are "..#self.m_Entities.." entities")
+	for i=(#self.m_Entities), 1, -1 do
 		if(self.m_Entities[i].m_LuaGameObject ~= nil) then
 			g_LogManager:Log(self.m_Entities[i].m_LuaGameObject:GetName())
+		else
+			g_LogManager:Log("nil")
+		end
+	end
+end
+
+function CGameController:PrintWeaponNames()
+	g_LogManager:Log("There are "..#self.m_Weapons.." weapons")
+	for i=1, (#self.m_Weapons) do
+		if(self.m_Weapons[i].m_LuaGameObject ~= nil) then
+			g_LogManager:Log(self.m_Weapons[i].m_LuaGameObject:GetName())
 		else
 			g_LogManager:Log("nil")
 		end

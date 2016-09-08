@@ -155,7 +155,7 @@ void CThirdPersonCameraController::Update(float ElapsedTime)
 		l_Direction = GetDirection();
 		Vect3f l_Position = m_PlayerPos - l_Direction;
 		l_Position.y = l_Position.y + m_LookAtPitch;
-		std::vector<Vect3f> l_FrustumCorners = CalculateFrustrumCorners(l_Position, ZNEAR);
+		std::vector<Vect3f> l_FrustumCorners = CalculateFrustrumCorners(l_Position, m_ZNear);
 		m_NewCameraPosition = CameraCollisionZoom(l_Position, m_PlayerPos, 0.1f, l_FrustumCorners);
 	}
 }
@@ -163,13 +163,13 @@ void CThirdPersonCameraController::Update(float ElapsedTime)
 void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 {
 	//CEngine::GetSingleton().GetPhysXManager()->MoveKinematicActor("CamPhysX", Camera->GetPosition());
-	Camera->SetFOV(FOV);
-	Camera->SetAspectRatio(ASPECT_RATIO);
+	Camera->SetFOV(m_Fov);
+	Camera->SetAspectRatio(m_AspectRatio);
 	Camera->SetPosition(m_NewCameraPosition);
 	Camera->SetLookAt(m_PlayerPos);
 	Camera->SetUp(GetUp());
-	Camera->SetZNear(ZNEAR);
-	Camera->SetZFar(ZFAR);
+	Camera->SetZNear(m_ZNear);
+	Camera->SetZFar(m_ZFar);
 	Camera->SetMatrixs();
 
 	#ifdef _DEBUG
@@ -281,9 +281,9 @@ std::vector<Vect3f> CThirdPersonCameraController::CalculateFrustrumCorners(Vect3
 	Vect3f CamUp = CCameraController::GetUp();
 	Vect3f CamRight = CCameraController::GetRight();
 	//Original
-	float HalfFOV = FOV*0.5f;
+	float HalfFOV = m_Fov*0.5f;
 	float l_Height = tan(HalfFOV)* Distance;
-	float l_Width = l_Height * ASPECT_RATIO;
+	float l_Width = l_Height * m_AspectRatio;
 
 
 	std::vector<Vect3f> l_FrustumCorners;

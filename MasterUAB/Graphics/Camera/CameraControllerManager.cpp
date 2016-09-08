@@ -9,8 +9,11 @@
 #include "Render\RenderManager.h"
 
 CCameraControllerManager::CCameraControllerManager()
+:m_CameraControllersFilename("")
+,m_CurrentCameraController(nullptr)
+,m_Locked(false)
 {
-	m_Filename="";
+	m_CameraControllersFilename = "";
 	m_CurrentCameraController = nullptr;
 	m_Locked=false;
 }
@@ -22,13 +25,13 @@ CCameraControllerManager::~CCameraControllerManager()
 
 void CCameraControllerManager::Load(const std::string &Filename)
 {
-	m_Filename=Filename;
+	m_CameraControllersFilename = Filename;
 
 	CXMLTreeNode l_XML;
 
 	if (l_XML.LoadFile(Filename.c_str()))
 	{
-		CXMLTreeNode l_Cameras = l_XML["cameras"];
+		CXMLTreeNode l_Cameras = l_XML["camera_controllers"];
 		bool l_Default = false;
 
 		if (l_Cameras.Exists())
@@ -80,7 +83,7 @@ void CCameraControllerManager::Reload()
 {
 	m_CurrentCameraController = nullptr;
 	Destroy();
-	Load(m_Filename);
+	Load(m_CameraControllersFilename);
 }
 
 void CCameraControllerManager::SetCurrentCameraController(const std::string CameraControllerName)

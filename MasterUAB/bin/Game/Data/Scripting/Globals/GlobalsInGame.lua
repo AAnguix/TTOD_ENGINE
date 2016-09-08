@@ -8,7 +8,7 @@
 g_Gravity = Vect3f(0.0,-10.0,0.0)
 g_WindMildEnter = false
 
-g_Enemies = {}
+--g_Enemies = {}
 
 g_CurrentGuiFile = "./Data/Scripting/GUI/GUIInGame.lua"
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainInGame.lua"

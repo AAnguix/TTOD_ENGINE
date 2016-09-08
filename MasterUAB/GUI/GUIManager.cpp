@@ -1,14 +1,12 @@
+#include "Render\ContextManager.h"
 #include "GUIManager.h"
 #include "XML\XMLTreeNode.h"
 #include <assert.h>
 #include "Engine\Engine.h"
-#include "Render\RenderManager.h"
 #include "Input\InputMapperImplementation.h"
 #include "Input\MouseInput.h"
 #include "Log\Log.h"
 #include "Materials\MaterialManager.h"
-#include <iterator>
-#include <sstream>
 #include "RenderableObjects\RenderableObjectTechnique.h"
 #include "Engine\Engine.h"
 #include "LuabindManager\LuabindManager.h"
@@ -1200,7 +1198,7 @@ int CGUIManager::FillCommandQueueWithText(const std::string& Font, const std::st
 
 	for (char c : Text)
 	{
-		if (c == '\n')
+		if (c == '\n' || c == '@')
 		{
 			l_CursorY += l_LineHeight;
 			l_CursorX = 0;

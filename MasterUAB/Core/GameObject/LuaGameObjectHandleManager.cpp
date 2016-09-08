@@ -42,6 +42,14 @@ void CLuaGameObjectHandleManager::Remove(const std::string &GameObjectName)
 	m_HandlesToBeDeleted.push_back(GameObjectName);
 }
 
+/*
+Used to remove character collider some seconds before gameobject is removed
+*/
+void CLuaGameObjectHandleManager::RemoveCharacterCollider(const std::string &GameObjectName)
+{
+	CEngine::GetSingleton().GetGameObjectManager()->RemoveGameObjectCharacterCollider(GameObjectName);
+}
+
 void CLuaGameObjectHandleManager::RemoveHandle(const std::string &GameObjectName)
 {
 	for (size_t i = 0; i < m_LuaGameObjectHandles.size(); ++i)

@@ -26,13 +26,11 @@ PS_INPUT VS(VS_INPUT IN)
 
 float4 PS(PS_INPUT IN) : SV_Target
 {
-	//if(IN.UV.x<0.5)
-	//	clip(-1);
 	float4 l_DiffuseMap = T0Texture.Sample(S0Sampler, IN.UV);
 	
 	float4 l_NormalMap = T1Texture.Sample(S1Sampler, IN.UV);
 	float l_Depth = T2Texture.Sample(S2Sampler, IN.UV).r;
-
+	
 	float l_SpecularFactor = l_DiffuseMap.a;
 	float l_Gloss = 1/(T3Texture.Sample(S3Sampler, IN.UV).a);
 	

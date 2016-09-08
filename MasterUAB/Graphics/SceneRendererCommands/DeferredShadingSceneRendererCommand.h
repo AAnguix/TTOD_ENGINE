@@ -10,8 +10,8 @@ class CDeferredShadingSceneRendererCommand : public CStagedTexturedSceneRenderer
 { 
 private:  
 	CRenderableObjectTechnique *m_RenderableObjectTechnique; 
-	bool m_UseLightVolumes;
 	ID3D11DepthStencilState *m_DepthStencilState;
+	bool m_UseLightVolumes;
 
 	CStaticMesh* m_SphereFirstPass; /*Used to optimize deferred shading*/
 	CStaticMesh* m_SphereSecondPass;

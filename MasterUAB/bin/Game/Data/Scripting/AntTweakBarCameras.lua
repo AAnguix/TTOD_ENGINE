@@ -1,6 +1,6 @@
 function OpenCameras()
 	ClickOnElement("Cameras","InitializeDebugBar()")
-	g_DebugHelper:RegisterButton("Reload cameras","ReloadCameras()")
+	g_DebugHelper:RegisterButton("Reload cameras","g_AntTweakbarReloader:ReloadCameras()")
 	
 	local l_CameraControllers=g_CameraControllerManager:GetLUACameraControllers()
 	for l_CameraController in l_CameraControllers do

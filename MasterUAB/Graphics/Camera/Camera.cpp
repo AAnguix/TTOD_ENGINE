@@ -2,32 +2,27 @@
 #include "XML\XMLTreeNode.h"
 
 CCamera::CCamera()
-: m_FOV(/*60.0f*/ FOV)
-, m_AspectRatio(ASPECT_RATIO)
-, m_ZNear(ZNEAR)
-, m_ZFar(ZFAR)
-, m_Position(5.0f, 5.0f, 0.0f)
-, m_LookAt(0.0f, 0.0f, 0.0f)
-, m_Up(0.0f, 1.0f, 0.0f)
+:m_FOV(0.0f) /*60.0f*/
+,m_AspectRatio(0.0f)
+,m_ZNear(0.0f)
+,m_ZFar(0.0f)
+,m_Position(5.0f, 5.0f, 0.0f)
+,m_LookAt(0.0f, 0.0f, 0.0f)
+,m_Up(0.0f, 1.0f, 0.0f)
 ,CNamed("DefaultCamera")
 {
 }
 
-CCamera::CCamera(const std::string &CameraName)  : CNamed(CameraName)
+CCamera::CCamera(const std::string &Name)
+:m_FOV(0.0f)
+,m_AspectRatio(0.0f)
+,m_ZNear(0.0f)
+,m_ZFar(0.0f)
+,m_Position(5.0f, 5.0f, 0.0f)
+,m_LookAt(0.0f, 0.0f, 0.0f)
+,m_Up(0.0f, 1.0f, 0.0f)
+,CNamed(Name)
 {
-}
-
-CCamera::CCamera(CXMLTreeNode &TreeNode) 
-:CNamed(TreeNode.GetPszProperty("name", ""))
-,m_FOV(TreeNode.GetFloatProperty("fov", FOV))
-,m_AspectRatio(TreeNode.GetFloatProperty("aspect", ASPECT_RATIO))
-,m_ZNear(TreeNode.GetFloatProperty("near", ZNEAR))
-,m_ZFar(TreeNode.GetFloatProperty("far", ZFAR))
-,m_Position(TreeNode.GetVect3fProperty("position", Vect3f(5.0f, 5.0f, 0.0f)))
-,m_LookAt(TreeNode.GetVect3fProperty("look_at", Vect3f(0.0f, 0.0f, 0.0f)))
-,m_Up(TreeNode.GetVect3fProperty("up", Vect3f(0.0f, 1.0f, 0.0f)))
-{
-	
 }
 
 CCamera::~CCamera(){}

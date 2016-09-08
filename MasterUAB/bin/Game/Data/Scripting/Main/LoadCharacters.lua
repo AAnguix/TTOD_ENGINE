@@ -24,7 +24,7 @@ function CGameController:LoadDragon(XMLTreeNode)
 			CGameController:LoadSkeleton(l_DragonComponent,XMLTreeNode)
 			l_DragonComponent:Initialize()
 			g_DragonComponent = l_DragonComponent
-			table.insert(self.m_Entities,l_DragonComponent)
+			table.insert(self.m_Enemies,l_DragonComponent)
 			g_LogManager:Log("Se crea el dragon bien")
 		else
 			g_LogManager:Log("Problemas al crear el dragon")
@@ -134,7 +134,6 @@ function CGameController:LoadEnemy(XMLTreeNode)
 		l_EnemyComponent:Initialize()
 		l_EnemyComponent:SetDeadEvent(l_DeadEvent)
 		CGameController:LoadEnemyChilds(l_EnemyComponent,XMLTreeNode)
-		table.insert(self.m_Entities,l_EnemyComponent)
 		table.insert(self.m_Enemies,l_EnemyComponent)
 	end
 end

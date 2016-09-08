@@ -1,6 +1,5 @@
 #include "FileUtils.h"
 #include <sstream>
-#include <fstream>
 #include <assert.h>
 #include <direct.h>
 #include "Engine\Engine.h"

@@ -3,7 +3,6 @@
 
 CRenderDebugGridSceneRendererCommand::CRenderDebugGridSceneRendererCommand(CXMLTreeNode &TreeNode) : CSceneRendererCommand(TreeNode)
 {
-
 }
 
 

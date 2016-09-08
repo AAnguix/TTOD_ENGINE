@@ -8,8 +8,8 @@
 
 CRenderDebugBlackAndWhiteMapsSceneRendererCommand::CRenderDebugBlackAndWhiteMapsSceneRendererCommand(CXMLTreeNode &TreeNode) 
 :CSceneRendererCommand(TreeNode)
+,m_Blurred(TreeNode.GetBoolProperty("blurred", false))
 {
-	m_Blurred = TreeNode.GetBoolProperty("blurred", false);
 }
 
 
@@ -25,8 +25,9 @@ void CRenderDebugBlackAndWhiteMapsSceneRendererCommand::Execute(CRenderManager &
 	{
 		CTexture* l_Texture = (CTexture*)l_Lights[i]->GetBlackAndWhiteMap();
 		if (m_Blurred)
+		{
 			l_Texture = (CTexture*)l_Lights[i]->GetBlackAndWhiteBlurredMap();
-
+		}
 		if (l_Lights[i]->GetGenerateShadowMap() && l_Texture != NULL)
 		{
 			RenderManager.DrawScreenQuad(l_Technique->GetEffectTechnique(), l_Texture, 0, 0, 1, 1, CColor(0.0, 0.0, 0.0, 1.0));

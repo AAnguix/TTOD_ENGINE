@@ -34,7 +34,14 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 ,m_ParentBoneId(-1)
 ,m_TemporalRenderbleObjectTechnique(NULL)
 {
-	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(TreeNode.GetPszProperty("core_name", ""));
+	std::string l_CoreName = TreeNode.GetPszProperty("core_name", "");
+	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(l_CoreName);
+	#ifdef _DEBUG
+	if (m_StaticMesh == nullptr)
+	{
+		LOG("Error. "+l_CoreName+ " hasn't been loaded");
+	}
+	#endif
 }
 
 void CMeshInstance::GeneratePhysxActor(CXMLTreeNode &TreeNode)

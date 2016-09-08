@@ -1,19 +1,20 @@
 #include "Effects\EffectShader.h"
 #include "Render\RenderManager.h"
-#include "Render\ContextManager.h"
-#include "Effects\EffectParameters.h"
 #include "Engine\Engine.h"
-#include <assert.h>
 #include <d3dcompiler.h>
 #include "XML\XMLTreeNode.h"
-#include "Vertex\VertexTypes.h"
+#include "Render\ContextManager.h"
+
 #include "Log\Log.h"
 #include "Utils\FileUtils.h"
+#include "Effects\EffectVertexShader.h"
+#include "Effects\EffectPixelShader.h"
+#include "Effects\EffectGeometryShader.h"
 
 CEffectShader::CEffectShader(const CXMLTreeNode &TreeNode)
 :CNamed(TreeNode)
 ,m_PreprocessorMacros(NULL)
-,m_ShaderMacros(0)
+,m_ShaderMacros(nullptr)
 ,m_Preprocessor(TreeNode.GetPszProperty("macro", ""))
 ,m_Filename(TreeNode.GetPszProperty("file", ""))
 {
@@ -21,28 +22,23 @@ CEffectShader::CEffectShader(const CXMLTreeNode &TreeNode)
 
 CEffectShader::~CEffectShader()
 {
-	CHECKED_DELETE(m_ShaderMacros);
-	
-	for(size_t i=0;i<m_ConstantBuffers.size();++i)
-	{
-		if (m_ConstantBuffers[i])
-		{
-			m_ConstantBuffers[i]->Release();
-			m_ConstantBuffers[i] = 0;
-		}
-	}
+	Destroy();
 }
 
 void CEffectShader::Destroy()
 {
-	CHECKED_DELETE(m_ShaderMacros);
+	if (m_ShaderMacros != nullptr)
+	{
+		delete m_ShaderMacros;
+		m_ShaderMacros = nullptr;
+	}
 	
 	for(size_t i=0;i<m_ConstantBuffers.size();++i)
 	{
 		if (m_ConstantBuffers[i])
 		{
 			m_ConstantBuffers[i]->Release();
-			m_ConstantBuffers[i] = 0;
+			m_ConstantBuffers[i] = nullptr;
 		}
 	}
 }
@@ -108,7 +104,11 @@ void CEffectShader::CreateShaderMacro()
 		 else    
 		 {   
 			CEngine::GetSingleton().GetLogManager()->Log("Error creating shader macro '%s', with wrong size on parameters"+l_PreprocessorItems[i]);  
-			CHECKED_DELETE_ARRAY(m_ShaderMacros);    
+			if (m_ShaderMacros != nullptr)
+			{
+				delete m_ShaderMacros;
+				m_ShaderMacros = nullptr;
+			}
 			return;   
 		 }  
 	}  

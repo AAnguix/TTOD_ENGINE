@@ -3,6 +3,7 @@
 #include "Engine\Engine.h"
 #include "Log\Log.h"
 #include "XML\XMLTreeNode.h"
+#include "Render\ContextManager.h"
 
 CSetDepthStencilStateSceneRendererCommand::CSetDepthStencilStateSceneRendererCommand(CXMLTreeNode &TreeNode) : CSceneRendererCommand(TreeNode)
 {
@@ -19,8 +20,6 @@ CSetDepthStencilStateSceneRendererCommand::CSetDepthStencilStateSceneRendererCom
 	{
 		CEngine::GetSingleton().GetLogManager()->Log("Error on creating CSetDepthStencilStateSceneRendererCommand");
 	}
-
-	//TODO ERROR
 }
 CSetDepthStencilStateSceneRendererCommand::~CSetDepthStencilStateSceneRendererCommand()
 {

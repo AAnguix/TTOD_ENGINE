@@ -280,6 +280,9 @@
     <ClInclude Include="SceneRendererCommands\RenderDebugBlackAndWhiteMapsSceneRendererCommand.h">
       <Filter>SceneRendererCommands</Filter>
     </ClInclude>
+    <ClInclude Include="Camera\CameraConstants.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Textures\TextureManager.cpp">

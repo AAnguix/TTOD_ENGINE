@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "GraphicsManager\GraphicsManager.h"
+#include "Render\ContextManager.h"
 #include "Engine\EngineSettings.h"
 #include "Render\GraphicsStats.h"
 #include "Engine\Engine.h"
@@ -36,8 +37,12 @@ static void __stdcall SwitchCameraCallback(void* _app)
 }
 
 CGame::CGame()
-:m_Graphics(0) 
+:m_Graphics(nullptr) 
 ,m_CurrentCamera(0)
+,m_EngineSettings(nullptr)
+,m_Hwnd(nullptr)
+,m_ApplicationName("")
+,m_Hinstance(nullptr)
 {
 }
 
@@ -90,7 +95,7 @@ bool CGame::Initialize()
 
 	CEngine &l_Engine = CEngine::GetSingleton();
 
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, l_FullScreen, l_VSync, D3DDebug);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_Hwnd, l_FullScreen, l_VSync, D3DDebug);
 	if (!result)
 	{
 		LOG("Unable to initialize graphics module");
@@ -99,11 +104,11 @@ bool CGame::Initialize()
 	//ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 
 	l_Engine.SetEngineSettings(m_EngineSettings);
-	l_Engine.GetInputMapper()->Initialize(m_hwnd);
+	l_Engine.GetInputMapper()->Initialize(m_Hwnd);
 	l_Engine.GetInputMapper()->PushContext(L"maincontext");
 	l_Engine.GetInputMapper()->AddCallback(InputCallback, 0);
 
-	l_Engine.Initialize(&m_hinstance);
+	l_Engine.Initialize(&m_Hinstance);
 	l_Engine.GetRenderManager()->InitializeDebugRender();
 
 	l_Engine.LoadLevelsCommonData();
@@ -123,7 +128,7 @@ void CGame::Shutdown()
 	{
 		m_Graphics->Shutdown();
 		delete m_Graphics;
-		m_Graphics = 0;
+		m_Graphics = nullptr;
 	}
 
 	ShutdownWindows();
@@ -131,23 +136,21 @@ void CGame::Shutdown()
 	if (m_EngineSettings)
 	{
 		delete m_EngineSettings;
-		m_EngineSettings = 0;
+		m_EngineSettings = nullptr;
 	}
 
 	delete CEngine::GetSingletonPtr();
-
-	return;
 }
 
-void CGame::Run()
+void CGame::Run() const
 {
-	UpdateWindow(m_hwnd);
+	UpdateWindow(m_Hwnd);
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 	
-	bool l_Exit, result;
-
+	bool l_Exit = false;
+	bool l_Result = false;
 	bool hasFocus = true;
 
 	__int64 cntsPerSec = 0;
@@ -156,8 +159,7 @@ void CGame::Run()
 
 	__int64 prevTimeStamp = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
-
-	l_Exit = false;
+	
 	while (!l_Exit)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -177,38 +179,31 @@ void CGame::Run()
 			
 			CEngine::GetSingleton().GetInputMapper()->BeginFrame();
 			CEngine::GetSingleton().GetInputMapper()->Dispatch();
-			result = Update(l_ElapsedTime);
-			result = Frame();
+			l_Result = Frame();
+			l_Result = Update(l_ElapsedTime);
 			CEngine::GetSingleton().GetInputMapper()->Clear();
 			CEngine::GetSingleton().GetInputMapper()->EndFrame();
 
 			prevTimeStamp = currTimeStamp;
-			if (!result)
+			if (!l_Result)
 			{
 				l_Exit = true;
 			}
 		}
 
 	}
-
-	return;
 }
 
 
-bool CGame::Frame()
+bool CGame::Frame() const
 {
-	bool l_Result = m_Graphics->Frame();
-	if (!l_Result)
-		return false;
-	
-	return true;
+	return m_Graphics->Frame();
 }
 
-bool CGame::Update(float ElapsedTime)
+bool CGame::Update(float ElapsedTime) const
 {
 	if (!CEngine::GetSingleton().LoadingLevel())
-		CEngine::GetSingleton().Update(ElapsedTime);
-	
+	{return CEngine::GetSingleton().Update(ElapsedTime);}
 	return true;
 }
 
@@ -312,14 +307,21 @@ void InputCallback(InputMapping::SMappedInput& inputs)
 	for (itAct = inputs.Actions.begin(); itAct != inputs.Actions.end(); ++itAct)
 	{
 		InputMapping::EAction l_Action = *itAct;
-		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputActionCallback", l_Action);
+		std::string l_CallBack = "Action" + std::to_string(l_Action);
+		if (CEngine::GetSingleton().GetEngineSettings()->GetDebugOptions().m_DebugInputMapper)
+		{
+			LOG(l_CallBack + " raised");
+		}
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_CallBack.c_str());
+		//luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputActionCallback", l_Action);
 	}
 
 	std::set<InputMapping::EState>::iterator itState;
 	for (itState = inputs.States.begin(); itState != inputs.States.end(); ++itState)
 	{
 		InputMapping::EState l_State = *itState;
-		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputStateCallback", l_State);
+		std::string l_CallBack = "State" + std::to_string(l_State);
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_CallBack.c_str());
 	}
 
 	if (CEngine::GetSingleton().Initialized())
@@ -358,8 +360,6 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					TwWindowSize((UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
 				}
 			}
-
-
 			return 0;
 		}
 		case WM_CLOSE:
@@ -400,44 +400,40 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			//CEngine::GetSingleton().GetInputManager()->UpdateCursor(xPosAbsolute, yPosAbsolute);
 		}
 		case WM_SETFOCUS:
-			//hasFocus = true;
-			//CEngine::GetSingleton().GetInputManager()->SetFocus(true);
+		{
 			CEngine::GetSingleton().GetInputMapper()->SetFocus(true);
 			break;
+		}
 		case  WM_KILLFOCUS:
-			//hasFocus = false;
-			//CEngine::GetSingleton().GetInputManager()->SetFocus(false);
+		{
 			CEngine::GetSingleton().GetInputMapper()->SetFocus(false);
 			break;
+		}
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_KEYDOWN:
 		{
-			InputMapping::EOSInputButtonX l_OSButton;
-			bool l_WasDown = ((lParam & (1 << 31)) != 0);
-
-			bool l_Alt = ((lParam & (1 << 29)) != 0);
-			bool l_Ctrl = false;
-			switch (wParam)
+			if ((HIWORD(lParam) & KF_REPEAT) == 0)
 			{
-				case VK_CONTROL:
-					l_Ctrl = true;
-					break;
-			}
+				bool l_WasDown = ((lParam & (1 << 31)) != 0); //lParam & (1 << 30);
+				bool l_Alt = ((lParam & (1 << 29)) != 0);
+				bool l_Ctrl = false;
 
-			if (ConvertWParamToOSButton(wParam, l_OSButton))
-			{
-				InputMapping::SOSInputButtons l_OSButtons(l_OSButton, l_Alt, l_Ctrl);
-				CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(l_OSButtons, true, l_WasDown);
+				switch (wParam)
+				{
+					case VK_CONTROL:
+					{l_Ctrl = true; }
+				}
+
+				InputMapping::EOSInputButtonX l_OSButton;
+				if (ConvertWParamToOSButton(wParam, l_OSButton))
+				{
+					InputMapping::SOSInputButtons l_OSButtons(l_OSButton, l_Alt, l_Ctrl);
+					CEngine::GetSingleton().GetInputMapper()->SetOSButtonState(l_OSButtons, true, l_WasDown);
+				}
 			}
-			//CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
-			//break;
+			return 0;
 		}
-		/*{
-			Mapper.Dispatch();
-			Mapper.Clear();
-		}*/
-		return 0;
 		case WM_KEYUP:
 		{
 			bool WasDown = ((lParam & (1 << 30)) != 0);
@@ -447,45 +443,35 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			bool l_Ctrl = false;
 			switch (wParam)
 			{
-			case VK_CONTROL:
-				l_Ctrl = true;
-				break;
+				case VK_CONTROL:
+				{l_Ctrl = true;}
 			}
 
 			if (WasDown != IsDown)
 			{
 				if (IsDown)
 				{
-					bool consumed = false;
 					switch (wParam)
 					{
-					case VK_RETURN:
+						case VK_RETURN:
 						if (l_Alt)
 						{
 							/*WINDOWPLACEMENT windowPosition = { sizeof(WINDOWPLACEMENT) };
 							GetWindowPlacement(hWnd, &windowPosition);
 
-							ToggleFullscreen(hWnd, windowPosition);
-							consumed = true;*/
+							ToggleFullscreen(hWnd, windowPosition);*/
 						}
 						break;
-					case VK_F4:
+
+						case VK_F4:
 						if (l_Alt)
 						{
 							PostQuitMessage(0);
-							consumed = true;
 						}
-						break;
-					}
-					if (consumed)
-					{
 						break;
 					}
 				}
 			}
-			/*	CEngine::GetSingleton().GetInputManager()->KeyEventReceived(wParam, lParam);
-			break;*/
-
 			InputMapping::EOSInputButtonX l_OSButton;
 
 			if (ConvertWParamToOSButton(wParam, l_OSButton))
@@ -505,7 +491,7 @@ void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScre
 	//int posX, posY;
 
 	ApplicationHandle = this;
-	m_hinstance = GetModuleHandle(NULL);
+	m_Hinstance = GetModuleHandle(NULL);
 	m_ApplicationName = "The Tale Of Degann";
 
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
@@ -514,8 +500,8 @@ void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScre
 	wc.lpfnWndProc = MsgProc;
 	wc.cbClsExtra = 0L;
 	wc.cbWndExtra = 0L;
-	wc.hInstance = m_hinstance;
-	wc.hIcon = HICON(LoadImage(m_hinstance, MAKEINTRESOURCE(IDI_GAME_ICON), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
+	wc.hInstance = m_Hinstance;
+	wc.hIcon = HICON(LoadImage(m_Hinstance, MAKEINTRESOURCE(IDI_GAME_ICON), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
 	wc.hIconSm = wc.hIcon;
 
 	wc.hCursor = NULL; //HCURSOR(LoadImage(m_hinstance, MAKEINTRESOURCE(102), IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE));  //LoadCursor(NULL, IDC_ARROW);
@@ -563,13 +549,12 @@ void CGame::InitializeWindows(int& screenWidth, int& screenHeight,bool& FullScre
 		posY = (GetSystemMetrics(SM_CYSCREEN) - screenHeight) / 2;
 	}*/
 
-	m_hwnd = CreateWindow(m_ApplicationName, m_ApplicationName, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, wc.hInstance, NULL);
+	m_Hwnd = CreateWindow(m_ApplicationName, m_ApplicationName, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, wc.hInstance, NULL);
 	
 	//m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName,WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
 	
 	//SetForegroundWindow(m_hwnd);
 	//SetFocus(m_hwnd);
-
 	//ShowCursor(true);
 
 	return;
@@ -585,11 +570,11 @@ void CGame::ShutdownWindows()
 		ChangeDisplaySettings(NULL, 0);
 	}
 
-	DestroyWindow(m_hwnd);
-	m_hwnd = NULL;
+	DestroyWindow(m_Hwnd);
+	m_Hwnd = NULL;
 
-	UnregisterClass(m_ApplicationName, m_hinstance);
-	m_hinstance = NULL;
+	UnregisterClass(m_ApplicationName, m_Hinstance);
+	m_Hinstance = NULL;
 
 	// Release the pointer to this class.
 	ApplicationHandle = NULL;

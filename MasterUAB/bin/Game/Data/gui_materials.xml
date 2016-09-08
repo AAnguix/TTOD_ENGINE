@@ -15,6 +15,9 @@
 	<material name="textbox_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\textures\textBox.png"/>
 </material>
+	<material name="freestyle_script_48_font_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
+		<texture filename="Data\GUI\Fonts\FreestyleScript48_0.png"/>
+</material>
 		<material name="freestyle_script_64_font_material" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<texture filename="Data\GUI\Fonts\FreestyleScript64_0.png"/>
 </material>

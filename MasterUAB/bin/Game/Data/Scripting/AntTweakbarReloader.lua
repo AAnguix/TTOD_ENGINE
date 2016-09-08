@@ -166,6 +166,7 @@ end
 function CAntTweakBarReloader:ReloadCameras()
 	local l_Engine = CEngine.GetSingleton()
 	l_Engine:GetCameraControllerManager():Reload()
+	g_CameraControllerManager:SetCurrentCameraController("ThirdPersonCamera")
 end
 
 function CAntTweakBarReloader:ReloadLog()

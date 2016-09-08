@@ -5,10 +5,11 @@
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Render\RenderManager.h"
 #include "Log\Log.h"
+#include "Render\ContextManager.h"
 
 CGenerateBlackAndWhiteMapsSceneRendererCommand::CGenerateBlackAndWhiteMapsSceneRendererCommand(CXMLTreeNode &TreeNode) : CStagedTexturedSceneRendererCommand(TreeNode)
+,m_RenderableObjectTechnique(CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("generate_black_and_white_map_renderable_object_technique"))
 {
-	m_RenderableObjectTechnique = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("generate_black_and_white_map_renderable_object_technique");
 }
 
 CGenerateBlackAndWhiteMapsSceneRendererCommand::~CGenerateBlackAndWhiteMapsSceneRendererCommand(){

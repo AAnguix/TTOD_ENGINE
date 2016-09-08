@@ -5,8 +5,6 @@
 
 class CRenderGUISceneRendererCommand : public CSceneRendererCommand 
 { 
-	private:  
-		//TODO CGUI   *m_GUI; -FALTA HACERLO
 	public:  
 		CRenderGUISceneRendererCommand(CXMLTreeNode &TreeNode);  
 		virtual void Execute(CRenderManager &RenderManager); 

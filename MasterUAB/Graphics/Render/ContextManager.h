@@ -1,13 +1,10 @@
 #ifndef _CONTEXTMANAGER_H
 #define _CONTEXTMANAGER_H
 
+#include <Windows.h>
 #include <d3d11.h>
-
-#include "Effects\Effect.h"
-#include "Camera\Camera.h"
-#include "Effects\EffectParameters.h"
 #include "Effects\EffectManager.h"
-#include <assert.h>
+#include "Camera\Camera.h"
 
 class CRenderableVertexs;
 

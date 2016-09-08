@@ -5,17 +5,19 @@ function CEnemyComponent:__init(CLuaGameObject,EnemyType)
 	self.m_Health = 100.0
 	self.m_MaxHealth = 100.0
 	self.m_Dead = false
-	self.m_CountdownToExtintionTimer = 5.0
+	self.m_CountdownToExtintionTimer = 6.0
+	self.m_CountdownToRemoveWeapon = self.m_CountdownToExtintionTimer*0.95
 	self.m_CountdownToExtintion = self.m_CountdownToExtintionTimer
 	
 	self.m_Armor = nil
 	self.m_Weapon = nil
+	self.m_WeaponsRemoved = false
 	
 	self.m_Speed = 0.0
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	self.m_AttackDelay = 0.0
 	self.m_VisionRange = 0.0
-	self.m_RotationVelocity = 5.0
+	self.m_RotationVelocity = 3.5
 	
 	self.m_DelayToPatrol = 2.0
 	self.m_WayPoints = {}
@@ -92,7 +94,7 @@ function CEnemyComponent:Die()
 	--self.m_LuaGameObject:SetTemporalRenderableObjectTechnique(l_RenderableObjectTechnique)
 	self.m_Dead = true
 	g_LayerManager:ChangeElementFromLayer(self.m_LuaGameObject:GetName(),"solid","dead_enemies")
-	self.m_LuaGameObject:SetBool("Die",true)
+	self.m_LuaGameObject:SetBool("Dead",true)
 	self.m_TemporalMaterials = self.m_LuaGameObject:CreateCopyMaterialsFromCore()
 	for i=0,(self.m_TemporalMaterials:size()-1) do
 		self.m_TemporalMaterials:at(i):AddTexture(g_FadeOutNoiseTexture,false)
@@ -110,11 +112,17 @@ function CEnemyComponent:CountdownToExtintion(ElapsedTime)
 		self.m_TemporalMaterials:at(i):SetFloatParameterValue("cutout_factor",l_CutOut)
 	end
 	
+	if(self.m_CountdownToExtintionTimer <= self.m_CountdownToRemoveWeapon and self.m_WeaponsRemoved==false) then
+		local l_Name = self.m_LuaGameObject:GetName()
+		g_GameController:RemoveEnemyArmorAndWeapon(l_Name)
+		self.m_WeaponsRemoved = true
+		g_LuaGameObjectHandleManager:RemoveCharacterCollider(l_Name)
+	end
+	
 	if(self.m_CountdownToExtintionTimer <= 0.0) then
 		self:RaiseDeadEvents()
 		--self.m_LuaGameObject:SetTemporalRenderableObjectTechnique(nil)
-		local l_Name = self.m_LuaGameObject:GetName() 
-		g_GameController:RemoveEnemy(l_Name)
+		g_GameController:RemoveElementFromTable(g_GameController:GetEnemies(),self.m_LuaGameObject:GetName())
 	end
 end
 
@@ -151,13 +159,13 @@ function CEnemyComponent:LookAtPoint(Point, ElapsedTime)
 	-- -k*T    si el ángulo es negativo. K es la velocidad
 	--  si -k*T < angulo, aplicas el angulo, y no la formula, para que no se pase de rotación
 	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-	local l_Velocity = self.m_RotationVelocity
-	self.m_LuaGameObject:SetYaw(self:CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+	-- if(l_Angle > 0.05 or l_Angle < -0.05) then
+		self.m_LuaGameObject:SetYaw(self:CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
+	-- end
 end
 
 function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 	local l_Position = self.m_LuaGameObject:GetPosition()
-	local l_Name = self.m_LuaGameObject:GetName()
 	if (#self.m_WayPoints)>0 then
 		local l_Destiny = Vect3f(0.0,0.0,0.0)
 		l_Destiny = self.m_WayPoints[self.m_CurrentWayPoint]
@@ -165,7 +173,7 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 		
 		if CTTODMathUtils.PointInsideCircle(l_Destiny, l_Position, 0.2) == false then
 			l_Vector:Normalize(1)
-			self.m_Velocity = self.m_Velocity + (l_Vector*self:GetSpeed())
+			self.m_Velocity = (l_Vector*self:GetSpeed())
 			self:LookAtPoint(l_Destiny, ElapsedTime)
 		else
 			self.m_CurrentWayPoint = self.m_CurrentWayPoint+1
@@ -243,5 +251,5 @@ function CEnemyComponent:IsAttacking() return self.m_Attacking end
 function CEnemyComponent:SetAttacking(state) self.m_Attacking = state end
 -- function CEnemyComponent:IsHit() return self.m_GotHit end
 -- function CEnemyComponent:SetHitState(state) self.m_GotHit = state end
-function CEnemyComponent:SetFollowTriangleWayPointsState(Value) self.M_FollowWaypoints = Value end
-function CEnemyComponent:SetMoveToAttackMovement(Value) self.M_AttackMovement = Value end
+function CEnemyComponent:SetFollowTriangleWayPointsState(Value) self.m_FollowWaypoints = Value end
+function CEnemyComponent:SetMoveToAttackMovement(Value) self.m_AttackMovement = Value end

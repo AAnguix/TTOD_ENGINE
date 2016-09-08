@@ -12,8 +12,7 @@ class CCameraControllerManager : public CTemplatedMapManager<CCameraController>
 private:
 	std::vector<CCameraController *> l_CameraControllerVector; /*To list CControllers in LUA*/
 
-
-	std::string m_Filename;
+	std::string m_CameraControllersFilename;
 	CCamera m_CurrentCamera;
 	bool m_Locked;
 	CCameraController* m_CurrentCameraController;

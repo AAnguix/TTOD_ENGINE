@@ -4,8 +4,8 @@
 #include "XML\XMLTreeNode.h"
 
 CSetLightConstantsSceneRendererCommand::CSetLightConstantsSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode) 
+,m_MaxLights(TreeNode.GetIntProperty("max_lights", 4))
 {
-	m_MaxLights = TreeNode.GetIntProperty("max_lights",4);
 	assert(m_MaxLights < 5);
 }
 

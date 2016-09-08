@@ -63,6 +63,7 @@ private:
 	void UpdateComponents(float ElapsedTime);
 
 	physx::PxShape* GetShape(const std::string &ShapeName);
+	void ChangeShapeTriggerState(physx::PxShape* Shape, bool State);
 
 	enum Groups
 	{
@@ -114,6 +115,7 @@ protected:
 	physx::PxConvexMesh* GetConvexMesh(const std::string &ConvexMeshName, physx::PxDefaultMemoryInputData MemoryInputData);
 	physx::PxTriangleMesh* GetTriangleMesh(const std::string &TriangleMeshName, physx::PxDefaultMemoryInputData MemoryInputData);
 	physx::PxShape* GenerateShape(const std::string &ShapeName, const physx::PxGeometry &Geometry, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
+	bool ReleaseShape(const std::string &ShapeName);
 
 	physx::PxMaterial* RegisterMaterial(const std::string &Name, float StaticFriction, float DynamicFriction, float Restitution);
 
@@ -178,9 +180,11 @@ public:
 
 	/*Triggers*/
 	bool CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
-	bool CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
+	bool CreateBoxTrigger(const std::string &TriggerName, const Vect3f &Size, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
 	bool CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
-	bool CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
+	bool CreateSphereTrigger(const std::string &TriggerName, float Radius, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType);
+	bool DeleteTrigger(const std::string &TriggerName);
+	
 	void CreateBoxLua(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 	void CreateSphereLua(const std::string &ShapeName, float Radius, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive);
 
@@ -215,6 +219,7 @@ public:
 	//bool Raycast(const Vect3f& Origin, const Vect3f& End, int FilterMask, SRaycastData* result_ = nullptr);
 	bool Raycast(const Vect3f& Origin, const Vect3f& Direction, const float& Length, SRaycastData* Result_);
 	void ChangeShapeTriggerState(const std::string &ShapeName, bool State);
+	void ChangeShapeTriggerState(const std::string &ShapeName, bool EnableTrigger, bool EnableSimulation);
 	bool GeometryQuery(const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_);
 
 

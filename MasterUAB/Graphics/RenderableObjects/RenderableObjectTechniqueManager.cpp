@@ -54,7 +54,11 @@ void CRenderableObjectTechniqueManager::Load(const std::string &Filename)
 
 					if (!m_PoolRenderableObjectTechniques.AddResource(l_PoolROTechnique->GetName(), l_PoolROTechnique))
 					{
-						CHECKED_DELETE(l_PoolROTechnique);
+						if (l_PoolROTechnique)
+						{
+							delete l_PoolROTechnique;
+							l_PoolROTechnique = nullptr;
+						}
 					}
 					else //Rellena con las techniques
 					{

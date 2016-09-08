@@ -1,6 +1,11 @@
 -- Prevents player from hitting multiple times an enemy in a single attack
 function CPlayerComponent:IsAttacking() return self.m_Attacking end
-function CPlayerComponent:SetAttacking(state) self.m_Attacking = state end
+function CPlayerComponent:IsBlocking() return self.m_Blocking end
+function CPlayerComponent:IsInteracting() return self.m_Interacting end
+
+function CPlayerComponent:SetAttacking(State) self.m_Attacking = State end
+function CPlayerComponent:SetBlocking(State) self.m_Blocking = State end
+function CPlayerComponent:SetInteracting(State) self.m_Interacting = State end
 
 -- Disables multiple attacksw input instructions while player is attacking
 function CPlayerComponent:IsAttackFinished() return self.m_AttackFinished end
@@ -13,7 +18,8 @@ function CPlayerComponent:CheckForSurroundingEnemies()
 		local l_EnemyPos = l_Enemies[i]:GetLuaGameObject():GetPosition()
 		local l_Distance = (l_EnemyPos-self.m_LuaGameObject:GetPosition()):Length()
 		if (l_Distance < self.m_DistanceToEnterCombatIdle) then
-			self.m_LuaGameObject:SetBool("SurroundingEnemies", true) 
+			self.m_LuaGameObject:SetBool("SurroundingEnemies", true)
+			return true
 		end
 	end
 	self.m_LuaGameObject:SetBool("SurroundingEnemies", false) 
@@ -56,16 +62,17 @@ end
 
 function CPlayerComponent:CalculateAttackDirection(ElapsedTime)
 	local l_ClosestEnemy = self:GetClosestEnemy(g_GameController:GetEnemies())
-	local l_Forward = self.m_LuaGameObject:GetForward()
+	local l_Forward = self.m_LuaGameObject:GetForward():Normalize(1)
 	if l_ClosestEnemy~=nil then
 		self:FaceEnemy(l_Forward, l_ClosestEnemy, ElapsedTime)
 	else 
-		--self:AttackCameraDirection(l_Forward, ElapsedTime)
+		-- local l_AttackDirection = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
+		self:FaceDirection(l_Forward, self.m_AttackDirection, ElapsedTime)
 	end
 end
 
-function CPlayerComponent:AttackCameraDirection(Forward, ElapsedTime)
-	local l_Angle = CTTODMathUtils.AngleBetweenVectors(self.m_AttackDirection, Forward)  
+function CPlayerComponent:FaceDirection(Forward, NewDirection, ElapsedTime)
+	local l_Angle = CTTODMathUtils.AngleBetweenVectors(NewDirection, Forward)  
 	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
 	if (math.abs(l_Angle)>self.m_AngleMargin) then
 		self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
@@ -77,12 +84,6 @@ function CPlayerComponent:FaceEnemy(Forward, ClosestEnemy, ElapsedTime)
 	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)    
 	--g_LogManager:Log("Angle del FaceEnemy: ".. l_Angle)
 	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
-end
-
-function CPlayerComponent:FaceAttackDirection(ElapsedTime)
-	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-	local l_Angle = g_CameraControllerManager:GetCurrentCameraController():GetYaw() - l_CurrentYaw
 	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
 end
 

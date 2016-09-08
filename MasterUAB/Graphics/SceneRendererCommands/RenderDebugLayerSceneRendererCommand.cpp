@@ -5,9 +5,8 @@
 #include "Engine\Engine.h"
 
 CRenderDebugLayerSceneRendererCommand::CRenderDebugLayerSceneRendererCommand(CXMLTreeNode &TreeNode): CSceneRendererCommand(TreeNode) 
+,m_Layer(CEngine::GetSingleton().GetLayerManager()->GetResource(TreeNode.GetPszProperty("layer")))
 {
-	std::string l_LayerName = TreeNode.GetPszProperty("layer");
-	m_Layer = CEngine::GetSingleton().GetLayerManager()->GetResource(l_LayerName);
 } 
 
 void CRenderDebugLayerSceneRendererCommand::Execute(CRenderManager &RenderManager)

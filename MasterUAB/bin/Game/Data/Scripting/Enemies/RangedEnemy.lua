@@ -1,13 +1,14 @@
 class 'CRangedEnemyComponent' (CEnemyComponent)
 function CRangedEnemyComponent:__init(CGameObject)
 	CEnemyComponent.__init(self, CGameObject, "RangedEnemy")
-	self.m_Health=30.0
+	self.m_Health=10.0
+	self.m_MaxHealth=self.m_Health
 	self.m_Speed=4.0
 	self.m_AttackDelay=4.0
 	self.m_VisionRange=12.0
 	self.m_PointRadius=0.66
 	self.m_EscapeRadius = 1.0
-	self.m_EscapeDistance=5.5
+	self.m_EscapeDistance=3.0
 	self.m_LastTimeFrightened = false
 	self.m_ShootingForce=320.0
 	
@@ -31,8 +32,8 @@ function CRangedEnemyComponent:Initialize()
 	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_RangedEnemy", "OnUpdate_Idle_RangedEnemy", "OnExit_Idle_RangedEnemy")
 	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_RangedEnemy", "OnUpdate_Attack_RangedEnemy", "OnExit_Attack_RangedEnemy")
 	local l_RunAway = self.m_LuaGameObject:AddState("RunAway_State", "alert", 1.0, "OnEnter_RunAway_RangedEnemy", "OnUpdate_RunAway_RangedEnemy", "OnExit_RunAway_RangedEnemy")
-	local l_Frightened = self.m_LuaGameObject:AddState("Frightened_State", "die", 1.0, "OnEnter_Frightened_RangedEnemy", "OnUpdate_Frightened_RangedEnemy", "OnExit_Frightened_RangedEnemy")
-	local l_Die = self.m_LuaGameObject:AddState("Die_State", "normalAttack", 1.0, "OnEnter_Die_RangedEnemy", "OnUpdate_Die_RangedEnemy", "OnExit_Die_RangedEnemy")
+	local l_Frightened = self.m_LuaGameObject:AddState("Frightened_State", "injured", 1.0, "OnEnter_Frightened_RangedEnemy", "OnUpdate_Frightened_RangedEnemy", "OnExit_Frightened_RangedEnemy")
+	local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_RangedEnemy", "OnUpdate_Dead_RangedEnemy", "OnExit_Dead_RangedEnemy")
 	
 	self.m_LuaGameObject:AddBool("IsPlayerInsideVisionRange", false)
 	--self.m_LuaGameObject:AddBool("AtackPlayer1", false)
@@ -40,7 +41,7 @@ function CRangedEnemyComponent:Initialize()
 	self.m_LuaGameObject:AddTrigger("PlayerInsideEscapeRange", false)
 	self.m_LuaGameObject:AddTrigger("AttackPlayer", false)
 	self.m_LuaGameObject:AddTrigger("Frightened", false)
-	self.m_LuaGameObject:AddBool("Die", false)
+	self.m_LuaGameObject:AddBool("Dead", false)
 	
 	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack",l_Attack, false, 0.1, 0.1)
 	l_IdleToAttack:AddTriggerCondition("AttackPlayer")
@@ -58,16 +59,18 @@ function CRangedEnemyComponent:Initialize()
 	
 	local l_FrightenedToIdle = l_Frightened:AddTransition("FrightenedToIdle",l_Idle, true, 0.1)
 	
-	local l_AnyToDie = self.m_LuaGameObject:AddAnyStateTransition("AnyStateToDie",l_Die, false, 0.1, 0.1)
-	l_AnyToDie:AddBoolCondition("Die", true)
+	local l_AnyToDead = self.m_LuaGameObject:AddAnyStateTransition("AnyStateToDead",l_Dead, false, 0.1, 0.1)
+	l_AnyToDead:AddBoolCondition("Dead", true)
 	
-	local l_DieToIdle = l_Die:AddTransition("DieToIdle",l_Idle, true, 0.1)
-	l_DieToIdle:AddBoolCondition("Die", false)
+	local l_DeadToIdle = l_Dead:AddTransition("DeadToIdle",l_Idle, true, 0.1)
+	l_DeadToIdle:AddBoolCondition("Dead", false)
 end
 
 function CRangedEnemyComponent:Update(ElapsedTime)
 	CEnemyComponent.Update(self,ElapsedTime)
-	self:MovementController(ElapsedTime)
+	if (not self.m_Dead) then
+		self:MovementController(ElapsedTime)
+	end 
 end
 
 function CRangedEnemyComponent:MovementController(ElapsedTime)

@@ -87,6 +87,59 @@ CMaterial::CMaterial(CXMLTreeNode &TreeNode)
 	}
 }
 
+CMaterial::CMaterial(const CMaterial& Other)
+:CNamed(Other.GetName()+"_copy")
+,m_CurrentParameterData(0)
+,m_Offset(0)
+{
+	m_RenderableObjectTechnique = Other.GetRenderableObjectTechnique();
+	m_StaticFriction = Other.GetStaticFriction();
+	m_DynamicFriction = Other.GetDynamicFriction();
+	m_Restitution = Other.GetRestitution();
+
+	for (size_t i = 0; i < Other.GetTextures().size(); ++i)
+	{
+		m_Textures.push_back(Other.GetTextures()[i]);
+	}
+
+	for (size_t i = 0; i < Other.GetParameters().size(); ++i)
+	{
+		CMaterialParameter* l_OtherMaterialParameter = Other.GetParameters()[i];
+		CMaterialParameter::TMaterialType l_MaterialType = l_OtherMaterialParameter->GetMaterialType();
+		std::string l_OtherDescription = l_OtherMaterialParameter->GetDescription();
+		std::string l_OtherName = l_OtherMaterialParameter->GetName();
+
+		CMaterialParameter* l_MaterialParameter = nullptr;
+
+		if (l_MaterialType == CMaterialParameter::TMaterialType::FLOAT)
+		{
+			l_MaterialType = CMaterialParameter::FLOAT;
+			float l_Value = *((float*)l_OtherMaterialParameter->GetValueAddress());
+			l_MaterialParameter = new CTemplatedMaterialParameter<float>(this, l_OtherName, l_OtherDescription, l_Value, l_MaterialType);
+
+		}
+		else if (l_MaterialType == CMaterialParameter::TMaterialType::VECT2F)
+		{
+			l_MaterialType = CMaterialParameter::VECT2F;
+			Vect2f l_Value = *((Vect2f*)l_OtherMaterialParameter->GetValueAddress());
+			l_MaterialParameter = new CTemplatedMaterialParameter<Vect2f>(this, l_OtherName, l_OtherDescription, l_Value, l_MaterialType);
+		}
+		else if (l_MaterialType == CMaterialParameter::TMaterialType::VECT3F)
+		{
+			l_MaterialType = CMaterialParameter::VECT3F;
+			Vect3f l_Value = *((Vect3f*)l_OtherMaterialParameter->GetValueAddress());
+			l_MaterialParameter = new CTemplatedMaterialParameter<Vect3f>(this, l_OtherName, l_OtherDescription, l_Value, l_MaterialType);
+		}
+		else if (l_MaterialType == CMaterialParameter::TMaterialType::VECT4F)
+		{
+			l_MaterialType = CMaterialParameter::VECT4F;
+			Vect4f l_Value = *((Vect4f*)l_OtherMaterialParameter->GetValueAddress());
+			l_MaterialParameter = new CTemplatedMaterialParameter<Vect4f>(this, l_OtherName, l_OtherDescription, l_Value, l_MaterialType);
+		}
+		m_Parameters.push_back(l_MaterialParameter);
+	}
+}
+
 CMaterial::~CMaterial()
 {
 	for(size_t i=0;i<m_Parameters.size();++i)

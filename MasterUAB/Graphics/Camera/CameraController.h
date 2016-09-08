@@ -18,6 +18,11 @@ protected:
 	float m_Yaw;
 	float m_Pitch;
 
+	float m_Fov;
+	float m_AspectRatio;
+	float m_ZNear;
+	float m_ZFar;
+
 	enum EType
 	{
 		FIXED=0,

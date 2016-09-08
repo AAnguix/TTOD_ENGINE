@@ -1,9 +1,23 @@
 --EVENTS
 
-function CPlayerComponent:PLAYER_OPENS_MAP() if(g_Engine:IsPaused()==false) then self:OpenMap() end end
-function CPlayerComponent:PLAYER_ATTACKS() if self:IsAttackFinished() then self.m_LuaGameObject:SetTrigger("Attack") end end
-function CPlayerComponent:PLAYER_BLOCKS() self.m_LuaGameObject:SetTrigger("Block") end
+function CPlayerComponent:PLAYER_OPENS_MAP() 
+	if(g_Engine:IsPaused()==false) then 
+		self:OpenMap() 
+	end 
+end
+function CPlayerComponent:PLAYER_ATTACKS() 
+	if (not self:IsLocked()) and self:IsAttackFinished() then 
+		self.m_LuaGameObject:SetTrigger("Attack") 
+	end
+end
+function CPlayerComponent:PLAYER_BLOCKS()
+	if (not self:IsLocked()) then 
+		self.m_LuaGameObject:SetTrigger("Block") 
+	end 
+end
+ 
 function CPlayerComponent:PLAYER_DRINKS_BEER() self:DrinkBeer() end
+
 function CPlayerComponent:LOCK_CHARACTER()
 	if (self:IsLocked()) then	
 		self:Unlock()
@@ -12,8 +26,14 @@ function CPlayerComponent:LOCK_CHARACTER()
 	end
 end
 
+function CPlayerComponent:CanMove()
+	-- local l_Result = (not self:IsAttacking()) and (not self:IsBlocking()) 
+	-- and (not self:IsInteracting()) and (not self:IsLocked())
+	return (not self:IsLocked())
+end
+
 function CPlayerComponent:PLAYER_WALKING_FORWARD()
-	if self:IsAttacking()==false then
+	if self:CanMove() then
 		self.m_Forward = true
 		--self.m_Walk = true
 		local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
@@ -22,7 +42,7 @@ function CPlayerComponent:PLAYER_WALKING_FORWARD()
 end
 
 function CPlayerComponent:PLAYER_WALKING_BACKWARDS()
-	if self:IsAttacking()==false then
+	if self:CanMove() then
 		self.m_Backwards = true
 		--self.m_Walk = true
 		local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward()
@@ -31,7 +51,7 @@ function CPlayerComponent:PLAYER_WALKING_BACKWARDS()
 end
 
 function CPlayerComponent:PLAYER_WALKING_RIGHT()
-	if self:IsAttacking()==false then
+	if self:CanMove() then
 		self.m_Right = true
 		--self.m_Walk = true
 		local l_CameraRight = g_CameraControllerManager:GetCurrentCameraController():GetRight()
@@ -40,7 +60,7 @@ function CPlayerComponent:PLAYER_WALKING_RIGHT()
 end
 
 function CPlayerComponent:PLAYER_WALKING_LEFT()
-	if self:IsAttacking()==false then
+	if self:CanMove() then
 		self.m_Left = true
 		--self.m_Walk = true
 		local l_CameraRight = g_CameraControllerManager:GetCurrentCameraController():GetRight()

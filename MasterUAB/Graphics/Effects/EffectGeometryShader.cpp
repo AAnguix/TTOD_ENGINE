@@ -1,8 +1,9 @@
-#include "Effects\EffectPixelShader.h"
-#include "Render\RenderManager.h"
+#include "Effects\EffectGeometryShader.h"
+#include "XML\XMLTreeNode.h"
 #include "Engine\Engine.h"
 #include "Log\Log.h"
-#include "XML\XMLTreeNode.h"
+#include "Render\RenderManager.h"
+#include "Render\ContextManager.h"
 
 void CEffectGeometryShader::Destroy()
 {

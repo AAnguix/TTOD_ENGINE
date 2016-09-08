@@ -13,6 +13,8 @@ function StartLevelOne()
 	
 	local l_SoundEvent = SoundEvent("Play_WolfBlood")
 	g_SoundManager:PlayEvent(l_SoundEvent)
+	
+	StartBossLevel()
 end
 
 function StartLevelTwo()
@@ -34,4 +36,33 @@ function StartLevelThree()
 
 	g_GameController:LoadXML("Data/Level3/game_entities.xml")
 	InitializeGUI()
+end
+
+function StartBossLevel()
+	dofile("./Data/Scripting/Globals/GlobalsBossLevel.lua")
+	dofile("./Data/Scripting/Elements/StatuesManager.lua")
+
+	CreateMagicBall()
+	CreateStatues()
+end
+
+function CreateMagicBall()
+	local l_MagicBallLuaGameObject = g_GameController:AddLuaGameObjectHandle("MagicBall")
+	g_MagicBall=CMagicBallComponent(l_MagicBallLuaGameObject)
+	g_ScriptManager:AddComponent(l_MagicBallLuaGameObject:GetName(),l_MagicBallLuaGameObject,g_MagicBall)
+	table.insert(g_GameController:GetEntities(),g_MagicBall)
+end
+
+function CreateStatues()
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle("StatuesManager")
+	g_StatuesManager  = CStatuesManagerComponent(l_LuaGameObject)
+	g_ScriptManager:AddComponent("StatuesManager",l_LuaGameObject,g_StatuesManager)
+	table.insert(g_GameController:GetEntities(),g_StatuesManager)
+	
+	local l_StatueOneLuaGameObject = g_GameController:AddLuaGameObjectHandle("StatueOne")
+	local l_StatueTwoLuaGameObject = g_GameController:AddLuaGameObjectHandle("StatueTwo")
+	local l_StatueThreeLuaGameObject = g_GameController:AddLuaGameObjectHandle("StatueThree")
+	g_StatuesManager:AddStatue(l_StatueOneLuaGameObject,10.0)
+	g_StatuesManager:AddStatue(l_StatueTwoLuaGameObject,10.0)
+	g_StatuesManager:AddStatue(l_StatueThreeLuaGameObject,10.0)
 end

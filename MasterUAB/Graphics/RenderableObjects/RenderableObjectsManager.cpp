@@ -1,4 +1,5 @@
 #include "RenderableObjects\RenderableObjectsManager.h"
+#include "Render\ContextManager.h"
 #include "Particles\ParticleSystemInstance.h"
 #include "GameObject\GameObject.h"
 
@@ -9,14 +10,7 @@ CRenderableObjectsManager::CRenderableObjectsManager() : CNamed("")
 
 CRenderableObjectsManager::~CRenderableObjectsManager()
 {
-
 }
-
-//void CRenderableObjectsManager::Reload()
-//{
-//	Destroy();
-//	Load(m_Filename);
-//}
 
 bool CRenderableObjectsManager::RemoveRenderableObject(const std::string& RenderableObjectName)
 {

@@ -23,6 +23,8 @@ public:
 	void Update();
 	CLuaGameObjectHandle Add(CGameObject* GameObject);
 	void Remove(const std::string &GameObjectName);
+	void RemoveCharacterCollider(const std::string &GameObjectName);
+
 	CLuaGameObjectHandle Get(const std::string &GameObjectName);
 	void Destroy();
 };

@@ -1,10 +1,12 @@
 #include "Particles\ParticleManager.h"
 #include "XML\XMLTreeNode.h"
+#include "Render\ContextManager.h"
 #include "Engine\Engine.h"
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectsManager.h"
 #include "Particles\ParticleSystemInstance.h"
 #include "Log\Log.h"
+
 
 CParticleManager::CParticleManager() : m_Filename("")
 {
@@ -30,7 +32,11 @@ void CParticleManager::Load(const std::string &Filename)
 				CParticleSystemType *l_ParticleSystemType = new CParticleSystemType(l_Meshes(i));
 				if (!AddResource(l_ParticleSystemType->GetName(), l_ParticleSystemType))
 				{
-					CHECKED_DELETE(l_ParticleSystemType);
+					if (l_ParticleSystemType)
+					{
+						delete l_ParticleSystemType;
+						l_ParticleSystemType = nullptr;
+					}
 				}
 				else
 				{

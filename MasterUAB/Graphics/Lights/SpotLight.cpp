@@ -2,6 +2,8 @@
 #include "Textures\DynamicTexture.h"
 #include "XML\XMLTreeNode.h"
 #include "Render\RenderManager.h"
+#include "Effects\EffectManager.h"
+#include "Render\ContextManager.h"
 
 CSpotLight::CSpotLight(const std::string &Name)
 :m_Angle(0.0f)

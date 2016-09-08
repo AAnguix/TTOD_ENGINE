@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<cinematics>
+	<on time="0.0" duration="30.0" action="draw_text" text="Eres agil, fuerte y no tienes miedo a nada, muy bien,@ pero debes repasar lo básico antes de estar preparada.@Avanza hacia mi para comenzar la leccion (UTILIZA WASD PARA MOVERTE)" text_name="StepOne" font_name="freestyle_script_48_font"
+	text_x="0.25" text_y="0.7" text_width="0.1" text_height="0.1" text_color="1.0 0.0 0.0 1.0" />
+
+	<after_last_action time="0.0" duration="20.0" action="draw_text" text="En esta cueva no entra ni un Apice luz... toca el pedestal donde se halla esa gema,@ así podremos ver algo.@ (Los pedestales enanos son artefactos antiguos con muchas utilidades,@ la mas basica de ellas es iluminar las zonas oscuras)" text_name="StepTwo" font_name="freestyle_script_48_font"
+	text_x="0.25" text_y="0.7" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0" />
+	
+	<after_last_action time="0.0" duration="25.0" action="draw_text" text="Step Three" text_name="StepThree" font_name="calibri_font"
+	text_x="0.7" text_y="0.8" text_width="0.1" text_height="0.1" text_color="0.0 1.0 0.0 1.0" />
+</cinematics>

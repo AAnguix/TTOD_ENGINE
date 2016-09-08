@@ -100,14 +100,14 @@ function CPlayerComponent:Initialize()
 	local l_CombatIdleToWalk = l_CombatIdle:AddTransition("CombatIdleToWalk", l_Walk, false, 0.1)
 	l_CombatIdleToWalk:AddBoolCondition("Walk", true)
 	
-	local l_CombatIdleToBlock = l_Idle:AddTransition("CombatIdleToBlock", l_Block, false, 0.1, 0.2)
+	local l_CombatIdleToBlock = l_CombatIdle:AddTransition("CombatIdleToBlock", l_Block, false, 0.1, 0.2)
 	l_CombatIdleToBlock:AddTriggerCondition("Block")
 	
 	local l_CombatIdleToTossed = l_CombatIdle:AddTransition("CombatIdleToTossed", l_Tossed, false, 0.2)
 	l_CombatIdleToTossed:AddTriggerCondition("TossedByDragon")
 	
 	local l_CombatIdleToIdle = l_CombatIdle:AddTransition("CombatIdleToIdle", l_Idle, false, 0.2)
-	l_IdleToCombatIdle:AddBoolCondition("SurroundingEnemies", false)
+	l_CombatIdleToIdle:AddBoolCondition("SurroundingEnemies", false)
 	
 	local l_CombatIdleToAttack = l_CombatIdle:AddTransition("CombatIdleToAttack", l_Attack, false, 0.2, 0.5)
 	l_CombatIdleToAttack:AddTriggerCondition("Attack")

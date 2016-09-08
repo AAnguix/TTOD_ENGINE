@@ -1,17 +1,19 @@
 #ifndef _GUIMANAGER_H
 #define _GUIMANAGER_H
 
+class CMaterial;
+class CRenderableVertexs;
+class CRenderManager;
+class CXMLTreeNode;
+
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <map>
 #include "Math\Color.h"
-class CMaterial;
-class CRenderableVertexs;
-class CRenderManager;
-class CXMLTreeNode;
 #include "Vertex\RenderableVertexs.h"
 #include "Vertex\VertexTypes.h"
+
 const unsigned int s_MaxVerticesPerCall = 240;
 
 class CGUIManager

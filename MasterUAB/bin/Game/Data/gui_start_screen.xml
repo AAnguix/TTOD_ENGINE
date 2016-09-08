@@ -54,6 +54,9 @@
 	</gui_spritemap>
 
 	<!-- FONTS -->
+	<gui_spritemap name="freestyle_script_48_spritemap" width="512" height="512" material="freestyle_script_48_font_material">
+		<sprite name="FreestyleScript48_0.png" x="0" y="0" w="512" h="512" />
+	</gui_spritemap>
 	<gui_spritemap name="freestyle_script_64_spritemap" width="512" height="512" material="freestyle_script_64_font_material">
 		<sprite name="FreestyleScript64_0.png" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>

@@ -2,7 +2,6 @@
 #define _EFFECTSHADER_H
 
 #include "Utils\Named.h"
-#include "Utils\Utils.h"
 #include <d3d11.h>
 #include <d3dcommon.h>
 #include <vector>

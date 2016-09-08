@@ -3,12 +3,17 @@
 #include <cmath>
 #include "Utils\Utils.h"
 #include "XML\XMLTreeNode.h"
+#include "Camera\CameraConstants.h"
 
 CCameraController::CCameraController()
 :CNamed("")
 ,m_Yaw(0.0f)
 ,m_Pitch(0.0f)
 ,m_Position(0, 0, 0)
+,m_Fov(FOV)
+,m_AspectRatio(ASPECT_RATIO)
+,m_ZNear(ZNEAR)
+,m_ZFar(ZFAR)
 {
 }
 
@@ -17,6 +22,10 @@ CCameraController::CCameraController(CXMLTreeNode &TreeNode)
 ,m_Position(TreeNode.GetVect3fProperty("position", v3fZERO))
 ,m_Yaw(TreeNode.GetFloatProperty("yaw", 0.0f))
 ,m_Pitch(TreeNode.GetFloatProperty("pitch", 0.0f))
+,m_Fov(TreeNode.GetFloatProperty("fov", FOV))
+,m_AspectRatio(TreeNode.GetFloatProperty("aspect_ratio", ASPECT_RATIO))
+,m_ZNear(TreeNode.GetFloatProperty("z_near", ZNEAR))
+,m_ZFar(TreeNode.GetFloatProperty("z_far", ZFAR))
 {
 
 }
@@ -59,9 +68,6 @@ void CCameraController::AddPitch(float Radians)
 	}
 }
 
-void CCameraController::Update(float ElapsedTime)
-{
-
-}
+void CCameraController::Update(float ElapsedTime){}
 
 CEmptyPointerClass* CCameraController::GetThisLuaAddress() const { return (CEmptyPointerClass *)this; }

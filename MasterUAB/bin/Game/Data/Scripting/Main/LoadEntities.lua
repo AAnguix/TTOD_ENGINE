@@ -89,7 +89,7 @@ function CGameController:LoadWeapon(TreeNode, EntityComponent)
 				g_LogManager:Log("Error. Can't load weapon "..l_Name..". WeaponType '"..l_WeaponStyle.."' isn't valid")
 			end
 			
-			table.insert(g_GameController:GetEntities(),l_WeaponComponent)
+			table.insert(g_GameController:GetWeapons(),l_WeaponComponent)
 		
 			g_ScriptManager:AddComponent(l_Name,l_WeaponLuaGameObject,l_WeaponComponent)
 			if l_ParentName == 'Player' and l_WeaponComponent ~= nil then

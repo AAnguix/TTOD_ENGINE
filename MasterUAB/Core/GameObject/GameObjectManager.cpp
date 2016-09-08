@@ -29,7 +29,7 @@ void CGameObjectManager::RemoveGameObject(const std::string &Name)
 		if (l_GameObject->GetAnimatorController()) { CEngine::GetSingleton().GetAnimatorControllerManager()->RemoveComponent(l_GameObject); l_GameObject->SetAnimatorController(nullptr); }
 		if (l_GameObject->GetRenderableObject()) { CEngine::GetSingleton().GetLayerManager()->RemoveRenderableObject(l_GameObject->GetName()); }
 		if (l_GameObject->GetCollider()) { CEngine::GetSingleton().GetPhysXManager()->RemoveColliderComponent(l_GameObject); l_GameObject->SetCollider(nullptr); }
-		if (l_GameObject->GetCharacterCollider()) { CEngine::GetSingleton().GetPhysXManager()->RemoveCharacterColliderComponent(l_GameObject); l_GameObject->SetCharacterCollider(nullptr); }
+		//if (l_GameObject->GetCharacterCollider()) { CEngine::GetSingleton().GetPhysXManager()->RemoveCharacterColliderComponent(l_GameObject); l_GameObject->SetCharacterCollider(nullptr); }
 		if (l_GameObject->GetAudioSource()) { CEngine::GetSingleton().GetSoundManager()->RemoveComponent(l_GameObject); l_GameObject->SetAudioSource(nullptr); }
 		if (l_GameObject->GetScript()) { CEngine::GetSingleton().GetScriptManager()->RemoveComponent(l_GameObject); l_GameObject->SetScript(nullptr); }
 		RemoveResource(Name);
@@ -39,6 +39,16 @@ void CGameObjectManager::RemoveGameObject(const std::string &Name)
 		#ifdef _DEBUG
 			LOG("Trying to remove a gameobject that doesn't exists");
 		#endif
+	}
+}
+
+void CGameObjectManager::RemoveGameObjectCharacterCollider(const std::string &Name)
+{
+	CGameObject* l_GameObject = GetResource(Name);
+	if (l_GameObject && l_GameObject->GetCharacterCollider())
+	{ 
+		CEngine::GetSingleton().GetPhysXManager()->RemoveCharacterColliderComponent(l_GameObject);
+		l_GameObject->SetCharacterCollider(nullptr);
 	}
 }
 

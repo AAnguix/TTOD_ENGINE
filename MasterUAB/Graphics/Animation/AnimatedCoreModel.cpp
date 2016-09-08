@@ -19,15 +19,20 @@ bool CAnimatedCoreModel::LoadSkeleton(const std::string &Filename)
 	return m_CalCoreModel->loadCoreSkeleton(Filename);
 }
 
-bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, bool Loop, float Weight)
+bool CAnimatedCoreModel::LoadAnimation(const std::string &Name, const std::string &Filename, bool Loop, float Weight, bool AutoLock)
 {
-	int l_AnimationID = m_CalCoreModel->loadCoreAnimation(Filename);
+	int l_AnimationID = m_CalCoreModel->loadCoreAnimation(Filename, Name);
 	if (l_AnimationID != -1)
 	{
+		assert((Loop && !AutoLock)||(!Loop));
+
 		float l_Duration = m_CalCoreModel->getCoreAnimation(l_AnimationID)->getDuration();
-		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID, Weight, l_Duration));
+		m_Animations.insert(m_Animations.begin() + l_AnimationID, EAnimation(Name, Loop, l_AnimationID, Weight, l_Duration, AutoLock));
 		return true;
 	}
+	#ifdef _DEBUG
+		LOG("Unable to load animation " + Name + ". File: " + Filename);
+	#endif
 	return false;
 }
 
@@ -44,12 +49,13 @@ EAnimation CAnimatedCoreModel::GetAnimation(const std::string &Name)
 }
 
 CAnimatedCoreModel::CAnimatedCoreModel() 
-:m_CalCoreModel(NULL),
-m_Materials(NULL), 
-m_BSPosition(v3fZERO),
-m_BSRadius(v3fZERO), CNamed("")
+:CNamed("")
+,m_CalCoreModel(NULL)
+,m_Materials(NULL) 
+,m_BSPosition(v3fZERO)
+,m_BSRadius(v3fZERO)
+,m_VertexTypes()
 {
-
 }
 
 CAnimatedCoreModel::~CAnimatedCoreModel()
@@ -76,6 +82,7 @@ CAnimatedCoreModel::~CAnimatedCoreModel()
     }
 
 	m_Materials.clear();
+	m_VertexTypes.clear();
 	//m_Animations.clear();
 }
 
@@ -128,13 +135,17 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 				else if (l_Element.GetName() == std::string("material"))
 				{	
 					std::string l_MaterialName = l_Element.GetPszProperty("name", "");
+					unsigned int l_VertexType = l_Element.GetIntProperty("vertex_type", 61);
+
 					CMaterial *l_Material=new CMaterial(l_Element);
 
 					if(!CEngine::GetSingleton().GetMaterialManager()->AddResource(l_Material->GetName(), l_Material))
 					{
-						if (l_Material != NULL)
+						if (l_Material != nullptr)
+						{
 							delete(l_Material);
-						l_Material = NULL;
+							l_Material = nullptr;
+						}
 						#ifdef _DEBUG
 							LOG("Unable to load material " + std::string(l_MaterialName) + " on model " + m_Name + ". It's already created.");
 						#endif
@@ -143,12 +154,14 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 					{
 						CEngine::GetSingleton().GetMaterialManager()->InsertMaterialIntoMaterialsFileName(l_MaterialName, l_S);
 						m_Materials.push_back(l_Material);
+						m_VertexTypes.push_back(l_VertexType);
 					}
 
 				}
 				else if (l_Element.GetName() == std::string("animation"))
 				{
-					LoadAnimation(l_Element.GetPszProperty("name"),Path+l_Element.GetPszProperty("filename"),l_Element.GetBoolProperty("loop",false), l_Element.GetFloatProperty("weight",1.0f));
+					LoadAnimation(l_Element.GetPszProperty("name"),Path+l_Element.GetPszProperty("filename"),l_Element.GetBoolProperty("loop",false), 
+					l_Element.GetFloatProperty("weight",1.0f),l_Element.GetBoolProperty("auto_lock",false));
 				}
 			}
 		}

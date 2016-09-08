@@ -291,7 +291,7 @@ bool CPhysXManager::CreateDynamicActor(const std::string &ActorName, const std::
 bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateBox(ShapeName, Size,MaterialName,MaterialStaticFriction,MaterialDynamicFriction,MaterialRestitution,Group,true);
-	ChangeShapeTriggerState(ShapeName, true);
+	ChangeShapeTriggerState(l_Shape, true);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -300,22 +300,22 @@ bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::st
 		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
 	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 }
-bool CPhysXManager::CreateBoxTrigger(const std::string &ActorName, const std::string &ShapeName, const Vect3f &Size, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
+bool CPhysXManager::CreateBoxTrigger(const std::string &TriggerName, const Vect3f &Size, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
-	physx::PxShape* l_Shape = CreateBox(ShapeName, Size, MaterialName, 10.0, 20.0, 1.0, Group, true);
-	ChangeShapeTriggerState(ShapeName, true);
+	physx::PxShape* l_Shape = CreateBox(TriggerName, Size, TriggerName+"_Material", 10.0, 20.0, 1.0, Group, true);
+	ChangeShapeTriggerState(l_Shape, true);
 	if (ActorType == "static")
-		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+		return CreateStaticActor(TriggerName, TriggerName, Position, Orientation);
 	else if (ActorType == "dynamic")
-		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, false);
+		return CreateDynamicActor(TriggerName, TriggerName, Position, Orientation, 5.0, false);
 	else if (ActorType == "kinematic")
-		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
-	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+		return CreateDynamicActor(TriggerName, TriggerName, Position, Orientation, 5.0, true);
+	else return CreateStaticActor(TriggerName, TriggerName, Position, Orientation);
 }
 bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
 	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, true);
-	ChangeShapeTriggerState(ShapeName, true);
+	ChangeShapeTriggerState(l_Shape, true);
 	if (ActorType == "static")
 		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 	else if (ActorType == "dynamic")
@@ -324,18 +324,22 @@ bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std:
 		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
 	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
 }
-
-bool CPhysXManager::CreateSphereTrigger(const std::string &ActorName, const std::string &ShapeName, float Radius, const std::string &MaterialName, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
+bool CPhysXManager::CreateSphereTrigger(const std::string &TriggerName, float Radius, const std::string &Group, const Vect3f &Position, const Quatf &Orientation, const std::string &ActorType)
 {
-	physx::PxShape* l_Shape = CreateSphere(ShapeName, Radius, MaterialName, 10.0, 20.0, 1.0, Group, true);
-	ChangeShapeTriggerState(ShapeName, true);
+	physx::PxShape* l_Shape = CreateSphere(TriggerName, Radius, TriggerName+"_Material", 10.0, 20.0, 1.0, Group, true);
+	ChangeShapeTriggerState(l_Shape, true);
 	if (ActorType == "static")
-		return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+		return CreateStaticActor(TriggerName, TriggerName, Position, Orientation);
 	else if (ActorType == "dynamic")
-		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, false);
+		return CreateDynamicActor(TriggerName, TriggerName, Position, Orientation, 5.0, false);
 	else if (ActorType == "kinematic")
-		return CreateDynamicActor(ActorName, ShapeName, Position, Orientation, 5.0, true);
-	else return CreateStaticActor(ActorName, ShapeName, Position, Orientation);
+		return CreateDynamicActor(TriggerName, TriggerName, Position, Orientation, 5.0, true);
+	else return CreateStaticActor(TriggerName, TriggerName, Position, Orientation);
+}
+bool CPhysXManager::DeleteTrigger(const std::string &TriggerName)
+{
+	RemoveActor(TriggerName);
+	return ReleaseShape(TriggerName);
 }
 
 /*Meshes that need to be cooked*/
@@ -763,7 +767,7 @@ Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterContro
 		CEngine::GetSingleton().GetLogManager()->Log("Unable to move " + CharacterControllerName + ". Is nullptr.");
 	#endif
 
-	size_t index = (size_t)l_Controller->getUserData();
+	size_t index = (size_t)l_Controller->getUserData(); 
 	l_Controller->move(CastVec(l_Move), l_Move.Length()*0.005f, ElapsedTime, l_Filters);
 
 	physx::PxRigidDynamic* l_Actor = l_Controller->getActor();
@@ -778,8 +782,6 @@ Vect3f CPhysXManager::MoveCharacterController(const std::string& CharacterContro
 
 	return l_Return;
 }
-
-
 
 Vect3f CPhysXManager::DisplacementCharacterController(const std::string& CharacterControllerName, const Vect3f &Displacement, float ElapsedTime)
 {
@@ -816,6 +818,23 @@ Vect3f CPhysXManager::GetCharacterControllerFootPosition(const std::string& Char
 	return l_Result;
 }
 
+void CPhysXManager::ChangeShapeTriggerState(physx::PxShape* Shape, bool State)
+{
+	if (Shape != nullptr)
+	{
+		if (State)
+		{
+			Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
+	}
+}
+
 void CPhysXManager::ChangeShapeTriggerState(const std::string &ShapeName, bool State)
 {
 	physx::PxShape* l_Shape = GetShape(ShapeName);
@@ -833,7 +852,25 @@ void CPhysXManager::ChangeShapeTriggerState(const std::string &ShapeName, bool S
 			l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 			l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		}
+	}
+}
 
+void CPhysXManager::ChangeShapeTriggerState(const std::string &ShapeName, bool EnableTrigger, bool EnableSimulation)
+{
+	physx::PxShape* l_Shape = GetShape(ShapeName);
+	assert(l_Shape != nullptr);
+
+	if (l_Shape != nullptr)
+	{
+		if (EnableTrigger && EnableSimulation)
+		{
+			EnableTrigger = false;
+			EnableSimulation = false;
+			assert(false);
+		}
+
+		l_Shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, EnableSimulation);
+		l_Shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, EnableTrigger);
 	}
 }
 
@@ -1107,6 +1144,17 @@ physx::PxShape* CPhysXManager::GenerateShape(const std::string &ShapeName, const
 	l_FilterData.word0 = GetGroup(Group);
 	l_Shape->setQueryFilterData(l_FilterData);
 	return l_Shape;
+}
+bool CPhysXManager::ReleaseShape(const std::string &ShapeName)
+{
+	std::map<std::string, physx::PxShape*>::iterator it;
+	it = m_Shapes.find(ShapeName);
+	if (it != m_Shapes.end())
+	{
+		it->second->release();
+		return true;
+	}
+	return false;
 }
 
 physx::PxShape* CPhysXManager::CreateBox(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)

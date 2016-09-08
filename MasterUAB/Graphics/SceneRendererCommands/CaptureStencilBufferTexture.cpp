@@ -3,6 +3,7 @@
 #include "Render\RenderManager.h"
 #include "XML\XMLTreeNode.h"
 #include <ScreenGrab.h>
+#include "Render\ContextManager.h"
 
 void CCaptureStencilBufferTexture::Init(const std::string &Name, unsigned int Width, unsigned int Height)
 {

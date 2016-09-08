@@ -2,13 +2,16 @@
 #include "Components\AnimatorController\AnimatorController.h"
 #include "GameObject\GameObject.h"
 #include <luabind/luabind.hpp>
-#include "Engine\Engine.h"
 #include "LuabindManager\LuabindManager.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "Components\LuaComponent.h"
 #include "Components\Script\Script.h"
 #include "Transition.h"
 #include "Log\Log.h"
+#include "Engine\Engine.h"
+#include "Engine\EngineSettings.h"
+
+const float m_AnimationHysteresis = 0.075f;
 
 /*
 Generates a state that has one animation.
@@ -67,6 +70,7 @@ void CState::OnEnter(CTransition* Transition)
 	{
 		float l_TimeSinceStart = CEngine::GetSingleton().GetRealTimeSinceStartup();
 
+		/*Multiple animations state*/
 		if (l_TimeSinceStart - m_LastTimeSinceStart > m_RestartAnimationsTime)
 		{
 			m_CurrentAnimationIndex = 0;
@@ -82,12 +86,12 @@ void CState::OnEnter(CTransition* Transition)
 
 	if (m_Animations[m_CurrentAnimationIndex].m_Loop)
 	{
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->BlendCycle(m_Animations[m_CurrentAnimationIndex].m_ID, m_Animations[m_CurrentAnimationIndex].m_Weight, l_DelayIn);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->BlendCycle(m_Animations[m_CurrentAnimationIndex].m_ID, m_Animations[m_CurrentAnimationIndex].m_Weight, l_DelayIn, m_Speed);
 	}
 	else
 	{
 		float l_DelayOut = Transition != nullptr ? Transition->GetDelayOut() : 0.0f;
-		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ExecuteAction(m_Animations[m_CurrentAnimationIndex].m_ID, l_DelayIn, l_DelayOut, m_Animations[m_CurrentAnimationIndex].m_Weight, false);
+		((CAnimatedInstanceModel*)(m_AnimatorController->GetOwner()->GetRenderableObject()))->ExecuteAction(m_Animations[m_CurrentAnimationIndex].m_ID, l_DelayIn, l_DelayOut, m_Animations[m_CurrentAnimationIndex].m_Weight, m_Speed, m_Animations[m_CurrentAnimationIndex].m_AutoLock);
 	}
 
 	try
@@ -98,8 +102,11 @@ void CState::OnEnter(CTransition* Transition)
 			if (l_Script != nullptr)
 			{
 				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
-				assert(l_LuaComponent != nullptr);
 				l_LuaComponent->ResetTimer();
+
+				if (CEngine::GetSingleton().GetEngineSettings()->GetDebugOptions().m_DebugAnimatorController)
+					LOG(m_AnimatorController->GetOwner()->GetName() + " -> enters " + m_Name);
+
 				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnEnter.c_str(), l_LuaComponent);
 			}
 		}
@@ -126,7 +133,9 @@ void CState::OnExit(CTransition* Transition)
 			if (l_Script != nullptr)
 			{
 				CLUAComponent* l_LuaComponent = l_Script->GetLuaComponent();
-				assert(l_LuaComponent != nullptr);
+				if (CEngine::GetSingleton().GetEngineSettings()->GetDebugOptions().m_DebugAnimatorController)
+					LOG(m_AnimatorController->GetOwner()->GetName() + " -> exit " + m_Name);
+
 				luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), m_OnExit.c_str(), l_LuaComponent);
 			}
 		}
@@ -223,7 +232,7 @@ bool CState::CheckStateChange(bool HasExitTime, float Timer, CState* NewState, C
 {
 	if (HasExitTime)
 	{
-		float l_AnimDuration = m_Animations[m_CurrentAnimationIndex].m_Duration - 0.075f;
+		float l_AnimDuration = (m_Animations[m_CurrentAnimationIndex].m_Duration*(1/m_Speed)) - (m_AnimationHysteresis);
 		if (Timer >= l_AnimDuration)
 		{
 			m_AnimatorController->ChangeCurrentState(NewState, Transition);

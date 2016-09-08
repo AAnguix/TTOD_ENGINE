@@ -161,7 +161,7 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 
 	#ifdef _DEBUG
 		Quatf l_QuatCamera = Quatf(0.0f, 0.0f, 0.0f, 1.0f);
-		bool l_CamPhysX = CEngine::GetSingleton().GetPhysXManager()->CreateSphereTrigger("DebugPhysxCamera", "DebugPhysxCamera", 0.1f, "DebugPhysxCameraMaterial", "GROUP3", Vect3f(0.0f, 0.0f, 0.0f), l_QuatCamera, "kinematic");
+		bool l_CamPhysX = CEngine::GetSingleton().GetPhysXManager()->CreateSphereTrigger("DebugPhysxCamera", 0.1f, "GROUP3", Vect3f(0.0f, 0.0f, 0.0f), l_QuatCamera, "kinematic");
 		CEngine::GetSingleton().GetLogManager()->Log("VC: " + std::string(l_VCDescription) + ". Memory: " + std::to_string(l_VCMemory)+" mb.");
 	#endif
 
@@ -188,7 +188,7 @@ float CEngine::GetRealTimeSinceStartup()
 void CEngine::LoadLevelsCommonData()
 {
 	m_MaterialManager->Load("./Data/effects_materials.xml");
-	m_CameraControllerManager->Load("./Data/cameras.xml");
+	m_CameraControllerManager->Load("./Data/camera_controllers.xml");
 }
 
 void CEngine::SetTimeScale(float TimeScale)
@@ -196,40 +196,53 @@ void CEngine::SetTimeScale(float TimeScale)
 	m_TimeScale = TimeScale;
 }
 
-void CEngine::Update(float ElapsedTime)
+bool CEngine::Update(float ElapsedTime)
 {
 	ElapsedTime *= m_TimeScale;
 
 	m_ElapsedTime = ElapsedTime;
 
-	CCamera l_Camera = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera();
-
 	CAnimatorControllerManager* l_AnimatorControllerManager = CEngine::GetSingleton().GetAnimatorControllerManager();
 
 	CScriptManager* l_ScriptManager = CEngine::GetSingleton().GetScriptManager();
 
-	CCameraControllerManager* l_CameraController = CEngine::GetSingleton().GetCameraControllerManager(); assert(l_CameraController != nullptr);
+	CCameraControllerManager* l_CameraController = CEngine::GetSingleton().GetCameraControllerManager();
 
 	std::stringstream l_Ss;
 	l_Ss << "Update(" << ElapsedTime << ")";
 	std::string l_Code = l_Ss.str();
 	m_LuabindManager->RunCode(l_Code);
 	
+	/*m_RenderManager->GetContextManager()->SetTimeParameters(ElapsedTime);
+
+	l_CameraController->Update(ElapsedTime);
+
+	m_PhysXManager->Update(ElapsedTime);
+
+	m_LayerManager->Update(ElapsedTime);
+
+	l_AnimatorControllerManager->Update(ElapsedTime);
+
+	l_ScriptManager->Update(ElapsedTime);*/
+
 	if (!m_Paused)
 	{
 		m_RenderManager->GetContextManager()->SetTimeParameters(ElapsedTime);
 
-		l_CameraController->Update(ElapsedTime);
+		l_AnimatorControllerManager->Update(ElapsedTime);
+
+		l_ScriptManager->Update(ElapsedTime);
+
+		//l_CameraController->Update(ElapsedTime);
 
 		m_PhysXManager->Update(ElapsedTime);
 
 		m_LayerManager->Update(ElapsedTime);
 
-		l_AnimatorControllerManager->Update(ElapsedTime);
-
-		l_ScriptManager->Update(ElapsedTime);
+		l_CameraController->Update(ElapsedTime);
 	}
 
+	CCamera l_Camera = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera();
 	m_SoundManager->Update(&l_Camera, ElapsedTime);
 
 	m_LuaGameObjectHandleManager->Update();
@@ -237,6 +250,8 @@ void CEngine::Update(float ElapsedTime)
 	m_GraphicsStats->Update(ElapsedTime);
 
 	m_Profiler->Update();
+
+	return true;
 }
 
 bool CEngine::AddLevel(const std::string &Level)
@@ -262,7 +277,7 @@ bool CEngine::LoadLevel(const std::string &Level)
 	{
 		if (m_Levels[i]->GetID() == Level)
 		{
-			m_LoadingLevel = true;
+			m_LoadingLevel = true; 
 			LoadLevelsCommonData();
 			l_Loaded = m_Levels[i]->Load(*this);
 			m_CurrentLevel = Level;

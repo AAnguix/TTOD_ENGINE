@@ -150,7 +150,7 @@ public:
 	bool IsPaused() const { return m_Paused; };
 	CEmptyPointerClass* GetTimeScaleLuaAddress() const;
 	CEmptyPointerClass* GetPausedLuaAddress() const;
-	void Update(float ElapsedTime);
+	bool Update(float ElapsedTime);
 	
 	void Initialize(HINSTANCE* HInstance);
 	HINSTANCE* GetHInstance() const { return m_HInstance; }

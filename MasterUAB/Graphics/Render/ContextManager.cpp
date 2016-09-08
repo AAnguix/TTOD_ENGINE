@@ -1,23 +1,14 @@
 #include "Render\ContextManager.h"
-#include "Render\RenderManager.h"
-
-#include "Vertex\VertexTypes.h"
 #include "Vertex\RenderableVertexs.h"
-#include "Effects\Effect.h"
-
-#include "Math\Matrix44.h"
-
-#include "Render\DebugRender.h"
 #include "Engine\Engine.h"
-#include "Effects\EffectManager.h"
-
-#include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include <ScreenGrab.h>
+#include "RenderableObjects\RenderableObjectTechniqueManager.h"
+#include "Effects\Effect.h"
+#include "Effects\EffectVertexShader.h"
+#include "Effects\EffectPixelShader.h"
+#include "Effects\EffectGeometryShader.h"
 
-#pragma comment(lib,"d3d11.lib")
-#include <random>
-#include <cmath>
-#include <wchar.h>
+//#pragma comment(lib,"d3d11.lib")
 
 CContextManager::CContextManager()
 :m_D3DDevice(nullptr)
@@ -32,6 +23,15 @@ CContextManager::CContextManager()
 ,m_NumViews(0)
 ,m_StencilTexture(nullptr)
 ,m_FullScreenEnabled(false)
+,m_CurrentRenderTargetViews(nullptr)
+,m_CurrentDepthStencilView(nullptr)
+,m_AlphaBlendState(nullptr)
+,m_AdditiveAlphaBlendState(nullptr)
+,m_Viewport()
+,m_VideoCardMemory(0)
+,m_VSyncEnabled(false)
+,m_NumDisplayModes(0)
+,m_DisplayModeList(nullptr)
 {
 
 	for (int i = 0; i < RS_COUNT; ++i)
@@ -56,7 +56,7 @@ void CContextManager::Shutdown()
 	if (m_DisplayModeList)
 	{
 		delete[] m_DisplayModeList;
-		m_DisplayModeList = 0;
+		m_DisplayModeList = nullptr;
 	}
 
 	if (m_SwapChain)
@@ -338,6 +338,9 @@ bool CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int 
 		CHECKED_RELEASE(m_RenderTargetView);
 		CHECKED_RELEASE(m_DepthStencil);
 		CHECKED_RELEASE(m_DepthStencilView);
+
+		//m_DeviceContext->ClearState();
+		//m_DeviceContext->FinishCommandList();
 
 		HRESULT l_Hr = m_SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
 		assert(!FAILED(l_Hr));

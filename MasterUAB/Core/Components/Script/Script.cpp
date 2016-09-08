@@ -1,5 +1,7 @@
 #include "Components\Script\Script.h"
 #include "Components\LuaComponent.h"
+#include "Log\Log.h"
+#include "Engine\Engine.h"
 #include <cassert>
 
 CScript::CScript(const std::string& Name, CGameObject* Owner, CLUAComponent* Component)
@@ -15,12 +17,5 @@ CScript::~CScript()
 
 void CScript::Update(float ElapsedTime)
 {
-	if (m_LuaComponent == nullptr)
-	{
-		assert(false);
-	}
-	else
-	{
-		m_LuaComponent->Update(ElapsedTime);
-	}
+	m_LuaComponent->Update(ElapsedTime);
 }

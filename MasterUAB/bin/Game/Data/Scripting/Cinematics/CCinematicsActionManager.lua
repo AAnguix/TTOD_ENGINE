@@ -2,14 +2,15 @@ class 'CCinematicsActionManager'
 
 function CCinematicsActionManager:__init()
 	self.m_Actions={}
+	self.m_ActionsToRemove={}
 	self.m_MaxTime=0
 	self.m_CurrentTime=0.0
 	self.m_CurrentAction=1
 	self.m_CurrentExecutedAction=1
 end
 
-function CCinematicsActionManager:Remove(i)
-	table.remove(self.m_Actions,i)
+function CCinematicsActionManager:RemoveAction(i)
+	table.insert(self.m_ActionsToRemove,i)
 end
 
 function CCinematicsActionManager:Update(ElapsedTime)
@@ -34,23 +35,37 @@ function CCinematicsActionManager:Update(ElapsedTime)
 	for i=1, (#self.m_Actions) do
 	
 		local l_Time = self.m_Actions[i]:GetTime()
-		local l_Acti = self.m_Actions[i]:IsActive()
-		local l_CurrentT = self.m_CurrentTime
-		if((l_Acti==false) and (l_Time<=l_CurrentT)) then
-			g_LogManager:Log("Activamos "..i.." "..self.m_Actions[i]:GetTime().." "..self.m_CurrentTime)
+		local l_Active = self.m_Actions[i]:IsActive()
+		
+		--g_LogManager:Log("accion "..i.." tiempo "..l_Time)
+		
+		if((l_Active==false) and (l_Time<=self.m_CurrentTime)) then
+			--g_LogManager:Log("Activamos "..i.." "..self.m_Actions[i]:GetTime().." "..self.m_CurrentTime)
 			self.m_Actions[i]:SetActive(true)
 		end
 	
 		if self.m_Actions[i]:IsActive() or self.m_Actions[i]:MustUpdate() then
 			
 			self.m_Actions[i]:Update(ElapsedTime)
-		
-			if(self.m_CurrentTime>(self.m_Actions[i]:GetTime()+self.m_Actions[i]:GetDuration())) then
-				self:Remove(i)
+			
+			local l_ActionTimer = self.m_Actions[i]:GetTime()+self.m_Actions[i]:GetDuration()
+			if(self.m_CurrentTime>l_ActionTimer) then
+				--g_LogManager:Log("borramos "..i.." "..self.m_CurrentTime.." "..l_ActionTimer)
+				self:RemoveAction(i)
 			end
 			
 		end
 	end
+	
+	self:RemoveActions()
+	
+end
+
+function CCinematicsActionManager:RemoveActions()
+	for i=1, (#self.m_ActionsToRemove) do
+		table.remove(self.m_Actions,i)
+	end
+	self.m_ActionsToRemove = {}
 end
 
 function CCinematicsActionManager:LoadXML(Filename)
@@ -100,6 +115,8 @@ function CCinematicsActionManager:LoadXML(Filename)
 					
 				elseif l_ActionName=="draw_slide" then
 					l_Action=CCinematicsActionDrawSlide(l_Element)
+				elseif l_ActionName=="draw_text" then
+					l_Action=CCinematicsActionDrawText(l_Element)
 				else 
 					g_LogManager:Log("Can't create cinematic action "..l_ActionName..". It doesn't exists.")
 				end

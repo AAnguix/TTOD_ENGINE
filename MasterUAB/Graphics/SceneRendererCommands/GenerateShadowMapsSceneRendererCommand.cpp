@@ -5,14 +5,14 @@
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "Render\RenderManager.h"
 #include "Log\Log.h"
+#include "Render\ContextManager.h"
 
 CGenerateShadowMapsSceneRendererCommand::CGenerateShadowMapsSceneRendererCommand(CXMLTreeNode &TreeNode) : CSceneRendererCommand(TreeNode)
 {
-
 }
 
-CGenerateShadowMapsSceneRendererCommand::~CGenerateShadowMapsSceneRendererCommand(){
-
+CGenerateShadowMapsSceneRendererCommand::~CGenerateShadowMapsSceneRendererCommand()
+{
 }
 
 void CGenerateShadowMapsSceneRendererCommand::Execute(CRenderManager &RenderManager)

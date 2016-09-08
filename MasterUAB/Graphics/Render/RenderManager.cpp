@@ -1,21 +1,22 @@
 #include "Render\RenderManager.h"
 #include "Render\DebugRender.h"
-#include "Materials\MaterialManager.h"
 #include "Engine\Engine.h"
-#include "RenderableObjects\RenderableObjectsManager.h"
-#include "RenderableObjects\MeshInstance.h"
+
 #include "Textures\Texture.h"
+
+#include "Effects\EffectTechnique.h"
+#include "Render\ContextManager.h"
+
 #include "Vertex\VertexTypes.h"
-#include "Vertex\RenderableVertexs.h"
-#include "Lights\LightManager.h"
-#include "Lights\SpotLight.h"
+
 
 CRenderManager::CRenderManager(CContextManager *ContextManager)
 :m_ContextManager(ContextManager)
 ,m_UseDebugCamera(false)
 ,m_CurrentRenderlistLength(0)
-,m_DebugRender(0)
-,m_DrawQuadRV(0)
+,m_DebugRender(nullptr)
+,m_DrawQuadRV(nullptr)
+,m_CurrentCamera(CCamera())
 {
 	
 }
@@ -26,7 +27,7 @@ void CRenderManager::Shutdown()
 	{
 		m_DebugRender->Shutdown();
 		delete m_DebugRender;
-		m_DebugRender = 0;
+		m_DebugRender = nullptr;
 	}
 
 	CHECKED_DELETE(m_DrawQuadRV);

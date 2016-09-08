@@ -13,7 +13,7 @@ function DefineLUAModules()
 	dofile("./Data/Scripting/Main/EventManager.lua")
 	dofile("./Data/Scripting/Main/GameController.lua")
 	dofile("./Data/Scripting/Main/AIManager.lua")
-	LoadCinematicsScripts()
+	LoadCinematicsScripts() --CinematicsScripts.lua
 	dofile("./Data/Scripting/Globals/GlobalsStartScreen.lua")
 	--dofile("./Data/Scripting/GUI/GUIStartScreen.lua")
 	dofile("./Data/Scripting/CameraControllers/FixedCameraController.lua")
@@ -40,7 +40,7 @@ end
 function InitializeLuaMain()
 	InitializeDebugBar()
 	g_LuaGuiManager:SetGui(1)
-	g_CinematicActionManager:LoadXML("./Data/Scripting/Cinematics_actions.xml")
+	g_CinematicActionManager:LoadXML("./Data/Scripting/Cinematic_slides.xml")
 end
 
 function Update(ElapsedTime)
@@ -49,18 +49,7 @@ function Update(ElapsedTime)
 	--UpdateCinematics(ElapsedTime)
 end
 
---Prevent input handling in the start screen
-function InputActionCallback(Action)
-	if Action == 20 then 
-		g_EventManager:FireEvent("ESC_PRESSED")
-	end
-end
-
-function InputStateCallback(State)
-end
-
-function InputRangesCallback(xAxis,yAxis)
-end
+dofile("./Data/Scripting/Input.lua")
 
 function ExitGame()
 	CEngine.TerminateApplication()

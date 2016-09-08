@@ -1,10 +1,12 @@
 #include "EffectManager.h"
-#include "Lights\Light.h"
+
+#include "Effects\EffectVertexShader.h"
+#include "Effects\EffectPixelShader.h"
+#include "Effects\EffectGeometryShader.h"
+
 #include "Engine\Engine.h"
 #include "Lights\LightManager.h"
 #include "Lights\SpotLight.h"
-#include "Lights\OmniLight.h"
-#include "Lights\Light.h"
 #include "Textures\DynamicTexture.h"
 #include "XML\XMLTreeNode.h"
 #include "Utils\FileUtils.h"
@@ -18,6 +20,9 @@ CMaterialEffectParameters CEffectManager::m_MaterialEffectParameters;
 
 CEffectManager::CEffectManager()
 :m_EffectsStateCode(0)
+,m_VertexShaders()
+,m_PixelShaders()
+,m_GeometryShaders()
 {
 
 }
@@ -105,8 +110,6 @@ void CEffectManager::Load(const std::string &Filename)
 					}
 				}
 			}
-
-
 		}
 		else { assert(false); }
 	}

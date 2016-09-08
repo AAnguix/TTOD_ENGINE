@@ -2,6 +2,7 @@
 #include "Engine\Engine.h"
 #include "Render\RenderManager.h"
 #include "XML\XMLTreeNode.h"
+#include "Render\ContextManager.h"
 
 CDynamicTexture::CDynamicTexture(const std::string &Name, int Width, int Height, bool CreateDepthStencilBuffer, TFormatType FormatType) : m_RenderTargetTexture(0) , m_RenderTargetView(0), m_DepthStencilBuffer(0), m_DepthStencilView(0)   
 {
@@ -14,7 +15,11 @@ CDynamicTexture::CDynamicTexture(const std::string &Name, int Width, int Height,
 	Init();
 }
 
-CDynamicTexture::CDynamicTexture(const CXMLTreeNode &TreeNode) : m_RenderTargetTexture(0) , m_RenderTargetView(0), m_DepthStencilBuffer(0), m_DepthStencilView(0) 
+CDynamicTexture::CDynamicTexture(const CXMLTreeNode &TreeNode)
+:m_RenderTargetTexture(nullptr)
+,m_RenderTargetView(nullptr)
+,m_DepthStencilBuffer(nullptr)
+,m_DepthStencilView(nullptr)
 {
 	SetName(TreeNode.GetPszProperty("name"));
 	m_Width=TreeNode.GetIntProperty("width");
@@ -32,13 +37,29 @@ CDynamicTexture::~CDynamicTexture()
 
 void CDynamicTexture::Unload()
 {
-	CHECKED_RELEASE(m_DepthStencilView);
+	if (m_DepthStencilView)
+	{
+		m_DepthStencilView->Release();
+		m_DepthStencilView = nullptr;
+	}
 
-	CHECKED_RELEASE(m_DepthStencilBuffer);
+	if (m_DepthStencilBuffer)
+	{
+		m_DepthStencilBuffer->Release();
+		m_DepthStencilBuffer = nullptr;
+	}
 
-	CHECKED_RELEASE(m_RenderTargetView);
+	if (m_RenderTargetView)
+	{
+		m_RenderTargetView->Release();
+		m_RenderTargetView = nullptr;
+	}
 
-	CHECKED_RELEASE(m_RenderTargetTexture);
+	if (m_RenderTargetTexture)
+	{
+		m_RenderTargetTexture->Release();
+		m_RenderTargetTexture = nullptr;
+	}
 }
 
 void CDynamicTexture::Init()

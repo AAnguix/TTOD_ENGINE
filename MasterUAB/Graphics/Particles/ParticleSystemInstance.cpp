@@ -1,3 +1,4 @@
+#include "Render\ContextManager.h"
 #include "Particles\ParticleSystemInstance.h"
 #include "Particles\ParticleSystemType.h"
 #include "XML\XMLTreeNode.h"
@@ -9,6 +10,8 @@
 #include "Camera\CameraControllerManager.h"
 #include "Utils\EmptyPointerClass.h"
 #include "Materials\Material.h"
+
+#include "Effects\EffectManager.h"
 
 #define s_epsilon std::pow(1.0f,-10)
 

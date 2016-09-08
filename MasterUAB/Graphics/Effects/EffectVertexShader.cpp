@@ -1,4 +1,5 @@
 #include "Effects\EffectVertexShader.h"
+#include "Render\ContextManager.h"
 #include "Render\RenderManager.h"
 #include "Engine\Engine.h"
 #include "Vertex\VertexTypes.h"
@@ -11,13 +12,13 @@ void CEffectVertexShader::Destroy()
 	if (m_VertexLayout)
 	{
 		m_VertexLayout->Release();
-		m_VertexLayout = 0;
+		m_VertexLayout = nullptr;
 	}
 
 	if (m_VertexShader)
 	{
 		m_VertexShader->Release();
-		m_VertexShader = 0;
+		m_VertexShader = nullptr;
 	}
 }
 
@@ -27,13 +28,13 @@ CEffectVertexShader::~CEffectVertexShader()
 }
 
 CEffectVertexShader::CEffectVertexShader(const CXMLTreeNode &TreeNode)
-: CEffectShader(TreeNode)
-, m_VertexShader(NULL)
-, m_VertexLayout(NULL)
+:CEffectShader(TreeNode)
+,m_VertexShader(nullptr)
+,m_VertexLayout(nullptr)
+,m_VertexType(TreeNode.GetPszProperty("vertex_type", ""))
 {
-	m_ShaderModel = TreeNode.GetPszProperty("shader_model","vs_4_0");
-	m_EntryPoint = TreeNode.GetPszProperty("entry_point","VS");
-	m_VertexType = TreeNode.GetPszProperty("vertex_type", "");
+	m_ShaderModel = TreeNode.GetPszProperty("shader_model", "vs_4_0");
+	m_EntryPoint = TreeNode.GetPszProperty("entry_point", "VS");
 }
 
 bool CEffectVertexShader::Load(size_t EffectsStateCode)
@@ -63,42 +64,55 @@ bool CEffectVertexShader::Load(size_t EffectsStateCode)
  
 	l_Loaded = false;
 
-	if(m_VertexType=="MV_POSITION_NORMAL_TEXTURE_VERTEX")  
-		l_Loaded=MV_POSITION_NORMAL_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-
-	else if(m_VertexType=="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX")  
-		l_Loaded=MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-
-	else if(m_VertexType=="MV_POSITION4_COLOR_TEXTURE_VERTEX")  
-		l_Loaded=MV_POSITION4_COLOR_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-	
-	else if(m_VertexType=="MV_POSITION_COLOR_VERTEX")  
-		l_Loaded=MV_POSITION_COLOR_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-
-	else if(m_VertexType=="MV_POSITION_TEXTURE_VERTEX")  
-		l_Loaded=MV_POSITION_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-
-	else if(m_VertexType=="MV_POSITION_COLOR_TEXTURE_VERTEX")  
-		l_Loaded=MV_POSITION_COLOR_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-
-	else if(m_VertexType=="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX")  
-		l_Loaded=MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-	
-	else if(m_VertexType=="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX")  
-		l_Loaded=MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-	
-	else if(m_VertexType=="MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX")  
-		l_Loaded=MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);  
-	
+	if (m_VertexType == "MV_POSITION_NORMAL_TEXTURE_VERTEX")
+	{
+		l_Loaded = MV_POSITION_NORMAL_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX")
+	{
+		l_Loaded = MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION4_COLOR_TEXTURE_VERTEX")
+	{
+		l_Loaded = MV_POSITION4_COLOR_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_COLOR_VERTEX")
+	{
+		l_Loaded = MV_POSITION_COLOR_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_TEXTURE_VERTEX")
+	{
+		l_Loaded = MV_POSITION_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_COLOR_TEXTURE_VERTEX")
+	{
+		l_Loaded = MV_POSITION_COLOR_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX")
+	{
+		l_Loaded = MV_POSITION_NORMAL_TEXTURE_TEXTURE2_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX")
+	{
+		l_Loaded = MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX")
+	{
+		l_Loaded = MV_POSITION_NORMAL_TEXTURE_TEXTURE2_BINORMAL_TANGENT_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
 	else if (m_VertexType == "MV_PARTICLE_VERTEX")
+	{
 		l_Loaded = MV_PARTICLE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
+	else if (m_VertexType == "MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX")
+	{
+		l_Loaded = MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
+	}
 	else
 	{
 		CEngine::GetSingleton().GetLogManager()->Log("Vertex type " + m_VertexType + " not recognized on CEffectVertexShader::Load");
 		assert(false);
 	}
-	//else if (m_VertexType == "MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX")
-		//l_Loaded = MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::CreateInputLayout(l_RenderManager, l_VSBlob, &m_VertexLayout);
 	
 	l_VSBlob->Release();  
 	if (!l_Loaded)
