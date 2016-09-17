@@ -4,11 +4,11 @@ function CStatuesManagerComponent:__init(CLuaGameObject)
 	self.m_Statues = {}
 	self.m_CurrentStatue = nil
 	self.m_CurrentStatueIndex = 1
-	self.m_MagicBallSpawnDelay = 5.0
+	self.m_MagicBallSpawnDelay = 6.0
 	self.m_MagicBallPositionOffset = Vect3f(0.0,2.5,0.0)
 	self.m_SpawnMagicBall = true
 	self.m_GrowMagicBall = false
-	self.m_ScaleFactor = 0.6
+	self.m_ScaleFactor = 0.65
 	self.m_LuaGameObject = CLuaGameObject
 	g_EventManager:Subscribe( self, "DRAGON_IMPACTED_BY_MAGIC_BALL" )
 end
@@ -65,6 +65,7 @@ function CStatuesManagerComponent:DRAGON_IMPACTED_BY_MAGIC_BALL()
 	g_LogManager:Log("index "..self.m_CurrentStatueIndex)
 	self:SetCurrentStatue(self.m_CurrentStatueIndex)
 	self.m_SpawnMagicBall = true
+	g_MaterialManager:GetResource("FireBall"):SetFloatParameterValue("scale",0.0)
 	--Play Dragon Impacted Sound
 end
 

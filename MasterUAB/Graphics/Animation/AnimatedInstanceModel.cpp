@@ -331,6 +331,9 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 		m_CalHardwareModel->setWeightBuffer(((char*)l_Vertexs) + 12, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
 		m_CalHardwareModel->setMatrixIndexBuffer(((char*)l_Vertexs) + 28, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
 		m_CalHardwareModel->setNormalBuffer(((char*)l_Vertexs) + 44, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		
+		m_CalHardwareModel->setTangentSpaceBuffer(1, ((char*)l_Vertexs) + 56, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		
 		m_CalHardwareModel->setTextureCoordNum(1);
 		m_CalHardwareModel->setTextureCoordBuffer(0, ((char*)l_Vertexs) + 88, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
 		m_CalHardwareModel->setIndexBuffer(l_Faces);

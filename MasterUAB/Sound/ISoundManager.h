@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "Math\Vector3.h"
 
 class CCamera;
 class C3DElement;
@@ -58,12 +59,13 @@ public:
 	virtual void RemoveComponents() = 0;
 
 	virtual bool Init() = 0;
-	virtual void Update(const CCamera *Camera, float ElapsedTime) = 0;
+	virtual void Update(const CCamera *Camera, const Vect3f &Forward, float ElapsedTime) = 0;
 	virtual bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename) = 0;
 	virtual bool Reload() = 0;
 
 	virtual bool LoadSoundBank(const std::string& Bank) = 0;
 	virtual bool UnloadSoundBank(const std::string& Bank) = 0;
+	virtual void ClearNamedSpeakers() = 0;
 
 	virtual void RegisterSpeaker(const C3DElement* Speaker) = 0;
 	virtual void UnregisterSpeaker(const C3DElement* Speaker) = 0;

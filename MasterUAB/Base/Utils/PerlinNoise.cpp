@@ -33,7 +33,7 @@ double CPerlinNoise::noise1(double arg)
 	int bx0, bx1;
 	float rx0, rx1, sx, t, u, v, vec[1];
 
-	vec[0] = arg;
+	vec[0] = float(arg);
 	if (start) {
 		start = 0;
 		init();

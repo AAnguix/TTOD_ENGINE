@@ -35,6 +35,7 @@ end
 function CLuaGuiInGame:ESC_PRESSED()
 	if g_PlayerComponent:IsMapOpened() == false then
 		self:CheckMenu()	
+		g_SoundManager:PlayEvent(SoundEvent("Play_Button"))	
 	end
 end
 
@@ -47,12 +48,10 @@ function CLuaGuiInGame:PLAYER_IS_DEAD()
 
 	if(l_ExitPressed) then
 		ExitGame()
-	end
-	if(l_RestartPressed) then
+	elseif(l_RestartPressed) then
 		g_GameController:RestartLastCheckPoint()
 	end
 end
-
 
 function CLuaGuiInGame:Update(ElapsedTime)
 	

@@ -9,6 +9,8 @@
 #include "Render\ContextManager.h"
 #include "GUIManager.h"
 
+#include <luabind/out_value_policy.hpp>
+
 using namespace luabind;
 
 void CLuabindManager::RegisterGUI()
@@ -48,6 +50,17 @@ void CLuabindManager::RegisterGUI()
 		class_<CGUIManager::SSliderResult>("SSliderResult")
 		.def_readwrite("real", &CGUIManager::SSliderResult::real)
 		.def_readwrite("temp", &CGUIManager::SSliderResult::temp)
+		.def_readwrite("hot", &CGUIManager::SSliderResult::hot)
+		.def_readwrite("active", &CGUIManager::SSliderResult::active)
+		.def(constructor<>())
+	];
+
+	module(LUA_STATE)
+	[
+		class_<CGUIManager::SButtonState>("SButtonState")
+		.def_readwrite("hot", &CGUIManager::SButtonState::hot)
+		.def_readwrite("active", &CGUIManager::SButtonState::active)
+		.def_readwrite("pressed", &CGUIManager::SButtonState::pressed)
 		.def(constructor<>())
 	];
 
@@ -61,8 +74,10 @@ void CLuabindManager::RegisterGUI()
 		.def("AddFont", &CGUIManager::AddFont)
 		.def("DoImage", (void(CGUIManager::*)(const std::string&, const std::string&, const const CGUIManager::SGUIPosition& Position))&CGUIManager::DoImage)
 		.def("DoImage", (void(CGUIManager::*)(const std::string&, const std::string&, const const CGUIManager::SGUIPosition& Position, const CColor &Color))&CGUIManager::DoImage)
-		.def("DoButton", (bool(CGUIManager::*)(const std::string&, const std::string&, const const CGUIManager::SGUIPosition&, const CColor &Color))&CGUIManager::DoButton)
 		.def("DoButton", (bool(CGUIManager::*)(const std::string&, const std::string&, const const CGUIManager::SGUIPosition&))&CGUIManager::DoButton)
+		.def("DoButton", (bool(CGUIManager::*)(const std::string&, const std::string&, const const CGUIManager::SGUIPosition&, const CColor &))&CGUIManager::DoButton)
+		.def("DoSButton", (CGUIManager::SButtonState(CGUIManager::*)(const std::string&, const std::string&, const const CGUIManager::SGUIPosition&, const CColor &))&CGUIManager::DoSButton)
+
 		.def("DoSlider", &CGUIManager::DoSlider)
 		.def("DoHealthBar", &CGUIManager::DoHealthBar)
 		.def("DoTextBox", &CGUIManager::DoTextBox)

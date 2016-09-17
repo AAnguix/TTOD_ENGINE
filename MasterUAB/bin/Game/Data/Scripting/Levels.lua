@@ -35,6 +35,12 @@ function StartLevelThree()
 	g_Engine:LoadLevel("3")
 
 	g_GameController:LoadXML("Data/Level3/game_entities.xml")
+	
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle("StoneGatePedestal")
+	local l_StoneGatePedestal  = CStoneGatePedestalComponent(l_LuaGameObject,"STONE_GATE_PEDESTAL_ACTIVATED")
+	g_ScriptManager:AddComponent("StoneGatePedestal",l_LuaGameObject,l_StoneGatePedestal)
+	table.insert(g_GameController:GetEntities(),l_StoneGatePedestal)
+	
 	InitializeGUI()
 end
 
@@ -43,7 +49,8 @@ function StartBossLevel()
 	dofile("./Data/Scripting/Elements/StatuesManager.lua")
 
 	CreateMagicBall()
-	CreateStatues()
+	--CreateStatues()
+	CreateLightPedestals()
 end
 
 function CreateMagicBall()
@@ -62,7 +69,25 @@ function CreateStatues()
 	local l_StatueOneLuaGameObject = g_GameController:AddLuaGameObjectHandle("StatueOne")
 	local l_StatueTwoLuaGameObject = g_GameController:AddLuaGameObjectHandle("StatueTwo")
 	local l_StatueThreeLuaGameObject = g_GameController:AddLuaGameObjectHandle("StatueThree")
-	g_StatuesManager:AddStatue(l_StatueOneLuaGameObject,10.0)
-	g_StatuesManager:AddStatue(l_StatueTwoLuaGameObject,10.0)
-	g_StatuesManager:AddStatue(l_StatueThreeLuaGameObject,10.0)
+	g_StatuesManager:AddStatue(l_StatueOneLuaGameObject,5.0)
+	g_StatuesManager:AddStatue(l_StatueTwoLuaGameObject,70.0)
+	g_StatuesManager:AddStatue(l_StatueThreeLuaGameObject,80.0)
+end
+
+function CreateLightPedestals()
+	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle("LightPedestalsManager")
+	g_LightPedestalsManager  = CLightPedestalsManagerComponent(l_LuaGameObject)
+	g_ScriptManager:AddComponent("LightPedestalsManager",l_LuaGameObject,g_LightPedestalsManager)
+	table.insert(g_GameController:GetEntities(),g_LightPedestalsManager)
+	
+	local l_LightPedestalOneLuaGameObject = g_GameController:AddLuaGameObjectHandle("LightPedestalOne") --LightPedestalOne
+	local l_LightPedestalTwoLuaGameObject = g_GameController:AddLuaGameObjectHandle("LightPedestalTwo") 
+	local l_LightPedestalThreeLuaGameObject = g_GameController:AddLuaGameObjectHandle("LightPedestalThree")  
+	local l_RuneOneLuaGameObject = g_GameController:AddLuaGameObjectHandle("RuneOne")
+	local l_RuneTwoLuaGameObject = g_GameController:AddLuaGameObjectHandle("RuneTwo")
+	local l_RuneThreeLuaGameObject = g_GameController:AddLuaGameObjectHandle("RuneThree")
+	
+	g_LightPedestalsManager:AddLightPedestal(l_LightPedestalOneLuaGameObject,"LIGHT_PEDESTAL_ONE_ACTIVATED",l_RuneOneLuaGameObject)
+	g_LightPedestalsManager:AddLightPedestal(l_LightPedestalTwoLuaGameObject,"LIGHT_PEDESTAL_TWO_ACTIVATED",l_RuneTwoLuaGameObject)
+	g_LightPedestalsManager:AddLightPedestal(l_LightPedestalThreeLuaGameObject,"LIGHT_PEDESTAL_THREE_ACTIVATED",l_RuneThreeLuaGameObject)
 end

@@ -18,9 +18,15 @@ class 'CPlayerComponent' (CLUAComponent)
 function CPlayerComponent:__init(CLuaGameObject)
 	CLUAComponent.__init(self,CLuaGameObject:GetName().."_PlayerScript")
 	self.m_LuaGameObject = CLuaGameObject 
-	self.m_MaxHealth=35.0 --10000
+	self.m_MaxHealth=50.0 --10000
 	self.m_Health=self.m_MaxHealth
 	self.m_Dead = false
+	self.m_LowHealth = false
+	self.m_FullHealth = false
+	self.m_Healing = false
+	self.m_HealPoints = 0.0
+	self.m_HealVelocity = 12.0
+	
 	self.m_CountdownToExtintionTimer = 5.0
 	self.m_CountdownToExtintion = self.m_CountdownToExtintionTimer
 	
@@ -55,8 +61,16 @@ function CPlayerComponent:__init(CLuaGameObject)
 	
 	self.m_RotationVelocity = 4.0
 	self.m_AngleMargin = 0.05
-	self.m_AttackDirection = Vect3f(0.0,0.0,0.0)
-	self.m_AttackDisplacement = 0.7
+	
+	--Facing direcition variables
+	self.m_RotationAngle = 0.0
+	self.m_RotationDuration = 0.0
+	self.m_YawBeforeFacing = 0.0
+	self.m_YawAfterFacing = 0.0
+	
+	self.m_FacingFinished = false
+	self.m_AttackDisplacement = 0.5
+	self.m_DistanceToEnterCombatIdle = 5.0
 	
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
 	self.m_Speed = 3.0
@@ -70,8 +84,6 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_AttackFinished = true
 	self.m_BeeingTossed = false
 	
-	self.m_DistanceToEnterCombatIdle = 5.0
-	
 	self:SubscribeEvents()
 end
 
@@ -82,6 +94,8 @@ function CPlayerComponent:SubscribeEvents()
 	g_EventManager:Subscribe(self, "PLAYER_WALKING_RIGHT")
 	g_EventManager:Subscribe(self, "PLAYER_WALKING_LEFT")
 
+	g_EventManager:Subscribe(self, "PLAYER_LOW_HEALTH")
+	g_EventManager:Subscribe(self, "PLAYER_FULL_HEALTH")
 	g_EventManager:Subscribe(self, "LOCK_CHARACTER")
 	g_EventManager:Subscribe(self, "PLAYER_OPENS_MAP")
 	g_EventManager:Subscribe(self, "PLAYER_DRINKS_BEER")
@@ -103,23 +117,28 @@ function CPlayerComponent:AddGravity()
 	self.m_Velocity = self.m_Velocity + Vect3f(0.0,-10.0,0.0)
 end
 
-function CPlayerComponent:SetAttackDirection(Value)
-	self.m_AttackDirection = Value
+-- Facing
+
+function CPlayerComponent:SetAttackFacingValues(ForwardBeforeFacing,DirectionToFace)	
+	self:SetFacingValues(ForwardBeforeFacing,DirectionToFace,"Attack_State", 2.0)
+end
+
+function CPlayerComponent:SetInteractionFacingValues(ForwardBeforeFacing,DirectionToFace)	
+	self:SetFacingValues(ForwardBeforeFacing,DirectionToFace,"Interact_State", 4.0)
+end
+
+function CPlayerComponent:SetFacingValues(ForwardBeforeFacing,DirectionToFace, StateName, Velocity)	
+	self.m_RotationAngle = CTTODMathUtils.AngleBetweenVectors(DirectionToFace,ForwardBeforeFacing) 
+	self.m_RotationDuration = (self.m_LuaGameObject:GetState(StateName):GetCurrentAnimation().m_Duration)/Velocity
+	self.m_YawBeforeFacing = self.m_LuaGameObject:GetYaw()
+	self.m_YawAfterFacing = self.m_LuaGameObject:GetYaw() + self.m_RotationAngle
+	
+	g_LogManager:Log("Settings values")
+	g_LogManager:Log("m_YawBeforeFacing"..self.m_YawBeforeFacing)
+	g_LogManager:Log("m_YawAfterFacing"..self.m_YawAfterFacing)
 end
 
 dofile("./Data/Scripting/Player/PlayerInitialize.lua")
-
-function CPlayerComponent:InitializePlayerStats()
-
-	local l_HealthPotion = CHealthPotion(4.0,50.0)
-	local l_ButtonGuiPosition = SGUIPosition(0.95, 0.85, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	local l_TextGuiPosition = SGUIPosition(0.968, 0.785, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(1.0,1.0,1.0,1.0))
-	l_HealthPotion:AddCooldownButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(0.6,1.0,1.0,0.85))
-	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", "health_potion_font_0.png", "")
-	
-	self.m_Inventory:AddItem(l_HealthPotion,5)
-end 
 
 dofile("./Data/Scripting/Player/PlayerController.lua")
 
@@ -128,19 +147,24 @@ function CPlayerComponent:Update(ElapsedTime)
 		self.m_Inventory:Update(ElapsedTime)
 	end
 	
+	if self.m_Healing then
+		self:Healing(ElapsedTime)
+	end
+	
 	self:PlayerController(ElapsedTime)
 	self:HandleEvents()
+	
 	if (self.m_Dead) then
 		self:CountdownToExtintion(ElapsedTime)
 	end
-	--g_LogManager:Log("CPlayerComponent updated")
 end
 
 function CPlayerComponent:Die()
 	self.m_Dead = true
+	self.m_LuaGameObject:PlayEvent("PlayerNotLowHealth")
 	self:Lock()
 	g_EventManager:FireEvent("CENTER_CAMERA")
-	g_Engine:SetTimeScale(0.7)
+	g_Engine:SetTimeScale(0.65)
 	-- Change background music
 end
 
@@ -153,37 +177,39 @@ function CPlayerComponent:CountdownToExtintion(ElapsedTime)
 	
 	if (self.m_CountdownToExtintionTimer<=0.0) then
 		g_EventManager:FireEvent("PLAYER_IS_DEAD")
+		--self.m_LuaGameObject:PlayEvent("PlayerDeadSound")
+		--self.m_LuaGameObject:PlayEvent("PlayerDeadMusic")
 	end
+end
+
+function CPlayerComponent:PLAYER_LOW_HEALTH()
+	self.m_LowHealth = true
+	self.m_LuaGameObject:PlayEvent("PlayerLowHealth")
+end
+function CPlayerComponent:PLAYER_FULL_HEALTH()
+	self.m_FullHealth = true
+	--self.m_LuaGameObject:PlayEvent("PlayerFullHealth")
 end
 
 function CPlayerComponent:HandleEvents()
-	if self:FullHealth() then
-		g_EventManager:FireEvent("PlayerHasFullHealth")
+	if (self:FullHealth() and (not self.m_FullHealth)) then
+		g_EventManager:FireEvent("PLAYER_FULL_HEALTH")
+	elseif (self:LowHealth() and (not self.m_LowHealth)) then
+		g_EventManager:FireEvent("PLAYER_LOW_HEALTH")
 	end
 end
 
-function CPlayerComponent:Lock()
-	self.m_Locked = true
-end
-function CPlayerComponent:Unlock()
-	self.m_Locked = false
-end
-function CPlayerComponent:IsLocked()
-	return self.m_Locked
-end
+function CPlayerComponent:Lock() self.m_Locked = true end
+function CPlayerComponent:Unlock() self.m_Locked = false end
+function CPlayerComponent:IsLocked() return self.m_Locked end
 
 function CPlayerComponent:IsBeingTossed(Value) self.m_BeeingTossed = Value end
 
-function CPlayerComponent:Health(Health) 
-	if((self.m_Health + Health)>self.m_MaxHealth) then
-		self.m_Health = self.m_MaxHealth
-	else
-		self.m_Health = self.m_Health + Health 
-	end
-end
-
 function CPlayerComponent:FullHealth()
 	return (self.m_Health==self.m_MaxHealth)
+end
+function CPlayerComponent:LowHealth()
+	return (self.m_Health<(self.m_MaxHealth*0.25))
 end
 function CPlayerComponent:GetLuaGameObject() return self.m_LuaGameObject end
 function CPlayerComponent:GetHealth() return self.m_Health end
@@ -227,4 +253,28 @@ end
 
 function CPlayerComponent:DrinkBeer()
 	self.m_Inventory:UseItem(1)
+end
+
+function CPlayerComponent:Healing(ElapsedTime) 
+	local l_HPoints = ElapsedTime*self.m_HealVelocity
+	if((self.m_Health + l_HPoints)>self.m_MaxHealth) then
+		self.m_Health = self.m_MaxHealth
+		self.m_Healing = false
+		self.m_LuaGameObject:PlayEvent("PlayerNotLowHealth")
+		self.m_LowHealth = false
+	else
+		self.m_Health = self.m_Health + l_HPoints 
+	end
+	
+	self.m_HealPoints = self.m_HealPoints - l_HPoints
+	if(self.m_HealPoints<=0.0) then
+		self.m_Healing = false
+		self.m_LuaGameObject:PlayEvent("PlayerNotLowHealth")
+		self.m_LowHealth = false
+	end
+end
+
+function CPlayerComponent:Heal(HealPoints) 
+	self.m_Healing = true
+	self.m_HealPoints = HealPoints
 end

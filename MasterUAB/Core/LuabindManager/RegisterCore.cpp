@@ -199,6 +199,7 @@ void CLuabindManager::RegisterCore()
 		.def("EnableAnimatorController", &CLuaGameObjectHandle::EnableAnimatorController)
 		.def("AddState", (CState*(CLuaGameObjectHandle::*)(const std::string &, const std::string &, float, const std::string &, const std::string &, const std::string &))&CLuaGameObjectHandle::AddState)
 		.def("AddState", (CState*(CLuaGameObjectHandle::*)(const std::string &, std::vector<const std::string>, float, float, const std::string &, const std::string &, const std::string &))&CLuaGameObjectHandle::AddState)
+		.def("GetState", &CLuaGameObjectHandle::GetState)
 		.def("AddAnyStateTransition", (CTransition*(CLuaGameObjectHandle::*)(const std::string&, CState*, bool, float))&CLuaGameObjectHandle::AddAnyStateTransition)
 		.def("AddAnyStateTransition", (CTransition*(CLuaGameObjectHandle::*)(const std::string&, CState*, bool, float, float))&CLuaGameObjectHandle::AddAnyStateTransition)
 		.def("AddInteger", &CLuaGameObjectHandle::AddInteger)
@@ -216,8 +217,11 @@ void CLuabindManager::RegisterCore()
 		.def("GetPhysxMaterial", &CLuaGameObjectHandle::GetPhysxMaterial)
 
 		.def("EnableAudioSource", &CLuaGameObjectHandle::EnableAudioSource)
-		.def("PlayEvent", &CLuaGameObjectHandle::PlayEvent)
 		.def("AddSound", &CLuaGameObjectHandle::AddSound)
+		.def("PlayEvent", (void(CLuaGameObjectHandle::*)(const std::string&))&CLuaGameObjectHandle::PlayEvent)
+		.def("PlayEvent", (void(CLuaGameObjectHandle::*)(const std::string&, const std::string&))&CLuaGameObjectHandle::PlayEvent)
+		.def("PlayEvent", (void(CLuaGameObjectHandle::*)(const std::string&, const C3DElement*))&CLuaGameObjectHandle::PlayEvent)
+		.def("Get3DElement", &CLuaGameObjectHandle::Get3DElement)
 	];
 
 	module(LUA_STATE)
@@ -414,7 +418,7 @@ public:
 	{
 		if (IsEnabled())
 		{
-			call<void>("OnTriggerEnter", Actor);
+			call_member<void>(this,"OnTriggerEnter", Actor);
 		}
 	}
 	virtual void OnTriggerExit(const std::string& Actor)
@@ -580,6 +584,8 @@ void CLuabindManager::RegisterComponents()
 		.def("OnUpdate", &CState::OnUpdate)
 		.def("OnExit", &CState::OnExit)
 		.def("GetOwnAnimatorController", &CState::GetOwnAnimatorController)
+		.def("GetAnimation", &CState::GetAnimation)
+		.def("GetCurrentAnimation", &CState::GetCurrentAnimation)
 	];
 
 	module(LUA_STATE)

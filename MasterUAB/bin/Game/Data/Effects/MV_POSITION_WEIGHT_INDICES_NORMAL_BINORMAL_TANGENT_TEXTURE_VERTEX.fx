@@ -95,7 +95,7 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 		
 	float l_Spec = 0.0;
 		
-	l_Output.Target0.xyz = l_Diffuse.xyz; //float4(1.0,0.0,0.0,1.0);
+	l_Output.Target0.xyz = l_Diffuse.xyz; //;
 	
 	float3 l_Target1 = float3(0.0,0.0,0.0);
 	
@@ -103,16 +103,19 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 	
 	l_Target1 = m_LightAmbient.xyz*l_Output.Target0.xyz; 
 					
-				
+			
 	float4 l_NormalMapTexture = T1Texture.Sample(S1Sampler, IN.UV);	
 	l_Spec = l_NormalMapTexture.a;
 	float3 l_TangentNormalized=normalize(IN.WorldTangent);
-	float3 l_BinormalNormalized=normalize(IN.WorldBinormal); 
+	float3 l_BinormalNormalized=normalize(IN.WorldBinormal);
+	
 	float3 l_Bump=m_BumpFactor*(l_NormalMapTexture.rgb - float3(0.5,0.5,0.5));	
 	float3 Nn = normalize(IN.Normal);
 	Nn = Nn + (l_Bump.x*l_TangentNormalized) + (l_Bump.y*l_BinormalNormalized);
 	l_Output.Target2 = float4(Normal2Texture(Nn), 1.0f); 
-	l_Output.Target2 = float4(l_BinormalNormalized,1.0);
+
+	//l_Output.Target2 = float4(l_TangentNormalized,1.0);  //float4(float3(1.0,1.0,0.0),1.0);
+	
 	
 	l_Output.Target1.xyz = l_Target1;
 	

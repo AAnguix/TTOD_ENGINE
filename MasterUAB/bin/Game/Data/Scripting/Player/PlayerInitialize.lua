@@ -5,9 +5,17 @@ function CPlayerComponent:Initialize()
 	
 	g_PhysXManager:AddCharacterColliderComponent(l_CColliderName, self.m_LuaGameObject, self.m_Height, self.m_Radius, self.m_Density)
 	
-	local l_AudioSourceName = self.m_LuaGameObject:GetName().."_AudioSource"
-	g_SoundManager:AddComponent(l_AudioSourceName, self.m_LuaGameObject)
-	self.m_LuaGameObject:AddSound("SonidoDePrueba","Play_Hit")
+	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
+	self.m_LuaGameObject:AddSound("PlayerBasicAttack","Play_DeganAttack")
+	self.m_LuaGameObject:AddSound("PlayerLowHealth","Play_HeartBeat")
+	self.m_LuaGameObject:AddSound("PlayerNotLowHealth","Stop_HeartBeat")
+	-- self.m_LuaGameObject:AddSound("PlayerDeadSound","Play_PlayerDeadSound")
+	-- self.m_LuaGameObject:AddSound("PlayerDeadMusic","Play_PlayerDeadMusic")
+	-- self.m_LuaGameObject:AddSound("StopPlayerDeadMusic","Stop_PlayerDeadMusic")
+	--self.m_LuaGameObject:AddSound("Interaction","Play_Interaction")
+	
+	
+	
 	--self.m_AudioSource:AddSound("OpenMapSound","Play_Open_Map")
 	
 	--Animations
@@ -27,6 +35,9 @@ function CPlayerComponent:Initialize()
 	local l_RestartAnimationsTime = 1.5
 	
 	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
+
+	self.m_RotationDuration = (l_Attack:GetAnimation(0).m_Duration)/2.0
+		
 	local l_Block = self.m_LuaGameObject:AddState("Block_State", "block", 1.0, "OnEnter_Block_Player", "OnUpdate_Block_Player", "OnExit_Block_Player")
 	local l_Injured = self.m_LuaGameObject:AddState("Injured_State", "die", 1.0, "OnEnter_Injured_Player", "OnUpdate_Injured_Player", "OnExit_Injured_Player")
 	-- local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_Player", "OnUpdate_Dead_Player", "OnExit_Dead_Player")
@@ -58,6 +69,7 @@ function CPlayerComponent:Initialize()
 	
 	local l_IdleToInteract = l_Idle:AddTransition("IdleToInteract", l_Interact, false, 0.1, 0.2)
 	l_IdleToInteract:AddTriggerCondition("Interact")
+	local l_InteractToIdle = l_Interact:AddTransition("InteractToIdle", l_Idle, true, 0.2)
 	
 	local l_WalkToIdle = l_Walk:AddTransition("WalkToIdle", l_Idle, false, 0.1)
 	l_WalkToIdle:AddBoolCondition("Walk", false)
@@ -67,20 +79,20 @@ function CPlayerComponent:Initialize()
 	l_WalkToCombatIdle:AddBoolCondition("Walk", false)
 	l_WalkToCombatIdle:AddBoolCondition("SurroundingEnemies", true)
 	
-	local l_WalkToAttack = l_Walk:AddTransition("l_WalkToAttack", l_Attack, false, 0.1, 0.1)
+	local l_WalkToAttack = l_Walk:AddTransition("WalkToAttack", l_Attack, false, 0.1, 0.1)
 	l_WalkToAttack:AddTriggerCondition("Attack")
 	
 	local l_WalkToTossed = l_Walk:AddTransition("WalkToTossed", l_Tossed, false, 0.2)
 	l_WalkToTossed:AddTriggerCondition("TossedByDragon")
 	
-	local l_WalkToInteract = l_Walk:AddTransition("WalkToInteract", l_Interact, false, 0.1, 0.2)
-	l_WalkToInteract:AddTriggerCondition("Interact")
+	-- local l_WalkToInteract = l_Walk:AddTransition("WalkToInteract", l_Interact, false, 0.1, 0.2)
+	-- l_WalkToInteract:AddTriggerCondition("Interact")
 	
 	local l_AttackToIdle = l_Attack:AddTransition("AttackToIdle", l_Idle, true, 0.2)
 	l_AttackToIdle:AddBoolCondition("SurroundingEnemies", false)
 	
 	local l_AttackToCombatIdle = l_Attack:AddTransition("AttackToCombatIdle", l_CombatIdle, true, 0.2)
-	l_AttackToIdle:AddBoolCondition("SurroundingEnemies", true)
+	l_AttackToCombatIdle:AddBoolCondition("SurroundingEnemies", true)
 	
 	local l_BlockToIdle = l_Block:AddTransition("BlockToIdle", l_Idle, true, 0.1)
 	l_BlockToIdle:AddBoolCondition("SurroundingEnemies", false)
@@ -96,6 +108,8 @@ function CPlayerComponent:Initialize()
 	
 	local l_CombatIdleToInteract = l_CombatIdle:AddTransition("CombatIdleToInteract", l_Interact, false, 0.1, 0.2)
 	l_CombatIdleToInteract:AddTriggerCondition("Interact")
+	local l_InteractToCombatIdle = l_Interact:AddTransition("InteractToCombatIdle", l_CombatIdle, true, 0.2)
+	
 	
 	local l_CombatIdleToWalk = l_CombatIdle:AddTransition("CombatIdleToWalk", l_Walk, false, 0.1)
 	l_CombatIdleToWalk:AddBoolCondition("Walk", true)
@@ -115,3 +129,15 @@ function CPlayerComponent:Initialize()
 
 	self:InitializePlayerStats()
 end
+
+function CPlayerComponent:InitializePlayerStats()
+
+	local l_HealthPotion = CHealthPotion(4.0,50.0)
+	local l_ButtonGuiPosition = SGUIPosition(0.95, 0.85, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+	local l_TextGuiPosition = SGUIPosition(0.968, 0.785, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(1.0,1.0,1.0,1.0))
+	l_HealthPotion:AddCooldownButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(0.6,1.0,1.0,0.85))
+	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", "health_potion_font_0.png", "")
+	
+	self.m_Inventory:AddItem(l_HealthPotion,5)
+end 

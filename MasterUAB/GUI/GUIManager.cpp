@@ -538,6 +538,10 @@ void CGUIManager::DoImage(const std::string& GuiID, const std::string& ImageID, 
 
 bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position)
 {
+	return DoButton(GuiID, ButtonID, Position, CColor(1.0f, 1.0f, 1.0f, 1.0f));
+}
+bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color)
+{
 	CheckInput();
 
 	SButtonInfo* l_Button = GetButton(ButtonID);
@@ -578,39 +582,44 @@ bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID
 	}
 
 	{
-		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
+		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y,
+			(int)(Position.x + Position.width), (int)(Position.y + Position.height)
 			, 0.0f, 0.0f, 1.0f, 1.0f,
-			CColor(1.0f, 1.0f, 1.0f, 1.0f) };
+			Color };
 		m_Commands.push_back(l_Command);
 	}
 
 	return l_Result;
 }
 
-bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color)
+CGUIManager::SButtonState CGUIManager::DoSButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color)
 {
-	CheckInput(); 
+	SButtonState l_ButtonState;
+
+	CheckInput();
 
 	SButtonInfo* l_Button = GetButton(ButtonID);
 	SSpriteInfo* l_Sprite = l_Button->normal;
-	
-	bool l_Result = false;
+
+	bool l_Pressed = false;
 
 	if (m_ActiveItem == GuiID)
 	{
+		l_ButtonState.active = true;
 		l_Sprite = l_Button->pressed;
 
 		if (m_MouseWentReleased)
 		{
 			if (m_HotItem == GuiID)
 			{
-				l_Result = true;
+				l_Pressed = true;
 			}
 			SetNotActive(GuiID);
 		}
 	}
 	else if (m_HotItem == GuiID)
 	{
+		l_ButtonState.hot = true;
 		l_Sprite = l_Button->highlight;
 
 		if (m_MouseWentPressed)
@@ -629,21 +638,23 @@ bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID
 	}
 
 	{
-		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
-		,0.0f,0.0f,1.0f,1.0f,
-		Color };
+		SGUICommand l_Command = { l_Sprite, (int)Position.x, (int)Position.y,
+			(int)(Position.x + Position.width), (int)(Position.y + Position.height)
+			, 0.0f, 0.0f, 1.0f, 1.0f,
+			Color };
 		m_Commands.push_back(l_Command);
 	}
 
-	return l_Result;
+	l_ButtonState.pressed = l_Pressed;
+
+	return l_ButtonState;
 }
+
 
 CGUIManager::SSliderResult CGUIManager::DoSlider(const std::string& GuiID, const std::string& SliderID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue)
 {
 	SSliderInfo* l_SliderInfo = GetSlider(SliderID);
 	SSliderResult l_Result;
-	l_Result.real = .0f;
-	l_Result.temp = .0f;
 
 	if (l_SliderInfo != nullptr)
 	{
@@ -658,6 +669,7 @@ CGUIManager::SSliderResult CGUIManager::DoSlider(const std::string& GuiID, const
 
 		if (m_ActiveItem == GuiID)
 		{
+			l_Result.active = true;
 			if (m_MouseWentReleased)
 			{
 				if (m_HotItem == GuiID)
@@ -669,6 +681,7 @@ CGUIManager::SSliderResult CGUIManager::DoSlider(const std::string& GuiID, const
 		}
 		else if (m_HotItem == GuiID)
 		{
+			l_Result.hot = true;
 			if (m_MouseWentPressed)
 			{
 				SetActive(GuiID);

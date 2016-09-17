@@ -51,8 +51,9 @@ function CEnemyComponent:Initialize()
 	local l_ComponentName = self.m_LuaGameObject:GetName().."_CharacterCollider"
 	g_PhysXManager:AddCharacterColliderComponent(self.m_LuaGameObject:GetName(), self.m_LuaGameObject, self.m_Height, self.m_Radius, self.m_Density)
 	
-	local l_ACName = self.m_LuaGameObject:GetName().."_AnimatorController"
-	g_AnimatorControllerManager:AddComponent(l_ACName, self.m_LuaGameObject)
+	g_AnimatorControllerManager:AddComponent(self.m_LuaGameObject:GetName().."_AnimatorController", self.m_LuaGameObject)
+	
+	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
 	
 	g_LogManager:Log("Enemy "..self.m_LuaGameObject:GetName().." created...")
 end
@@ -69,7 +70,6 @@ end
 
 function CEnemyComponent:TakeDamage(PlayerWeapon)
 	if (self:IsAttacking()==false)then self:GetLuaGameObject():SetTrigger("GotHit") end
-	--self.m_AudioSource:PlayEvent("SonidoDePrueba")
 	g_EventManager:FireEvent("ENEMY_TAKES_DAMAGE") 
 	if g_ShowHealthBarManager ~= nil then
 		g_ShowHealthBarManager:SetLastEnemyHit(self)
@@ -89,7 +89,7 @@ function CEnemyComponent:TakeDamage(PlayerWeapon)
 end
 
 function CEnemyComponent:Die()
-	--self.m_AudioSource:PlayEvent("DieSound")
+	--self.m_LuaGameObject:PlayEvent("EnemyDie")
 	--local l_RenderableObjectTechnique = g_RenderableObjectTechniqueManager:GetResource("fade_out_renderable_object_technique")
 	--self.m_LuaGameObject:SetTemporalRenderableObjectTechnique(l_RenderableObjectTechnique)
 	self.m_Dead = true

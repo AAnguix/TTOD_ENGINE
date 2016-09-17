@@ -8,10 +8,13 @@ function CPlayerComponent:WalkController()
 	g_Player:SetBool("Walk", self.m_Walk)
 end
 
--- function CPlayerComponent:MovementEquation(Acceleration, ElapsedTime)
-	-- local l_SquaredElapsedTime = ElapsedTime*ElapsedTime
-	-- return ((Acceleration*0.5)*(l_SquaredElapsedTime))
--- end
+function CPlayerComponent:FaceDirectionWhileWalking(Forward, NewDirection, ElapsedTime)
+	local l_Angle = CTTODMathUtils.AngleBetweenVectors(NewDirection, Forward)  
+	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
+	if (math.abs(l_Angle)>self.m_AngleMargin) then
+		self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
+	end
+end
 
 function CPlayerComponent:PlayerController(ElapsedTime)
 	
@@ -42,27 +45,3 @@ function CPlayerComponent:PlayerController(ElapsedTime)
 	self.m_Right = false
 	self.m_Left = false
 end
-
--- function CPlayerComponent:MatchPlayerYawToCameraYaw (CameraController, ElapsedTime, Forward, Backwards, Right, Left)
-	-- local l_Offset = 0.0
-	
-	-- if Forward then
-		-- if Right then
-			-- l_Offset = -0.785398
-		-- elseif Left then
-			-- l_Offset = 0.785398
-		-- end
-	-- elseif Backwards then
-		-- if Right then
-			-- l_Offset = 0.785398
-		-- elseif Left then
-			-- l_Offset = -0.785398
-		-- end
-	-- elseif Right then
-		-- l_Offset = -1.5708
-	-- elseif Left  then
-		-- l_Offset = 1.5708	
-	-- end
-		
-	-- g_Player:SetYaw(CameraController:GetYaw()+(l_Offset))
--- end

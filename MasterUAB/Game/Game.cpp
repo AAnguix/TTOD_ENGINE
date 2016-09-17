@@ -352,7 +352,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			CContextManager* l_ContextManager = CEngine::GetSingleton().GetRenderManager()->GetContextManager();
 			if (l_ContextManager)
 			{
-				if (SIZE_MINIMIZED != wParam)
+				//if (SIZE_MINIMIZED != wParam)
 				{
 					// TODO: Resetear el AntTeakBar
 					//TwWindowSize(0, 0);

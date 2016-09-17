@@ -25,11 +25,13 @@ function CDragonComponent:__init(CLuaGameObject, BoneID)--(CLuaGameObject, Parti
 	self.m_PhysicsTail = {}
 	self.m_PhysicsBody = {}
 	self.m_PhysicsHead = {}
-	--self.m_PhysicsTail = nil
 	--Character collider
 	self.m_Height = 3.0
 	self.m_Radius = 2.0
 	self.m_Density = 100
+	
+	self.m_CountdownToExtintionTimer = 8.0
+	self.m_CountdownToExtintion = self.m_CountdownToExtintionTimer
 	
 end
 
@@ -108,135 +110,28 @@ function CDragonComponent:Initialize()
 	
 end
 
+function CDragonComponent:Die()
+	self.m_Dead = true
+end
+
 function CDragonComponent:Update(ElapsedTime)
-	self:CheckLife()
-	local l_Stuned = self:CheckStuned()
-	
-	self:UpdatePxSkeleton()
-end
-
-function CDragonComponent:CreateSkeleton()
-	
-	if  #self.m_PhysicsHead > 0 then
-		for i, value in ipairs(self.m_PhysicsHead) do
-			if self.m_PhysicsHead[i].m_BoneType == "box" then
-				self:CreateBoxTypeBone(self.m_PhysicsHead[i])
-			elseif self.m_PhysicsHead[i].m_BoneType == "sphere" then
-				self:CreateSphereTypeBone(self.m_PhysicsHead[i])
-			end
-		end	
-	end	
-	
-	if  #self.m_PhysicsTail > 0 then
-		for i, value in ipairs(self.m_PhysicsTail) do 
-			if self.m_PhysicsTail[i].m_BoneType == "box" then
-				self:CreateBoxTypeBone(self.m_PhysicsTail[i])
-			elseif self.m_PhysicsTail[i].m_BoneType == "sphere" then
-				self:CreateSphereTypeBone(self.m_PhysicsTail[i])
-			end
-		end
-	end
-	
-	if  #self.m_PhysicsBody > 0 then
-		for i, value in ipairs(self.m_PhysicsBody) do
-			if self.m_PhysicsBody[i].m_BoneType == "box" then
-				self:CreateBoxTypeBone(self.m_PhysicsBody[i])
-			elseif self.m_PhysicsBody[i].m_BoneType == "sphere" then
-				self:CreateSphereTypeBone(self.m_PhysicsBody[i])
-			end
-		end
-	end	
-
-end
-
-function CDragonComponent:CreateBoxTypeBone(Bone)
-	local l_bone = Bone
-	local l_BoneSize = l_bone.m_BoneSize * 2
-	local l_BoneWorldPos = l_bone:GetWorldPos()
-	--local l_BoneRotation = l_bone:GetRotation()
-	local l_BoneRotation = Quatf(-0.688528, -0.161031, 0.146242, -0.691818)	
-	
-	--local l_result = g_PhysXManager:CreateBoxTrigger(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneSize ,l_bone.m_BoneName.."mat", "GROUP3",l_BoneWorldPos,l_BoneRotation, "kinematic")
-	--CreateBoxLua(const std::string &ShapeName, const Vect3f &Size, const std::string MaterialName, float MaterialStaticFriction, float MaterialDynamicFriction, float MaterialRestitution, const std::string &Group, bool IsExclusive)
-	g_PhysXManager:CreateBoxLua(l_bone.m_BoneName, l_BoneSize, l_bone.m_BoneName.."mat", 10.0, 20.0, 1.0, "", true)
-	local l_result = g_PhysXManager:CreateDynamicActor(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneWorldPos, l_BoneRotation, 5.0, true);
-	if l_result then
-		-- g_LogManager:Log(l_bone.m_BoneName.." BoxSkeleton Creado OK ") 
+	if (self.m_Dead) then
+		self:CountdownToExtintion(ElapsedTime)
 	else
-		 g_LogManager:Log(l_bone.m_BoneName.." BoxSkeleton Creado Mal ")
+		local l_Stuned = self:CheckStuned()
+		self:UpdatePxSkeleton()
 	end
 end
 
-function CDragonComponent:CreateSphereTypeBone(Bone)
+function CDragonComponent:CountdownToExtintion(ElapsedTime)
+	self.m_CountdownToExtintionTimer = self.m_CountdownToExtintionTimer - ElapsedTime
 	
-	local l_bone = Bone
-	local l_BoneSize = l_bone.m_BoneSize
-	local l_BoneWorldPos = l_bone:GetWorldPos()
-	local l_BoneRotation = l_bone:GetRotation()		
-	--local l_result = g_PhysXManager:CreateSphereTrigger(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneSize ,l_bone.m_BoneName.."mat", "GROUP3",l_BoneWorldPos,l_BoneRotation, "kinematic")
-	g_PhysXManager:CreateSphereLua(l_bone.m_BoneName, l_BoneSize, l_bone.m_BoneName.."mat", 10.0, 20.0, 1.0, "", true)
-	local l_result = g_PhysXManager:CreateDynamicActor(l_bone.m_BoneName, l_bone.m_BoneName, l_BoneWorldPos, l_BoneRotation, 5.0, true);
-	if l_result then
-		 --g_LogManager:Log(l_bone.m_BoneName.." SphereSkeleton Creado OK ")
-	else
-		 g_LogManager:Log(l_bone.m_BoneName.." SphereSkeleton Creado Mal ")
+	if(self.m_CountdownToExtintionTimer <= 0.0) then
+		g_GameController:RemoveElementFromTable(g_GameController:GetEnemies(),self.m_LuaGameObject:GetName())
 	end
-end	
-
-function CDragonComponent:UpdatePxSkeleton()
-	
-	--if  #self.m_PhysicsTail > 0 then
-		--for i, value in ipairs(self.m_PhysicsTail) do
-			--if self.m_PhysicsTail[i].m_BoneType == "box" then
-				--self.m_PhysicsTail[i]:SetTransform()
-			--end
-		--end
-	--end 
-	
 end
 
-function CDragonComponent:AddPxPiece(Index, Piece)
-	
-	if Index == "head" then
-		--g_LogManager:Log("Agregando Dragon Piece: "..Piece.m_BoneName.." Tipo: "..Index)
-		table.insert(self.m_PhysicsHead, Piece)
-	elseif Index == "body" then
-		--g_LogManager:Log("Agregando Dragon Piece: "..Piece.m_BoneName.." Tipo: "..Index)
-		table.insert(self.m_PhysicsBody, Piece)
-	elseif Index == "tail" then
-		--g_LogManager:Log("Agregando Dragon Piece: "..Piece.m_BoneName.." Tipo: "..Index)
-		table.insert(self.m_PhysicsTail, Piece)
-	else
-		g_LogManager:Log("Error al crear un hueso del dragon, indice no reconocido")
-	end 
-	--g_LogManager:Log("Dragon Piece: "..Piece.m_BoneName.." Agregada")
-end
-
-function CDragonComponent:GetBone(BoneName)
-	
-	if  #self.m_PhysicsTail > 0 then
-		for i, value in ipairs(self.m_PhysicsTail) do
-			if self.m_PhysicsTail[i].m_BoneName == BoneName then
-				return self.m_PhysicsTail[i]
-			end
-		end
-	elseif #self.m_PhysicsBody > 0 then
-		for i, value in ipairs(self.m_PhysicsBody) do
-			if self.m_PhysicsBody[i].m_BoneName == BoneName then
-				return self.m_PhysicsBody[i]
-			end
-		end
-	elseif #self.m_PhysicsHead > 0 then
-		for i, value in ipairs(self.m_PhysicsHead) do
-			if self.m_PhysicsHead[i].m_BoneName == BoneName then
-				return self.m_PhysicsHead[i]
-			end
-		end
-	else
-		g_LogManager:Log("Metodo CDragonComponent:GetBone(BoneName) invocado pero no consiguio el hueso")
-	end 
-	
-end
+dofile("./Data/Scripting/Enemies/DragonSkeleton.lua")
 
 function CDragonComponent:ChangeTailState(State)
 	if  #self.m_PhysicsTail > 0 then
@@ -347,12 +242,6 @@ function CDragonComponent:CheckStuned(ElapsedTime)
 	return false
 end
 
-function CDragonComponent:CheckLife()
-	if self.m_Health<=0 then
-		g_EventManager:FireEvent("DragonIsDead")
-	end
-end
-
 function CDragonComponent:GetHealthPercentage()
 	return ((self.m_Health*100)/self.m_MaxHealth) 
 end
@@ -360,11 +249,21 @@ end
 
 function CDragonComponent:TakeDamage(PlayerWeapon, PlayerDamage)
 	local l_DragonArmor = self.m_Armor:GetType()
-	self.m_Health = self.m_Health - (g_DamageCalculator:CalculateDamage(l_DragonArmor,PlayerWeapon,PlayerDamage))
+	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_DragonArmor,PlayerWeapon,PlayerDamage)
+	self:TakeSimpleDamage(l_DamageCalculated)
 end
-function CDragonComponent:TakeMagicDamage(Damage)
-	self.m_Health = self.m_Health - Damage
+
+function CDragonComponent:TakeSimpleDamage(Damage)
+	if self.m_Health > 0.0 then
+		if((self.m_Health - Damage)<=0.0) then
+			self.m_Health = 0.0
+			self:Die()
+		else
+			self.m_Health = self.m_Health - Damage
+		end
+	end
 end
+
 function CDragonComponent:Stun(Seconds)
 	self.m_TimeStuned = Seconds
 end

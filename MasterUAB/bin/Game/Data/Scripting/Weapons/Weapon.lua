@@ -20,17 +20,6 @@ end
 function CWeaponComponent:Update(ElapsedTime)
 end
 
-function CWeaponComponent:PlayerAttacksEnemy(EnemyActor)
-	local l_AttackingState = g_PlayerComponent:IsAttacking()
-	if l_AttackingState then
-		local l_Enemy = g_GameController:GetEnemy(EnemyActor)
-		if l_Enemy ~=  nil then
-			l_Enemy:TakeDamage(self)
-			g_PlayerComponent:SetAttacking(false) 
-		end
-	end
-end
-
 function CWeaponComponent:OnTriggerEnter(Actor)
 end
 

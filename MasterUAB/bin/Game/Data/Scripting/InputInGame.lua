@@ -36,22 +36,20 @@ function Action29()	g_EventManager:FireEvent("ON_ALT9_PRESSED") end
 function Action30()	g_EventManager:FireEvent("RELOAD_LUA") end
 
 function State0() g_EventManager:FireEvent("PLAYER_WALKING_FORWARD") 
-
-local l_Pos = SGUIPosition(0.5,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-g_GUIManager:DoText("W","freestyle_script_64_font",l_Pos,"","W")
-		
+	-- local l_Pos = SGUIPosition(0.5,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	-- g_GUIManager:DoText("W","freestyle_script_64_font",l_Pos,"","W")
 end
 function State1() g_EventManager:FireEvent("PLAYER_WALKING_LEFT") 
-local l_Pos = SGUIPosition(0.53,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-g_GUIManager:DoText("A","freestyle_script_64_font",l_Pos,"","A")
+	-- local l_Pos = SGUIPosition(0.53,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	-- g_GUIManager:DoText("A","freestyle_script_64_font",l_Pos,"","A")
 end
 function State2() g_EventManager:FireEvent("PLAYER_WALKING_BACKWARDS") 
-local l_Pos = SGUIPosition(0.56,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-g_GUIManager:DoText("S","freestyle_script_64_font",l_Pos,"","S")
+	-- local l_Pos = SGUIPosition(0.56,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	-- g_GUIManager:DoText("S","freestyle_script_64_font",l_Pos,"","S")
 end
 function State3() g_EventManager:FireEvent("PLAYER_WALKING_RIGHT") 
-local l_Pos = SGUIPosition(0.59,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-g_GUIManager:DoText("D","freestyle_script_64_font",l_Pos,"","D")
+	-- local l_Pos = SGUIPosition(0.59,0.4,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+	-- g_GUIManager:DoText("D","freestyle_script_64_font",l_Pos,"","D")
 end
 
 function InputRangesCallback(xAxis,yAxis)

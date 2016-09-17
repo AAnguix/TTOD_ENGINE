@@ -158,6 +158,14 @@ CState* CLuaGameObjectHandle::AddState(const std::string &Name, std::vector<cons
 	if (l_Animator)	{ return l_Animator->AddState(Name, Animations, RestartAnimationsTime, Speed, OnEnter, OnUpdate, OnExit); }
 	else { AnimatorError();	return nullptr; }
 }
+
+CState* CLuaGameObjectHandle::GetState(const std::string &Name)
+{
+	CAnimatorController* l_Animator = m_GameObject->GetAnimatorController();
+	if (l_Animator)	{ return l_Animator->GetState(Name); }
+	else { AnimatorError();	return nullptr; }
+}
+
 CTransition* CLuaGameObjectHandle::AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut)
 {
 	CAnimatorController* l_Animator = m_GameObject->GetAnimatorController();
@@ -251,4 +259,23 @@ void CLuaGameObjectHandle::PlayEvent(const std::string &Key)
 	CAudioSource* l_AudioSource = m_GameObject->GetAudioSource();
 	if (l_AudioSource)	{ l_AudioSource->PlayEvent(Key); }
 	else { AudioSourceError(); }
+}
+void CLuaGameObjectHandle::PlayEvent(const std::string &Key, const std::string& Speaker)
+{
+	CAudioSource* l_AudioSource = m_GameObject->GetAudioSource();
+	if (l_AudioSource)	{ l_AudioSource->PlayEvent(Key, Speaker); }
+	else { AudioSourceError(); }
+}
+void CLuaGameObjectHandle::PlayEvent(const std::string &Key, const C3DElement* Speaker)
+{
+	CAudioSource* l_AudioSource = m_GameObject->GetAudioSource();
+	if (l_AudioSource)	{ l_AudioSource->PlayEvent(Key, Speaker); }
+	else { AudioSourceError(); }
+}
+/*Used for dynamic speakers*/
+C3DElement* CLuaGameObjectHandle::Get3DElement() const
+{
+	C3DElement* l_3DElement = m_GameObject->GetRenderableObject();
+	assert(l_3DElement);
+	return l_3DElement;
 }

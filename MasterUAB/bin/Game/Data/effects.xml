@@ -16,10 +16,10 @@
 	<pixel_shader name="lava_ps" file="./Data/Effects/Lava.fx" shader_model="ps_5_0" entry_point="PS"/>
 	<effect_technique name="lava_technique" vertex_shader="lava_vs" pixel_shader="lava_ps"/>
 
-	<!--Raycast-->
-	<vertex_shader name="raycast_vs" file="./Data/Effects/Raycast.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_BINORMAL_TANGENT_VERTEX"/>
-	<pixel_shader name="raycast_ps" file="./Data/Effects/Raycast.fx" shader_model="ps_5_0" entry_point="PS"/>
-	<effect_technique name="raycast_technique" vertex_shader="raycast_vs" pixel_shader="raycast_ps"/>
+	<!--FacingPlane-->
+	<vertex_shader name="facing_plane_vs" file="./Data/Effects/FacingPlane.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_NORMAL_TEXTURE_VERTEX"/>
+	<pixel_shader name="facing_plane_ps" file="./Data/Effects/FacingPlane.fx" shader_model="ps_5_0" entry_point="PS"/>
+	<effect_technique name="facing_plane_technique" vertex_shader="facing_plane_vs" pixel_shader="facing_plane_ps"/>
 	
 	<!--Heat Vision-->
 	<vertex_shader name="heat_vision_vs" file="./Data/Effects/HeatVision.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>

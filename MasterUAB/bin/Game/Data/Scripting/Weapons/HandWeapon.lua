@@ -5,7 +5,16 @@ function CHandWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentB
 	self.m_ColliderAdjust = ColliderAdjustment
 	self.m_ColliderRadious = ColliderRadius
 	
-	g_PhysXManager:CreateSphereTrigger(self.m_LuaGameObject:GetName(),ColliderRadius,"",Vect3f(0.0,1.0,0.0),Quatf(0.0,0.0,0.0,1.0),"kinematic")
+	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
+	self.m_LuaGameObject:AddSound("Hit","Play_DeganAxeImpact")
+	self.m_LuaGameObject:AddSound("HitBlocked","Play_HitBlocked")
+	--self.m_LuaGameObject:AddSound("PlayerBeaten","Play_BasicEnemySwordImpact")
+	
+	local l_Result = g_PhysXManager:CreateSphereTrigger(self.m_LuaGameObject:GetName(),ColliderRadius,"",Vect3f(0.0,1.0,0.0),Quatf(0.0,0.0,0.0,1.0),"kinematic")
+	if l_Result then
+		g_LogManager:Log("Created sphere trigger "..self.m_LuaGameObject:GetName())
+	else g_LogManager:Log("Error. Can't create sphere trigger "..self.m_LuaGameObject:GetName())
+	end
 end
 
 function CHandWeaponComponent:GetLuaGameObject() return self.m_LuaGameObject end
@@ -15,6 +24,19 @@ function CHandWeaponComponent:Update(ElapsedTime)
 	self:AddTime(ElapsedTime)
 	CWeaponComponent.Update(self,ElapsedTime)
 	self:SetWeaponTransform(ElapsedTime)
+end
+
+function CHandWeaponComponent:PlayerAttacksEnemy(EnemyActor)
+	local l_AttackingState = g_PlayerComponent:IsAttacking()
+	if l_AttackingState then
+		local l_Enemy = g_GameController:GetEnemy(EnemyActor)
+		if l_Enemy ~=  nil then
+			self.m_LuaGameObject:PlayEvent("Hit")
+			g_LogManager:Log("Enemy es golpeado")
+			l_Enemy:TakeDamage(self)
+			g_PlayerComponent:SetAttacking(false) 
+		end
+	end
 end
 
 function CHandWeaponComponent:OnTriggerEnter(Actor)
@@ -35,22 +57,22 @@ function CHandWeaponComponent:PlayerAttackedByBasicEnemy(EnemyActor)
 	local l_Parent = g_GameController:GetEnemy(EnemyActor)
 	local l_AttackingState = l_Parent:IsAttacking()
 	if l_AttackingState then
+		g_LogManager:Log("Player es golpeado")
 		if g_PlayerComponent:IsBlocking() then
 			local l_Angle = CTTODMathUtils.AngleBetweenVectors(g_Player:GetForward(),l_Parent:GetLuaGameObject():GetForward())
 			math.abs(l_Angle)
-			--g_LogManager:Log(l_Angle.." Angulos")
 			if (l_Angle > g_PlayerComponent:GetMinBlockAngle() and l_Angle < g_PlayerComponent:GetMaxBlockAngle()) then
-				--g_LogManager:Log("Ataque bloqueado")
-				l_Parent:SetAttacking(false)  --Para que no entre mas de 1 vez por ataque, Verificar cunado las fisicas se muevan bien
+				self.m_LuaGameObject:PlayEvent("HitBlocked")
+				l_Parent:SetAttacking(false)  
 			else
-				--g_LogManager:Log("Bloqueo Levantado pero el ataque Pego")
+				self.m_LuaGameObject:PlayEvent("Hit")
 				g_PlayerComponent:TakeDamage(self)
-				l_Parent:SetAttacking(false)  --Para que no entre mas de 1 vez por ataque, Verificar cunado las fisicas se muevan bien
+				l_Parent:SetAttacking(false)  
 			end
 		else
-			--g_LogManager:Log("Choque Trigger y player con el flag Attackng levantado")
+			self.m_LuaGameObject:PlayEvent("Hit")
 			g_PlayerComponent:TakeDamage(self)
-			l_Parent:SetAttacking(false)  --Para que no entre mas de 1 vez por ataque, Verificar cunado las fisicas se muevan bien
+			l_Parent:SetAttacking(false)  --Only executed once/attack
 		end
 		
 	else

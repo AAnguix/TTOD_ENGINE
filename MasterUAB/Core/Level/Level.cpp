@@ -156,6 +156,7 @@ bool CLevel::Unload(CEngine& Engine)
 	Engine.GetScriptManager()->RemoveComponents();
 	Engine.GetPhysXManager()->Destroy();
 	Engine.GetSoundManager()->RemoveComponents();
+	Engine.GetSoundManager()->ClearNamedSpeakers();
 	Engine.GetSoundManager()->UnloadSoundBank(m_SoundBankFilename);
 	Engine.GetAnimatorControllerManager()->RemoveComponents();
 	Engine.GetMaterialManager()->Destroy();

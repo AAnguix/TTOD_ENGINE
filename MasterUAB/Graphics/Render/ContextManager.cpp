@@ -7,6 +7,7 @@
 #include "Effects\EffectVertexShader.h"
 #include "Effects\EffectPixelShader.h"
 #include "Effects\EffectGeometryShader.h"
+#include "Log\Log.h"
 
 //#pragma comment(lib,"d3d11.lib")
 
@@ -331,21 +332,102 @@ bool CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int 
 	if (m_SwapChain)
 	{
 		if (m_DeviceContext)
-			m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+		{
+			m_DeviceContext->OMSetRenderTargets(0, 0, 0);
+		}
+		if (m_RenderTargetView) 
+		{
+			m_RenderTargetView->Release(); 
+			m_RenderTargetView = 0;
+		}
+		/*if (m_DepthStencil) 
+		{ 
+			m_DepthStencil->Release(); 
+			m_DepthStencil = 0;
+		}*/
+		if (m_DepthStencilView) 
+		{ 
+			m_DepthStencilView->Release();
+			m_DepthStencilView = 0;
+		}
+
+		//m_DeviceContext->ClearState();
 
 		/*for(int i=0;i<MAX_RENDER_TARGETS;++i)
 		CHECKED_RELEASE(m_CurrentRenderTargetViews[i]);*/
-		CHECKED_RELEASE(m_RenderTargetView);
-		CHECKED_RELEASE(m_DepthStencil);
-		CHECKED_RELEASE(m_DepthStencilView);
 
-		//m_DeviceContext->ClearState();
-		//m_DeviceContext->FinishCommandList();
+		HRESULT l_HResult = m_SwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+		
+		#ifdef _DEBUG
+			if (l_HResult == 0x887A0001)
+			{
+				LOG("DXGI_ERROR_INVALID_CALL. The application provided invalid parameter data");
+			}
+		#endif
+		
+		assert(!FAILED(l_HResult));
 
-		HRESULT l_Hr = m_SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
-		assert(!FAILED(l_Hr));
+		HRESULT l_Result;
+		m_Width = Width;
+		m_Height = Height;
 
-		bool l_Result = CreateBackBuffer(hWnd, Width, Height);
+		ID3D11Texture2D *pBackBuffer;
+		l_Result = m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+		if (FAILED(l_Result)){ return false; }
+
+		l_Result = m_D3DDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_RenderTargetView);
+		if (FAILED(l_Result)){ return false; }
+		pBackBuffer->Release();
+		pBackBuffer = 0;
+
+		DXGI_FORMAT l_Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		DXGI_FORMAT l_Resformat = GetDepthResourceFormat(l_Format);
+		DXGI_FORMAT l_Srvformat = GetDepthShaderResourceViewFormat(l_Format);
+
+	/*	D3D11_TEXTURE2D_DESC descDepth;
+		ZeroMemory(&descDepth, sizeof(descDepth));
+		descDepth.Width = Width;
+		descDepth.Height = Height;
+		descDepth.MipLevels = 1;
+		descDepth.ArraySize = 1;
+		descDepth.Format = l_Resformat;
+		descDepth.SampleDesc.Count = 1;
+		descDepth.SampleDesc.Quality = 0;
+		descDepth.Usage = D3D11_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		descDepth.CPUAccessFlags = 0;
+		descDepth.MiscFlags = 0;
+		l_Result = m_D3DDevice->CreateTexture2D(&descDepth, NULL, &m_DepthStencil);
+		if (FAILED(l_Result)){ return false; }*/
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC l_DescDepthStencilView;
+		ZeroMemory(&l_DescDepthStencilView, sizeof(l_DescDepthStencilView));
+		l_DescDepthStencilView.Format = l_Format;
+		l_DescDepthStencilView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		l_DescDepthStencilView.Texture2D.MipSlice = 0;
+		l_Result = m_D3DDevice->CreateDepthStencilView(m_DepthStencil, &l_DescDepthStencilView, &m_DepthStencilView);
+		if (FAILED(l_Result)){ return false; }
+
+		SetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+
+		m_Viewport.Width = (FLOAT)Width;
+		m_Viewport.Height = (FLOAT)Height;
+		m_Viewport.MinDepth = 0.0f;
+		m_Viewport.MaxDepth = 1.0f;
+		m_Viewport.TopLeftX = 0;
+		m_Viewport.TopLeftY = 0;
+		m_DeviceContext->RSSetViewports(1, &m_Viewport);
+
+		/*D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
+		ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+		srvd.Format = l_Srvformat;
+		srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvd.Texture2D.MipLevels = descDepth.MipLevels;
+		srvd.Texture2D.MostDetailedMip = 0;
+
+		hr = m_D3DDevice->CreateShaderResourceView(m_DepthStencil, &srvd, &m_StencilTexture);*/
+
+		return true;
 		
 		return l_Result;
 	}
@@ -395,9 +477,17 @@ bool CContextManager::CreateBackBuffer(HWND hWnd, unsigned int Width, unsigned i
 	descDSV.Texture2D.MipSlice = 0;
 	l_Result = m_D3DDevice->CreateDepthStencilView(m_DepthStencil, &descDSV, &m_DepthStencilView);
 	if (FAILED(l_Result)){ return false; }
-
-	SetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
 	
+	SetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+
+	m_Viewport.Width = (FLOAT)Width;
+	m_Viewport.Height = (FLOAT)Height;
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+	m_Viewport.TopLeftX = 0;
+	m_Viewport.TopLeftY = 0;
+	m_DeviceContext->RSSetViewports(1, &m_Viewport);
+
 	/*D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
 	ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	srvd.Format = l_Srvformat;

@@ -38,7 +38,6 @@ function CCinematicsActionDrawText:__init(XMLTreeNode)
 	CCinematicsAction.__init(self, XMLTreeNode)
 	
 	self.m_Text = XMLTreeNode:GetPszProperty("text","",false)
-	g_LogManager:Log("textoooooo "..self.m_Text)
 	
 	self.m_TextName = XMLTreeNode:GetPszProperty("text_name","",false)
 	self.m_FontName = XMLTreeNode:GetPszProperty("font_name","",false)

@@ -18,7 +18,7 @@ function CStatueComponent:Update(ElapsedTime)
 		CActivableElement.Update(self,ElapsedTime)
 		if CActivableElement.IsActivable(self) then
 			local l_Pos = SGUIPosition(0.4,0.7,0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
-			g_GUIManager:DoText("MagicBallText","felix_font",l_Pos,"","Cast Magic Ball [E]")
+			g_GUIManager:DoText("MagicBallText","freestyle_script_48_font",l_Pos,"","Cast Magic Ball [E]")
 		end
 	
 	end

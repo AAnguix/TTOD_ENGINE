@@ -57,7 +57,7 @@ function OnUpdate_Walk_Player(Player, ElapsedTime)
 	l_NewForward:Normalize(1)
 	
 	local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
-	Player:FaceDirection(l_NewForward, l_CameraForward, ElapsedTime)
+	Player:FaceDirectionWhileWalking(l_NewForward, l_CameraForward, ElapsedTime)
 	
 	local l_Lgo = Player:GetLuaGameObject()
 	Player:CheckForSurroundingEnemies()
@@ -72,9 +72,13 @@ function OnEnter_Attack_Player(Player)
 	Player:SetAttackFinished(false)
 	Player:Lock()
 	
-	local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
-	Player:SetAttackDirection(l_CameraForward)
+	local l_DirectionToFace = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
+	local l_ForwardBeforeFacing = Player:GetLuaGameObject():GetForward():Normalize(1)
+	Player:SetAttackFacingValues(l_ForwardBeforeFacing,l_DirectionToFace)
+	
 	-- g_Engine:GetRenderManager():GetContextManager():SetFullScreen(true, 1920, 1080)
+	
+	Player:GetLuaGameObject():PlayEvent("PlayerBasicAttack")
 	
 	-- Player:TakeDamage(nil,400)
 end
@@ -87,8 +91,30 @@ function OnUpdate_Attack_Player(Player, ElapsedTime)
 end
 
 function OnExit_Attack_Player(Player)
+	Player.m_FacingFinished = false
 	Player:SetAttacking(false)
 	Player:SetAttackFinished(true)
+	Player:Unlock()
+end
+
+-------------------- INTERACT -------------------- 
+function OnEnter_Interact_Player(Player)
+	Player:SetInteracting(true)
+	Player:Lock()
+end
+
+function OnUpdate_Interact_Player(Player, ElapsedTime)
+	Player:CheckForSurroundingEnemies() 
+	local l_Forward = Player.m_LuaGameObject:GetForward():Normalize(1)
+	
+	if (not Player.m_FacingFinished) then
+		Player:FaceDirection(ElapsedTime)
+	end
+end
+
+function OnExit_Interact_Player(Player)
+	Player.m_FacingFinished = false
+	Player:SetInteracting(false)
 	Player:Unlock()
 end
 
@@ -96,9 +122,9 @@ end
 function OnEnter_Block_Player(Player)
 	Player:SetBlocking(true)
 	Player:Lock()
-	
-	local l_CameraForward = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
-	Player:SetAttackDirection(l_CameraForward)
+	local l_DirectionToFace = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
+	local l_ForwardBeforeFacing = Player:GetLuaGameObject():GetForward():Normalize(1)
+	Player:SetAttackFacingValues(l_ForwardBeforeFacing,l_DirectionToFace)
 end
 
 function OnUpdate_Block_Player(Player, ElapsedTime)
@@ -107,6 +133,7 @@ function OnUpdate_Block_Player(Player, ElapsedTime)
 end
 
 function OnExit_Block_Player(Player)
+	Player.m_FacingFinished = false
 	Player:SetBlocking(false)
 	Player:Unlock()
 end
@@ -124,15 +151,4 @@ function OnExit_Tossed_Player(Player)
 	PlayerComponent:IsBeingTossed(false)
 end
 
--------------------- INTERACT -------------------- 
-function OnEnter_Interact_Player(Player)
-	Player:SetInteracting(true)
-end
 
-function OnUpdate_Interact_Player(Player, ElapsedTime)
-	Player:CheckForSurroundingEnemies()
-end
-
-function OnExit_Interact_Player(Player)
-	Player:SetInteracting(false)
-end

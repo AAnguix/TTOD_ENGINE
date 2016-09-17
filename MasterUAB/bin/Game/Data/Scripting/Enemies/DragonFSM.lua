@@ -4,23 +4,16 @@ function OnUpdate_Idle_Dragon(Dragon, ElapsedTime)
 	
 	local l_AttackDelay = Dragon:GetCurrentState().m_AttackDelay
 	local l_Lgo = Dragon:GetLuaGameObject()
-	--g_LogManager:Log("Current attack delay "..l_AttackDelay)
-	--g_LogManager:Log("Timer: "..Dragon:GetTimer())
 	
 	if Dragon:GetHealthPercentage() < 75 then
-		--g_LogManager:Log("Health bellow 75%!")
 		l_Lgo:SetTrigger("IsHealthBellow75Percent")  
 	elseif  Dragon:GetHealthPercentage() < 50 then
-		--g_LogManager:Log("Health bellow 50%!")
 		l_Lgo:SetTrigger("IsHealthBellow50Percent")  
 	elseif  Dragon:GetHealthPercentage() < 25 then
-		--g_LogManager:Log("Health bellow 25%!")
 		l_Lgo:SetTrigger("IsHealthBellow25Percent")  
 	end
 	
 	if Dragon:GetTimer() > l_AttackDelay then
-		--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." El timepo es mayor del Attack Delay")
-		
 		local l_ScratchRange = Dragon:GetCurrentState().m_ScratchRange
 		--g_LogManager:Log(l_ScratchRange.." Scratch range")
 		l_Lgo:SetTrigger("WaitingTimeExpired")  

@@ -91,72 +91,7 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 {
 	PixelOutputType l_Output;
 
-	float4 Fire_result = float4(0.0,0.0,0.0,0.0);
-	
-	float brightness = m_FrequencyVar1 * 0.25 + m_FrequencyVar2 * 0.25;
-	float radius = 0.24 + brightness * 0.2;
-	float invRadius  = 1.0/radius;
-	
-	float time = m_Times.y * 0.1;
-	
-	//float aspect	= iResolution.x/iResolution.y;
-	//float2 uv	= fragCoord.xy / iResolution.xy;
-	float2 uv = IN.UV;
-	float2 p = uv - 0.5;
-	p.x = mul(p.x,m_Aspect);
-	
-	float fade	= pow( length( 2.0 * p ), 0.5 );
-	float fVal1	= 1.0 - fade;
-	float fVal2	= 1.0 - fade;
-	
-	float angle = atan2(p.y,p.x)/m_AngleDenominator;
-	float dist = length(p);
-	float3 coord = float3( angle, dist, time * 0.1 );
-	
-	float newTime1	= abs( snoise( coord + float3( 0.0, -time * ( 0.35 + brightness * 0.001 ), time * 0.015 ), 15.0 ) );
-	float newTime2	= abs( snoise( coord + float3( 0.0, -time * ( 0.15 + brightness * 0.001 ), time * 0.015 ), 45.0 ) );	
-	for( int i=1; i<=7; i++ )
-	{
-		float power = pow( 2.0, float(i + 1) );
-		fVal1 += ( 0.5 / power ) * snoise( coord + float3( 0.0, -time, time * 0.2 ), ( power * ( 10.0 ) * ( newTime1 + 1.0 ) ) );
-		fVal2 += ( 0.5 / power ) * snoise( coord + float3( 0.0, -time, time * 0.2 ), ( power * ( 25.0 ) * ( newTime2 + 1.0 ) ) );
-	}
-	
-	float corona = pow( fVal1 * max( 1.1 - fade, 0.0 ), 2.0 ) * 50.0;
-	corona += pow( fVal2 * max( 1.1 - fade, 0.0 ), 2.0 ) * 50.0;
-	corona *= 1.2 - newTime1;
-	
-	float3 sphereNormal = float3( 0.0, 0.0, 1.0 );
-	float3 dir = float3( 0.0,0.0,0.0 );
-	float3 center = float3( 0.5, 0.5, 1.0 );
-	float3 starSphere = float3( 0.0,0.0,0.0 );
-	
-	float2 sp = -1.0 + 2.0 * uv;
-	sp.x *= m_Aspect;
-	sp *= ( 2.0 - brightness );
-  	float r = dot(sp,sp);
-	float f = (1.0-sqrt(abs(1.0-r)))/(r) + brightness * 0.5;
-	if( dist < radius )
-	{
-		corona *= pow( abs(dist) * invRadius, 24.0 );
-  		float2 newUv;
- 		newUv.x = sp.x*f;
-  		newUv.y = sp.y*f;
-		newUv += float2( time, 0.0 );
-		
-		float3 texSample = T0Texture.Sample(S0Sampler, newUv).rgb;
-		float l_UVDisplacement = ( texSample.g * brightness * 4.5 + time );
-		float2 l_StarUV = newUv + float2( l_UVDisplacement, 0.0 );
-		starSphere 	= T0Texture.Sample(S0Sampler, l_StarUV).rgb;
-	}
-	
-	//float starGlow	= min( max( 1.0 - dist * ( 1.0 - brightness ), 0.0 ), 1.0 );
-	float starGlow	= m_StarGlow;
-	//Fire_result.rgb	= float3( r );
-	Fire_result.rgb	= float3( f * ( 0.75 + brightness * 0.3 ) * m_Color1 ) 
-	+ starSphere + corona * m_Color1 + starGlow * m_Color2;
-	
-	Fire_result.a		= 1.0;
+	float4 Fire_result = float4(1.0,1.0,1.0,0.1);
 	
 	float l_Spec = 0.0;
 	

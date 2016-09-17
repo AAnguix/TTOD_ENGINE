@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "ISoundManager.h"
 #include "Log\Log.h"
+#include "Utils\3DElement.h"
 
 CAudioSource::CAudioSource(const std::string &Name, CGameObject *Owner)
 :CComponent(Name, Owner)
@@ -12,17 +13,31 @@ CAudioSource::CAudioSource(const std::string &Name, CGameObject *Owner)
 
 CAudioSource::~CAudioSource()
 {
-	m_SoundsToPlay.clear();
+	m_DefaultSpeakerSoundsToPlay.clear();
+	m_NamedSpeakersSoundsToPlay.clear();
+	m_GameObjectSpeakersSoundsToPlay.clear();
 	m_Sounds.clear();
 }
 
 void CAudioSource::Update(float ElapsedTime)
 {
-	for (size_t i = 0; i < m_SoundsToPlay.size();i++)
+	for (size_t i = 0; i < m_DefaultSpeakerSoundsToPlay.size();i++)
 	{
-		CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_SoundsToPlay[i]);
+		CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_DefaultSpeakerSoundsToPlay[i]);
 	}
-	m_SoundsToPlay.clear();
+	m_DefaultSpeakerSoundsToPlay.clear();
+
+	for (size_t i = 0; i < m_NamedSpeakersSoundsToPlay.size(); i++)
+	{
+		CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_NamedSpeakersSoundsToPlay[i].first, m_NamedSpeakersSoundsToPlay[i].second);
+	}
+	m_NamedSpeakersSoundsToPlay.clear();
+
+	for (size_t i = 0; i < m_GameObjectSpeakersSoundsToPlay.size(); i++)
+	{
+		CEngine::GetSingleton().GetSoundManager()->PlayEvent(m_GameObjectSpeakersSoundsToPlay[i].first, m_GameObjectSpeakersSoundsToPlay[i].second);
+	}
+	m_GameObjectSpeakersSoundsToPlay.clear();
 }
 
 void CAudioSource::PlayEvent(const std::string &Key)
@@ -34,7 +49,43 @@ void CAudioSource::PlayEvent(const std::string &Key)
 		{
 			if (m_Sounds[i].first == Key)
 			{
-				m_SoundsToPlay.push_back(m_Sounds[i].second);
+				m_DefaultSpeakerSoundsToPlay.push_back(m_Sounds[i].second);
+				l_Found = true;
+				i = m_Sounds.size();
+			}
+		}
+		assert(l_Found);
+	}
+}
+
+void CAudioSource::PlayEvent(const std::string &Key, const std::string& Speaker)
+{
+	bool l_Found = false;
+	if (IsEnabled())
+	{
+		for (unsigned int i = 0; i < m_Sounds.size(); ++i)
+		{
+			if (m_Sounds[i].first == Key)
+			{
+				m_NamedSpeakersSoundsToPlay.push_back(std::pair<SoundEvent, const std::string&>(m_Sounds[i].second, Speaker));
+				l_Found = true;
+				i = m_Sounds.size();
+			}
+		}
+		assert(l_Found);
+	}
+}
+
+void CAudioSource::PlayEvent(const std::string &Key, const C3DElement* Speaker)
+{
+	bool l_Found = false;
+	if (IsEnabled())
+	{
+		for (unsigned int i = 0; i < m_Sounds.size(); ++i)
+		{
+			if (m_Sounds[i].first == Key)
+			{
+				m_GameObjectSpeakersSoundsToPlay.push_back(std::pair<SoundEvent, const C3DElement*>(m_Sounds[i].second, Speaker));
 				l_Found = true;
 				i = m_Sounds.size();
 			}

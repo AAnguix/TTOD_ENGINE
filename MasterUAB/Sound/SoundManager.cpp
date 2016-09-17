@@ -52,6 +52,45 @@ CSoundManager::~CSoundManager()
 	Terminate();
 }
 
+/*Private*/
+void CSoundManager::Terminate()
+{
+	Clean();
+	ClearGameObjectSpeakers();
+
+	if (m_InitOk)
+	{
+		AK::SoundEngine::UnregisterAllGameObj();
+		AK::SOUNDENGINE_DLL::Term();
+	}
+}
+
+
+void CSoundManager::ClearNamedSpeakers()
+{
+	std::unordered_map<std::string, AkGameObjectID>::iterator it;
+	for (it = m_NamedSpeakers.begin(); it != m_NamedSpeakers.end(); it++)
+	{
+		AK::SoundEngine::UnregisterGameObj(it->second);
+	}
+	m_NamedSpeakers.clear();
+}
+void CSoundManager::ClearGameObjectSpeakers()
+{
+	std::unordered_map<const C3DElement*, AkGameObjectID>::iterator it;
+	for (it = m_GameObjectSpeakers.begin(); it != m_GameObjectSpeakers.end(); it++)
+	{
+		AK::SoundEngine::UnregisterGameObj(it->second);
+	}
+	m_GameObjectSpeakers.clear();
+}
+
+void CSoundManager::Clean()
+{
+	AK::SoundEngine::ClearBanks();
+	ClearNamedSpeakers();
+}
+
 /*Public*/
 void CSoundManager::PlayEvent(const SoundEvent &Event)
 {
@@ -80,6 +119,9 @@ void CSoundManager::PlayEvent(const SoundEvent &Event, const C3DElement* Speaker
 	}
 	else
 	{
+		#ifdef _DEBUG
+			LOG("Unable to play event " + Event.m_EventName + ". 3DElement not found");
+		#endif
 		assert(false);
 	}
 }
@@ -195,30 +237,6 @@ void CSoundManager::UnregisterSpeaker(const C3DElement* Speaker)
 	else { assert(false); }
 }
 
-
-/*Private*/
-void CSoundManager::Terminate()
-{
-	AK::SoundEngine::ClearBanks();
-	if (m_InitOk)
-	{
-		AK::SoundEngine::UnregisterAllGameObj();
-		AK::SOUNDENGINE_DLL::Term();
-	}
-}
-
-void CSoundManager::Clean()
-{
-	AK::SoundEngine::ClearBanks();
-
-	std::unordered_map<std::string, AkGameObjectID>::iterator it;
-	for (it = m_NamedSpeakers.begin(); it != m_NamedSpeakers.end(); it++)
-	{
-		AK::SoundEngine::UnregisterGameObj(it->second);
-	}
-	m_NamedSpeakers.clear();
-}
-
 bool CSoundManager::Init()
 {
 	//Initialize audio engine
@@ -290,7 +308,7 @@ bool CSoundManager::Reload()
 	return Load(m_SoundBanksFilename, m_SpeakersFilename);
 }
 
-void CSoundManager::Update(const CCamera *Camera, float ElapsedTime)
+void CSoundManager::Update(const CCamera *Camera, const Vect3f &Forward, float ElapsedTime)
 {
 	std::unordered_map<const C3DElement*, AkGameObjectID>::iterator it;
 
@@ -314,7 +332,7 @@ void CSoundManager::Update(const CCamera *Camera, float ElapsedTime)
 		AK::SoundEngine::SetPosition(it->second, l_SoundPosition);
 	}
 
-	SetListenerPosition(Camera);
+	SetListenerPosition(Camera, Forward);
 
 	UpdateComponents(ElapsedTime);
 
@@ -379,12 +397,12 @@ void CSoundManager::RemoveComponents()
 	m_Components.clear();
 }
 
-void CSoundManager::SetListenerPosition(const CCamera *Camera)
+void CSoundManager::SetListenerPosition(const CCamera *Camera, const Vect3f &Forward)
 {
 	Vect3f l_Position = Camera->GetPosition();
 	//Vect3f l_Orientation = Camera->GetForward(); //TODO
-	Vect3f l_Orientation = Camera->GetLookAt();
-	Vect3f l_VectorUp = Camera->GetUp();
+	Vect3f l_OrientationFront = Camera->GetLookAt();
+	Vect3f l_VectorUp = Camera->GetUp().GetNormalized();
 
 	AkListenerPosition l_ListenerPosition = {};
 
@@ -392,9 +410,9 @@ void CSoundManager::SetListenerPosition(const CCamera *Camera)
 	l_ListenerPosition.Position.Y = l_Position.y;
 	l_ListenerPosition.Position.Z = l_Position.z;
 
-	l_ListenerPosition.OrientationFront.X = l_Orientation.x;
-	l_ListenerPosition.OrientationFront.Y = l_Orientation.y;
-	l_ListenerPosition.OrientationFront.Z = l_Orientation.z;
+	l_ListenerPosition.OrientationFront.X = Forward.x;
+	l_ListenerPosition.OrientationFront.Y = Forward.y;
+	l_ListenerPosition.OrientationFront.Z = Forward.z;
 
 	l_ListenerPosition.OrientationTop.X = l_VectorUp.x;
 	l_ListenerPosition.OrientationTop.Y = l_VectorUp.y;
@@ -514,7 +532,7 @@ bool CSoundManager::LoadSpeakersXML()
 				{
 					std::string l_Name = l_Speaker.GetPszProperty("name", "");
 					Vect3f l_Position = l_Speaker.GetVect3fProperty("position", v3fZERO);
-					Vect3f l_Orientation = l_Speaker.GetVect3fProperty("orientation", v3fZERO);
+					Vect3f l_Orientation = l_Speaker.GetVect3fProperty("orientation", v3fZERO).Normalize();
 
 					AkSoundPosition l_SoundPosition = {};
 					l_SoundPosition.Position.X = l_Position.x;
@@ -528,13 +546,16 @@ bool CSoundManager::LoadSpeakersXML()
 					AkGameObjectID l_ID = GenerateObjectID();
 					m_NamedSpeakers[l_Name] = l_ID;
 					AK::SoundEngine::RegisterGameObj(l_ID);
-					AK::SoundEngine::SetPosition(l_ID, l_SoundPosition);
+					AKRESULT l_Result = AK::SoundEngine::SetPosition(l_ID, l_SoundPosition);
+					assert(l_Result == AK_Success);
 				}
 			}
+
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 AkGameObjectID CSoundManager::GenerateObjectID()

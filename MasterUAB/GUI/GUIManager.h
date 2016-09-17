@@ -53,6 +53,14 @@ public:
 	};
 
 public:
+	struct SButtonState
+	{
+		bool hot;
+		bool active;
+		bool pressed;
+		SButtonState(){ hot = false; active = false; pressed = false; };
+		SButtonState(bool Hot, bool Active, bool Pressed){ hot = Hot; active = Active; pressed = Pressed; };
+	};
 	struct SGUIPosition
 	{
 		float x;
@@ -66,7 +74,9 @@ public:
 	{
 		float real;
 		float temp;
-		SSliderResult():real(0.0f), temp(0.0f){};
+		bool hot;
+		bool active;
+		SSliderResult():real(0.0f), temp(0.0f),hot(false),active(false){};
 	};
 	struct SHealthBarResult
 	{
@@ -218,8 +228,6 @@ private:
 	void SetSelected(const std::string& ID);
 	void SetNotSelected(const std::string& ID);
 
-	
-
 public:
 	CGUIManager();
 	virtual ~CGUIManager();
@@ -242,6 +250,10 @@ public:
 
 	bool DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position);
 	bool DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color);
+	SButtonState DoSButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color);
+
+	void a(bool* HotItem){};
+
 
 	SSliderResult DoSlider(const std::string& GuiID, const std::string& SliderID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);
 	void DoHealthBar(const std::string& GuiID, const std::string& HealthBarID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue);

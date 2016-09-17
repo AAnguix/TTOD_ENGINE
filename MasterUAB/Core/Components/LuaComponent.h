@@ -11,8 +11,9 @@ private:
 	//std::string m_Type;
 	float m_Timer;
 	bool m_Enabled;
+	
 public:
-	virtual ~CLUAComponent() {}
+	//virtual ~CLUAComponent() {}
 	CLUAComponent(const std::string Name);
 	virtual const std::string &GetName();
 	//virtual std::string GetType(){ return m_Type; };
@@ -21,7 +22,7 @@ public:
 	virtual float GetTimer() { return m_Timer; };
 	virtual void ResetTimer() { m_Timer = 0.0f; };
 	
-	virtual void Update(float ElapsedTime){};
+	virtual void Update(float ElapsedTime);
 	virtual void Disable(){ m_Enabled = false; };
 	virtual void Enable(){ m_Enabled = true; };
 	virtual bool IsEnabled(){ return m_Enabled; };

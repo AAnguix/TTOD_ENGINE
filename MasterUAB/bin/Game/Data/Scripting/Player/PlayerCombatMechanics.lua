@@ -33,12 +33,19 @@ function CPlayerComponent:TakeDamage(EnemyWeapon)
 	end
 	
 	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyWeapon:GetDamage())
+	self:TakeSimpleDamage(l_DamageCalculated)
+end
+
+function CPlayerComponent:TakeSimpleDamage(Damage)
 	if self.m_Health > 0.0 then
-		if((self.m_Health - l_DamageCalculated)<=0.0) then
+		if((self.m_Health - Damage)<=0.0) then
 			self.m_Health = 0.0
 			self:Die()
 		else
-			self.m_Health = self.m_Health - l_DamageCalculated
+			self.m_Health = self.m_Health - Damage
+			if(self.m_FullHealth) then
+				self.m_FullHealth = false
+			end
 			local l_Camera = g_CameraControllerManager:GetCurrentCameraController()
 			local l_CameraRotation = Vect3f(l_Camera:GetYaw(),l_Camera:GetPitch(),0.0)
 			l_Camera:StartShaking(l_CameraRotation, 400, 60, -0.15, 0.15, 60, -0.15, 0.15)
@@ -61,30 +68,42 @@ function CPlayerComponent:GetClosestEnemy(Enemies)
 end
 
 function CPlayerComponent:CalculateAttackDirection(ElapsedTime)
-	local l_ClosestEnemy = self:GetClosestEnemy(g_GameController:GetEnemies())
-	local l_Forward = self.m_LuaGameObject:GetForward():Normalize(1)
-	if l_ClosestEnemy~=nil then
-		self:FaceEnemy(l_Forward, l_ClosestEnemy, ElapsedTime)
-	else 
-		-- local l_AttackDirection = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
-		self:FaceDirection(l_Forward, self.m_AttackDirection, ElapsedTime)
+
+	if (not self.m_FacingFinished) then
+		-- local l_ClosestEnemy = self:GetClosestEnemy(g_GameController:GetEnemies())
+		-- if l_ClosestEnemy~=nil then
+			-- self:FaceEnemy(self.m_ForwardBeforeFacing, l_ClosestEnemy, ElapsedTime)
+		-- else 
+			-- self:FaceDirectionWhileAttacking(ElapsedTime)
+		-- end
+		self:FaceDirection(ElapsedTime)
 	end
 end
 
-function CPlayerComponent:FaceDirection(Forward, NewDirection, ElapsedTime)
-	local l_Angle = CTTODMathUtils.AngleBetweenVectors(NewDirection, Forward)  
-	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-	if (math.abs(l_Angle)>self.m_AngleMargin) then
-		self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
+function CPlayerComponent:FaceDirection(ElapsedTime)
+	if(self.m_RotationDuration == 0.0) then
+		g_LogManager:Log("Error. RotationDuration is 0")
+	end
+	
+	local l_Difference = self.m_YawAfterFacing - self.m_LuaGameObject:GetYaw()
+	if ((math.abs(l_Difference))>self.m_AngleMargin) then
+		local l_Angle = (self:GetTimer()*self.m_RotationAngle)/self.m_RotationDuration
+		self.m_LuaGameObject:SetYaw(self.m_YawBeforeFacing + l_Angle)
+	else 
+		g_LogManager:Log("Facing STOP!")
+		self.m_FacingFinished = true
 	end
 end
 
 function CPlayerComponent:FaceEnemy(Forward, ClosestEnemy, ElapsedTime)
 	local l_EnemyPos = ClosestEnemy:GetLuaGameObject():GetPosition()
 	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(Forward, self.m_LuaGameObject:GetPosition(), l_EnemyPos)    
-	--g_LogManager:Log("Angle del FaceEnemy: ".. l_Angle)
-	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
-	self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
+	if (math.abs(l_Angle)>self.m_AngleMargin) then
+		local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
+		self.m_LuaGameObject:SetYaw(CTTODMathUtils.CalculateNewAngle(l_Angle, l_CurrentYaw, self.m_RotationVelocity, ElapsedTime))
+	else 
+		self.m_FacingFinished = true
+	end
 end
 
 function CPlayerComponent:ClosestHit(ObjectPos)

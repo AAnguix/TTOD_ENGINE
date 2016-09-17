@@ -335,9 +335,10 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
 			CScript* l_Script = CEngine::GetSingleton().GetScriptManager()->GetScript(triggerName);
-			if(l_Script!=nullptr)
+			if (l_Script != nullptr)
+			{
 				l_Script->GetLuaComponent()->OnTriggerEnter(actorName);
-
+			}
 			/*l_Ss << "OnTriggerEnter" << triggerName << "('" << actorName << "')";
 			std::string l_Code = l_Ss.str();
 			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);*/

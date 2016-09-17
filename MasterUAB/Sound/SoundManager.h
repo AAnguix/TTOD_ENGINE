@@ -48,7 +48,10 @@ private:
 	bool InitBanks();
 	void Terminate();
 	void Clean();
-	void SetListenerPosition(const CCamera *Camera);
+
+	void ClearGameObjectSpeakers();
+
+	void SetListenerPosition(const CCamera *Camera, const Vect3f &Forward);
 
 	void PlayEvent(const SoundEvent& Event, const AkGameObjectID& ID);
 	void SetSwitch(const SoundSwitchValue &SwitchValue, const AkGameObjectID& ID);
@@ -59,12 +62,13 @@ public:
 	virtual ~CSoundManager();
 
 	bool Init();
-	void Update(const CCamera *Camera, float ElapsedTime);
+	void Update(const CCamera *Camera, const Vect3f &Forward, float ElapsedTime);
 	bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename);
 	bool Reload();
 
 	bool LoadSoundBank(const std::string& Bank);
 	bool UnloadSoundBank(const std::string& Bank);
+	void ClearNamedSpeakers();
 
 	void RegisterSpeaker(const C3DElement* Speaker);
 	void UnregisterSpeaker(const C3DElement* Speaker);

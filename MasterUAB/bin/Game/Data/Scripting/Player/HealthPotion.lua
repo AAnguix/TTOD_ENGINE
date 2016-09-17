@@ -6,7 +6,8 @@ end
 
 function CHealthPotion:Use()
 	if (g_PlayerComponent:FullHealth()==false) and (CItem.Use(self)) then
-		g_PlayerComponent:Health(self.m_HealthPoints)
+		g_PlayerComponent:Heal(self.m_HealthPoints)
+		--g_SoundManager:PlayEvent(SoundEvent("Play_DrinkPotion"))	
 		return true
 	else return false
 	end

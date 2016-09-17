@@ -44,7 +44,7 @@ function InitializeLuaMain()
 end
 
 function Update(ElapsedTime)
-	g_LuaGuiManager:Update()
+	g_LuaGuiManager:Update(ElapsedTime)
 	g_EventManager:Update()
 	--UpdateCinematics(ElapsedTime)
 end

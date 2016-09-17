@@ -3,6 +3,8 @@ dofile("./Data/Scripting/GUI/LuaGui.lua")
 dofile("./Data/Scripting/GUI/LuaGuiStartScreen.lua")
 dofile("./Data/Scripting/GUI/LuaGuiInGame.lua")
 dofile("./Data/Scripting/GUI/LuaGuiCredits.lua")
+dofile("./Data/Scripting/GUI/LuaGuiOptions.lua")
+dofile("./Data/Scripting/GUI/LuaGuiAudioMenu.lua")
 
 class 'CLuaGuiManager'
 function CLuaGuiManager:__init()
@@ -38,6 +40,9 @@ function CLuaGuiManager:__init()
 	
 	self.m_ShowGraphicsStats = true
 	
+	self.m_HotElementSound = "Play_Button7"
+	self.m_ButtonPressedSound = "Play_Button1"
+	
 	self:Initialize()
 end
 
@@ -45,6 +50,8 @@ function CLuaGuiManager:Initialize()
 	self:AddGui(CLuaGuiStartScreen())
 	self:AddGui(CLuaGuiInGame())
 	self:AddGui(CLuaGuiCredits())
+	self:AddGui(CLuaGuiOptions())
+	self:AddGui(CLuaGuiAudioMenu())
 end
 
 function CLuaGuiManager:Reload()

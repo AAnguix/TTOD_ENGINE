@@ -39,6 +39,7 @@ public:
 	CState(CAnimatorController* AnimatorController, const std::string &Name, const std::vector<EAnimation> &Animations, float RestartAnimationsTime, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
 	virtual ~CState();
 	EAnimation GetAnimation(unsigned int Id = 0) const { return m_Animations[Id]; }
+	EAnimation GetCurrentAnimation() const { return m_Animations[m_CurrentAnimationIndex]; }
 	CTransition* AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut);
 	CTransition* AddTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn);
 	void OnEnter(CTransition* Transition);

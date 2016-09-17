@@ -50,6 +50,7 @@ end
 function CMagicBallComponent:OnTriggerEnter(Actor)
 	if (Actor=="Player") then
 		--TODO CAMBIAR POR EL DRAGON
+		g_PlayerComponent:TakeSimpleDamage(self.m_Damage)
 		g_EventManager:FireEvent("DRAGON_IMPACTED_BY_MAGIC_BALL")
 	end
 end

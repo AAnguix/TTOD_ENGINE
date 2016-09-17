@@ -150,8 +150,11 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 
 	m_LuabindManager->Initialize();
 
-	m_SoundManager->SetPath("./Data/Audio/Soundbanks/");
-	m_SoundManager->Init();
+	m_Profiler->Begin("LoadSoundBanks");
+		m_SoundManager->Init();
+		m_SoundManager->SetPath("./Data/Audio/Soundbanks/General/");
+		m_SoundManager->Load("SoundbanksInfo.xml", "");
+	m_Profiler->End("LoadSoundBanks");
 
 	m_SceneRendererCommandManager->Load("./Data/start_screen_scene_renderer_commands.xml");
 
@@ -242,8 +245,10 @@ bool CEngine::Update(float ElapsedTime)
 		l_CameraController->Update(ElapsedTime);
 	}
 
+	CCameraController* l = CEngine::GetSingleton().GetCameraControllerManager()->GetCurrentCameraController();
 	CCamera l_Camera = CEngine::GetSingleton().GetRenderManager()->GetCurrentCamera();
-	m_SoundManager->Update(&l_Camera, ElapsedTime);
+	Vect3f x = l->GetUp();
+	m_SoundManager->Update(&l_Camera, l->GetForward().Normalize(), ElapsedTime);
 
 	m_LuaGameObjectHandleManager->Update();
 

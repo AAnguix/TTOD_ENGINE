@@ -55,6 +55,7 @@ public:
 	void EnableAnimatorController(bool Value);
 	CState* AddState(const std::string &Name, const std::string &Animation, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
 	CState* AddState(const std::string &Name, std::vector<const std::string> Animations, float RestartAnimationsTime, float Speed, const std::string &OnEnter, const std::string &OnUpdate, const std::string &OnExit);
+	CState* GetState(const std::string &Name);
 	CTransition* AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn, float DelayOut);
 	CTransition* AddAnyStateTransition(const std::string &Name, CState* NewState, bool HasExitTime, float DelayIn);
 
@@ -74,6 +75,9 @@ public:
 	void EnableAudioSource(bool Value);
 	bool AddSound(const std::string &Key, const std::string &SoundEventName);
 	void PlayEvent(const std::string &Key);
+	void PlayEvent(const std::string &Key, const std::string& Speaker);
+	void PlayEvent(const std::string &Key, const C3DElement* Speaker);
+	C3DElement* Get3DElement() const;
 };
 
 #endif

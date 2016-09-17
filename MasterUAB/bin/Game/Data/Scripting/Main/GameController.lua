@@ -21,6 +21,7 @@ end
 function CGameController:RestartLastCheckPoint()
 	--Reproducir sonido
 	g_LogManager:Log("Player is DEAD")
+	g_Engine:SetTimeScale(1.0)
 	self:Destroy()
 	local l_CurrentLevel = g_Engine:GetCurrentLevel()
 	g_Engine:UnloadLevel(l_CurrentLevel)
