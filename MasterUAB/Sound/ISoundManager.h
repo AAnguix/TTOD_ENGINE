@@ -14,27 +14,28 @@ class CLuaGameObjectHandle;
 struct SoundEvent
 {
 	std::string m_EventName;
-	SoundEvent(const std::string EventName):m_EventName(EventName){};
+	SoundEvent(const std::string &EventName):m_EventName(EventName){};
 };
 struct SoundSwitch
 {
 	std::string m_SwitchName;
-	SoundSwitch(const std::string SwitchName):m_SwitchName(SwitchName){};
+	SoundSwitch(const std::string &SwitchName):m_SwitchName(SwitchName){};
 };
 struct SoundSwitchValue
 {
 	SoundSwitch m_SoundSwitch;
-	SoundSwitchValue(const std::string SoundSwitchValue):m_SoundSwitch(SoundSwitchValue){};
+	std::string m_ValueName;
+	SoundSwitchValue(const std::string &SwitchName, const std::string &ValueName) :m_SoundSwitch(SoundSwitch(SwitchName)),m_ValueName(ValueName){};
 };
 struct SoundRTPC
 {
 	std::string m_RtpcName;
-	SoundRTPC(const std::string RtpcName):m_RtpcName(RtpcName){};
+	SoundRTPC(const std::string &RtpcName):m_RtpcName(RtpcName){};
 };
 struct SoundStateValue
 {
 	std::string m_ValueName;
-	SoundStateValue(const std::string StateValue):m_ValueName(StateValue){};
+	SoundStateValue(const std::string &StateValue):m_ValueName(StateValue){};
 };
 
 

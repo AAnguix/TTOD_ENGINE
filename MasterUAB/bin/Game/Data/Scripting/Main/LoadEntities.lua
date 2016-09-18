@@ -73,7 +73,8 @@ function CGameController:LoadWeapon(TreeNode, EntityComponent)
 			local l_WeaponName = TreeNode:GetPszProperty("game_object","",false)
 			local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)
 			local l_WeaponStyle = TreeNode:GetPszProperty("weapon_style","",false)
-			local l_ColliderAdjustment = TreeNode:GetVect3fProperty("collider_adjustment", Vect3f(0.0,0.0,0.0), false)
+		
+			local l_PositionAdjustment = TreeNode:GetVect3fProperty("position_adjustment", Vect3f(0.0,0.0,0.0), false)
 			local l_ColliderRadius = TreeNode:GetFloatProperty("collider_radius", 0.0, false)
 			
 			local l_OnPlayerContactParticles = TreeNode:GetPszProperty("on_player_contact_particles","",false)
@@ -82,9 +83,9 @@ function CGameController:LoadWeapon(TreeNode, EntityComponent)
 			local l_WeaponComponent = nil
 			if l_WeaponStyle == 'throwing' then
 				g_LogManager:Log("Creamos una arma throwing")
-				l_WeaponComponent = CThrowingWeaponComponent(l_WeaponName,l_Parent, l_BoneName, l_WeaponLuaGameObject, l_Damage, l_WeaponType, l_OnPlayerContactParticles, l_ProjectileParticles)	
+				l_WeaponComponent = CThrowingWeaponComponent(l_WeaponName,l_Parent, l_BoneName, l_PositionAdjustment, l_WeaponLuaGameObject, l_Damage, l_WeaponType, l_OnPlayerContactParticles, l_ProjectileParticles)	
 			elseif l_WeaponStyle == 'hand' then
-				l_WeaponComponent = CHandWeaponComponent(l_WeaponName,l_Parent, l_BoneName, l_WeaponLuaGameObject, l_Damage, l_WeaponType,l_ColliderAdjustment,l_ColliderRadius)
+				l_WeaponComponent = CHandWeaponComponent(l_WeaponName,l_Parent, l_BoneName, l_WeaponLuaGameObject, l_Damage, l_WeaponType,l_PositionAdjustment,l_ColliderRadius)
 			else
 				g_LogManager:Log("Error. Can't load weapon "..l_Name..". WeaponType '"..l_WeaponStyle.."' isn't valid")
 			end

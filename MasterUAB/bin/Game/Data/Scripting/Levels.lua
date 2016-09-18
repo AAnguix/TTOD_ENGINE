@@ -11,10 +11,10 @@ function StartLevelOne()
 	g_CameraControllerManager:SetCurrentCameraController("ThirdPersonCamera")
 	g_SceneRendererCommandManager:Reload()
 	
-	local l_SoundEvent = SoundEvent("Play_WolfBlood")
+	local l_SoundEvent = SoundEvent("Play_Resting")
 	g_SoundManager:PlayEvent(l_SoundEvent)
 	
-	StartBossLevel()
+	--StartBossLevel()
 end
 
 function StartLevelTwo()

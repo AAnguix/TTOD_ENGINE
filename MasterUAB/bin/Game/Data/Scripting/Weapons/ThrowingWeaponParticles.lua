@@ -4,7 +4,9 @@ function CThrowingWeaponComponent:UpdateProjectileParticles(ElapsedTime)
 		if(self:GetTimer()>self.m_ProjectileParticlesDuration) then
 			self:EnableProjectileParticles(false)
 		else
-			self.m_ProjectileParticlesLuaGameObject:SetPosition(self.m_LuaGameObject:GetPosition())
+			if (self.m_ProjectileParticlesLuaGameObject ~= nil)then
+				self.m_ProjectileParticlesLuaGameObject:SetPosition(self.m_LuaGameObject:GetPosition())
+            end 
 		end
 	end
 end

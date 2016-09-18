@@ -1,9 +1,9 @@
 class 'CThrowingWeaponComponent' (CWeaponComponent)
-function CThrowingWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, 
+function CThrowingWeaponComponent:__init(ComponentType, ParentLuaGameObject, ParentBoneName, PositionAdjustment, LuaGameObject, 
 	Damage, WeaponType, OnPlayerContactParticlesName, ProjectileParticlesName)
 	CWeaponComponent.__init(self,ComponentType, ParentLuaGameObject, ParentBoneName, LuaGameObject, Damage, WeaponType, "throwing")
 	--self.m_LuaGameObject:SetParent(self.m_ParentLuaGameObject,ParentBoneName)
-	self.m_BasePosition = self.m_LuaGameObject:GetPosition()
+	self.m_PositionAdjustment = PositionAdjustment
 	self.m_Parented = true
 	if(OnPlayerContactParticlesName~="") then
 		self.m_OnPlayerContactParticlesLuaGameObject = g_GameController:AddLuaGameObjectHandle(OnPlayerContactParticlesName)
@@ -28,7 +28,7 @@ function CThrowingWeaponComponent:Update(ElapsedTime)
 	local l_Position = Vect3f(0.0,0.0,0.0)
 	if self:IsParented() then
 		local l_Matrix = Mat44f()
-		l_Matrix = self:GetWeaponTransform(ElapsedTime)
+		l_Matrix = self:GetWeaponTransform()
 		self:MoveActor(self.m_LuaGameObject:GetName(), l_Matrix)
 	end
 	if self.m_ProjectileParticlesLuaGameObject ~= nil then
@@ -108,16 +108,22 @@ function CThrowingWeaponComponent:MoveActor(Actor,Matrix)
 	g_PhysXManager:MoveKinematicActor(self.m_LuaGameObject:GetName(), l_Position, l_Quat)
 end
 
-function CThrowingWeaponComponent:GetWeaponTransform(ElapsedTime)
+function CThrowingWeaponComponent:GetWeaponTransform()
 	local l_BoneTransform = Mat44f()
 	local l_ParentTransform = Mat44f()
 	l_BoneTransform = self.m_ParentLuaGameObject:GetBoneTransformationMatrix(self.m_BoneID)
 	l_ParentTransform = self.m_ParentLuaGameObject:GetTransform()
 	
 	local l_Transform = Mat44f()
-	l_Transform:SetIdentity()
-	--l_Transform = self:Get3DMaxTransform()
+	l_Transform = self:WeaponAdjustment()
 	local l_Matrix = Mat44f()
 	l_Matrix = l_Transform*l_BoneTransform*l_ParentTransform
 	return l_Matrix
+end
+
+function CThrowingWeaponComponent:WeaponAjustment()
+    local l_Translation = Mat44f()
+    l_Translation:SetIdentity()
+    l_Translation:Translate(self.m_PositionAdjustment)
+	return l_Translation
 end

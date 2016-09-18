@@ -189,6 +189,7 @@ function CEnemyComponent:MoveWithAStar(ElapsedTime)
 	
 	local l_Enemy = self.m_LuaGameObject
 	local l_EnemyPos = l_Enemy:GetPosition()
+	local l_EnemyPosCentre = Vect3f(l_EnemyPos.x,(l_EnemyPos.y+1.0),l_EnemyPos.z)
 	
 	local l_PlayerPos = g_Player:GetPosition()
 	local l_Pos = Vect3f(0.0,0.0,0.0)
@@ -215,11 +216,12 @@ function CEnemyComponent:MoveWithAStar(ElapsedTime)
 		self.m_Velocity = self.m_Velocity + (l_VectorToPlayer*self:GetSpeed())
 		
 		local l_Forward = self.m_LuaGameObject:GetForward()
-		--local NameOfHit = g_PhysXManager:RaycastOutName(l_EnemyPos, l_Forward, self.m_DistanceToFacePlayer)
+		local l_RaycastData =  SRaycastData()
+		local l_Raycast = g_PhysXManager:Raycast(l_EnemyPosCentre, l_Forward, self.m_DistanceToFacePlayer, l_RaycastData)
 		
 		local l_RotateView = false
 		local l_Distance = (l_PlayerPos-self.m_LuaGameObject:GetPosition()):Length()
-		if l_Distance < self.m_DistanceToFacePlayer then 
+		if (l_Distance < self.m_DistanceToFacePlayer and l_Raycast == false)then 
 			l_RotateView = true
 		end
 		

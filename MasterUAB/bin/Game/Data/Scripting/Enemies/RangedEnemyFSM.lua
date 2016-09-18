@@ -1,6 +1,9 @@
+AttackRangedTimmer = 0.0
+
 -------------------- IDLE --------------------
 
-function OnEnter_Idle_RangedEnemy(Enemy)		
+function OnEnter_Idle_RangedEnemy(Enemy)
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters idle")		
 end
 function OnUpdate_Idle_RangedEnemy(Enemy, ElapsedTime)
 	
@@ -16,16 +19,29 @@ function OnUpdate_Idle_RangedEnemy(Enemy, ElapsedTime)
 end
 function OnExit_Idle_RangedEnemy(Enemy)
 	--Enemy:GetAnimator():SetBool("IsPlayerInsideVisionRange", false)
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits idle")
 end
 
 -------------------- ATTACK --------------------
 
 function OnEnter_Attack_RangedEnemy(Enemy)
+	AttackRangedTimmer = 0.0
 	Enemy:SetAttacking(true)
-	Enemy:AttachProjectile()
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters attack")
+	
 end
 function OnUpdate_Attack_RangedEnemy(Enemy, ElapsedTime)
+	AttackRangedTimmer = AttackRangedTimmer + ElapsedTime
 	local l_PlayerPos = g_Player:GetPosition()
+	if (AttackRangedTimmer > 1.5 and  Enemy.EnergyBallThrowed == false)then
+		Enemy.EnergyBallThrowed = true
+		local Position = Vect3f(l_PlayerPos.x,l_PlayerPos.y + 1.0,l_PlayerPos.z)
+		Enemy:LaunchProjectile(Position)
+	elseif (AttackRangedTimmer > 0.8 and Enemy.EnergyBallThrowed == false) then
+		Enemy:AttachProjectile()
+	end
+	
+	
 	if ElapsedTime>0.0 then
 		Enemy:LookAtPoint(l_PlayerPos,ElapsedTime)
 	else 
@@ -33,7 +49,8 @@ function OnUpdate_Attack_RangedEnemy(Enemy, ElapsedTime)
 	end
 end
 function OnExit_Attack_RangedEnemy(Enemy)
-	Enemy:LaunchProjectile(g_Player:GetPosition())--PONER POSICION DEL HUESO
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits attack")
+	Enemy.EnergyBallThrowed = false
 	Enemy:SetAttacking(false)
 end
 
@@ -86,10 +103,12 @@ end
 -------------------- DEAD --------------------
 
 function OnEnter_Dead_RangedEnemy(Enemy)
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters dead")	
 end
 
 function OnUpdate_Dead_RangedEnemy(Enemy, ElapsedTime)
 end
 
-function OnExit_Dead_RangedEnemy(Enemy)	
+function OnExit_Dead_RangedEnemy(Enemy)
+	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." exits dead")	
 end

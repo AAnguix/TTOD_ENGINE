@@ -1,19 +1,40 @@
 function OnEnter_Idle_Dragon(Dragon, ElapsedTime)
+	--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." enters idle")
+	Dragon:SpitFire()
 end
 function OnUpdate_Idle_Dragon(Dragon, ElapsedTime)
 	
+	local Result = SRaycastData()
+	local Bone =  Dragon.m_ParticleEmitterBone
+	local Postion = Bone:GetWorldPos()+Vect3f(1.5,0.0,0.0)
+	local Rot = Bone:GetRotation()
+	local Direction = Vect3f(1.0,0.0,0.0) + Vect3f(0.0,-1.0,0.0)
+	Direction:Normalize(1)
+	local GeometryQuery = g_PhysXManager:GeometryQuery("SweepTest",Postion, Rot, Direction, 5.6, Result)
+	 if (GeometryQuery)then
+		g_PlayerComponent:TakeDamage2(5)
+	 end
+	
+	
 	local l_AttackDelay = Dragon:GetCurrentState().m_AttackDelay
 	local l_Lgo = Dragon:GetLuaGameObject()
+	--g_LogManager:Log("Current attack delay "..l_AttackDelay)
+	--g_LogManager:Log("Timer: "..Dragon:GetTimer())
 	
 	if Dragon:GetHealthPercentage() < 75 then
+		--g_LogManager:Log("Health bellow 75%!")
 		l_Lgo:SetTrigger("IsHealthBellow75Percent")  
 	elseif  Dragon:GetHealthPercentage() < 50 then
+		--g_LogManager:Log("Health bellow 50%!")
 		l_Lgo:SetTrigger("IsHealthBellow50Percent")  
 	elseif  Dragon:GetHealthPercentage() < 25 then
+		--g_LogManager:Log("Health bellow 25%!")
 		l_Lgo:SetTrigger("IsHealthBellow25Percent")  
 	end
 	
 	if Dragon:GetTimer() > l_AttackDelay then
+		--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." El timepo es mayor del Attack Delay")
+		
 		local l_ScratchRange = Dragon:GetCurrentState().m_ScratchRange
 		--g_LogManager:Log(l_ScratchRange.." Scratch range")
 		l_Lgo:SetTrigger("WaitingTimeExpired")  
@@ -27,11 +48,13 @@ function OnUpdate_Idle_Dragon(Dragon, ElapsedTime)
 	end
 end
 function OnExit_Idle_Dragon(Dragon, ElapsedTime)
+	Dragon:StopSpittingFire()
 end
 
 ------------------------------------------------------------
 
 function OnEnter_SpitFire_Dragon(Dragon, ElapsedTime)
+	--g_LogManager:Log(Dragon.m_RObject:GetName().." enters SplitFire")
 	--Mirar al player, para que cuando lanze la animacion le ataque
 end
 function OnUpdate_SpitFire_Dragon(Dragon, ElapsedTime)
@@ -51,6 +74,7 @@ end
 ------------------------------------------------------------
 
 function OnEnter_Scratch_Dragon(Dragon, ElapsedTime)
+	--g_LogManager:Log(Dragon:GetLuaGameObject():GetName().." Enters Scartch")
 	local l_PlayerPos = g_Player:GetPosition()
 	--Dragon:SetTarget(l_PlayerPos)
 	Dragon:ChangeTailState(true)
@@ -69,6 +93,7 @@ end
 ------------------------------------------------------------
 
 function OnEnter_Stomp_Dragon(Dragon, ElapsedTime)
+	--g_LogManager:Log(Dragon.m_RObject:GetName().." did special attack. STOMP")
 	local l_PlayerPos = g_Player:GetPosition()
 	Dragon:SetTarget(l_PlayerPos)
 end
@@ -84,6 +109,7 @@ end
 ------------------------------------------------------------
 
 function OnEnter_WhipTale_Dragon(Dragon, ElapsedTime)
+	--g_LogManager:Log(Dragon.m_RObject:GetName().." did special attack. WHIP TALE")
 	local l_PlayerPos = g_Player:GetPosition()
 	Dragon:SetTarget(l_PlayerPos)
 end

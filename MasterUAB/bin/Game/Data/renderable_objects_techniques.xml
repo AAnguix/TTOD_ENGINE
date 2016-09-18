@@ -32,6 +32,7 @@
 		<renderable_object_technique name="rnm_renderable_object_technique" technique="gbuffer_diffuse_normal_rnm_technique"/>
 		<renderable_object_technique name="Bola_Fuego_renderable_object_technique" technique="Bola_Fuego_technique"/>
 		<default_technique vertex_type="MV_POSITION4_COLOR_TEXTURE_VERTEX" technique="gbuffer_drawquad_technique"/>
+		<renderable_object_technique name="burning_character_technique" technique="burning_character_technique"/>
 	</pool_renderable_object_technique>
 	
 	<pool_renderable_object_technique name="deferred_shading">

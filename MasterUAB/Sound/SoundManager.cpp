@@ -190,8 +190,8 @@ void CSoundManager::SetRTPCValue(const SoundRTPC& Rtpc, float Value, const C3DEl
 
 void CSoundManager::BroadcastRTPCValue(const SoundRTPC& Rtpc, float Value)
 {
-	//AKRESULT l_Result = AK::SoundEngine::SetRTPCValue(Rtpc.RTPCName.c_str(), AkRtpcValue()Value); TODO
-	//assert (l_Result);
+	AKRESULT l_Result = AK::SoundEngine::SetRTPCValue(Rtpc.m_RtpcName.c_str(), (AkRtpcValue)Value);
+	assert (l_Result);
 }
 void CSoundManager::BroadcastState(const SoundStateValue& State)
 {
@@ -441,14 +441,14 @@ bool CSoundManager::LoadSoundBanksXML()
 					for (int j = 0; j < l_Element.GetNumChildren(); ++j)
 					{
 						CXMLTreeNode l_SoundBankElement = l_Element(j);
-
-						if (l_SoundBankElement.GetName() == std::string("Path"))
+						std::string l_ElementName = l_SoundBankElement.GetName();
+						if (l_ElementName == std::string("Path"))
 						{
 							std::string l_Path = l_SoundBankElement.GetPszKeyword("Path");
 							if (l_Path != "Init.bnk")
 								LoadSoundBank(l_Path);
 						}
-						if (l_SoundBankElement.GetName() == std::string("IncludedEvents"))
+						if (l_ElementName == std::string("IncludedEvents"))
 						{
 							for (int k = 0; k < l_SoundBankElement.GetNumChildren(); ++k)
 							{
@@ -482,6 +482,9 @@ bool CSoundManager::InitBanks()
 	l_ReturnValue = AK::SoundEngine::LoadBank("Init.bnk", AK_DEFAULT_POOL_ID, l_BankID);
 	if (l_ReturnValue != AK_Success)
 	{
+		#ifdef _DEBUG
+			LOG("Unable to load Init.bnk. Path: " + m_Path);
+		#endif
 		return false;
 	}
 
@@ -495,6 +498,9 @@ bool CSoundManager::LoadSoundBank(const std::string& Bank)
 	l_ReturnValue = AK::SoundEngine::LoadBank(Bank.c_str(), AK_DEFAULT_POOL_ID, l_BankID);
 	if (l_ReturnValue != AK_Success)
 	{
+		#ifdef _DEBUG
+			LOG("Unable to load bank " +Bank);
+		#endif
 		return false;
 	}
 
@@ -579,8 +585,8 @@ void CSoundManager::PlayEvent(const SoundEvent& Event, const AkGameObjectID& ID)
 }
 void CSoundManager::SetSwitch(const SoundSwitchValue &SwitchValue, const AkGameObjectID& ID)
 {
-	//AKRESULT l_Result = AK::SoundEngine::SetSwitch(SwitchValue.soundSwitch.switchName.c_str(), SwitchValue.valueName.c_str(), ID); //TODO
-	//assert(l_Result);
+	AKRESULT l_Result = AK::SoundEngine::SetSwitch(SwitchValue.m_SoundSwitch.m_SwitchName.c_str(), SwitchValue.m_ValueName.c_str(), ID); //TODO
+	assert(l_Result);
 }
 void CSoundManager::SetRTPCValue(const SoundRTPC &Rtpc, float Value, const AkGameObjectID& ID)
 {

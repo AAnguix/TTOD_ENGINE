@@ -20,24 +20,57 @@ static physx::PxDefaultAllocator gDefaultAllocatorCallback;
 physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
+	/*
+	if ((physx::PxGetFilterObjectType(attributes0) == physx::PxFilterObjectType::eRIGID_STATIC || physx::PxGetFilterObjectType(attributes1) == physx::PxFilterObjectType::eRIGID_STATIC)
+	&& (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)))
+	{
+	return physx::PxFilterFlag::eSUPPRESS;
+	}
+	else if ((physx::PxFilterObjectIsKinematic(attributes0)) && (physx::PxFilterObjectIsKinematic(attributes1)))
+	{
+	return physx::PxFilterFlag::eDEFAULT;
+	}
+
+	else
+	{
+	pairFlags =
+	physx::PxPairFlag::eCONTACT_DEFAULT
+	| physx::PxPairFlag::eTRIGGER_DEFAULT
+	| physx::PxPairFlag::eNOTIFY_CONTACT_POINTS
+	| physx::PxPairFlag::eSOLVE_CONTACT;
+	}
+
+	return physx::PxFilterFlag::eDEFAULT;
+	*/
+	//_________________________________
+
+	// let triggers through
 	if ((physx::PxGetFilterObjectType(attributes0) == physx::PxFilterObjectType::eRIGID_STATIC || physx::PxGetFilterObjectType(attributes1) == physx::PxFilterObjectType::eRIGID_STATIC)
 		&& (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)))
 	{
 		return physx::PxFilterFlag::eSUPPRESS;
 	}
-	else if ((physx::PxFilterObjectIsKinematic(attributes0)) && (physx::PxFilterObjectIsKinematic(attributes1)))
+	else if (physx::PxFilterObjectIsTrigger(attributes0) && physx::PxFilterObjectIsTrigger(attributes1))
 	{
+		return physx::PxFilterFlag::eSUPPRESS;
+	}
+	else if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
 		return physx::PxFilterFlag::eDEFAULT;
 	}
-
-	else
+	else if ((physx::PxFilterObjectIsKinematic(attributes0)) && (physx::PxFilterObjectIsKinematic(attributes1)))
 	{
-		pairFlags =
-			physx::PxPairFlag::eCONTACT_DEFAULT
-			| physx::PxPairFlag::eTRIGGER_DEFAULT
-			| physx::PxPairFlag::eNOTIFY_CONTACT_POINTS
-			| physx::PxPairFlag::eSOLVE_CONTACT;
+		return physx::PxFilterFlag::eSUPPRESS;
 	}
+	//else if (physx::PxGetFilterObjectType(attributes0) == physx::PxFilterObjectType::eUNDEFINED)
+	// generate contacts for all that were not filtered above
+	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+
+	// trigger the contact callback for pairs (A,B) where
+	// the filtermask of A contains the ID of B and vice versa.
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 
 	return physx::PxFilterFlag::eDEFAULT;
 };
@@ -84,8 +117,8 @@ CPhysXManagerImplementation::CPhysXManagerImplementation()
 	physx::PxSceneDesc sceneDesc(m_PhysX->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
-	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-	//sceneDesc.filterShader = contactReportFilterShader;
+	sceneDesc.filterShader = contactReportFilterShader;
+	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
 	m_Scene = m_PhysX->createScene(sceneDesc);
 	assert(m_Scene);
@@ -396,7 +429,7 @@ void CPhysXManagerImplementation::CreateCharacterController(const std::string &N
 	l_Desc.radius = Radius;
 	l_Desc.climbingMode = physx::PxCapsuleClimbingMode::eCONSTRAINED;
 	l_Desc.slopeLimit = cosf(3.1415f / 6); //The maximum slope which the character can walk up. //cosf(3.1415f / 6);
-	l_Desc.stepOffset = 0.001f; //maximum height of an obstacle which the character can climb.
+	l_Desc.stepOffset = 0.3f; //maximum height of an obstacle which the character can climb.
 	l_Desc.contactOffset = 0.001f;
 	l_Desc.density = Density;
 	l_Desc.reportCallback = this;

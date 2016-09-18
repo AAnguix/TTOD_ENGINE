@@ -27,6 +27,10 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_HealPoints = 0.0
 	self.m_HealVelocity = 12.0
 	
+	self.m_BurningState = false
+	self.m_BurningStateTime = 2.0
+	self.m_BurningStateCounter = 0.0
+	
 	self.m_CountdownToExtintionTimer = 5.0
 	self.m_CountdownToExtintion = self.m_CountdownToExtintionTimer
 	
@@ -145,6 +149,10 @@ dofile("./Data/Scripting/Player/PlayerController.lua")
 function CPlayerComponent:Update(ElapsedTime)
 	if(not self.m_Dead) then
 		self.m_Inventory:Update(ElapsedTime)
+	end
+	
+	if (self.m_BurningState) then
+		self:SetBurningStateTimer(ElapsedTime)
 	end
 	
 	if self.m_Healing then

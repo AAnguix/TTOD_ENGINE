@@ -53,6 +53,22 @@ function CPlayerComponent:TakeSimpleDamage(Damage)
 	end
 end
 
+function CPlayerComponent:SetBurningState()
+    local l_RenderableObjectTechnique = g_RenderableObjectTechniqueManager:GetResource("burning_character_technique")
+    self.m_LuaGameObject:SetTemporalRenderableObjectTechnique(l_RenderableObjectTechnique)    
+    self.m_BurningState = true
+    self.m_BurningStateCounter = 0.0
+end   
+
+function CPlayerComponent:SetBurningStateTimer(ElapsedTime)
+    g_LogManager:Log("SetBurningStateTimer: ")
+    self.m_BurningStateCounter = self.m_BurningStateCounter + ElapsedTime
+    if (self.m_BurningStateCounter >= self.m_BurningStateTime) then
+         self.m_LuaGameObject:SetTemporalRenderableObjectTechnique(nil)
+         self.m_BurningState = false
+	end
+end 
+
 function CPlayerComponent:GetClosestEnemy(Enemies)
 	local l_ClosestEnemy = nil
 	local l_MinDistance = 0.0

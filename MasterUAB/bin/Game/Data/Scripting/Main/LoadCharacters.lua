@@ -8,9 +8,6 @@ function CGameController:LoadDragon(XMLTreeNode)
 		local l_BoneName = XMLTreeNode:GetPszProperty("bone_name", "", false)
 		local l_ModelName = XMLTreeNode:GetPszProperty("model_name", "", false)
 		
-		local l_CoreModel = l_LuaGameObject:GetAnimatedCoreModel()
-		local l_BoneID = l_CoreModel:GetBoneId(l_BoneName)
-		
 		--if l_LuaGameObject ~= nil and l_ParticleEmitter ~= nil and l_BoneName ~= "" then
 			--local l_DragonComponent = CDragonComponent(l_LuaGameObject,l_ParticleEmitter,l_BoneID)
 			--g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_DragonComponent)
@@ -18,7 +15,7 @@ function CGameController:LoadDragon(XMLTreeNode)
 			--table.insert(self.m_Entities,l_DragonComponent)
 		--end
 		if l_LuaGameObject ~= nil and l_BoneName ~= "" then
-			local l_DragonComponent = CDragonComponent(l_LuaGameObject,l_BoneID)
+			local l_DragonComponent = CDragonComponent(l_LuaGameObject,l_BoneName)
 			g_ScriptManager:AddComponent(l_ComponentName,l_LuaGameObject,l_DragonComponent)
 			
 			CGameController:LoadSkeleton(l_DragonComponent,XMLTreeNode)

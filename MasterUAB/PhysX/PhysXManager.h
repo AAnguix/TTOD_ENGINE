@@ -220,7 +220,7 @@ public:
 	bool Raycast(const Vect3f& Origin, const Vect3f& Direction, const float& Length, SRaycastData* Result_);
 	void ChangeShapeTriggerState(const std::string &ShapeName, bool State);
 	void ChangeShapeTriggerState(const std::string &ShapeName, bool EnableTrigger, bool EnableSimulation);
-	bool GeometryQuery(const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_);
+	bool GeometryQuery(const std::string ActorName, const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_);
 
 
 	void ApplyForce(const std::string &ActorName, const Vect3f &Force);
@@ -246,6 +246,9 @@ public:
 		return l_ActorData;
 	}
 	const std::vector<std::string> & GetActorNames() const { return m_ActorNames; }
+
+	physx::PxActor* GetActor(const std::string& ActorName) const;
+
 
 };
 

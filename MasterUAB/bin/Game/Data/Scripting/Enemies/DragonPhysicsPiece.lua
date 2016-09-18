@@ -20,10 +20,6 @@ end
 
 function CDragonPhysicsPiece:Update(ElapsedTime)
 	self:SetTransform()
-	--g_LogManager:Log("Actualizando arma")
-	local Ray =  SRaycastData()
-	local Raycast = g_PhysXManager:Raycast(self:GetWorldPos(), Vect3f(0.0,1.0,0.0), 7.0, Ray)
-	
 end
 
 function CDragonPhysicsPiece:GetWorldPos()

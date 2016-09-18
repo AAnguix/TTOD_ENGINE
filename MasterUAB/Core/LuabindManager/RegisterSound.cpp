@@ -15,29 +15,34 @@ void CLuabindManager::RegisterSound()
 	module(LUA_STATE)
 	[
 		class_<SoundEvent>("SoundEvent")
-		.def(constructor<const std::string>())
-	];
-	module(LUA_STATE)
-	[
-		class_<SoundRTPC>("SoundRTPC")
-		.def(constructor<const std::string>())
+		.def(constructor<const std::string&>())
+		.def_readonly("m_EventName", &SoundEvent::m_EventName)
 	];
 	module(LUA_STATE)
 	[
 		class_<SoundSwitch>("SoundSwitch")
-		.def(constructor<const std::string>())
+		.def(constructor<const std::string&>())
+		.def_readonly("m_SwitchName", &SoundSwitch::m_SwitchName)
 	];
 	module(LUA_STATE)
 	[
 		class_<SoundSwitchValue>("SoundSwitchValue")
-		.def(constructor<const std::string>())
+		.def(constructor<const std::string&, const std::string&>())
+		.def_readonly("m_SoundSwitch", &SoundSwitchValue::m_SoundSwitch)
+		.def_readonly("m_ValueName", &SoundSwitchValue::m_ValueName)
+	];
+	module(LUA_STATE)
+	[
+		class_<SoundRTPC>("SoundRTPC")
+		.def(constructor<const std::string&>())
+		.def_readonly("m_RtpcName", &SoundRTPC::m_RtpcName)
 	];
 	module(LUA_STATE)
 	[
 		class_<SoundStateValue>("SoundStateValue")
-		.def(constructor<const std::string>())
+		.def(constructor<const std::string&>())
+		.def_readonly("m_ValueName", &SoundStateValue::m_ValueName)
 	];
-
 	module(LUA_STATE)
 	[
 		class_<ISoundManager>("ISoundManager")

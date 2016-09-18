@@ -1283,7 +1283,12 @@ void CPhysXManager::CreateSphereLua(const std::string &ShapeName, float Radius, 
 	CreateSphere(ShapeName, Radius, MaterialName, MaterialStaticFriction, MaterialDynamicFriction, MaterialRestitution, Group, IsExclusive);
 }
 
-bool CPhysXManager::GeometryQuery(const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_)
+physx::PxActor* CPhysXManager::GetActor(const std::string& ActorName) const
+{
+	return m_Actors[GetActorIndex(ActorName)];
+}
+
+bool CPhysXManager::GeometryQuery(const std::string ActorName, const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_)
 {
 	//physx::PxGeometry l_Geometry = physx::PxSphereGeometry(2.5f);
 	physx::PxGeometry l_Geometry = physx::PxBoxGeometry(physx::PxReal(2.0f), physx::PxReal(2.0f), physx::PxReal(2.0f));
