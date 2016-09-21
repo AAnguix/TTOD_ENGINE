@@ -10,6 +10,7 @@
 #include "Engine\Engine.h"
 #include "Input\InputMapperImplementation.h"
 
+#include "GUIManager.h"
 #include "Input\KeyBoardInput.h"
 #include "LuabindManager\LuabindManager.h"
 #include "Log\Log.h"
@@ -374,7 +375,10 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_CHAR:
 		{
-			CEngine::GetSingleton().GetInputMapper()->GetKeyBoard()->SetLastChar(wParam);
+			if (CEngine::GetSingleton().GetGUIManager()->ItemSelected())
+			{
+				CEngine::GetSingleton().GetInputMapper()->GetKeyBoard()->SetLastChar(wParam);
+			}
 			break;
 		}
 		case WM_SETCURSOR:

@@ -106,6 +106,9 @@ void CSoundManager::PlayEvent(const SoundEvent &Event, const std::string& Speake
 	}
 	else
 	{
+		#ifdef _LOG
+			LOG("Unable to play event " + Event.m_EventName + ". Speaker "+Speaker+" not found");
+		#endif
 		assert(false);
 	}
 }
@@ -279,13 +282,16 @@ bool CSoundManager::Init()
 	}
 	else
 	{
-		CEngine::GetSingleton().GetLogManager()->Log("WWise initialized properly.");
-		m_InitOk = true;
+		m_InitOk = InitBanks();
+		if (m_InitOk)
+		{
+			CEngine::GetSingleton().GetLogManager()->Log("WWise initialized properly.");
+			m_DefaultSpeakerID = GenerateObjectID();
+			AK::SoundEngine::RegisterGameObj(m_DefaultSpeakerID);
+			return true;
+		}
+		return false;
 	}
-
-	m_DefaultSpeakerID = GenerateObjectID();
-	AK::SoundEngine::RegisterGameObj(m_DefaultSpeakerID);
-	return true;
 }
 
 bool CSoundManager::Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename)
@@ -294,8 +300,21 @@ bool CSoundManager::Load(const std::string& SoundBanksFilename, const std::strin
 	m_SpeakersFilename = SpeakersFilename;
 
 	bool l_IsOk = true;
-	InitBanks();
+
 	l_IsOk = LoadSoundBanksXML();
+	l_IsOk = LoadSpeakersXML();
+
+	return l_IsOk;
+}
+
+bool CSoundManager::Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename, std::vector<const std::string> &SoundBanksLoaded)
+{
+	m_SoundBanksFilename = SoundBanksFilename;
+	m_SpeakersFilename = SpeakersFilename;
+
+	bool l_IsOk = true;
+
+	l_IsOk = LoadSoundBanksXML(SoundBanksLoaded);
 	l_IsOk = LoadSpeakersXML();
 
 	return l_IsOk;
@@ -468,6 +487,58 @@ bool CSoundManager::LoadSoundBanksXML()
 
 	return true;
 }
+
+bool CSoundManager::LoadSoundBanksXML(std::vector<const std::string> &SoundBanksLoaded)
+{
+	CXMLTreeNode l_XML;
+
+	if (l_XML.LoadFile((m_Path + m_SoundBanksFilename).c_str()))
+	{
+		CXMLTreeNode l_Soundbanks = l_XML["SoundBanks"];
+
+		if (l_Soundbanks.Exists())
+		{
+			for (int i = 0; i < l_Soundbanks.GetNumChildren(); ++i)
+			{
+				CXMLTreeNode l_Element = l_Soundbanks(i);
+
+				if (l_Element.GetName() == std::string("SoundBank"))
+				{
+
+					for (int j = 0; j < l_Element.GetNumChildren(); ++j)
+					{
+						CXMLTreeNode l_SoundBankElement = l_Element(j);
+						std::string l_ElementName = l_SoundBankElement.GetName();
+						if (l_ElementName == std::string("Path"))
+						{
+							std::string l_Path = l_SoundBankElement.GetPszKeyword("Path");
+							if (l_Path != "Init.bnk")
+							{
+								LoadSoundBank(l_Path);
+								SoundBanksLoaded.push_back(l_Path);
+							}
+						}
+						if (l_ElementName == std::string("IncludedEvents"))
+						{
+							for (int k = 0; k < l_SoundBankElement.GetNumChildren(); ++k)
+							{
+								CXMLTreeNode l_SoundEvent = l_SoundBankElement(k);
+								if (l_SoundEvent.GetName() == std::string("Event"))
+								{
+									std::string l_SoundBankID = l_SoundEvent.GetPszProperty("Name", "");
+									m_SoundEvents.push_back(l_SoundBankID);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 bool CSoundManager::InitBanks()
 {
 	//Load initialization and main soundbanks
@@ -492,10 +563,14 @@ bool CSoundManager::InitBanks()
 }
 bool CSoundManager::LoadSoundBank(const std::string& Bank)
 {
+	AkOSChar *l_Path;
 	AkBankID l_BankID;
 	AKRESULT l_ReturnValue;
 
+	CONVERT_CHAR_TO_OSCHAR(m_Path.c_str(), l_Path);
+	l_ReturnValue = AK::SOUNDENGINE_DLL::SetBasePath(l_Path);
 	l_ReturnValue = AK::SoundEngine::LoadBank(Bank.c_str(), AK_DEFAULT_POOL_ID, l_BankID);
+	
 	if (l_ReturnValue != AK_Success)
 	{
 		#ifdef _DEBUG

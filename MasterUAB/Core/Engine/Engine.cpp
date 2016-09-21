@@ -46,6 +46,8 @@ CEngine::CEngine()
 ,m_Initialized(false)
 ,m_ElapsedTime(0.0f)
 ,m_EngineSettings(nullptr)
+,m_LevelsToLoad(0)
+,m_LevelsToUnload(0)
 {
 	m_Log = new CLog;
 	m_LuabindManager = new CLuabindManager;
@@ -151,8 +153,8 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 	m_LuabindManager->Initialize();
 
 	m_Profiler->Begin("LoadSoundBanks");
-		m_SoundManager->Init();
 		m_SoundManager->SetPath("./Data/Audio/Soundbanks/General/");
+		m_SoundManager->Init();
 		m_SoundManager->Load("SoundbanksInfo.xml", "");
 	m_Profiler->End("LoadSoundBanks");
 
@@ -201,6 +203,11 @@ void CEngine::SetTimeScale(float TimeScale)
 
 bool CEngine::Update(float ElapsedTime)
 {
+	if (!m_PhysXManager->Simulating())
+	{
+		UpdateLevels();
+	}
+
 	ElapsedTime *= m_TimeScale;
 
 	m_ElapsedTime = ElapsedTime;
@@ -259,7 +266,7 @@ bool CEngine::Update(float ElapsedTime)
 	return true;
 }
 
-bool CEngine::AddLevel(const std::string &Level)
+bool CEngine::AddLevel(const std::string &Level, const std::string &LuaLoadFunction)
 {
 	bool l_Exists = false;
 
@@ -269,62 +276,69 @@ bool CEngine::AddLevel(const std::string &Level)
 			l_Exists = true;
 	}
 	if (!l_Exists)
-		m_Levels.push_back(new CLevel(Level));
+		m_Levels.push_back(new CLevel(Level, LuaLoadFunction));
 
 	return !l_Exists;
 }
 
-bool CEngine::LoadLevel(const std::string &Level)
+void CEngine::LoadLevel(const std::string &Level)
 {
-	bool l_Loaded = false;
-
 	for (size_t i = 0; i < m_Levels.size(); ++i)
 	{
 		if (m_Levels[i]->GetID() == Level)
 		{
-			m_LoadingLevel = true; 
-			LoadLevelsCommonData();
-			l_Loaded = m_Levels[i]->Load(*this);
-			m_CurrentLevel = Level;
-			m_LoadingLevel = false;
-		}
-	}
-
-	#ifdef _DEBUG
-		if (l_Loaded)
-			m_Log->Log("Level " + Level + " loaded");
-		else
-			m_Log->Log("Can't load level " + Level);
-	#endif
-
-	return l_Loaded;
-}
-
-bool CEngine::UnloadLevel(const std::string &Level)
-{
-	m_LoadingLevel = true;
-
-		bool l_Unloaded = false;
-
-		for (size_t i = 0; i < m_Levels.size(); ++i)
-		{
-			if (m_Levels[i]->GetID() == Level)
+			std::vector<CLevel*>::iterator it;
+			it = find(m_LevelsToLoad.begin(), m_LevelsToLoad.end(), m_Levels[i]);
+			if (it == m_LevelsToLoad.end())
 			{
-				l_Unloaded = m_Levels[i]->Unload(*this);
-				m_CurrentLevel = "";
+				m_LevelsToLoad.push_back(m_Levels[i]);
+			}
+			else 
+			{
+				LOG("Error. Level " + Level + " is pending to be loaded.");
 			}
 		}
+	}
+}
 
-		#ifdef _DEBUG
-		if (l_Unloaded)
-			m_Log->Log("Level " + Level + " unloaded");
-		else
-			m_Log->Log("Can't unload level " + Level);
-		#endif
+/*
+	Loads/Unloads the levels pending to be loaded/unloaded.
+*/
+void CEngine::UpdateLevels()
+{
+	for (size_t i = 0; i < m_LevelsToUnload.size(); ++i)
+	{
+		m_LevelsToUnload[i]->Unload(*this);
+		m_CurrentLevel = "";
+	}
+	m_LevelsToUnload.clear();
+	for (size_t i = 0; i < m_LevelsToLoad.size(); ++i)
+	{
+		LoadLevelsCommonData();
+		m_LevelsToLoad[i]->Load(*this);
+		m_CurrentLevel = m_LevelsToLoad[i]->GetID();
+	}
+	m_LevelsToLoad.clear();
+}
 
-	m_LoadingLevel = false;
-
-	return l_Unloaded;
+void CEngine::UnloadLevel(const std::string &Level)
+{
+	for (size_t i = 0; i < m_Levels.size(); ++i)
+	{
+		if (m_Levels[i]->GetID() == Level)
+		{
+			std::vector<CLevel*>::iterator it;
+			it = find(m_LevelsToUnload.begin(), m_LevelsToUnload.end(), m_Levels[i]);
+			if (it == m_LevelsToUnload.end())
+			{
+				m_LevelsToUnload.push_back(m_Levels[i]);
+			}
+			else
+			{
+				LOG("Error. Level " + Level + " is pending to be unloaded.");
+			}
+		}
+	}
 }
 
 CGameObjectManager* CEngine::GetGameObjectManager() const { return m_GameObjectManager; }

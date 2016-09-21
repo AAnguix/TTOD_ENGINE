@@ -16,11 +16,12 @@ class CPhysXManagerImplementation :
 
 private:
 	void CreateScene();
+	void Destroy();
+	void DestroyScene();
 
 public:
 	CPhysXManagerImplementation();
 	virtual ~CPhysXManagerImplementation();
-	void Destroy();
 	void Reload();
 	void RemoveComponents();
 

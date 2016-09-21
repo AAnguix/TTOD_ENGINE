@@ -9,6 +9,7 @@ class CLevel
 {
 private:
 	std::string m_ID;
+	std::string m_LuaLoadFunction;
 
 	std::string m_MaterialsFilename;
 	std::string m_ParticleSystemsFilename;
@@ -18,6 +19,7 @@ private:
 	std::string m_LightsFilename;
 
 	std::string m_SoundBankFilename;
+	std::vector<const std::string> m_SoundBanks;
 	std::string m_SpeakersFilename;
 
 	std::string m_SceneRendererCommandsFilename;
@@ -26,7 +28,7 @@ private:
 	void UpdateLoadPercentageLevel(unsigned int Percentage, CGUIManager::SSliderResult& SliderResult);
 
 public:
-	CLevel(const std::string &ID);
+	CLevel(const std::string &ID, const std::string LuaLoadFunction);
 	virtual ~CLevel();
 	std::string GetID() const{ return m_ID; };
 	unsigned int GetPercentageLoaded() const{ return m_PercentageLoaded; }

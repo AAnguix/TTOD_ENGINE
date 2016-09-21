@@ -1,9 +1,12 @@
 #include "PhysXManagerImplementation.h"
 #include <Windows.h>
 #include <sstream>
+
 #include "Engine\Engine.h"
-#include "LuabindManager\LuabindManager.h"
 #include "Log\Log.h"
+#include "Engine\EngineSettings.h"
+
+#include "LuabindManager\LuabindManager.h"
 #include "Components\Collider.h"
 #include "Components\CharacterCollider.h"
 #include "Components\Script\ScriptManager.h"
@@ -117,8 +120,8 @@ CPhysXManagerImplementation::CPhysXManagerImplementation()
 	physx::PxSceneDesc sceneDesc(m_PhysX->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
-	sceneDesc.filterShader = contactReportFilterShader;
-	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	//sceneDesc.filterShader = contactReportFilterShader;
+	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
 	m_Scene = m_PhysX->createScene(sceneDesc);
 	assert(m_Scene);
@@ -148,10 +151,10 @@ void CPhysXManagerImplementation::RemoveComponents()
 
 void CPhysXManagerImplementation::CreateScene()
 {
-	SYSTEM_INFO sysinfo;
-	GetSystemInfo(&sysinfo);
-	DWORD numCPU = sysinfo.dwNumberOfProcessors;
-	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(numCPU);
+	SYSTEM_INFO l_SystemInfo;
+	GetSystemInfo(&l_SystemInfo);
+	DWORD l_CPUs = l_SystemInfo.dwNumberOfProcessors;
+	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(l_CPUs);
 
 	physx::PxSceneDesc sceneDesc(m_PhysX->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
@@ -165,6 +168,15 @@ void CPhysXManagerImplementation::CreateScene()
 
 	m_ControllerManager = PxCreateControllerManager(*m_Scene);
 	m_ControllerManager->setOverlapRecoveryModule(true);
+}
+
+
+void CPhysXManagerImplementation::DestroyScene()
+{
+	if (m_Scene && !Simulating())
+	{
+		Destroy();
+	}
 }
 
 void CPhysXManagerImplementation::Destroy()
@@ -190,16 +202,6 @@ void CPhysXManagerImplementation::Destroy()
 		}
 	}
 	m_Actors.clear();
-	
-	/*if (m_ControllerManager != nullptr)
-	{
-		m_ControllerManager->release();	m_ControllerManager = nullptr;
-	}
-
-	if (m_Scene != nullptr)
-	{
-		m_Scene->release();	m_Scene = nullptr;
-	}*/
 
 	std::map<std::string, physx::PxMaterial*>::iterator it;
 	for (it = m_Materials.begin(); it != m_Materials.end(); ++it)
@@ -213,17 +215,8 @@ void CPhysXManagerImplementation::Destroy()
 	m_ActorNames.clear();
 	m_ActorPositions.clear();
 	m_ActorOrientations.clear();
-	
+
 	m_Shapes.clear();
-	//std::map<std::string, physx::PxShape*>::iterator itShape;
-
-	/*for (itShape = m_Shapes.begin(); itShape != m_Shapes.end(); ++itShape)
-	{
-		itShape->second->release();
-	}*/
-
-	//CreateScene();
-
 }
 
 CPhysXManagerImplementation::~CPhysXManagerImplementation()
@@ -370,21 +363,20 @@ void CPhysXManagerImplementation::onTrigger(physx::PxTriggerPair* pairs, physx::
 			CScript* l_Script = CEngine::GetSingleton().GetScriptManager()->GetScript(triggerName);
 			if (l_Script != nullptr)
 			{
+				if (CEngine::GetSingleton().GetEngineSettings()->GetDebugOptions().m_DebugPhysXTriggers)
+					LOG("TriggerEnter: "+actorName+" -> "+triggerName);
 				l_Script->GetLuaComponent()->OnTriggerEnter(actorName);
 			}
-			/*l_Ss << "OnTriggerEnter" << triggerName << "('" << actorName << "')";
-			std::string l_Code = l_Ss.str();
-			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);*/
 		}
 		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
 			CScript* l_Script = CEngine::GetSingleton().GetScriptManager()->GetScript(triggerName);
 			if (l_Script != nullptr)
+			{
+				if (CEngine::GetSingleton().GetEngineSettings()->GetDebugOptions().m_DebugPhysXTriggers)
+					LOG("TriggerExit: " + actorName + " -> " + triggerName);
 				l_Script->GetLuaComponent()->OnTriggerExit(actorName);
-
-			/*l_Ss << "OnTriggerExit" << triggerName << "('" << actorName << "')";
-			std::string l_Code = l_Ss.str();
-			CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Code);*/
+			}
 		}
 	}
 }

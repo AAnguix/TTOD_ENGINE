@@ -31,6 +31,7 @@ private:
 		bool m_DebugScriptManager;
 		bool m_DebugAnimatorController;
 		bool m_DebugInputMapper;
+		bool m_DebugPhysXTriggers;
 	};
 
 	SDebugOptions m_DebugOptions;

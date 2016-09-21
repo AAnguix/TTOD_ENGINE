@@ -46,9 +46,9 @@
 		<sprite name="handle" x="0" y="400" w="64" h="64" />
 		<sprite name="pressed_handle" x="400" y="400" w="64" h="64" />
 	</gui_spritemap>
-	<!-- <gui_spritemap name="console" width="512" height="512" material="console_material">
+	<gui_spritemap name="console" width="512" height="512" material="console_material">
 		<sprite name="console" x="0" y="0" w="512" h="512" />
-	</gui_spritemap> -->
+	</gui_spritemap>
 	<gui_spritemap name="textBox" width="512" height="128" material="textbox_material">
 		<sprite name="textBox" x="0" y="0" w="512" h="128" />
 	</gui_spritemap>

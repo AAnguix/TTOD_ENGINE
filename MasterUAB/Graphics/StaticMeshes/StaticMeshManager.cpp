@@ -48,7 +48,11 @@ bool CStaticMeshManager::Load(const std::string &FileName)
 						#endif
 						assert(l_Load);
 						if (l_Load)
-							l_StaticMesh->LoadShape(l_Element.GetPszProperty("shape_type", ""), l_Element.GetPszProperty("group", ""), l_Element.GetBoolProperty("is_exclusive", false));
+						{
+							std::string l_ShapeType = l_Element.GetPszProperty("shape_type", "");
+							if (l_ShapeType!="")
+								l_StaticMesh->LoadShape(l_ShapeType, l_Element.GetPszProperty("group", ""), l_Element.GetBoolProperty("is_exclusive", false));
+						}
 					}
 				}
 				if (l_Element.GetName() == std::string("physx_shape"))

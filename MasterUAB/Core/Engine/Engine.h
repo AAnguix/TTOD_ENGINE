@@ -118,6 +118,8 @@ private:
 	CEngineSettings* m_EngineSettings;
 
 	std::vector<CLevel*> m_Levels;
+	std::vector<CLevel*> m_LevelsToLoad;
+	std::vector<CLevel*> m_LevelsToUnload;
 	std::string m_CurrentLevel;
 
 	bool m_LoadingLevel;
@@ -137,6 +139,8 @@ private:
 
 	CEngine();
 
+	void UpdateLevels();
+
 public:
 	virtual ~CEngine();
 	float GetElapsedTime() const { return m_ElapsedTime; }
@@ -155,10 +159,11 @@ public:
 	void Initialize(HINSTANCE* HInstance);
 	HINSTANCE* GetHInstance() const { return m_HInstance; }
 	void LoadLevelsCommonData();
-	bool AddLevel(const std::string &Level);
-	bool LoadLevel(const std::string &Level);
-	bool UnloadLevel(const std::string &Level);
+	bool AddLevel(const std::string &Level, const std::string &LuaLoadFunction);
+	void LoadLevel(const std::string &Level);
+	void UnloadLevel(const std::string &Level);
 	bool LoadingLevel() const { return m_LoadingLevel; };
+
 	std::string GetCurrentLevel() const { return m_CurrentLevel; };
 	void SetCurrentLevel(const std::string &Level) { m_CurrentLevel=Level; };
 

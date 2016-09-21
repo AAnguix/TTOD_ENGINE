@@ -352,25 +352,23 @@ bool CStaticMesh::Load(const std::string &FileName)
 
 bool CStaticMesh::LoadShape(const std::string &ShapeType, const std::string &Group, bool IsExclusive)
 {
-	if (ShapeType == "")
-		return false;
-	else
-	{
-		if (ShapeType == "box")
-			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateBox(m_Name, GetBoundingBoxSize(), m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
-		else if (ShapeType == "sphere")
-			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateSphere(m_Name, m_BoundingSphere.radius, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
-		else if (ShapeType == "capsule")
-			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateCapsule(m_Name, GetCapsuleRadius(), GetCapsuleHalfHeight(), m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
-		else if (ShapeType == "plane")
-			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreatePlane(m_Name, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+	assert(ShapeType != "");
 
-		else if (ShapeType == "convex")
-			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateConvexMesh(m_Name, m_MeshVertex, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
-		else if (ShapeType == "triangle")
-			m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateTriangleMesh(m_Name, m_MeshVertex, m_MeshIndex, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
-		return true;
-	}
+	if (ShapeType == "box")
+		m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateBox(m_Name, GetBoundingBoxSize(), m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+	else if (ShapeType == "sphere")
+		m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateSphere(m_Name, m_BoundingSphere.radius, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+	else if (ShapeType == "capsule")
+		m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateCapsule(m_Name, GetCapsuleRadius(), GetCapsuleHalfHeight(), m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+	else if (ShapeType == "plane")
+		m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreatePlane(m_Name, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+
+	else if (ShapeType == "convex")
+		m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateConvexMesh(m_Name, m_MeshVertex, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+	else if (ShapeType == "triangle")
+		m_Shape = CEngine::GetSingleton().GetPhysXManager()->CreateTriangleMesh(m_Name, m_MeshVertex, m_MeshIndex, m_Materials[0]->GetName(), m_Materials[0]->GetStaticFriction(), m_Materials[0]->GetDynamicFriction(), m_Materials[0]->GetRestitution(), Group, IsExclusive);
+	
+	return true;
 }
 
 bool CStaticMesh::Reload()

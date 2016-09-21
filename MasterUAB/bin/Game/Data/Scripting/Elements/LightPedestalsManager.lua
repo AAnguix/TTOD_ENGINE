@@ -1,26 +1,53 @@
 class 'CLightPedestalsManagerComponent' (CLUAComponent)
-function CLightPedestalsManagerComponent:__init(CLuaGameObject)
+function CLightPedestalsManagerComponent:__init(CLuaGameObject, StoneGateLuaGameObject)
 CLUAComponent.__init(self,"LightManagerScript")	
 	self.m_LuaGameObject = CLuaGameObject
-	self.m_LightsEnabled = false
+	self.m_StoneGateLuaGameObject = StoneGateLuaGameObject 
 	self.m_Lights = {}
+	self.m_StartLightIntensities = {}
+	self.m_EndLightIntensities = {}
 	self.m_LightPedestals = {}
-	self.m_Time = 0.0
-	self.m_CombinationDone = false 
-	self.m_CombinationDoneSoundDelay = 1.0
-	self.m_CombinationDoneSoundPlayed = false
 	
+	self.m_CombinationDoneSoundDelay = 1.0
+	self.m_LightsOnSoundDelay = 1.0
+	self.m_StoneGateDisplacement = Vect3f(0.2,0.0,0.0)
+	self.m_StoneGateTimeMoving = 2.0
+	self.m_Orders = {3,1,2}
+	
+	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
+	self.m_LuaGameObject:AddSound("RightCombination","Play_RightCombination")
+	self.m_LuaGameObject:AddSound("WrongCombination","Play_WrongCombination")
+	self.m_LuaGameObject:AddSound("LightsOn","Play_LightsOn")
+	self.m_LuaGameObject:AddSound("StoneGate","Play_StoneDoor")
+		
 	g_EventManager:Subscribe(self, "LIGHT_PEDESTAL_ONE_ACTIVATED")
 	g_EventManager:Subscribe(self, "LIGHT_PEDESTAL_TWO_ACTIVATED")
 	g_EventManager:Subscribe(self, "LIGHT_PEDESTAL_THREE_ACTIVATED")
 	g_EventManager:Subscribe(self, "PEDESTALS_COMBINATION_DONE")
-	self.m_Orders = {3,1,2}
-	self.m_Actives = {false,false,false}
 	
-	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
-	self.m_LuaGameObject:AddSound("PlayerInteraction3","Play_Interaction3")
-	--self.m_LuaGameObject:AddSound("LightsOn","Play_LightsOn")
-	--self.m_LuaGameObject:AddSound("WrongCombination","Play_WrongCombination")
+	self:Init()
+end
+
+function CLightPedestalsManagerComponent:Init()
+	self.m_LightsEnabled = false
+	self.m_CombinationDone = false 
+	self.m_CombinationDoneSoundPlayed = false
+	self.m_LightsOnSoundPlayed = false
+	self.m_StoneGateSoundPlayed = false
+	self.m_Actives = {false,false,false}
+end
+
+function CLightPedestalsManagerComponent:Reset()
+	self:Init()
+	for i=1, (#self.m_LightPedestals) do
+		self.m_LightPedestals[i].m_RuneLuaGameObject:EnableRenderableObject(false)
+		self.m_LightPedestals[i]:Enable()
+	end
+	
+	for x=1, (#self.m_Lights) do
+		local l_Intensity = self.m_StartLightIntensities[self.m_Lights[x]:GetName()]
+		self.m_Lights[x]:SetIntensity(l_Intensity)
+	end
 end
 
 function CLightPedestalsManagerComponent:AddLightPedestal(CLuaGameObject, Event, RuneLuaGameObject)
@@ -80,9 +107,8 @@ function CLightPedestalsManagerComponent:PEDESTALS_COMBINATION_DONE()
 end
 
 function CLightPedestalsManagerComponent:ResetLightPedestal()
-	g_LogManager:Log("Reseteando combinacion...")
 	self.m_Actives = {false,false,false}
-	--self.m_LuaGameObject:PlayEvent("WrongCombination")
+	self.m_LuaGameObject:PlayEvent("WrongCombination")
 end
 
 function CLightPedestalsManagerComponent:HideAllRunes()
@@ -91,20 +117,52 @@ function CLightPedestalsManagerComponent:HideAllRunes()
 	end
 end
 
-function CLightPedestalsManagerComponent:AddLight(Light)
+function CLightPedestalsManagerComponent:AddLight(Light, Intensity)
 	table.insert(self.m_Lights,Light)
+	self.m_StartLightIntensities[Light:GetName()] = Light:GetIntensity()
+	self.m_EndLightIntensities[Light:GetName()] = Intensity
 end
 
 function CLightPedestalsManagerComponent:Update(ElapsedTime)
 	--if (self.m_Pedestal:IsActive())
 	if (self.m_CombinationDone) and (not self.m_LightsEnabled) then
 		self:AddTime(ElapsedTime)
-		self:EnableLights(self:GetTimer())
-		
 		if((not self.m_CombinationDoneSoundPlayed) and (self:GetTimer()>self.m_CombinationDoneSoundDelay)) then
-			self.m_LuaGameObject:PlayEvent("PlayerInteraction3")
-			self.m_CombinationDoneSoundPlayed = true
+			self:PlayCombinationDoneSound()
 		end
+		if(self.m_CombinationDoneSoundPlayed) then
+			if ((not self.m_LightsOnSoundPlayed)and(self:GetTimer()>self.m_LightsOnSoundDelay)) then
+				self:PlayLightsOnSound()
+			elseif(self.m_LightsOnSoundPlayed and (not self.m_LightsEnabled)) then
+				self:EnableLights(self:GetTimer()*0.05)
+			end
+		end
+	elseif (self.m_LightsEnabled) then
+		self:AddTime(ElapsedTime)
+		self:MoveGate(ElapsedTime)
+	end
+end
+
+function CLightPedestalsManagerComponent:PlayCombinationDoneSound()
+	self.m_LuaGameObject:PlayEvent("RightCombination")
+	self.m_CombinationDoneSoundPlayed = true
+	self:ResetTimer()
+end
+
+function CLightPedestalsManagerComponent:PlayLightsOnSound()
+	self.m_LuaGameObject:PlayEvent("LightsOn")
+	self.m_LightsOnSoundPlayed = true
+	self:ResetTimer()
+end
+
+function CLightPedestalsManagerComponent:MoveGate(ElapsedTime)
+	if(not self.m_StoneGateSoundPlayed) then
+		self.m_LuaGameObject:PlayEvent("StoneGate")
+		self.m_StoneGateSoundPlayed = true
+	end
+	if(self:GetTimer()<self.m_StoneGateTimeMoving) then
+		local l_Displacement = self.m_StoneGateDisplacement*ElapsedTime
+		self.m_StoneGateLuaGameObject:SetPosition(self.m_StoneGateLuaGameObject:GetPosition()+l_Displacement)
 	end
 end
 
@@ -118,17 +176,27 @@ function CLightPedestalsManagerComponent:DisableLights()
 	end	
 end
 
-function CLightPedestalsManagerComponent:EnableLights(ElapsedTime)
+function CLightPedestalsManagerComponent:EnableLights(Timer)
 	local l_Intensity = 0.0
-	-- local l_Intensity = Lerp(0.0,1.0,ElapsedTime)
+	local l_LightsModified = 0
+	
 	for i=1, (#self.m_Lights) do
-		local l_LightIntensity = self.m_Lights[i]:GetIntensity()
-		local l_Intensity = Lerp(l_LightIntensity,1.0,ElapsedTime*0.25)
-		self.m_Lights[i]:SetIntensity(l_Intensity) 
+		local l_CurrentLightIntensity = self.m_Lights[i]:GetIntensity()
+		local l_EndLightIntensity = self.m_EndLightIntensities[self.m_Lights[i]:GetName()]
+		
+		if(math.abs(l_EndLightIntensity-l_CurrentLightIntensity)<0.0001) then
+			self.m_Lights[i]:SetIntensity(l_EndLightIntensity)
+		elseif (l_CurrentLightIntensity < l_EndLightIntensity) then
+			local l_Intensity = Lerp(l_CurrentLightIntensity,l_EndLightIntensity,Timer)
+			self.m_Lights[i]:SetIntensity(l_Intensity)
+			l_LightsModified = l_LightsModified+1
+		end
 	end	
 	
-	if l_Intensity >= 1.0 then
+	if l_LightsModified == 0 then
 		self.m_LightsEnabled = true
-		--self.m_LuaGameObject:PlayEvent("LightsOn")
+		self:ResetTimer()
 	end
+	
+	l_LightsModified = 0
 end

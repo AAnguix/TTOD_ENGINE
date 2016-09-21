@@ -55,6 +55,7 @@ class CPhysXManager
 {
 
 private:
+	bool m_Simulating;
 	float m_LeftOverSeconds;
 	std::vector<const std::string> m_ActorsToBeDeleted;
 	void RemoveActors();
@@ -86,6 +87,7 @@ protected:
 
 	physx::PxFoundation *m_Foundation;
 	physx::PxPhysics *m_PhysX;
+	bool m_DestroyScene;
 
 	# if USE_PHYSX_DEBUG
 		physx::PxVisualDebuggerConnection *m_DebugConnection;
@@ -134,6 +136,7 @@ protected:
 	physx::PxActor* IsRigidDynamic(const std::string& ActorName);
 
 public:
+	bool Simulating() const{ return m_Simulating; };
 	struct SRaycastData
 	{
 		Vect3f m_Position;
@@ -158,7 +161,8 @@ public:
 
 	static CPhysXManager* CreatePhysxManager();
 	virtual ~CPhysXManager();
-	virtual void Destroy(){};
+	virtual void Destroy();
+	virtual void DestroyScene();
 	void Update(float ElapsedTime);
 	virtual void Reload();
 

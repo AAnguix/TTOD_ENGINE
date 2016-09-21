@@ -62,6 +62,7 @@ public:
 	virtual bool Init() = 0;
 	virtual void Update(const CCamera *Camera, const Vect3f &Forward, float ElapsedTime) = 0;
 	virtual bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename) = 0;
+	virtual bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename, std::vector<const std::string> &SoundBanksLoaded) = 0;
 	virtual bool Reload() = 0;
 
 	virtual bool LoadSoundBank(const std::string& Bank) = 0;

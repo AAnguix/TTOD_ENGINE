@@ -42,7 +42,7 @@ function CPlayerComponent:Initialize()
 	local l_Injured = self.m_LuaGameObject:AddState("Injured_State", "die", 1.0, "OnEnter_Injured_Player", "OnUpdate_Injured_Player", "OnExit_Injured_Player")
 	-- local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_Player", "OnUpdate_Dead_Player", "OnExit_Dead_Player")
 	local l_Tossed = self.m_LuaGameObject:AddState("Tossed_State", "combatIdle", 1.0, "OnEnter_Tossed_Player", "OnUpdate_Tossed_Player", "OnExit_Tossed_Player")
-	local l_Interact = self.m_LuaGameObject:AddState("Interact_State", "interact", 1.0, "OnEnter_Interact_Player", "OnUpdate_Interact_Player", "OnExit_Interact_Player")
+	local l_Interact = self.m_LuaGameObject:AddState("Interact_State", "block", 1.0, "OnEnter_Interact_Player", "OnUpdate_Interact_Player", "OnExit_Interact_Player")
 	local l_CombatIdle = self.m_LuaGameObject:AddState("CombatIdle_State", "combatIdle", 1.0, "OnEnter_CombatIdle_Player", "OnUpdate_CombatIdle_Player", "OnExit_CombatIdle_Player")
 	
 	self.m_LuaGameObject:AddBool("Walk", false)

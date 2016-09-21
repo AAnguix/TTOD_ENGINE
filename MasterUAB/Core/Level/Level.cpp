@@ -22,9 +22,11 @@
 #include <thread>
 #include <direct.h>
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
+#include "LuabindManager\LuabindManager.h"
 
-CLevel::CLevel(const std::string &ID)
+CLevel::CLevel(const std::string &ID, const std::string LuaLoadFunction)
 :m_ID(ID)
+,m_LuaLoadFunction(LuaLoadFunction)
 ,m_MaterialsFilename("Data/Level" + m_ID + "/materials.xml")
 ,m_StaticMeshesFilename("./Data/Level" + m_ID + "/static_meshes.xml")
 ,m_ParticleSystemsFilename("./Data/Level" + m_ID + "/particles_systems.xml")
@@ -36,7 +38,6 @@ CLevel::CLevel(const std::string &ID)
 ,m_SceneRendererCommandsFilename("./Data/Level" + m_ID + "/scene_renderer_commands.xml")
 ,m_PercentageLoaded(0)
 {
-
 }
 
 CLevel::~CLevel()
@@ -109,12 +110,14 @@ bool CLevel::Load(CEngine& Engine)
 	Engine.GetProfiler()->Begin("LoadSoundBanks");
 	ISoundManager* l_SoundManager = Engine.GetSoundManager();
 	l_SoundManager->SetPath(m_SoundBankFilename);
-	l_SoundManager->Load("SoundbanksInfo.xml", m_SpeakersFilename);
+	l_SoundManager->Load("SoundbanksInfo.xml", m_SpeakersFilename, m_SoundBanks);
 	Engine.GetProfiler()->End("LoadSoundBanks");
 
 	Engine.GetProfiler()->Begin("LoadSceneRendererCommands");
 	Engine.GetSceneRendererCommandManager()->Load(m_SceneRendererCommandsFilename);
 	Engine.GetProfiler()->End("LoadSceneRendererCommands");
+
+	Engine.GetLuabindManager()->RunCode(m_LuaLoadFunction);
 
 	UpdateLoadPercentageLevel(100, l_SliderResult);
 
@@ -154,10 +157,13 @@ bool CLevel::Unload(CEngine& Engine)
 	bool l_Result = true;
 
 	Engine.GetScriptManager()->RemoveComponents();
-	Engine.GetPhysXManager()->Destroy();
+	Engine.GetPhysXManager()->DestroyScene();
 	Engine.GetSoundManager()->RemoveComponents();
 	Engine.GetSoundManager()->ClearNamedSpeakers();
-	Engine.GetSoundManager()->UnloadSoundBank(m_SoundBankFilename);
+	for (size_t i = 0; i < m_SoundBanks.size(); ++i)
+	{
+		Engine.GetSoundManager()->UnloadSoundBank(m_SoundBanks[i]);
+	}
 	Engine.GetAnimatorControllerManager()->RemoveComponents();
 	Engine.GetMaterialManager()->Destroy();
 
@@ -165,7 +171,6 @@ bool CLevel::Unload(CEngine& Engine)
 	Engine.GetParticleSystemManager()->Destroy();
 	Engine.GetAnimatedModelManager()->Destroy();
 
-	//Engine.GetGUIManager()->Destroy();
 	Engine.GetLayerManager()->Destroy();
 	Engine.GetLightManager()->Destroy();
 	Engine.GetLuaGameObjectHandleManager()->Destroy();

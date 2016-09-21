@@ -30,30 +30,6 @@ function CGameController:LoadDestructibleWall(XMLTreeNode)
 	table.insert(self.m_Entities,l_DestructibleWall)
 end
 
--- LIGHTMANAGER
-function CGameController:LoadLightManager(XMLTreeNode, Pedestal)
-	local l_Name = XMLTreeNode:GetPszProperty("game_object", "", false)
-	local l_LuaGameObject = g_GameController:AddLuaGameObjectHandle(l_Name)
-	local l_LightManager = CLightManager(Pedestal)
-	
-	g_ScriptManager:AddComponent(l_Name,l_LuaGameObject,l_LightManager)
-	table.insert(self.m_Entities,l_LightManager)
-	
-	for i=0, XMLTreeNode:GetNumChildren()-1 do
-		local l_Element=XMLTreeNode:GetChild(i)
-		if l_Element:GetName()=="light" then
-			local l_LightName = l_Element:GetPszProperty("name","",false)
-			local l_Light = g_LightManager:GetResource(l_LightName)
-			if l_Light == nil then
-				g_LogManager:Log("Unable to find "..l_LightName.." to add it to LightManager")
-			else
-				l_LightManager:AddLight(l_Light)
-			end
-		end
-	end
-	-- l_LightManager:DisableLights()
-end
-
 -- WEAPON
 function CGameController:LoadWeapon(TreeNode, EntityComponent)
 	

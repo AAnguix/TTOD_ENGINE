@@ -58,9 +58,9 @@ void CLuabindManager::RegisterGUI()
 	module(LUA_STATE)
 	[
 		class_<CGUIManager::SButtonState>("SButtonState")
-		.def_readwrite("hot", &CGUIManager::SButtonState::hot)
-		.def_readwrite("active", &CGUIManager::SButtonState::active)
-		.def_readwrite("pressed", &CGUIManager::SButtonState::pressed)
+		.def_readonly("hot", &CGUIManager::SButtonState::hot)
+		.def_readonly("active", &CGUIManager::SButtonState::active)
+		.def_readonly("pressed", &CGUIManager::SButtonState::pressed)
 		.def(constructor<>())
 	];
 

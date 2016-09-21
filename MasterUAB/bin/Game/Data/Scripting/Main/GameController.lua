@@ -1,6 +1,27 @@
 class 'CGameController'
 function CGameController:__init()
 	self:ClearTables()
+	g_EventManager:Subscribe(self, "LEVEL_ONE_FINISHED")
+	g_EventManager:Subscribe(self, "LEVEL_TWO_FINISHED")
+	g_EventManager:Subscribe(self, "LEVEL_THREE_FINISHED")
+	g_EventManager:Subscribe(self, "LEVEL_FOUR_FINISHED")
+end
+
+function CGameController:LEVEL_ONE_FINISHED()
+	
+	local l_SoundEvent = SoundEvent("Stop_Resting")
+	g_SoundManager:PlayEvent(l_SoundEvent)
+	
+	StartLevelTwo()
+end
+function CGameController:LEVEL_TWO_FINISHED()
+	StartLevelThree()
+end
+function CGameController:LEVEL_THREE_FINISHED()
+	StartLevelFour()
+end
+function CGameController:LEVEL_FOUR_FINISHED()
+	GameFinished()
 end
 
 -- Includes
@@ -32,15 +53,6 @@ end
 dofile("./Data/Scripting/Main/GameControllerGets.lua")
 
 function CGameController:Update(ElapsedTime)
-end
-
-function CGameController:LoadLevel(Level)
-	g_Engine:AddLevel(Level)
-	g_Engine:LoadLevel(Level)
-	LuaMain() --Load new LUA behavior (per frame)
-	self:LoadXML("Data/Level"..Level.."/game_entities.xml")
-	g_AIManager:LoadLevel(Level)
-	g_ItemManager:LoadItems(Level)
 end
 
 function CGameController:LoadLevelIndependentData()
@@ -87,8 +99,6 @@ function CGameController:LoadXML(Filename)
 				l_Pedestal = self:LoadPedestal(l_Element)
 			elseif l_ElemName=="shadow_manager" then
 				self:LoadShadowManager(l_Element)
-			elseif l_ElemName=="light_manager" then
-				self:LoadLightManager(l_Element,l_Pedestal)
 			elseif l_ElemName=="destructible_wall" then
 				self:LoadDestructibleWall(l_Element)
 			end 

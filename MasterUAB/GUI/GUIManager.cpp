@@ -48,7 +48,6 @@ bool CGUIManager::IsMouseInside(float MouseX, float MouseY, float X, float Y, fl
 void CGUIManager::SortCommands()
 {
 	size_t l_Elements = m_SpriteMaps.size();
-	//std::vector<unsigned int> m_CommandsPerSpriteMap;
 	std::vector<unsigned int> m_CommandsPerSpriteMap(m_Materials.size());
 	std::string l_SPName;
 
@@ -595,7 +594,7 @@ bool CGUIManager::DoButton(const std::string& GuiID, const std::string& ButtonID
 CGUIManager::SButtonState CGUIManager::DoSButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color)
 {
 	SButtonState l_ButtonState;
-
+	
 	CheckInput();
 
 	SButtonInfo* l_Button = GetButton(ButtonID);
@@ -899,7 +898,6 @@ std::string CGUIManager::DoTextBox(const std::string& GuiID, const std::string& 
 		}
 
 		CKeyBoardInput* l_KeyBoard = CEngine::GetSingleton().GetInputMapper()->GetKeyBoard();
-		//CKeyBoardInput* l_KeyBoard = CEngine::GetSingleton().GetInputManager()->GetKeyBoard();
 
 		wchar_t l_LastChar = l_KeyBoard->ConsumeLastChar();
 
@@ -913,7 +911,8 @@ std::string CGUIManager::DoTextBox(const std::string& GuiID, const std::string& 
 		}
 		else if (l_LastChar == '\b')
 		{
-			l_ActiveText = l_ActiveText.substr(0, l_ActiveText.length() - 1);
+			if (l_ActiveText.length()>0)
+				l_ActiveText = l_ActiveText.substr(0, l_ActiveText.length() - 1);
 		}
 
 		FillCommandQueueWithText(Font, l_DisplayText, Vect2f(Position.x + Position.width * 0.05f, Position.y + Position.height * 0.75f), GUIAnchor::BASE_LEFT);
@@ -925,12 +924,13 @@ std::string CGUIManager::DoTextBox(const std::string& GuiID, const std::string& 
 void CGUIManager::CreateConsole(const std::string& GuiID, const std::string& Font, const SGUIPosition& Position, const std::string& Sprite, float ElapsedTime)
 {
 	static std::string s_Text = "";
-	s_Text = CEngine::GetSingleton().GetGUIManager()->DoTextBox(GuiID, Font, Position, Sprite, "> " + s_Text, ElapsedTime);
-	s_Text = s_Text.substr(2, s_Text.length() - 2);
+	s_Text = CEngine::GetSingleton().GetGUIManager()->DoTextBox(GuiID, Font, Position, Sprite,s_Text, ElapsedTime);
+	//s_Text = s_Text.substr(2, s_Text.length() - 2);
 
 	if (s_Text.length() > 0 && s_Text[s_Text.length() - 1] == '\n')
 	{
 		std::string l_Command = s_Text.substr(0, s_Text.length() - 1);
+		LOG("Console: " + l_Command);
 		CEngine::GetSingleton().GetLuabindManager()->RunCode(l_Command);
 		s_Text = "";
 	}
@@ -988,6 +988,12 @@ void CGUIManager::CheckInput()
 
 void CGUIManager::Render(CRenderManager* RenderManager)
 {
+	if (m_MouseWentPressed && m_SelectedItem != "")
+	{
+		if (m_SelectedItem!=m_HotItem)
+			SetNotSelected(m_SelectedItem);
+	}
+
 	SortCommands();
 
 	m_InputUpToDate = false;

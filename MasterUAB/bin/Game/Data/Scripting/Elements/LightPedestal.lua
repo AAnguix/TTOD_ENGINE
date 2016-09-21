@@ -1,12 +1,11 @@
 class 'CLightPedestalComponent' (CActivableElement)
 function CLightPedestalComponent:__init(CLuaGameObject, Event, RuneLuaGameObject)
-	CActivableElement.__init(self, CLuaGameObject, 1.5, "LightPedestal",Event)   --1.4
+	CActivableElement.__init(self, CLuaGameObject, 1.0, "LightPedestal",Event)   --1.4
 	self.m_Event = Event
 	self.m_RuneLuaGameObject = RuneLuaGameObject
 	self.TemporalActivationTime = 1.5
 	
 	self.m_RuneTemporarilyActivated = false
-	self.m_RuneActivated = false
 	
 	self.m_Disabled = false
 	self.m_RuneLuaGameObject:EnableRenderableObject(false)
@@ -14,14 +13,12 @@ end
 
 function CLightPedestalComponent:ActivateRune()
 	self.m_RuneLuaGameObject:EnableRenderableObject(true)
-	self.m_LuaGameObject:PlayEvent("PlayerInteraction2",self.m_LuaGameObject:GetName())
+	self.m_LuaGameObject:PlayEvent("PlayerInteraction",self.m_LuaGameObject:GetName())
 end
 
 function CLightPedestalComponent:ActivateRuneTemporarily()
 	self.m_RuneTemporarilyActivated = true
 	self.m_RuneLuaGameObject:EnableRenderableObject(true)
-	--self.m_LuaGameObject:PlayEvent("PlayerInteraction2",self.m_LuaGameObject:GetName())
-	g_LogManager:Log("Activando runa temporalmente")	
 end
 
 function CLightPedestalComponent:Update(ElapsedTime)

@@ -9,6 +9,7 @@ end
 function DefineFunctions()
 	dofile("./Data/Scripting/Globals/GlobalsInGame.lua")
 	dofile("./Data/Scripting/AntTweakBar.lua")
+	dofile("./Data/Scripting/ConsoleFunctions.lua")
 end
 
 function InitializeLuaMain()
@@ -25,7 +26,7 @@ function Update(ElapsedTime)
 		g_LuaCameraController:Update(ElapsedTime)
 		UpdateCinematics(ElapsedTime)
 	end
-	g_LuaGuiManager:Update()
+	g_LuaGuiManager:Update(ElapsedTime)
 	--g_LogManager:Log("LuiGui updated")
 end
 

@@ -106,7 +106,6 @@ function CPlayerComponent:FaceDirection(ElapsedTime)
 		local l_Angle = (self:GetTimer()*self.m_RotationAngle)/self.m_RotationDuration
 		self.m_LuaGameObject:SetYaw(self.m_YawBeforeFacing + l_Angle)
 	else 
-		g_LogManager:Log("Facing STOP!")
 		self.m_FacingFinished = true
 	end
 end

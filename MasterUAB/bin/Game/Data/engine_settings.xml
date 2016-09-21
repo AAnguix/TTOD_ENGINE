@@ -3,7 +3,7 @@
 	<data_path value="./Data/"/> 	
 	<window full_screen="false" screen_position="0 0" screen_size="1280 720" screen_resolution="1280 720"/> 
 	<fps value="30"/> 
-	<debug_options animator_controller="true" script_manager="false" input_mapper="false" /> 
+	<debug_options animator_controller="false" script_manager="false" input_mapper="false" physx_triggers="false" /> 
 	<vsync value="true"/> 
 	<d3d_debug value="true"/>
 	<gui_materials value="./Data/gui_materials.xml"/>

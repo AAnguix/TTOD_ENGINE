@@ -67,7 +67,7 @@ void CLuabindManager::RegisterCore()
 	module(LUA_STATE)
 	[
 		class_<CLevel>("CLevel")
-		.def(constructor<const std::string& >())
+		.def(constructor<const std::string&, const std::string&>())
 		.def("GetID", &CLevel::GetID)
 		.def("Load", &CLevel::Load)
 		.def("Unload", &CLevel::Unload)
@@ -266,7 +266,6 @@ void CLuabindManager::RegisterCore()
 		.def(constructor<>())
 		.def("RunCode", &CLuabindManager::RunCode)
 		.def("RunFile", &CLuabindManager::RunFile)
-		.def("Load", &CLuabindManager::Load)
 	];  
 
 	module(LUA_STATE)

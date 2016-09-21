@@ -57,6 +57,8 @@ function CLuaGuiInGame:Update(ElapsedTime)
 	
 	CLuaGui.Update(self,ElapsedTime)
 	
+	Console(ElapsedTime)
+	
 	-- local l_Pos = g_PlayerComponent:GetLuaGameObject():GetPosition()
 	-- local l_Vector = Vect3f(l_Pos.x,l_Pos.y+2.0,l_Pos.z)
 	-- local l_ScreenPos = g_RenderManager:GetCurrentCamera():GetPositionInScreenCoordinates(l_Vector)

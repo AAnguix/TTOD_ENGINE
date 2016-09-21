@@ -47,7 +47,7 @@ end
 
 function CLuaGuiStartScreen:Update(ElapsedTime)
 	
-	self.m_Loading = true
+	--self.m_Loading = false
 	
 	if (not self.m_Loading) then
 		CLuaGui.Update(self,ElapsedTime)
@@ -56,7 +56,9 @@ function CLuaGuiStartScreen:Update(ElapsedTime)
 		self:CreditsButton()
 		self:ExitButton()
 	else 
-		StartLevelOne() 
+		StartLevelOnee() 
+		g_LogManager:Log("esta loading")
+		self.m_Loading = false
 	end
 end
 
@@ -67,6 +69,7 @@ function CLuaGuiStartScreen:PlayButton()
 	self:HandleSoundEvents("Play",l_ButtonState)
 	if l_ButtonState.pressed then
 		g_SoundManager:PlayEvent(SoundEvent(g_LuaGuiManager.m_ButtonPressedSound))
+		g_LogManager:Log("play esta pressed")
 		self.m_Loading = true
 	end
 end
@@ -76,6 +79,7 @@ function CLuaGuiStartScreen:OptionsButton()
 	local l_ButtonState = g_GUIManager:DoSButton("options_button_0","options_button",l_OptionsPos,CColor(1.0,1.0,1.0,1.0))
 	self:HandleSoundEvents("Options",l_ButtonState)
 	if l_ButtonState.pressed then
+		g_LogManager:Log("options esta pressed")
 		g_SoundManager:PlayEvent(SoundEvent(g_LuaGuiManager.m_ButtonPressedSound))
 		self:AudioMenu()
 	end

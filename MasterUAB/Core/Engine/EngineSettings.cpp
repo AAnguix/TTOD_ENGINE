@@ -50,6 +50,7 @@ bool CEngineSettings::LoadSettings(const std::string &SettingsFile)
 					m_DebugOptions.m_DebugAnimatorController = l_Element.GetBoolProperty("animator_controller", true);
 					m_DebugOptions.m_DebugScriptManager = l_Element.GetBoolProperty("script_manager", true);
 					m_DebugOptions.m_DebugInputMapper = l_Element.GetBoolProperty("input_mapper", true);
+					m_DebugOptions.m_DebugPhysXTriggers = l_Element.GetBoolProperty("physx_triggers", true);
 				}
 				else if (l_Element.GetName() == std::string("fps"))
 				{

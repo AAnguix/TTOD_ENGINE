@@ -43,7 +43,6 @@ public:
 	void Destroy();
 	void RunCode(const std::string &Code) const;
 	void RunFile(const std::string &FileName) const;
-	void Load(const std::string &XMLFile);
 	lua_State * GetLuaState() const {return m_LS;}
 	void RegisterLUAFunctions();
 	

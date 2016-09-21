@@ -44,6 +44,7 @@ private:
 
 	AkGameObjectID GenerateObjectID();
 	bool LoadSoundBanksXML();
+	bool LoadSoundBanksXML(std::vector<const std::string> &SoundBanksLoaded);
 	bool LoadSpeakersXML();
 	bool InitBanks();
 	void Terminate();
@@ -64,6 +65,7 @@ public:
 	bool Init();
 	void Update(const CCamera *Camera, const Vect3f &Forward, float ElapsedTime);
 	bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename);
+	bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename, std::vector<const std::string> &SoundBanksLoaded);
 	bool Reload();
 
 	bool LoadSoundBank(const std::string& Bank);

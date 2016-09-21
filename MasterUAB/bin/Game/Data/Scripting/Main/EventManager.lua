@@ -4,6 +4,11 @@ function CEventManager:__init( )
 	self.PendingSubscribe = {}
 	self.PendingUnsubscribe = {}
 end
+function CEventManager:Destroy()
+	self.Events = {}
+	self.PendingSubscribe = {}
+	self.PendingUnsubscribe = {}
+end
 function CEventManager:FireEvent( eventName, ... )
 	self.Events[ eventName ] = self.Events[ eventName ] or {}
 	

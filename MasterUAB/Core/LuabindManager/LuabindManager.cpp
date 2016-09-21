@@ -102,26 +102,26 @@ void CLuabindManager::Destroy()
 	lua_close(m_LS); 
 }  
 
-//Execute code fragment in LUA
+/*
+Execute code fragment in LUA
+*/
 void CLuabindManager::RunCode(const std::string &Code) const
 {  
 	if(luaL_dostring(m_LS,Code.c_str()))  
 	{   
 		const char *l_Str=lua_tostring(m_LS, -1);   
-		//Info("%s",l_Str);
 		CEngine::GetSingleton().GetLogManager()->Log(l_Str);
-		//assert(!"must be log");
 	} 
 }  
 
-//Execute LUA file
+/*
+Execute LUA file
+*/
 void CLuabindManager::RunFile(const std::string &FileName) const
 {  
 	if(luaL_dofile(m_LS, FileName.c_str()))  
 	{   const char *l_Str=lua_tostring(m_LS, -1);   
 		CEngine::GetSingleton().GetLogManager()->Log(l_Str);
-		//Info("%s",l_Str); 
-		//assert(!"must be log");
 	} 
 }   
 
@@ -134,9 +134,4 @@ void CLuabindManager::RegisterLUAFunctions()
 	RegisterGraphics();
 	RegisterGUI();
 	RegisterPhysics();
-}
-
-void CLuabindManager::Load(const std::string &XMLFile)
-{
-
 }

@@ -80,5 +80,11 @@ void CLuaGameObjectHandleManager::RemoveHandlesToBeDeleted()
 
 void CLuaGameObjectHandleManager::Destroy()
 {
+	for (size_t i = 0; i < m_LuaGameObjectHandles.size(); ++i)
+	{
+		RemoveHandle(m_LuaGameObjectHandles[i].GetName());
+	}
+
+	/*Before*/
 	m_LuaGameObjectHandles.clear();
 }

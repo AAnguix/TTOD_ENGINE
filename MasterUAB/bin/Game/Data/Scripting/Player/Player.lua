@@ -63,7 +63,7 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_Right = false
 	self.m_Left = false
 	
-	self.m_RotationVelocity = 4.0
+	self.m_RotationVelocity = 6.0
 	self.m_AngleMargin = 0.05
 	
 	--Facing direcition variables
@@ -137,9 +137,9 @@ function CPlayerComponent:SetFacingValues(ForwardBeforeFacing,DirectionToFace, S
 	self.m_YawBeforeFacing = self.m_LuaGameObject:GetYaw()
 	self.m_YawAfterFacing = self.m_LuaGameObject:GetYaw() + self.m_RotationAngle
 	
-	g_LogManager:Log("Settings values")
-	g_LogManager:Log("m_YawBeforeFacing"..self.m_YawBeforeFacing)
-	g_LogManager:Log("m_YawAfterFacing"..self.m_YawAfterFacing)
+	-- g_LogManager:Log("Settings values")
+	-- g_LogManager:Log("m_YawBeforeFacing"..self.m_YawBeforeFacing)
+	-- g_LogManager:Log("m_YawAfterFacing"..self.m_YawAfterFacing)
 end
 
 dofile("./Data/Scripting/Player/PlayerInitialize.lua")

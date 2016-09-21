@@ -53,7 +53,6 @@ void CLuabindManager::RegisterSound()
 		.def("SetPath", &ISoundManager::SetPath)
 		.def("Init", &ISoundManager::Init)
 		.def("Update", &ISoundManager::Update)
-		.def("Load", &ISoundManager::Load)
 		.def("Reload", &ISoundManager::Reload)
 
 		.def("AddComponent", &ISoundManager::AddComponent)

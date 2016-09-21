@@ -8,7 +8,7 @@ CLUAComponent.__init(self,ScriptType)
 	self.m_ActivationEvent = ActivationEvent
 	g_EventManager:Subscribe( self, "PLAYER_INTERACTS" )
 	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
-	self.m_LuaGameObject:AddSound("PlayerInteraction2","Play_Interaction2")
+	self.m_LuaGameObject:AddSound("PlayerInteraction","Play_Interaction")
 end
 
 function CActivableElement:UnsuscribeEvents()
@@ -26,10 +26,10 @@ function CActivableElement:PLAYER_INTERACTS()
 			local l_DirectionToFace = (self.m_LuaGameObject:GetPosition() - l_PlayerLuaGameObject:GetPosition()):Normalize(1)
 			local l_ForwardBeforeFacing = l_PlayerLuaGameObject:GetForward():Normalize(1)
 			
-			g_LogManager:Log("Player")
-			g_LogManager:Log(l_ForwardBeforeFacing)
-			g_LogManager:Log("Pedestal")
-			g_LogManager:Log(l_DirectionToFace)
+			-- g_LogManager:Log("Player")
+			-- g_LogManager:Log(l_ForwardBeforeFacing)
+			-- g_LogManager:Log("Pedestal")
+			-- g_LogManager:Log(l_DirectionToFace)
 			
 			g_PlayerComponent:SetInteractionFacingValues(l_ForwardBeforeFacing,l_DirectionToFace)
 			g_EventManager:FireEvent(self.m_ActivationEvent)

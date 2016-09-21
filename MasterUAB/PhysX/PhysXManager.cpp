@@ -42,9 +42,19 @@ inline Quatf CastQuat(const physx::PxQuat& q)
 	return Quatf(q.x, q.y, q.z, q.w);
 }
 
-CPhysXManager::CPhysXManager()
+CPhysXManager::CPhysXManager():
+m_LeftOverSeconds(0.0f)
+,m_DestroyScene(false)
 {
-	m_LeftOverSeconds = 0.0f;
+}
+
+void CPhysXManager::Destroy()
+{
+}
+
+void CPhysXManager::DestroyScene()
+{
+	m_DestroyScene = true;
 }
 
 CPhysXManager::~CPhysXManager()
@@ -157,6 +167,7 @@ CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::stri
 		{
 			l_Found = true;
 			i = m_CharacterColliderComponents.size();
+			l_CharacterCollider = m_CharacterColliderComponents[i];
 		}
 	}
 	if (!l_Found)
@@ -175,8 +186,6 @@ CCharacterCollider* CPhysXManager::AddCharacterColliderComponent(const std::stri
 		#ifdef _DEBUG
 			CEngine::GetSingleton().GetLogManager()->Log("Unable to create component " + Name + ". It's already created");
 		#endif
-		delete(l_CharacterCollider); 
-		l_CharacterCollider = NULL;
 	}
 
 	return l_CharacterCollider;
@@ -601,13 +610,26 @@ void CPhysXManager::Update(float ElapsedTime)
 {
 	RemoveActors();
 
+	/*if (m_DestroyScene)
+	{
+		DestroyScene();
+		m_DestroyScene = false;
+	}*/
+
 	m_LeftOverSeconds += ElapsedTime;
 
 	if (m_LeftOverSeconds >= PHYSX_UPDATE_STEP)
 	{
+		m_Simulating = true;
 		m_Scene->simulate(PHYSX_UPDATE_STEP);
 		physx::PxU32 l_ErrorState;
+
 		bool l_Result = m_Scene->fetchResults(true, &l_ErrorState);
+
+		if (l_Result)
+		{
+			m_Simulating = false;
+		}
 
 		m_LeftOverSeconds = fmod(m_LeftOverSeconds, PHYSX_UPDATE_STEP);
 
