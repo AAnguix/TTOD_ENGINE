@@ -17,6 +17,7 @@ private:
 
 	int m_ParentBoneId;
 	CAnimatedInstanceModel* m_Parent;
+	bool m_Billboard;
 
 public:   
 	CMeshInstance(CGameObject* Owner, const std::string &Name, const std::string &CoreName, const Vect3f &Position, float Yaw, float Pitch, float Roll);

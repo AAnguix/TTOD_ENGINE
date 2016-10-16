@@ -8,11 +8,12 @@ CLUAComponent.__init(self,"LightManagerScript")
 	self.m_EndLightIntensities = {}
 	self.m_LightPedestals = {}
 	
+	self.m_StoneGateSoundDelay = 1.5
 	self.m_CombinationDoneSoundDelay = 1.0
 	self.m_LightsOnSoundDelay = 1.0
-	self.m_StoneGateDisplacement = Vect3f(0.2,0.0,0.0)
-	self.m_StoneGateTimeMoving = 2.0
-	self.m_Orders = {3,1,2}
+	self.m_StoneGateDisplacement = Vect3f(0.6,0.0,0.0)
+	self.m_StoneGateTimeMoving = 7.0
+	self.m_Orders = {1,2,3,4}
 	
 	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
 	self.m_LuaGameObject:AddSound("RightCombination","Play_RightCombination")
@@ -23,6 +24,7 @@ CLUAComponent.__init(self,"LightManagerScript")
 	g_EventManager:Subscribe(self, "LIGHT_PEDESTAL_ONE_ACTIVATED")
 	g_EventManager:Subscribe(self, "LIGHT_PEDESTAL_TWO_ACTIVATED")
 	g_EventManager:Subscribe(self, "LIGHT_PEDESTAL_THREE_ACTIVATED")
+	g_EventManager:Subscribe(self, "LIGHT_PEDESTAL_FOUR_ACTIVATED")
 	g_EventManager:Subscribe(self, "PEDESTALS_COMBINATION_DONE")
 	
 	self:Init()
@@ -30,11 +32,11 @@ end
 
 function CLightPedestalsManagerComponent:Init()
 	self.m_LightsEnabled = false
-	self.m_CombinationDone = false 
+	self.m_CombinationDone = true  -- CHANGE THISSS!!
 	self.m_CombinationDoneSoundPlayed = false
 	self.m_LightsOnSoundPlayed = false
 	self.m_StoneGateSoundPlayed = false
-	self.m_Actives = {false,false,false}
+	self.m_Actives = {false,false,false,false}
 end
 
 function CLightPedestalsManagerComponent:Reset()
@@ -69,6 +71,11 @@ end
 function CLightPedestalsManagerComponent:LIGHT_PEDESTAL_THREE_ACTIVATED()
 	if(not self.m_CombinationDone) then 
 		self:LightPedestalPressed(3)
+	end
+end
+function CLightPedestalsManagerComponent:LIGHT_PEDESTAL_FOUR_ACTIVATED()
+	if(not self.m_CombinationDone) then 
+		self:LightPedestalPressed(4)
 	end
 end
 
@@ -107,7 +114,7 @@ function CLightPedestalsManagerComponent:PEDESTALS_COMBINATION_DONE()
 end
 
 function CLightPedestalsManagerComponent:ResetLightPedestal()
-	self.m_Actives = {false,false,false}
+	self.m_Actives = {false,false,false,false}
 	self.m_LuaGameObject:PlayEvent("WrongCombination")
 end
 
@@ -117,10 +124,10 @@ function CLightPedestalsManagerComponent:HideAllRunes()
 	end
 end
 
-function CLightPedestalsManagerComponent:AddLight(Light, Intensity)
+function CLightPedestalsManagerComponent:AddLight(Light, EndIntensity)
 	table.insert(self.m_Lights,Light)
 	self.m_StartLightIntensities[Light:GetName()] = Light:GetIntensity()
-	self.m_EndLightIntensities[Light:GetName()] = Intensity
+	self.m_EndLightIntensities[Light:GetName()] = EndIntensity
 end
 
 function CLightPedestalsManagerComponent:Update(ElapsedTime)
@@ -133,6 +140,7 @@ function CLightPedestalsManagerComponent:Update(ElapsedTime)
 		if(self.m_CombinationDoneSoundPlayed) then
 			if ((not self.m_LightsOnSoundPlayed)and(self:GetTimer()>self.m_LightsOnSoundDelay)) then
 				self:PlayLightsOnSound()
+				self:ResetTimer()
 			elseif(self.m_LightsOnSoundPlayed and (not self.m_LightsEnabled)) then
 				self:EnableLights(self:GetTimer()*0.05)
 			end
@@ -156,13 +164,14 @@ function CLightPedestalsManagerComponent:PlayLightsOnSound()
 end
 
 function CLightPedestalsManagerComponent:MoveGate(ElapsedTime)
-	if(not self.m_StoneGateSoundPlayed) then
+	if(not self.m_StoneGateSoundPlayed and (self:GetTimer() > self.m_StoneGateSoundDelay)) then
 		self.m_LuaGameObject:PlayEvent("StoneGate")
 		self.m_StoneGateSoundPlayed = true
 	end
 	if(self:GetTimer()<self.m_StoneGateTimeMoving) then
 		local l_Displacement = self.m_StoneGateDisplacement*ElapsedTime
-		self.m_StoneGateLuaGameObject:SetPosition(self.m_StoneGateLuaGameObject:GetPosition()+l_Displacement)
+		g_PhysXManager:MoveKinematicActor(self.m_StoneGateLuaGameObject:GetName(), self.m_StoneGateLuaGameObject:GetPosition()+l_Displacement)
+		--self.m_StoneGateLuaGameObject:SetPosition(self.m_StoneGateLuaGameObject:GetPosition()+l_Displacement)
 	end
 end
 

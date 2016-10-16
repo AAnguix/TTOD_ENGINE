@@ -49,7 +49,7 @@ physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes a
 
 	// let triggers through
 	if ((physx::PxGetFilterObjectType(attributes0) == physx::PxFilterObjectType::eRIGID_STATIC || physx::PxGetFilterObjectType(attributes1) == physx::PxFilterObjectType::eRIGID_STATIC)
-		&& (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)))
+	&& (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)))
 	{
 		return physx::PxFilterFlag::eSUPPRESS;
 	}
@@ -120,8 +120,8 @@ CPhysXManagerImplementation::CPhysXManagerImplementation()
 	physx::PxSceneDesc sceneDesc(m_PhysX->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
-	//sceneDesc.filterShader = contactReportFilterShader;
-	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.filterShader = contactReportFilterShader;
+	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.flags = physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
 	m_Scene = m_PhysX->createScene(sceneDesc);
 	assert(m_Scene);

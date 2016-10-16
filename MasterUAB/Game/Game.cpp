@@ -32,6 +32,9 @@ void InputGamepadCallback(InputMapping::SMappedInput& inputs);
 int LastX = 0;
 int LastY = 0;
 
+float m_XMouseSpeed = 2.0f;
+float m_YMouseSpeed = 2.0f;
+
 static void __stdcall SwitchCameraCallback(void* _app)
 {
 	((CGame*)_app)->SwitchCamera();
@@ -314,7 +317,6 @@ void InputCallback(InputMapping::SMappedInput& inputs)
 			LOG(l_CallBack + " raised");
 		}
 		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), l_CallBack.c_str());
-		//luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputActionCallback", l_Action);
 	}
 
 	std::set<InputMapping::EState>::iterator itState;
@@ -326,10 +328,9 @@ void InputCallback(InputMapping::SMappedInput& inputs)
 	}
 
 	if (CEngine::GetSingleton().Initialized())
-		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputRangesCallback", inputs.Ranges[InputMapping::RANGE_ONE], inputs.Ranges[InputMapping::RANGE_TWO]);
-
-	/*if (inputs.Actions.find(InputMapping::ACTION_ONE) != inputs.Actions.end())
-		LOG("Action one raised");*/
+	{ 
+		luabind::call_function<void>(CEngine::GetSingleton().GetLuabindManager()->GetLuaState(), "InputRangesCallback", inputs.Ranges[InputMapping::RANGE_ONE] * m_XMouseSpeed, inputs.Ranges[InputMapping::RANGE_TWO] * m_YMouseSpeed);
+	}
 }
 
 void InputGamepadCallback(InputMapping::SMappedInput& inputs)

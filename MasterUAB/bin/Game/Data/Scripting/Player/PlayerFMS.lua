@@ -74,6 +74,12 @@ function OnEnter_Attack_Player(Player)
 	
 	local l_DirectionToFace = g_CameraControllerManager:GetCurrentCameraController():GetForward():Normalize(1)
 	local l_ForwardBeforeFacing = Player:GetLuaGameObject():GetForward():Normalize(1)
+	
+	-- g_LogManager:Log("DirToFace:")
+	-- g_LogManager:Log(l_DirectionToFace)
+	-- g_LogManager:Log("ForwardBeforeFacing:")
+	-- g_LogManager:Log(l_ForwardBeforeFacing)
+	
 	Player:SetAttackFacingValues(l_ForwardBeforeFacing,l_DirectionToFace)
 	
 	-- g_Engine:GetRenderManager():GetContextManager():SetFullScreen(true, 1920, 1080)

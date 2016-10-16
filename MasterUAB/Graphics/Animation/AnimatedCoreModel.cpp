@@ -5,6 +5,9 @@
 #include "XML\XMLTreeNode.h"
 #include "cal3d\coremodel.h"
 #include "cal3d\coretrack.h"
+#include "Render/ContextManager.h"
+#include "Render/RenderManager.h"
+#include "Vertex/VertexTypes.h"
 
 bool CAnimatedCoreModel::LoadMesh(const std::string &Filename)
 {
@@ -135,7 +138,7 @@ void CAnimatedCoreModel::Load(const std::string &Path)
 				else if (l_Element.GetName() == std::string("material"))
 				{	
 					std::string l_MaterialName = l_Element.GetPszProperty("name", "");
-					unsigned int l_VertexType = l_Element.GetIntProperty("vertex_type", 61);
+					unsigned int l_VertexType = l_Element.GetIntProperty("vertex_type", MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::GetVertexType());
 
 					CMaterial *l_Material=new CMaterial(l_Element);
 

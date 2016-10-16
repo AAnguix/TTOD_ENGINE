@@ -68,6 +68,8 @@ void CLuabindManager::RegisterBase()
 			,def("PointInsideCircle", &CTTODMathUtils::PointInsideCircle)
 			,def("CalculateNewAngle", &CTTODMathUtils::CalculateNewAngle)
 			,def("AngleBetweenVectors", &CTTODMathUtils::AngleBetweenVectors)
+			,def("GetFixedAngle", &CTTODMathUtils::GetFixedAngle)
+			,def("FaceDirection", &CTTODMathUtils::FaceDirection)
 		]
 	];
 

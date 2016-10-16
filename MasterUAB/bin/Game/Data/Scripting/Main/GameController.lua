@@ -2,9 +2,6 @@ class 'CGameController'
 function CGameController:__init()
 	self:ClearTables()
 	g_EventManager:Subscribe(self, "LEVEL_ONE_FINISHED")
-	g_EventManager:Subscribe(self, "LEVEL_TWO_FINISHED")
-	g_EventManager:Subscribe(self, "LEVEL_THREE_FINISHED")
-	g_EventManager:Subscribe(self, "LEVEL_FOUR_FINISHED")
 end
 
 function CGameController:LEVEL_ONE_FINISHED()
@@ -13,15 +10,19 @@ function CGameController:LEVEL_ONE_FINISHED()
 	g_SoundManager:PlayEvent(l_SoundEvent)
 	
 	StartLevelTwo()
+	g_EventManager:Subscribe(self, "LEVEL_TWO_FINISHED")
 end
 function CGameController:LEVEL_TWO_FINISHED()
 	StartLevelThree()
+	g_EventManager:Subscribe(self, "LEVEL_THREE_FINISHED")
 end
 function CGameController:LEVEL_THREE_FINISHED()
 	StartLevelFour()
+	g_EventManager:Subscribe(self, "LEVEL_FOUR_FINISHED")
 end
 function CGameController:LEVEL_FOUR_FINISHED()
 	GameFinished()
+	g_EventManager:Subscribe(self, "GAME_FINISHED")
 end
 
 -- Includes

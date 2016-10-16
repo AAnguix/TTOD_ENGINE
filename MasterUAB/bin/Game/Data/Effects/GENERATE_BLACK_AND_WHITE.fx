@@ -27,7 +27,8 @@ PS_INPUT VS(VS_INPUT IN)
 
 float4 PS(PS_INPUT IN) : SV_Target
 {
-	float l_ShadowStrength=0.4;
+
+	float l_ShadowStrength=0.7;
 	float4 color = float4(1, 1, 1, 1);
 	
 	float l_Bias=0.0001;
@@ -50,13 +51,14 @@ float4 PS(PS_INPUT IN) : SV_Target
 			float l_ShadowMap=T6Texture.Sample(S6Sampler, l_ProjectedLightCoords).r;
 			float l_LightDepthValue=l_LightViewPosition.z/l_LightViewPosition.w;
 			
-			//color = float4(l_ShadowMap, l_ShadowMap, l_ShadowMap, l_ShadowMap);
 			if(l_LightDepthValue < (l_ShadowMap+l_Bias)) //<
 			{
-				color = float4(1, 1, 1, 1);
+				color = float4(1.0,1.0,1.0,1.0);
 			}
 			else
+			{
 				color = float4(l_ShadowStrength,l_ShadowStrength,l_ShadowStrength,1);
+			}
 		}
 	}
 	

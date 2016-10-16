@@ -43,7 +43,10 @@ function CLightPedestalComponent:Update(ElapsedTime)
 	end
 end
 
-function CLightPedestalComponent:Disable() self.m_Disabled = true end
+function CLightPedestalComponent:Disable() 
+	self.m_Disabled = true 
+	CActivableElement.Disable(self)
+end
 function CLightPedestalComponent:Enable() self.m_Disabled = false end
 
 function CLightPedestalComponent:GetRuneLuaGameObject()

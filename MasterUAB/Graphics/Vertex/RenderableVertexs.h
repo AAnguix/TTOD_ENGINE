@@ -77,8 +77,13 @@ public:
 			const Vect3f& t=tan1[b];  
 
 			// Gram-Schmidt orthogonalize   
-			Vect3f l_VAl=t-(*l_NormalVtx)*((*l_NormalVtx)*t);   l_VAl.Normalize();   *l_TangentVtx=l_VAl;      // Calculate handedness   
-			Vect3f l_Cross;   l_Cross=(*l_NormalVtx)^(*l_TangentVtx);   
+			Vect3f l_2ndOperator = ((*l_NormalVtx)*t);
+			
+			Vect3f l_VAl = t - Vect3f((*l_NormalVtx).x*l_2ndOperator.x, (*l_NormalVtx).y*l_2ndOperator.y, (*l_NormalVtx).z*l_2ndOperator.z);
+			l_VAl.Normalize();   
+			*l_TangentVtx=l_VAl;      // Calculate handedness   
+			Vect3f l_Cross;   
+			l_Cross=(*l_NormalVtx)^(*l_TangentVtx);   
 			l_TangentVtx4->w=(l_Cross*(tan2[b]))< 0.0f ? -1.0f : 1.0f;      
 			*l_BiNormalVtx=(*l_NormalVtx)^(*l_TangentVtx);  
 		}  

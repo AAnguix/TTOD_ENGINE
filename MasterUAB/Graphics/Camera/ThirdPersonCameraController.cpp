@@ -171,10 +171,6 @@ void CThirdPersonCameraController::SetCamera(CCamera *Camera) const
 	Camera->SetZNear(m_ZNear);
 	Camera->SetZFar(m_ZFar);
 	Camera->SetMatrixs();
-
-	#ifdef _DEBUG
-		//CEngine::GetSingleton().GetPhysXManager()->MoveKinematicActor("DebugPhysxCamera", Camera->GetPosition());
-	#endif
 }
 
 void CThirdPersonCameraController::MoveUpDown(float Movement, bool Speed, float ElapsedTime)

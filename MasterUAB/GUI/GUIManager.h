@@ -119,6 +119,16 @@ private:
 		SSpriteInfo* pressed_handle;
 		float handleRelativeWidth;
 		float handleRelativeHeight;
+		SSliderInfo(SSpriteInfo* Base, SSpriteInfo* Top, SSpriteInfo* Handle, SSpriteInfo* Pressed_Handle, int SliderWidth, int SliderHeight) : base(Base), top(Top), handle(Handle), pressed_handle(Pressed_Handle)
+		{
+			float x1 = Handle->u1 * SliderWidth;
+			float x2 = Handle->u2 * SliderWidth;
+			float y1 = Handle->v1 * SliderHeight;
+			float y2 = Handle->v2 * SliderHeight;
+
+			handleRelativeWidth = (x2 - x1) / SliderWidth;
+			handleRelativeHeight = (y2 - y1) / SliderHeight;
+		};
 		SSliderInfo(SSpriteInfo* Base, SSpriteInfo* Top, SSpriteInfo* Handle, SSpriteInfo* Pressed_Handle) : base(Base), top(Top), handle(Handle), pressed_handle(Pressed_Handle)
 		{
 			float x1 = Handle->u1 * Handle->spriteMap->w;
@@ -146,6 +156,9 @@ private:
 
 			barRelativeWidth = (x2 - x1) / Background->spriteMap->w;
 			barRelativeHeight = (y2 - y1) / Background->spriteMap->h;
+		};
+		SHealthBarInfo(SSpriteInfo* Base, SSpriteInfo* Top) : base(Base), top(Top), background(nullptr), barRelativeWidth(0.0f), barRelativeHeight(0.0f)
+		{
 		};
 	};
 	struct SButtonInfo
@@ -244,8 +257,11 @@ public:
 	void AddImage(const std::string& ImageID, const std::string& Sprite);
 	void AddButton(const std::string& ButtonID, const std::string& Normal, const std::string& Highlight, const std::string& Pressed);
 	void AddSlider(const std::string& SliderID, const std::string& Base, const std::string& Top, const std::string& Handle, const std::string& PressedHandle);
+	void AddSlider(const std::string& SliderID, const std::string& Base, const std::string& Top, const std::string& Handle, const std::string& PressedHandle, int SliderWidth, int SliderHeight);
 	void AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top, const std::string& Background);
-	
+	void AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top);
+
+
 	bool DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position);
 	bool DoButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color);
 	SButtonState DoSButton(const std::string& GuiID, const std::string& ButtonID, const SGUIPosition& Position, const CColor &Color);

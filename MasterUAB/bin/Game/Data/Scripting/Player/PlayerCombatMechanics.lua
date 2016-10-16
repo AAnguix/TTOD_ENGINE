@@ -31,7 +31,6 @@ function CPlayerComponent:TakeDamage(EnemyWeapon)
 	if( self.m_CurrentArmor~=nil) then
 		l_Armor = self.m_CurrentArmor:GetType()
 	end
-	
 	local l_DamageCalculated = g_DamageCalculator:CalculateDamage(l_Armor,EnemyWeapon,EnemyWeapon:GetDamage())
 	self:TakeSimpleDamage(l_DamageCalculated)
 end
@@ -86,29 +85,66 @@ end
 function CPlayerComponent:CalculateAttackDirection(ElapsedTime)
 
 	if (not self.m_FacingFinished) then
-		-- local l_ClosestEnemy = self:GetClosestEnemy(g_GameController:GetEnemies())
-		-- if l_ClosestEnemy~=nil then
-			-- self:FaceEnemy(self.m_ForwardBeforeFacing, l_ClosestEnemy, ElapsedTime)
-		-- else 
-			-- self:FaceDirectionWhileAttacking(ElapsedTime)
-		-- end
 		self:FaceDirection(ElapsedTime)
 	end
 end
 
 function CPlayerComponent:FaceDirection(ElapsedTime)
-	if(self.m_RotationDuration == 0.0) then
-		g_LogManager:Log("Error. RotationDuration is 0")
-	end
-	
-	local l_Difference = self.m_YawAfterFacing - self.m_LuaGameObject:GetYaw()
-	if ((math.abs(l_Difference))>self.m_AngleMargin) then
-		local l_Angle = (self:GetTimer()*self.m_RotationAngle)/self.m_RotationDuration
-		self.m_LuaGameObject:SetYaw(self.m_YawBeforeFacing + l_Angle)
-	else 
-		self.m_FacingFinished = true
-	end
+	self.m_FacingFinished = CTTODMathUtils.FaceDirection(self, self.m_LuaGameObject, self.m_LuaGameObject:GetYaw(), self.m_YawBeforeFacing, 
+	self.m_YawAfterFacing, self.m_RotationAngle, self.m_RotationDuration, self.m_AngleMargin)
 end
+
+-- function CPlayerComponent:FaceDirection(ElapsedTime)
+	-- if(self.m_RotationDuration == 0.0) then
+		-- g_LogManager:Log("Error. RotationDuration is 0")
+	-- end
+		
+	-- local l_Pi = 3.14159265359
+	-- local l_Pi_2 = (l_Pi/2.0)
+	
+	-- local ThreeQuarter = l_Pi + l_Pi_2
+	-- local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
+	-- local l_Difference = self.m_YawAfterFacing - self.m_LuaGameObject:GetYaw()
+	
+	-- if((l_CurrentYaw>ThreeQuarter)and(self.m_YawAfterFacing<(l_Pi/2.0))) then
+		-- l_Difference = (2*l_Pi) - l_CurrentYaw + self.m_YawAfterFacing
+	-- elseif((l_CurrentYaw<0.0) and(self.m_YawAfterFacing<0.0)) then
+		-- l_Difference = math.abs(math.abs(l_CurrentYaw) - math.abs(self.m_YawAfterFacing))
+	-- end
+	
+	-- l_Difference = math.abs(l_Difference)
+	
+	-- if (l_Difference>self.m_AngleMargin) then
+		-- local l_Angle = (self:GetTimer()*self.m_RotationAngle)/self.m_RotationDuration
+		-- local l_NewYaw = CTTODMathUtils.GetFixedAngle(self.m_YawBeforeFacing + l_Angle)
+		-- if(l_NewYaw<0.0 and self.m_YawAfterFacing<0.0) then
+			-- if(self.m_RotationAngle<0.0 and l_NewYaw<self.m_YawAfterFacing)then
+				-- self.m_FacingFinished = true
+				-- self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				-- return true
+			-- elseif(self.m_RotationAngle>0.0 and l_NewYaw>self.m_YawAfterFacing)then
+				-- self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				-- self.m_FacingFinished = true
+				-- return true
+			-- end
+		-- elseif(l_NewYaw>0.0 and self.m_YawAfterFacing>0.0) then
+			-- if(self.m_RotationAngle<0.0 and l_NewYaw<self.m_YawAfterFacing)then
+				-- self.m_FacingFinished = true
+				-- self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				-- return true
+			-- elseif(self.m_RotationAngle>0.0 and l_NewYaw>self.m_YawAfterFacing)then
+				-- self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				-- self.m_FacingFinished = true
+				-- return true
+			-- end
+		-- end
+		
+		-- self.m_LuaGameObject:SetYaw(l_NewYaw)
+	-- else 
+		-- self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+		-- self.m_FacingFinished = true
+	-- end
+-- end
 
 function CPlayerComponent:FaceEnemy(Forward, ClosestEnemy, ElapsedTime)
 	local l_EnemyPos = ClosestEnemy:GetLuaGameObject():GetPosition()

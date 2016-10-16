@@ -2,6 +2,7 @@ class 'CActivableElement' (CLUAComponent)
 function CActivableElement:__init(CLuaGameObject, InteractionRange, ScriptType, ActivationEvent)
 CLUAComponent.__init(self,ScriptType)	
 	self.m_LuaGameObject = CLuaGameObject
+	self.m_Disabled = false
 	self.m_Activable = false
 	self.m_InteractionRange = InteractionRange
 	self.m_InteractionAngle = 1.5707
@@ -33,6 +34,9 @@ function CActivableElement:PLAYER_INTERACTS()
 			
 			g_PlayerComponent:SetInteractionFacingValues(l_ForwardBeforeFacing,l_DirectionToFace)
 			g_EventManager:FireEvent(self.m_ActivationEvent)
+			if(self.m_ActivationEvent=="DYNAMITE_EQUIPED") then
+				g_ItemManager:DYNAMITE_EQUIPED()
+			end
 		end
 	end
 end
@@ -42,15 +46,17 @@ function CActivableElement:GetInteractionRange()
 end
 
 function CActivableElement:IsActivable() return self.m_Activable end
+function CActivableElement:Disable() self.m_Disabled=true end
 
 function CActivableElement:Update(ElapsedTime)
 	self.m_Activable = false
-	local l_Position = self.m_LuaGameObject:GetPosition()
-	local l_PlayerPos = g_Player:GetPosition()
-	local l_PlayerForward = g_Player:GetForward()
-	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_PlayerForward,l_PlayerPos,l_Position)
-	
-	if ((CTTODMathUtils.PointInsideCircle(l_PlayerPos, l_Position, self.m_InteractionRange)) and (l_Angle<self.m_InteractionAngle and l_Angle>(self.m_InteractionAngle*-1.0))) then
-		self.m_Activable = true
+	if(not self.m_Disabled) then
+		local l_Position = self.m_LuaGameObject:GetPosition()
+		local l_PlayerPos = g_Player:GetPosition()
+		local l_PlayerForward = g_Player:GetForward()
+		local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_PlayerForward,l_PlayerPos,l_Position)
+		if ((CTTODMathUtils.PointInsideCircle(l_PlayerPos, l_Position, self.m_InteractionRange)) and (l_Angle<self.m_InteractionAngle and l_Angle>(self.m_InteractionAngle*-1.0))) then
+			self.m_Activable = true
+		end
 	end
 end

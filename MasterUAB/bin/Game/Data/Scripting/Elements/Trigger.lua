@@ -6,7 +6,9 @@ CLUAComponent.__init(self,"Trigger")
 end
 
 function CTriggerComponent:OnTriggerEnter(Actor)
-	g_EventManager:FireEvent(self.m_Event)
+	if(Actor=="Player") then
+		g_EventManager:FireEvent(self.m_Event)
+	end
 end
 
 

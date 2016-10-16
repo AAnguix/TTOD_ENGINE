@@ -20,8 +20,8 @@
 </material>
 	<material name="GUIMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX"/>
 	<material name="GaussianFilterMaterial" renderable_object_technique="gaussian_filter_renderable_object_technique">
-		<parameter type="float" name="TextureSize" value="512.000000" description="min=256.0 max=512.0 step=256"/>
-		<parameter type="float" name="BlurScale" value="1.000000" description="min=0.0 max=1.0 step=0.01"/>
+		<parameter type="vect2f" name="TextureSize" value="512.0 512.0"/>
+		<parameter type="float" name="BlurScale" value="1.000000" description="min=0.0 max=64.0 step=0.01"/>
 </material>
 	<material name="ThresholdMaterial" renderable_object_technique="MV_POSITION4_COLOR_TEXTURE_VERTEX">
 		<parameter type="float" name="Threshold" value="0.500000" description="min=0.0 max=1.0 step=0.001"/>

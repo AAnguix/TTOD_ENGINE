@@ -139,8 +139,17 @@ function CDragonPhysicsPiece:ChangeTriggerState(State)
 	g_PhysXManager:ChangeShapeTriggerState(self.m_BoneName, State)
 end	
 
-function CDragonPhysicsPiece:DrawRaycast()
-	local l_bonePos = self:GetWorldPos()
-	local Ray =  SRaycastData()
-	local Raycast = g_PhysXManager:Raycast(l_bonePos, l_Direction, 20.0, Ray)
-end	
+function CDragonPhysicsPiece:GetDirectionVector(value)
+	local l_BoneTransform = Mat44f()
+	local l_ParentTransform = Mat44f()
+	l_BoneTransform = self.m_ParentLuaGameObject:GetBoneTransformationMatrix(self.m_BoneID)
+	l_ParentTransform = self.m_ParentLuaGameObject:GetTransform()
+	local l_Transform = Mat44f()
+	l_Transform:SetIdentity()
+	local l_Matrix = Mat44f()
+	l_Matrix = l_Transform*l_BoneTransform*l_ParentTransform
+	local l_Position = Vect3f(0.0,0.0,0.0)
+	l_Position = l_Matrix:GetVectorBasis(value)
+	return l_Position
+end
+

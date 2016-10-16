@@ -65,6 +65,6 @@ float4 PS( PS_INPUT IN) : SV_Target
 	float3 l_WorldPos=GetPositionFromZDepthView(l_Depth, IN.UV,m_InverseView, m_InverseProjection);
 	
 	float l_DistanceEyeToWorldPosition=length(l_WorldPos-m_InverseView[3].xyz); //m_InverseView[3].xyz
-	
+	//return float4(1,0,0,1)
 	return float4(GetFogColor(l_DistanceEyeToWorldPosition, l_FinalColor.xyz), l_FinalColor.a);
 }

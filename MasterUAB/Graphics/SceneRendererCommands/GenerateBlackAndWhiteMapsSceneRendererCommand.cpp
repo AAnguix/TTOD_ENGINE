@@ -16,7 +16,6 @@ CGenerateBlackAndWhiteMapsSceneRendererCommand::~CGenerateBlackAndWhiteMapsScene
 
 }
 
-bool x = true;
 void CGenerateBlackAndWhiteMapsSceneRendererCommand::Execute(CRenderManager &RenderManager)
 {
 	CLightManager* l_LightManager = CEngine::GetSingleton().GetLightManager();
@@ -38,23 +37,20 @@ void CGenerateBlackAndWhiteMapsSceneRendererCommand::Execute(CRenderManager &Ren
 			CEngine::GetSingleton().GetEffectManager()->SetBlackAndWhiteLightConstants(l_Lights[i]);
 			RenderManager.DrawScreenQuad(m_RenderableObjectTechnique->GetEffectTechnique(), NULL, 0, 0, 1.0f, 1.0f, CColor(1.0f, 1.0f, 1.0f, 1.0f));
 
-			//MIO
-			if (x)
-			{
-				CMaterial* l_GaussianFilterMaterial = CEngine::GetSingleton().GetMaterialManager()->GetResource("GaussianFilterMaterial");
-				CMaterial* l_GuiMaterial = CEngine::GetSingleton().GetMaterialManager()->GetResource("GUIMaterial");
+			CMaterial* l_GaussianFilterMaterial = CEngine::GetSingleton().GetMaterialManager()->GetResource("GaussianFilterMaterial");
+			CMaterial* l_GuiMaterial = CEngine::GetSingleton().GetMaterialManager()->GetResource("GUIMaterial");
 
-				RenderManager.GetContextManager()->UnsetRenderTargets();
-				RenderManager.GetContextManager()->SetDefaultViewPort();
+			RenderManager.GetContextManager()->UnsetRenderTargets();
+			RenderManager.GetContextManager()->SetDefaultViewPort();
 
-				l_Lights[i]->SetBlackAndWhiteMap(RenderManager, true);
-				CPoolRenderableObjectTechnique* l_GaussianFilterPool = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetPoolRenderableObjectTechniques().GetResource("gaussian_filter_pool_renderable_object_technique");
-				l_GaussianFilterPool->Apply();
-				l_Lights[i]->GetBlackAndWhiteMap()->Activate(0);
-				l_GaussianFilterMaterial->Apply();
+			l_Lights[i]->SetBlackAndWhiteMap(RenderManager, true);
+			CPoolRenderableObjectTechnique* l_GaussianFilterPool = CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetPoolRenderableObjectTechniques().GetResource("gaussian_filter_pool_renderable_object_technique");
+			l_GaussianFilterPool->Apply();
 
-				RenderManager.DrawScreenQuad(l_GaussianFilterMaterial->GetRenderableObjectTechnique()->GetEffectTechnique(), NULL, 0, 0, 1.0f, 1.0f, CColor(0.0, 0.0, 0.0, 0.0));
-			}
+			l_Lights[i]->GetBlackAndWhiteMap()->Activate(0);
+			l_GaussianFilterMaterial->Apply();
+
+			RenderManager.DrawScreenQuad(l_GaussianFilterMaterial->GetRenderableObjectTechnique()->GetEffectTechnique(), NULL, 0, 0, 1.0f, 1.0f, CColor(0.0, 0.0, 0.0, 0.0));
 		}
 	}
 

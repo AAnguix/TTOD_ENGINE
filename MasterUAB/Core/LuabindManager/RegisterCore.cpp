@@ -28,6 +28,7 @@
 #include "Components\AnimatorController\AnimatorControllerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "PhysXManager.h"
+#include "Render\ContextManager.h"
 
 /*Core*/
 #include "GameObject\LuaGameObjectHandleManager.h"
@@ -72,6 +73,7 @@ void CLuabindManager::RegisterCore()
 		.def("Load", &CLevel::Load)
 		.def("Unload", &CLevel::Unload)
 		.def("GetPercentageLoaded", &CLevel::GetPercentageLoaded)
+		.def("AddSoundBankInfoFile", &CLevel::AddSoundBankInfoFile)
 	];
 
 	module(LUA_STATE) 

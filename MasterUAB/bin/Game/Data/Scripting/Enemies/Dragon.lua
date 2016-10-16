@@ -6,9 +6,11 @@ function CDragonComponent:__init(CLuaGameObject, BoneName)--(CLuaGameObject, Par
 		
 	
 	self.m_MaxHealth=1000.0
-	self.m_Health=740.0
+	self.m_Health=300.0
 	self.m_Weapons = {}
 	self.m_Armor = nil
+	
+	--States
 	self.m_States = {}
 	self.m_CurrentState = nil
 	self.m_CurrentStateIndex = 0
@@ -18,25 +20,42 @@ function CDragonComponent:__init(CLuaGameObject, BoneName)--(CLuaGameObject, Par
 	
 	self.m_Speed = 1.0
 	self.m_Velocity = Vect3f(0.0,0.0,0.0)
-	self.m_ParticleEmitterBoneName = BoneName
 	
+	self.m_ParticleEmitterBoneName = BoneName
 	self.mFireParticlesGameObjectName = "smoke001"
 	self.m_FireParticles = g_GameController:AddLuaGameObjectHandle(self.mFireParticlesGameObjectName)
-	self.m_ParticleEmitterBone = nil
-	self.m_Target = Vect3f(0.0,0.0,0.0)
 	
+	
+	--Bones
+	self.m_ParticleEmitterBone = nil
+	self.mLeftLeg = nil
+	self.mRightLeg = nil 
+	self.m_Target = Vect3f(0.0,0.0,0.0)
 	self.m_PhysicsTail = {}
 	self.m_PhysicsBody = {}
 	self.m_PhysicsHead = {}
 	
-	g_PhysXManager:CreateSphereTrigger("SweepTest","SweepTest",1.0,"SweepTest_Material","",Vect3f(15.0,14.44641,15.28963),Quatf(0.0,0.0,0.0,1.0),"kinematic")
+	--Facing direcition variables
+	self.m_AngleMargin = 0.15
+	self.m_RotationAngle = 0.0
+	self.m_RotationDuration = 0.0
+	self.m_YawBeforeFacing = 0.0
+	self.m_YawAfterFacing = 0.0
+	self.m_FacingFinished = false
+	
+	--Shape for the Sweep 
+	g_PhysXManager:CreateSphereTrigger("SweepTest","SweepTest",1.0,"SweepTest_Material","",Vect3f(0.0,15.0,0.0),Quatf(0.0,0.0,0.0,1.0),"kinematic")
 end
 
 function CDragonComponent:Initialize()
+	self:CreateSkeleton()
+	self.m_FireParticles:EnableRenderableObject(false)
 	self.m_ParticleEmitterBone = self:GetBone("CATRigHub004Bone001Bone002")
+	self.mLeftLeg = self:GetBone("CATRigLLegAnkle2")
+	self.mRightLeg = self:GetBone("CATRigRLegAnkle1")
 	--local l_GameObject = self.m_LuaGameObject:GetGameObject()
 	local l_CColliderName = self.m_LuaGameObject:GetName().."_CharacterCollider"
-	self:CreateSkeleton()
+	
 	
 	
 	l_ACName = self.m_LuaGameObject:GetName().."_AnimatorController"
@@ -44,14 +63,20 @@ function CDragonComponent:Initialize()
 	
 
 	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_Dragon", "OnUpdate_Idle_Dragon", "OnExit_Idle_Dragon")
-	local l_Scratch = self.m_LuaGameObject:AddState("Scratch_State", "slash", 1.0, "OnEnter_Scratch_Dragon", "OnUpdate_Scratch_Dragon", "OnExit_Scratch_Dragon")
-	--local l_SpitFire = self.m_LuaGameObject:AddState("SpitFire_State", "normalAttack", 1.0, "OnEnter_SpitFire_Dragon", "OnUpdate_SpitFire_Dragon", "OnExit_SpitFire_Dragon")
+	local l_Rotate = self.m_LuaGameObject:AddState("Rotate_State", "idle", 1.0, "OnEnter_Rotate_Dragon", "OnUpdate_Rotate_Dragon", "OnExit_Rotate_Dragon")
+	local l_ScratchRight = self.m_LuaGameObject:AddState("ScratchRight_State", "slash", 1.0, "OnEnter_ScratchRight_Dragon", "OnUpdate_ScratchRight_Dragon", "OnExit_ScratchRight_Dragon")
+	local l_ScratchLeft = self.m_LuaGameObject:AddState("ScratchLeft_State", "slash2", 1.0, "OnEnter_ScratchLeft_Dragon", "OnUpdate_ScratchLeft_Dragon", "OnExit_ScratchLeft_Dragon")
+	local l_SpitFire = self.m_LuaGameObject:AddState("SpitFire_State", "Spit", 1.0, "OnEnter_SpitFire_Dragon", "OnUpdate_SpitFire_Dragon", "OnExit_SpitFire_Dragon")
 	--local l_Stomp = self.m_LuaGameObject:AddState("Stomp_State", "iraAttack", 1.0, "OnEnter_Stomp_Dragon", "OnUpdate_Stomp_Dragon", "OnExit_Stomp_Dragon")
 	--local l_WhipTale = self.m_LuaGameObject:AddState("WhipTale_State", "iraAttack", 1.0, "OnEnter_WhipTale_Dragon", "OnUpdate_WhipTale_Dragon", "OnExit_WhipTale_Dragon")
     
-	self.m_LuaGameObject:AddBool("IsPlayerInsideScratchRange", false)
-	self.m_LuaGameObject:AddTrigger("WaitingTimeExpired", false) --The time that the dragon waits beetwen attacks
-	self.m_LuaGameObject:AddTrigger("TimeSpitingFireExpired", false) --The time that the dragon is spiting fire
+	self.m_LuaGameObject:AddTrigger("IsPlayerInsideRightScratchRange", false)
+	self.m_LuaGameObject:AddTrigger("IsPlayerInsideLeftScratchRange", false)
+	self.m_LuaGameObject:AddTrigger("SpitFire", false)
+	self.m_LuaGameObject:AddBool("Rotate", false)
+	
+	--self.m_LuaGameObject:AddTrigger("WaitingTimeExpired", false) --The time that the dragon waits beetwen attacks
+	
 	self.m_LuaGameObject:AddTrigger("IsHealthBellow25Percent", false)
 	self.m_LuaGameObject:AddTrigger("IsHealthBellow50Percent", false)
 	self.m_LuaGameObject:AddTrigger("IsHealthBellow75Percent", false)
@@ -59,20 +84,26 @@ function CDragonComponent:Initialize()
 	self.m_LuaGameObject:AddBool("HealthBellow25PercentAttackRaised", false)
 	self.m_LuaGameObject:AddBool("HealthBellow50PercentAttackRaised", false)
 	self.m_LuaGameObject:AddBool("HealthBellow75PercentAttackRaised", false)
+	
 
-	--local l_IdleToSplitFire = l_Idle:AddTransition("IdleToSplitFire", l_SpitFire, false, 0.1, 0.1)
-	--l_IdleToSplitFire:AddBoolCondition("IsPlayerInsideScratchRange", false)
-	--l_IdleToSplitFire:AddTriggerCondition("WaitingTimeExpired")
+	local l_IdleToSpitFire = l_Idle:AddTransition("IdleToSpitFire", l_SpitFire, false, 0.1)
+	l_IdleToSpitFire:AddTriggerCondition("SpitFire")
 	
-	--local l_SplitFireToIdle = l_SpitFire:AddTransition("SplitFireToIdle", l_Idle, false, 0.1)
-	--l_SplitFireToIdle:AddTriggerCondition("TimeSpitingFireExpired")
+	local l_IdleToScratchRight = l_Idle:AddTransition("IdleToScratchRight", l_ScratchRight, false, 0.2, 0.2)
+	l_IdleToScratchRight:AddTriggerCondition("IsPlayerInsideRightScratchRange")
 	
-	local l_IdleToScratch = l_Idle:AddTransition("IdleToScratch", l_Scratch, false, 0.2, 0.2)
-	l_IdleToScratch:AddBoolCondition("IsPlayerInsideScratchRange", true)
-	l_IdleToScratch:AddTriggerCondition("WaitingTimeExpired")
+	local l_IdleToScratchLeft = l_Idle:AddTransition("IdleToScratchLeft", l_ScratchLeft, false, 0.2, 0.2)
+	l_IdleToScratchLeft:AddTriggerCondition("IsPlayerInsideLeftScratchRange")
 	
+	local l_IdleToRotate = l_Idle:AddTransition("IdleToRotate", l_Rotate, false, 0.1)
+	l_IdleToRotate:AddBoolCondition("Rotate",true)
 	
-	local l_ScratchToIdle = l_Scratch:AddTransition("ScratchToIdle", l_Idle, true, 0.3)
+	local l_RotateToIdle = l_Rotate:AddTransition("RotateToIdle", l_Idle, false, 0.1)
+	l_RotateToIdle:AddBoolCondition("Rotate",false)
+	
+	local l_SpitFireToIdle = l_SpitFire:AddTransition("SpitFireToIdle", l_Idle, true, 0.1)
+	local l_ScratchRightToIdle = l_ScratchRight:AddTransition("ScratchRightToIdle", l_Idle, true, 0.3)
+	local l_ScratchLeftToIdle = l_ScratchLeft:AddTransition("ScratchLeftToIdle", l_Idle, true, 0.3)
 
 	--Special attacks
 	--local l_IdleToStomp = l_Idle:AddTransition("IdleToStomp", l_Stomp, false, 0.1, 0.1)
@@ -88,7 +119,7 @@ function CDragonComponent:Initialize()
 	--l_IdleToWhipTale75:AddBoolCondition("HealthBellow75PercentAttackRaised",false)
 	
 	--AttackDelay, ScratchDamage, ScratchRange, SpitFireDamage, TimeSpitingFire, RotationVelocity
-	self:AddState(4.0, 10.0, 14.0, 15.0, 3.0, 4.0)
+	self:AddState(4.0, 10.0, 4.0, 15.0, 3.0, 2.0)
 	self:AddState(3.0, 12.0, 2.0, 20.0, 3.0, 4.0)
 	self:AddState(2.0, 15.0, 2.0, 30.0, 3.0, 4.0)
 	self:AddState(1.0, 20.0, 2.0, 50.0, 3.0, 4.0)
@@ -101,8 +132,6 @@ end
 function CDragonComponent:Update(ElapsedTime)
 	self:CheckLife()
 	local l_Stuned = self:CheckStuned()
-	
-	self:UpdatePxSkeleton()
 	self:SetParticleEmmiterPosition(self.m_ParticleEmitterBone)
 end
 
@@ -174,18 +203,6 @@ function CDragonComponent:CreateSphereTypeBone(Bone)
 	end
 end	
 
-function CDragonComponent:UpdatePxSkeleton()
-	
-	--if  #self.m_PhysicsTail > 0 then
-		--for i, value in ipairs(self.m_PhysicsTail) do
-			--if self.m_PhysicsTail[i].m_BoneType == "box" then
-				--self.m_PhysicsTail[i]:SetTransform()
-			--end
-		--end
-	--end 
-	
-end
-
 function CDragonComponent:AddPxPiece(Index, Piece)
 	
 	if Index == "head" then
@@ -244,12 +261,18 @@ function CDragonComponent:ChangeTailState(State)
 	end
 end
 
+function CDragonComponent:ChangeAttackingLegsState(State)
+	self.mLeftLeg:ChangeTriggerState(State)
+	self.mRightLeg:ChangeTriggerState(State)
+end
+
 function CDragonComponent:GetLuaGameObject() return self.m_LuaGameObject end
 --function CDragonComponent:GetSpeed()	return self.m_Speed end
 function CDragonComponent:GetSpeed()return self.m_Speed end
 function CDragonComponent:GetArmor() return self.m_Armor end
 function CDragonComponent:GetHealth() return self.m_Health end
 function CDragonComponent:StopSpittingFire() self.m_FireParticles:EnableRenderableObject(false) end
+function CDragonComponent:SpitFire() self.m_FireParticles:EnableRenderableObject(true) end
 function CDragonComponent:SetTarget(Target) self.m_Target = Target end
 
 
@@ -287,11 +310,6 @@ function CDragonComponent:CreatePhysxSqueleton()
 	g_LogManager:Log("Dragon physx squeleton generated...")
 end
 
-
-function CDragonComponent:SpitFire()
-	self.m_FireParticles:EnableRenderableObject(true)
-end
-
 function CDragonComponent:GetFireParticlesTransform()
 	local l_TransformMatrix = Mat44f()
 	local l_DragonTransform = self:GetRenderableObject():GetTransform()
@@ -304,7 +322,6 @@ function CDragonComponent:GetFireParticlesTransform()
 	return l_TransformMatrix
 end
 
-
 function CDragonComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, ElapsedTime)
 	local l_Result = 0.0
 	if Angle < 0.0 then
@@ -314,26 +331,25 @@ function CDragonComponent:CalculateNewAngle(Angle, CurrentYaw, Velocity, Elapsed
 		end
 	else
 		if (Velocity*ElapsedTime) > Angle then
-			l_Result = CurrentYaw + (Angle*ElapsedTime)
-		else l_Result = CurrentYaw + (Velocity*ElapsedTime)
+			l_Result = (CurrentYaw + 1.5708)+ (Angle*ElapsedTime)
+		else l_Result = (CurrentYaw + 1.5708) + (Velocity*ElapsedTime)
 		end
 	end
 	return l_Result
 end
 
 function CDragonComponent:LookAtPoint(Point, ElapsedTime)
-	local l_Forward = self.m_RObject:GetForward()
+	local l_Forward = self.m_LuaGameObject:GetForward()
 	l_Forward.y = 0.0
 	--Point.y = 0.0
-	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_RObject:GetPosition(), Point)	
+	local l_Angle = CTTODMathUtils.GetAngleToFacePoint(l_Forward, self.m_LuaGameObject:GetPosition(), Point)	
 	-- -k*T    si el ángulo es negativo. K es la velocidad
 	--  si -k*T < angulo, aplicas el angulo, y no la formula, para que no se pase de rotación
-	local l_CurrentYaw = self.m_RObject:GetYaw()
+	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
 	local l_Velocity = self.m_CurrentState.m_RotationVelocity
-
-	self.m_RObject:SetYaw(self:CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
+	
+	self.m_LuaGameObject:SetYaw(self:CalculateNewAngle(l_Angle, l_CurrentYaw, l_Velocity, ElapsedTime))
 end
-
 
 function CDragonComponent:CheckStuned(ElapsedTime)
 	if self.m_TimeStuned>0 then
@@ -376,6 +392,18 @@ function CDragonComponent:NextState()
 	end
 	--g_LogManager:Log("Dragon changes to state "..self.m_CurrentStateIndex)
 end
+
+function CDragonComponent:ChangeAttackState(value)
+	
+	if value < #self.m_States then
+		self.m_CurrentStateIndex = value
+		self.m_CurrentState = self.m_States[value]
+		g_LogManager:Log("DragonAttackState: State changed to "..value)
+	else
+		g_LogManager:Log("DragonAttackState: Invalid State")
+	end
+	--g_LogManager:Log("Dragon changes to state "..self.m_CurrentStateIndex)
+end
 function CDragonComponent:GetCurrentState()
 	return self.m_CurrentState
 end
@@ -386,6 +414,9 @@ function CDragonComponent:SetParticleEmmiterPosition(Bone)
 end
 
 
+function CDragonComponent:SetAttackFacingValues(ForwardBeforeFacing,DirectionToFace)	
+	self:SetFacingValues(ForwardBeforeFacing,DirectionToFace,"Rotation_State", 2.0)
+end
 
 -------- DRAGON STATES ------
 function CDragonComponent:AddState(AttackDelay, ScratchDamage, ScratchRange, SpitFireDamage, TimeSpitingFire, RotationVelocity)
@@ -408,3 +439,97 @@ function CDragonState:__init(AttackDelay, ScratchDamage, ScratchRange, SpitFireD
 	self.m_TimeSpitingFire = TimeSpitingFire
 	self.m_RotationVelocity = RotationVelocity
 end
+
+------------------------------------------
+
+function CDragonComponent:SetFacingValues(ForwardBeforeFacing,DirectionToFace, StateName, Velocity)	
+	local l_Pi = 3.14159265359
+	self.m_RotationAngle = CTTODMathUtils.AngleBetweenVectors(DirectionToFace,ForwardBeforeFacing) 
+
+	if(self.m_RotationAngle>l_Pi)then
+		self.m_RotationAngle = self.m_RotationAngle - (l_Pi*2)
+	elseif(self.m_RotationAngle<(-l_Pi))then
+		self.m_RotationAngle = self.m_RotationAngle + (l_Pi*2)
+	end
+	
+	self.m_RotationDuration = (2.0)/Velocity
+	
+	g_LogManager:Log("RotationAngle: "..self.m_RotationAngle)
+	self.m_YawBeforeFacing = self.m_LuaGameObject:GetYaw()
+	
+	g_LogManager:Log("YawBeforeFacing: "..self.m_YawBeforeFacing)
+	
+	
+	
+	local l_NewYaw = CTTODMathUtils.GetFixedAngle(self.m_LuaGameObject:GetYaw() + self.m_RotationAngle)
+	self.m_YawAfterFacing = l_NewYaw
+	g_LogManager:Log("YawAfterFacing: "..self.m_YawAfterFacing)
+	
+	-- g_LogManager:Log("Settings values")
+	-- g_LogManager:Log("m_YawBeforeFacing"..self.m_YawBeforeFacing)
+	-- g_LogManager:Log("m_YawAfterFacing"..self.m_YawAfterFacing)
+end
+
+function CDragonComponent:FaceDirection(ElapsedTime)
+	g_LogManager:Log("Entra en el FaceDirection")
+	if(self.m_RotationDuration == 0.0) then
+		g_LogManager:Log("Error. RotationDuration is 0")
+	end
+		
+	local l_Pi = 3.14159265359
+	local l_Pi_2 = (l_Pi/2.0)
+	
+	local ThreeQuarter = l_Pi + l_Pi_2
+	local l_CurrentYaw = self.m_LuaGameObject:GetYaw()
+	local l_Difference = self.m_YawAfterFacing - self.m_LuaGameObject:GetYaw()
+	
+	if((l_CurrentYaw>ThreeQuarter)and(self.m_YawAfterFacing<(l_Pi/2.0))) then
+		l_Difference = (2*l_Pi) - l_CurrentYaw + self.m_YawAfterFacing
+	elseif((l_CurrentYaw<0.0) and(self.m_YawAfterFacing<0.0)) then
+		l_Difference = math.abs(math.abs(l_CurrentYaw) - math.abs(self.m_YawAfterFacing))
+	end
+	
+	l_Difference = math.abs(l_Difference)
+	
+	if (l_Difference>self.m_AngleMargin) then
+		g_LogManager:Log("self.m_RotationDuration: "..self.m_RotationDuration)
+		g_LogManager:Log("self.m_RotationAngle: "..self.m_RotationAngle)
+		--g_LogManager:Log("GetTimer: "..self:GetTimer())
+		local l_Angle = (self:GetTimer()*self.m_RotationAngle)/self.m_RotationDuration
+		local l_NewYaw = CTTODMathUtils.GetFixedAngle(self.m_YawBeforeFacing + l_Angle)
+		g_LogManager:Log("l_Angle: "..l_Angle)
+		g_LogManager:Log("l_NewYaw: "..l_NewYaw)
+		if(l_NewYaw<0.0 and self.m_YawAfterFacing<0.0) then
+			if(self.m_RotationAngle<0.0 and l_NewYaw<self.m_YawAfterFacing)then
+				g_LogManager:Log("m_FacingFinished1")
+				self.m_FacingFinished = true
+				self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				return true
+			elseif(self.m_RotationAngle>0.0 and l_NewYaw>self.m_YawAfterFacing)then
+				self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				g_LogManager:Log("m_FacingFinished2")
+				self.m_FacingFinished = true
+				return true
+			end
+		elseif(l_NewYaw>0.0 and self.m_YawAfterFacing>0.0) then
+			if(self.m_RotationAngle<0.0 and l_NewYaw<self.m_YawAfterFacing)then
+				g_LogManager:Log("m_FacingFinished3")
+				self.m_FacingFinished = true
+				self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				return true
+			elseif(self.m_RotationAngle>0.0 and l_NewYaw>self.m_YawAfterFacing)then
+				self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+				g_LogManager:Log("m_FacingFinished4")
+				self.m_FacingFinished = true
+				return true
+			end
+		end
+		
+		self.m_LuaGameObject:SetYaw(l_NewYaw)
+	else 
+		self.m_LuaGameObject:SetYaw(self.m_YawAfterFacing)
+		g_LogManager:Log("m_FacingFinished5")
+		self.m_FacingFinished = true
+	end
+end	
+

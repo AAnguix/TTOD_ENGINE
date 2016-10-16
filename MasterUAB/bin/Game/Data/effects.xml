@@ -81,6 +81,10 @@
 	<pixel_shader name="fade_out_ps" file="./Data/Effects/Fadeout.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS"/>
 	<effect_technique name="fade_out_technique" vertex_shader="fade_out_vs" pixel_shader="fade_out_ps"/>
 	
+	<vertex_shader name="fade_out_binormal_vs" file="./Data/Effects/FadeoutBinormal.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX" macro="HAS_WEIGHTS"/>
+	<pixel_shader name="fade_out_binormal_ps" file="./Data/Effects/FadeoutBinormal.fx" shader_model="ps_5_0" entry_point="PS" macro="HAS_WEIGHTS"/>
+	<effect_technique name="fade_out_binormal_technique" vertex_shader="fade_out_binormal_vs" pixel_shader="fade_out_binormal_ps"/>
+	
 	<vertex_shader name="burning_character_vs" file="./Data/Effects/BurningCharacter.fx" shader_model="vs_5_0" entry_point="VS" vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX"/>
 	<pixel_shader name="burning_character_ps" file="./Data/Effects/BurningCharacter.fx" shader_model="ps_5_0" entry_point="PS"/>
 	<effect_technique name="burning_character_technique" vertex_shader="burning_character_vs" pixel_shader="burning_character_ps"/>

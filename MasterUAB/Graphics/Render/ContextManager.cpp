@@ -428,8 +428,6 @@ bool CContextManager::ResizeBuffers(HWND hWnd, unsigned int Width, unsigned int 
 		hr = m_D3DDevice->CreateShaderResourceView(m_DepthStencil, &srvd, &m_StencilTexture);*/
 
 		return true;
-		
-		return l_Result;
 	}
 	return false;
 }

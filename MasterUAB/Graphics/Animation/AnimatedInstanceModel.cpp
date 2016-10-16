@@ -322,7 +322,7 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 			m_NumFaces += l_CalCoreSubmesh->getFaceCount();
 		}
 	}
-
+	l_VertexType = MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::GetVertexType();
 	if (l_VertexType == MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX::GetVertexType())
 	{
 		MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX*l_Vertexs = (MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX*)malloc(m_NumFaces * 3 * sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
@@ -332,16 +332,16 @@ bool CAnimatedInstanceModel::LoadVertexBuffer()
 		m_CalHardwareModel->setMatrixIndexBuffer(((char*)l_Vertexs) + 28, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
 		m_CalHardwareModel->setNormalBuffer(((char*)l_Vertexs) + 44, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
 		
-		m_CalHardwareModel->setTangentSpaceBuffer(1, ((char*)l_Vertexs) + 56, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		//m_CalHardwareModel->setTangentSpaceBuffer(1, ((char*)l_Vertexs) + 56, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
 		
 		m_CalHardwareModel->setTextureCoordNum(1);
-		m_CalHardwareModel->setTextureCoordBuffer(0, ((char*)l_Vertexs) + 88, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
+		m_CalHardwareModel->setTextureCoordBuffer(0, ((char*)l_Vertexs) + 92, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX));
 		m_CalHardwareModel->setIndexBuffer(l_Faces);
-		m_CalHardwareModel->load(0, 0, MAXBONES);
+		bool l_Ret=m_CalHardwareModel->load(0, 0, MAXBONES);
 		m_NumFaces = m_CalHardwareModel->getTotalFaceCount();
 		m_NumVertices = m_CalHardwareModel->getTotalVertexCount();
 
-		CRenderableVertexs::CalcTangentsAndBinormals(l_Vertexs, (unsigned short*)l_Faces, m_NumVertices, m_NumFaces, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX), 0, 44, 56, 72, 88);
+		CRenderableVertexs::CalcTangentsAndBinormals(l_Vertexs, (unsigned short*)l_Faces, m_NumVertices, m_NumFaces * 3, sizeof(MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX), 0, 44, 60, 76, 92);
 	
 		if (sizeof(CalIndex) == 2)
 			m_RenderableVertexs = new CTriangleListRenderableIndexed16Vertexs<MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX>(l_Vertexs, m_NumVertices, l_Faces, m_NumFaces * 3, false);

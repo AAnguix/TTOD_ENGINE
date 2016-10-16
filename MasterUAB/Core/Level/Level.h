@@ -18,7 +18,8 @@ private:
 	std::string m_RenderableObjectsFilename;
 	std::string m_LightsFilename;
 
-	std::string m_SoundBankFilename;
+	std::string m_SoundBankPath;
+	std::vector<const std::string> m_SoundBanksInfoFiles;
 	std::vector<const std::string> m_SoundBanks;
 	std::string m_SpeakersFilename;
 
@@ -35,6 +36,8 @@ public:
 
 	bool Load(CEngine& Engine);
 	bool Unload(CEngine& Engine);
+
+	void AddSoundBankInfoFile(const std::string SoundBankInfoFile){ m_SoundBanksInfoFiles.push_back(SoundBankInfoFile); }
 };
 
 #endif

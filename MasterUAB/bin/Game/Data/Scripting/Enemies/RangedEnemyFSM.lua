@@ -1,5 +1,3 @@
-AttackRangedTimmer = 0.0
-
 -------------------- IDLE --------------------
 
 function OnEnter_Idle_RangedEnemy(Enemy)
@@ -25,19 +23,17 @@ end
 -------------------- ATTACK --------------------
 
 function OnEnter_Attack_RangedEnemy(Enemy)
-	AttackRangedTimmer = 0.0
 	Enemy:SetAttacking(true)
 	g_LogManager:Log(Enemy.m_LuaGameObject:GetName().." enters attack")
 	
 end
 function OnUpdate_Attack_RangedEnemy(Enemy, ElapsedTime)
-	AttackRangedTimmer = AttackRangedTimmer + ElapsedTime
 	local l_PlayerPos = g_Player:GetPosition()
-	if (AttackRangedTimmer > 1.5 and  Enemy.EnergyBallThrowed == false)then
+	if (self:GetTimer() > self.m_SpawnBallDelay and  Enemy.EnergyBallThrowed == false)then
 		Enemy.EnergyBallThrowed = true
 		local Position = Vect3f(l_PlayerPos.x,l_PlayerPos.y + 1.0,l_PlayerPos.z)
 		Enemy:LaunchProjectile(Position)
-	elseif (AttackRangedTimmer > 0.8 and Enemy.EnergyBallThrowed == false) then
+	elseif (self:GetTimer() > self.m_LaunchBallDelay and Enemy.EnergyBallThrowed == false) then
 		Enemy:AttachProjectile()
 	end
 	
@@ -70,6 +66,8 @@ function OnEnter_RunAway_RangedEnemy(Enemy)
 	else 
 		Enemy.m_LastTimeFrightened = false
 	end
+	
+	self.m_LuaGameObject:PlayEvent("OrcShamanJump",self.m_LuaGameObject:Get3DElement())
 end
 function OnUpdate_RunAway_RangedEnemy(Enemy, ElapsedTime)
 	

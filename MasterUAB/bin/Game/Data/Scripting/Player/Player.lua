@@ -18,7 +18,7 @@ class 'CPlayerComponent' (CLUAComponent)
 function CPlayerComponent:__init(CLuaGameObject)
 	CLUAComponent.__init(self,CLuaGameObject:GetName().."_PlayerScript")
 	self.m_LuaGameObject = CLuaGameObject 
-	self.m_MaxHealth=50.0 --10000
+	self.m_MaxHealth=700
 	self.m_Health=self.m_MaxHealth
 	self.m_Dead = false
 	self.m_LowHealth = false
@@ -63,8 +63,8 @@ function CPlayerComponent:__init(CLuaGameObject)
 	self.m_Right = false
 	self.m_Left = false
 	
-	self.m_RotationVelocity = 6.0
-	self.m_AngleMargin = 0.05
+	self.m_RotationVelocity = 8.0
+	self.m_AngleMargin = 0.15
 	
 	--Facing direcition variables
 	self.m_RotationAngle = 0.0
@@ -106,6 +106,7 @@ function CPlayerComponent:SubscribeEvents()
 	g_EventManager:Subscribe(self, "PLAYER_ATTACKS")
 	g_EventManager:Subscribe(self, "PLAYER_BLOCKS")
 	g_EventManager:Subscribe(self, "ON_ALT8_PRESSED")
+	g_EventManager:Subscribe(self, "DYNAMITE_DROPPED")
 end
 
 function CPlayerComponent:ON_ALT8_PRESSED()
@@ -132,10 +133,20 @@ function CPlayerComponent:SetInteractionFacingValues(ForwardBeforeFacing,Directi
 end
 
 function CPlayerComponent:SetFacingValues(ForwardBeforeFacing,DirectionToFace, StateName, Velocity)	
+	local l_Pi = 3.14159265359
 	self.m_RotationAngle = CTTODMathUtils.AngleBetweenVectors(DirectionToFace,ForwardBeforeFacing) 
+
+	if(self.m_RotationAngle>l_Pi)then
+		self.m_RotationAngle = self.m_RotationAngle - (l_Pi*2)
+	elseif(self.m_RotationAngle<(-l_Pi))then
+		self.m_RotationAngle = self.m_RotationAngle + (l_Pi*2)
+	end
+	
 	self.m_RotationDuration = (self.m_LuaGameObject:GetState(StateName):GetCurrentAnimation().m_Duration)/Velocity
 	self.m_YawBeforeFacing = self.m_LuaGameObject:GetYaw()
-	self.m_YawAfterFacing = self.m_LuaGameObject:GetYaw() + self.m_RotationAngle
+	
+	local l_NewYaw = CTTODMathUtils.GetFixedAngle(self.m_LuaGameObject:GetYaw() + self.m_RotationAngle)
+	self.m_YawAfterFacing = l_NewYaw
 	
 	-- g_LogManager:Log("Settings values")
 	-- g_LogManager:Log("m_YawBeforeFacing"..self.m_YawBeforeFacing)

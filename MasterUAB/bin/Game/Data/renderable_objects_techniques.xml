@@ -14,8 +14,9 @@
 		<renderable_object_technique name="facing_plane_renderable_object_technique" technique="facing_plane_technique"/>
 	</pool_renderable_object_technique>	
 	
-	<pool_renderable_object_technique name="fade_out">
+	<pool_renderable_object_technique name="fade_out"> 
 		<default_technique vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_TEXTURE_VERTEX" technique="fade_out_technique"/>
+		<default_technique vertex_type="MV_POSITION_WEIGHT_INDICES_NORMAL_BINORMAL_TANGENT_TEXTURE_VERTEX" technique="fade_out_binormal_technique"/>
 	</pool_renderable_object_technique>
 	
 	<pool_renderable_object_technique name="generate_g_buffer">

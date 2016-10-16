@@ -1312,23 +1312,16 @@ physx::PxActor* CPhysXManager::GetActor(const std::string& ActorName) const
 
 bool CPhysXManager::GeometryQuery(const std::string ActorName, const Vect3f& Position, const Quatf& Orientation, const Vect3f& Direction, const float& Length, SRaycastData* Result_)
 {
-	//physx::PxGeometry l_Geometry = physx::PxSphereGeometry(2.5f);
-	physx::PxGeometry l_Geometry = physx::PxBoxGeometry(physx::PxReal(2.0f), physx::PxReal(2.0f), physx::PxReal(2.0f));
 	physx::PxTransform l_InitialPos = physx::PxTransform(CastVec(Position), CastQuat(Orientation));
 	physx::PxVec3 l_DirectionVector = physx::PxVec3(CastVec(Direction));
 	physx::PxSweepBuffer l_Buffer;
-	//physx::PxHitFlags l_Flag = physx::PxHitFlag::eNORMAL | physx::PxHitFlag::eDISTANCE | physx::PxHitFlag::ePOSITION;
 	physx::PxHitFlags l_Flag = physx::PxHitFlag::eDEFAULT;
+	physx::PxQueryFilterData l_filterData(physx::PxQueryFlag::eDYNAMIC);
 
+	physx::PxShape* l_Shape = GetShape(ActorName);
+	assert(l_Shape != nullptr);
 
-	//physx::PxGeometry sphereGeometry = physx::PxSphereGeometry(1.5f);
-	//physx::PxTransform l_InitialPos = physx::PxTransform(physx::PxVec3(0, 5, 0));
-	//physx::PxReal maxDistance = 10.0f;
-	//physx::PxVec3 unitDir = physx::PxVec3(0, -1, 0);
-	//physx::PxQueryFilterData l_filterData(physx::PxQueryFlag::eSTATIC);
-	physx::PxQueryFilterData l_filterData(physx::PxQueryFlag::eANY_HIT);
-
-	bool status = m_Scene->sweep(l_Geometry, l_InitialPos, l_DirectionVector, Length, l_Buffer, l_Flag, l_filterData);
+	bool status = m_Scene->sweep(l_Shape->getGeometry().any(), l_InitialPos, l_DirectionVector, Length, l_Buffer, l_Flag, l_filterData);
 	if (status)
 	{
 		Result_->m_Position = CastVec(l_Buffer.block.position);
@@ -1340,4 +1333,18 @@ bool CPhysXManager::GeometryQuery(const std::string ActorName, const Vect3f& Pos
 	}
 
 	return false;
+
+	/*
+	PxVec3 pos = toVec3(mActor->getController()->getPosition());
+	physx::getsh
+	PxRigidDynamic* actor = mActor->getController()->getActor();
+	PxShape* capsuleShape = getShape(*actor);
+
+	PxCapsuleGeometry capGeom(capsuleShape->getGeometry().capsule());
+
+	PxQueryFilterData objType = PxQueryFilterData(PxSceneQueryFilterFlag::eSTATIC);
+	PxSceneQueryFlags hintFlag = PxSceneQueryFlag::ePOSITION | PxSceneQueryFlag::eNORMAL;
+	PxSweepBuffer hit;
+	return getActiveScene().sweep(capGeom, PxTransform(pos), PxVec3(0.0f, -1.0f, 0.0f), 1000.f, hit, hintFlag, objType);
+	*/
 }

@@ -33,11 +33,12 @@ CLevel::CLevel(const std::string &ID, const std::string LuaLoadFunction)
 ,m_AnimatedModelsFilename("./Data/Level" + m_ID + "/animated_models.xml")
 ,m_RenderableObjectsFilename("./Data/Level" + m_ID + "/renderable_objects.xml")
 ,m_LightsFilename("Data/Level" + m_ID + "/lights.xml")
-,m_SoundBankFilename("./Data/Level" + m_ID + "/Audio/Soundbanks/")
+,m_SoundBankPath("./Data/Level" + m_ID + "/Audio/Soundbanks/")
 ,m_SpeakersFilename("./Data/Level" + m_ID + "/Audio/speakers.xml")
 ,m_SceneRendererCommandsFilename("./Data/Level" + m_ID + "/scene_renderer_commands.xml")
 ,m_PercentageLoaded(0)
 {
+	m_SoundBanksInfoFiles.push_back("SoundbanksInfo.xml");
 }
 
 CLevel::~CLevel()
@@ -60,7 +61,7 @@ bool CLevel::Load(CEngine& Engine)
 	Engine.GetProfiler()->End("LoadLoadScreenSceneRendererCommands");*/
 
 	CEngine::GetSingleton().GetGUIManager()->AddImage("background_image","background_sprite");
-	CEngine::GetSingleton().GetGUIManager()->AddSlider("level_percentage_loaded_slider", "level_percentage_loaded_slider_base", "level_percentage_loaded_slider_top", "level_percentage_loaded_slider_handle", "level_percentage_loaded_slider_pressed_handle");
+	CEngine::GetSingleton().GetGUIManager()->AddSlider("level_percentage_loaded_slider", "volume_slider_sprite_base", "volume_slider_sprite_top", "gem_sprite", "gem_sprite");
 	CGUIManager::SSliderResult l_SliderResult;
 	l_SliderResult.real = 0;
 	l_SliderResult.temp = 0;
@@ -109,8 +110,14 @@ bool CLevel::Load(CEngine& Engine)
 
 	Engine.GetProfiler()->Begin("LoadSoundBanks");
 	ISoundManager* l_SoundManager = Engine.GetSoundManager();
-	l_SoundManager->SetPath(m_SoundBankFilename);
-	l_SoundManager->Load("SoundbanksInfo.xml", m_SpeakersFilename, m_SoundBanks);
+	l_SoundManager->SetPath(m_SoundBankPath);
+	
+	for (size_t i = 0; i < m_SoundBanksInfoFiles.size(); ++i)
+	{
+		l_SoundManager->LoadSoundBanks(m_SoundBanksInfoFiles[i], m_SoundBanks);
+	}
+	l_SoundManager->LoadSpeakers(m_SpeakersFilename);
+	
 	Engine.GetProfiler()->End("LoadSoundBanks");
 
 	Engine.GetProfiler()->Begin("LoadSceneRendererCommands");
@@ -160,6 +167,7 @@ bool CLevel::Unload(CEngine& Engine)
 	Engine.GetPhysXManager()->DestroyScene();
 	Engine.GetSoundManager()->RemoveComponents();
 	Engine.GetSoundManager()->ClearNamedSpeakers();
+	Engine.GetSoundManager()->ClearGameObjectSpeakers();
 	for (size_t i = 0; i < m_SoundBanks.size(); ++i)
 	{
 		Engine.GetSoundManager()->UnloadSoundBank(m_SoundBanks[i]);

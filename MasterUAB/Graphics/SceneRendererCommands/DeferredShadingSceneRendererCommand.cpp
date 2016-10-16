@@ -55,12 +55,8 @@ void CDeferredShadingSceneRendererCommand::ExecuteDeferredShading(CRenderManager
 
 	ActivateTextures();
 
-	//CEngine::GetSingleton().GetEffectManager()->SetLightsConstantsDefaultValues();
-
-	/*Diffuse + Specular*/
 	for (size_t i = 0; i < l_Size; ++i)
 	{
-		/*Only 1 light*/
 		if (l_Lights[i]->GetActive())
 		{
 			CEngine::GetSingleton().GetEffectManager()->SetLightConstants(0, l_Lights[i]);

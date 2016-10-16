@@ -61,13 +61,17 @@ public:
 
 	virtual bool Init() = 0;
 	virtual void Update(const CCamera *Camera, const Vect3f &Forward, float ElapsedTime) = 0;
-	virtual bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename) = 0;
-	virtual bool Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename, std::vector<const std::string> &SoundBanksLoaded) = 0;
+
+	virtual bool LoadSoundBanks(const std::string& SoundBanksFilename, std::vector<const std::string> &SoundBanksLoaded) = 0;
+	virtual bool LoadSoundBanks(const std::string& SoundBanksFilename) = 0;
+	virtual bool LoadSpeakers(const std::string& SpeakersFilename) = 0;
+
 	virtual bool Reload() = 0;
 
 	virtual bool LoadSoundBank(const std::string& Bank) = 0;
 	virtual bool UnloadSoundBank(const std::string& Bank) = 0;
 	virtual void ClearNamedSpeakers() = 0;
+	virtual void ClearGameObjectSpeakers() = 0;
 
 	virtual void RegisterSpeaker(const C3DElement* Speaker) = 0;
 	virtual void UnregisterSpeaker(const C3DElement* Speaker) = 0;

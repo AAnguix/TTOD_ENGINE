@@ -1,21 +1,19 @@
 class 'CItemManager'
 function CItemManager:__init()
-	g_EventManager:Subscribe(self, "DYNAMITE_DROPPED")
-	g_EventManager:Subscribe(self, "DYNAMITE_EQUIPED")
-	g_EventManager:Subscribe(self, "DYNAMITE_USED")
 	self.m_Dynamite = nil
 	self.m_HasDynamite = false
+	self.m_DynamiteDroped = false
+	g_EventManager:Subscribe(self, "DYNAMITE_EQUIPED")
+	g_EventManager:Subscribe(self, "DYNAMITE_USED")
+	g_EventManager:Subscribe(self, "DYNAMITE_DROPPED")
 end
 
-function CItemManager:LoadItems(Level)
-	if (Level=="1") then
-		local l_DynamiteGameObjectHandle = g_GameController:AddLuaGameObjectHandle("dynamite")
-		
-		self.m_Dynamite = CDynamiteComponent(l_DynamiteGameObjectHandle)
-		g_ScriptManager:AddComponent("Dynamite_Script",self.m_Dynamite:GetLuaGameObject(),self.m_Dynamite)
-		table.insert(g_GameController:GetEntities(),self.m_Dynamite)
-		self.m_Dynamite:GetLuaGameObject():EnableRenderableObject(false)
-	end
+function CItemManager:LoadLevelTwoItems()
+	local l_DynamiteGameObjectHandle = g_GameController:AddLuaGameObjectHandle("dynamite")
+	self.m_Dynamite = CDynamiteComponent(l_DynamiteGameObjectHandle)
+	g_ScriptManager:AddComponent("Dynamite_Script",self.m_Dynamite:GetLuaGameObject(),self.m_Dynamite)
+	table.insert(g_GameController:GetEntities(),self.m_Dynamite)
+	self.m_Dynamite:GetLuaGameObject():EnableRenderableObject(false)
 end
 
 function CItemManager:DYNAMITE_DROPPED(Position)
@@ -24,13 +22,12 @@ function CItemManager:DYNAMITE_DROPPED(Position)
 end
 
 function CItemManager:DYNAMITE_EQUIPED()
+	g_LogManager:Log("DINAMITA EQUIPADA")
 	self.m_Dynamite:GetLuaGameObject():EnableRenderableObject(false)
 	local l_DynamiteGuiComponent = CDynamiteGuiComponent()
 	l_DynamiteGuiComponent:AddButton("dynamite_0", "dynamite", "dynamite_normal", "dynamite_highlight", "dynamite_pressed",CColor(1.0,1.0,1.0,1.0))
 	g_PlayerComponent.m_Inventory:AddItem(l_DynamiteGuiComponent,1)
 	self.m_HasDynamite = true
-	self.m_Dynamite:UnsuscribeEvents()
-	g_EventManager:Unsubscribe(self,"DYNAMITE_EQUIPED", true)
 	g_GameController:RemoveElementFromTable(g_GameController:GetEntities(),"dynamite")
 	self.m_Dynamite = nil
 end

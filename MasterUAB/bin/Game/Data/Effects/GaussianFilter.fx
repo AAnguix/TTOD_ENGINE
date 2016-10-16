@@ -4,8 +4,8 @@
 
 // static float m_TextureSize=m_RawDataValues[0];
 // static float m_BlurScale=m_RawDataValues[1];
-static float m_TextureSize=512;
-static float m_BlurScale=1.0;
+static float2 m_TextureSize=float2(m_RawDataValues[0], m_RawDataValues[1]);
+static float m_BlurScale=m_RawDataValues[2];
 
 struct VS_INPUT
 {
@@ -55,7 +55,7 @@ float4 GetGaussianBlurFromSampler(Texture2D _Texture2D, SamplerState _SamplerSta
 	};
 
 	float4 l_GaussianColor = 0;
-	float2 l_TextureSize=TextureSize*TextureScale;
+	float2 l_TextureSize=float2(1.0/m_TextureSize.x, 1.0/m_TextureSize.y)*TextureScale;
 	float l_TotalWeights=0.0;
 	
 	for(int i = 0; i<7; ++i)
@@ -65,7 +65,7 @@ float4 GetGaussianBlurFromSampler(Texture2D _Texture2D, SamplerState _SamplerSta
 		l_TotalWeights+=l_BlurWeights[i];
 		l_GaussianColor += l_Color;
 	}
-	
+	//return _Texture2D.Sample(_SamplerState, UV);
 	return l_GaussianColor/l_TotalWeights;
 }
 

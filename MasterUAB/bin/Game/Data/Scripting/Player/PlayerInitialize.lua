@@ -26,15 +26,15 @@ function CPlayerComponent:Initialize()
 	local l_Walk = self.m_LuaGameObject:AddState("Walk_State", "walk", 1.0, "OnEnter_Walk_Player", "OnUpdate_Walk_Player", "OnExit_Walk_Player")
 	
 	local l_AttacksAnimations = stringVector()
-	local l_AnimationOne = "normalAttack"
-	local l_AnimationTwo = "combatIdle"
-	local l_AnimationThree = "die"
+	local l_AnimationOne = "attack_one"
+	local l_AnimationTwo = "attack_two"
 	l_AttacksAnimations:push_back(l_AnimationOne)
 	l_AttacksAnimations:push_back(l_AnimationTwo)
-	l_AttacksAnimations:push_back(l_AnimationThree)
 	local l_RestartAnimationsTime = 1.5
 	
-	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
+	local l_Attack = self.m_LuaGameObject:AddState("Attack_State","attack_one",1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
+
+	--local l_Attack = self.m_LuaGameObject:AddState("Attack_State", l_AttacksAnimations, l_RestartAnimationsTime, 1.0, "OnEnter_Attack_Player", "OnUpdate_Attack_Player", "OnExit_Attack_Player")
 
 	self.m_RotationDuration = (l_Attack:GetAnimation(0).m_Duration)/2.0
 		
@@ -42,7 +42,7 @@ function CPlayerComponent:Initialize()
 	local l_Injured = self.m_LuaGameObject:AddState("Injured_State", "die", 1.0, "OnEnter_Injured_Player", "OnUpdate_Injured_Player", "OnExit_Injured_Player")
 	-- local l_Dead = self.m_LuaGameObject:AddState("Dead_State", "die", 1.0, "OnEnter_Dead_Player", "OnUpdate_Dead_Player", "OnExit_Dead_Player")
 	local l_Tossed = self.m_LuaGameObject:AddState("Tossed_State", "combatIdle", 1.0, "OnEnter_Tossed_Player", "OnUpdate_Tossed_Player", "OnExit_Tossed_Player")
-	local l_Interact = self.m_LuaGameObject:AddState("Interact_State", "block", 1.0, "OnEnter_Interact_Player", "OnUpdate_Interact_Player", "OnExit_Interact_Player")
+	local l_Interact = self.m_LuaGameObject:AddState("Interact_State", "interact", 1.0, "OnEnter_Interact_Player", "OnUpdate_Interact_Player", "OnExit_Interact_Player")
 	local l_CombatIdle = self.m_LuaGameObject:AddState("CombatIdle_State", "combatIdle", 1.0, "OnEnter_CombatIdle_Player", "OnUpdate_CombatIdle_Player", "OnExit_CombatIdle_Player")
 	
 	self.m_LuaGameObject:AddBool("Walk", false)
@@ -61,7 +61,7 @@ function CPlayerComponent:Initialize()
 	local l_IdleToTossed = l_Idle:AddTransition("IdleToTossed", l_Tossed, false, 0.2)
 	l_IdleToTossed:AddTriggerCondition("TossedByDragon")
 	
-	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false, 0.2, 0.5)
+	local l_IdleToAttack = l_Idle:AddTransition("IdleToAttack", l_Attack, false, 0.2, 0.8)
 	l_IdleToAttack:AddTriggerCondition("Attack")
 	
 	local l_IdleToCombatIdle = l_Idle:AddTransition("IdleToCombatIdle", l_CombatIdle, false, 0.2)
@@ -88,7 +88,7 @@ function CPlayerComponent:Initialize()
 	-- local l_WalkToInteract = l_Walk:AddTransition("WalkToInteract", l_Interact, false, 0.1, 0.2)
 	-- l_WalkToInteract:AddTriggerCondition("Interact")
 	
-	local l_AttackToIdle = l_Attack:AddTransition("AttackToIdle", l_Idle, true, 0.2)
+	local l_AttackToIdle = l_Attack:AddTransition("AttackToIdle", l_Idle, true, 2.0)
 	l_AttackToIdle:AddBoolCondition("SurroundingEnemies", false)
 	
 	local l_AttackToCombatIdle = l_Attack:AddTransition("AttackToCombatIdle", l_CombatIdle, true, 0.2)
@@ -132,11 +132,11 @@ end
 
 function CPlayerComponent:InitializePlayerStats()
 
-	local l_HealthPotion = CHealthPotion(4.0,50.0)
-	local l_ButtonGuiPosition = SGUIPosition(0.95, 0.85, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	local l_TextGuiPosition = SGUIPosition(0.968, 0.785, 0.08, 0.070, CGUIManager.TOP_CENTER, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
-	l_HealthPotion:AddButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(1.0,1.0,1.0,1.0))
-	l_HealthPotion:AddCooldownButton("health_potion_0", "health_potion", "health_potion_normal", "health_potion_highlight", "health_potion_pressed",CColor(0.6,1.0,1.0,0.85))
+	local l_HealthPotion = CHealthPotion(4.0,10.0)
+	local l_Color = CColor(1.0,1.0,1.0,1.0)
+	
+	l_HealthPotion:AddButton("health_potion", "health_potion", "potion_sprite", "potion_sprite", "potion_sprite",l_Color)
+	l_HealthPotion:AddCooldownButton("health_potion_cooldown", "health_potion_cooldown", "cooldown_potion_sprite", "cooldown_potion_sprite", "cooldown_potion_sprite",l_Color)
 	l_HealthPotion:AddText("health_potion_units", "health_potion_font", "Data\\GUI\\Fonts\\health_potion_font.fnt", "health_potion_font_0.png", "")
 	
 	self.m_Inventory:AddItem(l_HealthPotion,5)

@@ -8,9 +8,11 @@ class CGameObject;
 class CState;
 class CMaterial;
 class CAnimatedCoreModel;
-#include "Animation\AnimatedInstanceModel.h"
+
 class CRenderableObjectTechnique;
 class CTransition;
+
+class C3DElement;
 
 /*Encapsulates components to LUA*/
 class CLuaGameObjectHandle {

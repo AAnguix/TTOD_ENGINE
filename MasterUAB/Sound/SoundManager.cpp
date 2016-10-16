@@ -106,7 +106,7 @@ void CSoundManager::PlayEvent(const SoundEvent &Event, const std::string& Speake
 	}
 	else
 	{
-		#ifdef _LOG
+		#ifdef _DEBUG
 			LOG("Unable to play event " + Event.m_EventName + ". Speaker "+Speaker+" not found");
 		#endif
 		assert(false);
@@ -294,29 +294,30 @@ bool CSoundManager::Init()
 	}
 }
 
-bool CSoundManager::Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename)
+bool CSoundManager::LoadSoundBanks(const std::string& SoundBanksFilename, std::vector<const std::string> &SoundBanksLoaded)
 {
 	m_SoundBanksFilename = SoundBanksFilename;
-	m_SpeakersFilename = SpeakersFilename;
 
 	bool l_IsOk = true;
-
-	l_IsOk = LoadSoundBanksXML();
-	l_IsOk = LoadSpeakersXML();
-
+		l_IsOk = LoadSoundBanksXML(SoundBanksLoaded);
 	return l_IsOk;
 }
 
-bool CSoundManager::Load(const std::string& SoundBanksFilename, const std::string& SpeakersFilename, std::vector<const std::string> &SoundBanksLoaded)
+bool CSoundManager::LoadSoundBanks(const std::string& SoundBanksFilename)
 {
 	m_SoundBanksFilename = SoundBanksFilename;
+
+	bool l_IsOk = true;
+	l_IsOk = LoadSoundBanksXML();
+	return l_IsOk;
+}
+
+bool CSoundManager::LoadSpeakers(const std::string& SpeakersFilename)
+{
 	m_SpeakersFilename = SpeakersFilename;
 
 	bool l_IsOk = true;
-
-	l_IsOk = LoadSoundBanksXML(SoundBanksLoaded);
-	l_IsOk = LoadSpeakersXML();
-
+		l_IsOk = LoadSpeakersXML();
 	return l_IsOk;
 }
 
@@ -324,7 +325,9 @@ bool CSoundManager::Reload()
 {
 	Clean();
 	RemoveComponents();
-	return Load(m_SoundBanksFilename, m_SpeakersFilename);
+	bool l_Result = LoadSoundBanks(m_SoundBanksFilename);
+	l_Result = LoadSpeakers(m_SpeakersFilename);
+	return l_Result;
 }
 
 void CSoundManager::Update(const CCamera *Camera, const Vect3f &Forward, float ElapsedTime)

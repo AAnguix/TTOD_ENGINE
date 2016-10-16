@@ -21,6 +21,8 @@ void CGenerateShadowMapsSceneRendererCommand::Execute(CRenderManager &RenderMana
 	std::vector<CLight*> l_Lights = l_LightManager->GetResourcesVector();
 	size_t l_Size = l_Lights.size();
 
+	int l_LightsGeneratingShadowmap = 0;
+
 	for(size_t i=0;i<l_Size;++i)
 	{
 		if(l_Lights[i]->GetActive() && l_Lights[i]->GetGenerateShadowMap())
@@ -34,7 +36,7 @@ void CGenerateShadowMapsSceneRendererCommand::Execute(CRenderManager &RenderMana
 			#ifdef _DEBUG
 			if (m_ROManager.size() == 0)
 			{
-				LOG("Error. Can't generate shadows because there must be at least one layer");
+				LOG("ERROR. Can't generate ShadowMap because there must be at least one layer");
 			}
 			#endif
 
@@ -44,9 +46,18 @@ void CGenerateShadowMapsSceneRendererCommand::Execute(CRenderManager &RenderMana
 				l_Layer->Render(RenderManager, m_ROManager[j]->GetName());
 				//RenderManager.DrawScreenQuad(CEngine::GetSingleton().GetRenderableObjectTechniqueManager()->GetResource("MV_POSITION4_COLOR_TEXTURE_VERTEX")->GetEffectTechnique(),(CTexture*)l_Lights[i]->GetShadowMap(),0,0,1.0,1.0,CColor(1.0,0.0,0.0,1.0));
 			}
+
+			++l_LightsGeneratingShadowmap;
 		}
 	}
 
+	#ifdef _DEBUG
+		if (l_LightsGeneratingShadowmap == 0)
+		{
+			LOG("ERROR.There aren't any lights to generate a ShadowMap");
+		}
+	#endif
+	
 	RenderManager.GetContextManager()->UnsetRenderTargets();
 	//SetDefaultViewport poner en contextManager
 	RenderManager.GetContextManager()->SetDefaultViewPort();

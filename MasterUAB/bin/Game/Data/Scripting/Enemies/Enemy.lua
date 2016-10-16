@@ -42,7 +42,6 @@ function CEnemyComponent:__init(CLuaGameObject,EnemyType)
 	self.m_DistanceToFacePlayer = 5.0
 	
 	self.m_DeadEvent = ""
-	self.m_DeadEventParameter = nil
 	
 	self.m_TemporalMaterials = nil
 end
@@ -54,6 +53,7 @@ function CEnemyComponent:Initialize()
 	g_AnimatorControllerManager:AddComponent(self.m_LuaGameObject:GetName().."_AnimatorController", self.m_LuaGameObject)
 	
 	g_SoundManager:AddComponent(self.m_LuaGameObject:GetName().."_AudioSource", self.m_LuaGameObject)
+	g_SoundManager:RegisterSpeaker(self.m_LuaGameObject:Get3DElement())
 	
 	g_LogManager:Log("Enemy "..self.m_LuaGameObject:GetName().." created...")
 end
@@ -89,7 +89,7 @@ function CEnemyComponent:TakeDamage(PlayerWeapon)
 end
 
 function CEnemyComponent:Die()
-	--self.m_LuaGameObject:PlayEvent("EnemyDie")
+	self.m_LuaGameObject:PlayEvent("OrcDead")
 	--local l_RenderableObjectTechnique = g_RenderableObjectTechniqueManager:GetResource("fade_out_renderable_object_technique")
 	--self.m_LuaGameObject:SetTemporalRenderableObjectTechnique(l_RenderableObjectTechnique)
 	self.m_Dead = true
@@ -129,7 +129,7 @@ end
 function CEnemyComponent:RaiseDeadEvents()
 	if (self.m_DeadEvent~="") then
 		if self.m_DeadEvent == "DYNAMITE_DROPPED" then
-			g_EventManager:FireEvent(self.m_DeadEvent, self.m_LuaGameObject:GetPosition())
+			g_ItemManager:DYNAMITE_DROPPED(self.m_LuaGameObject:GetPosition())
 		else 
 			g_EventManager:FireEvent(self.m_DeadEvent)
 		end
@@ -171,16 +171,24 @@ function CEnemyComponent:FollowTriangleWayPoints(ElapsedTime)
 		l_Destiny = self.m_WayPoints[self.m_CurrentWayPoint]
 		local l_Vector =  l_Destiny - l_Position
 		
+		g_LogManager:Log("Destiny: ")
+		g_LogManager:Log(l_Destiny)
+		g_LogManager:Log("Position: ")
+		g_LogManager:Log(l_Position)
+		
 		if CTTODMathUtils.PointInsideCircle(l_Destiny, l_Position, 0.2) == false then
+			g_LogManager:Log("andando")
 			l_Vector:Normalize(1)
 			self.m_Velocity = (l_Vector*self:GetSpeed())
 			self:LookAtPoint(l_Destiny, ElapsedTime)
 		else
 			self.m_CurrentWayPoint = self.m_CurrentWayPoint+1
+			g_LogManager:Log("New Point: "..self.m_CurrentWayPoint)
 		end
 		
 		if self.m_CurrentWayPoint > (#self.m_WayPoints) then
 			self.m_CurrentWayPoint = 1
+			g_LogManager:Log("reset")
 		end
 	end
 end
@@ -237,7 +245,9 @@ function CEnemyComponent:MoveWithAStar(ElapsedTime)
 	end
 end
 
-function CEnemyComponent:SetDeadEvent(Event, Parameter) self.m_DeadEvent = Event self.m_DeadEventParameter=Parameter end
+function CEnemyComponent:SetDeadEvent(Event) 
+	self.m_DeadEvent = Event 
+end
 function CEnemyComponent:GetAvatar() return self.m_GuiAvatar end
 function CEnemyComponent:GetHealth() return self.m_Health end
 function CEnemyComponent:GetMaxHealth() return self.m_MaxHealth end

@@ -2,11 +2,25 @@ class 'CShowHealthBarManagerComponent' (CLUAComponent)
 function CShowHealthBarManagerComponent:__init(CLuaGameObject)
 CLUAComponent.__init(self,"ShowHealthBarManager")	
 	self.m_LastEnemyHit = nil
-	self.m_X = 0.09
-	self.m_Y = 0.05
-	self.m_Width = 0.25
-	self.m_Height = 0.05
-	self.m_HealthBarID = "player_health_bar_0"
+
+	self.m_HBBackgroundX = 0.45
+	self.m_HBX = self.m_HBBackgroundX + 0.1
+	self.m_AvatarX = self.m_HBBackgroundX - 0.04
+	
+	self.m_HBBackgroundY = 0.07
+	self.m_HBY = self.m_HBBackgroundY + 0.01
+	self.m_AvatarY = self.m_HBBackgroundY - 0.034
+	
+	self.m_HBBackgroundWidth = 0.2
+	self.m_HBWidth = self.m_HBBackgroundWidth*0.8
+	
+	self.m_HBBackgrounHeight = 0.025
+	self.m_HBHeight = self.m_HBBackgrounHeight/1.65 --0.015
+	
+	self.m_AvatarWidth = 0.07
+	self.m_AvatarHeight = self.m_AvatarWidth
+	
+	self.m_HealthBarID = "enemy_health_bar"
 	self.m_HealthBarName = "player_health_bar"
 	self.m_TimeShowingBar = 5.0
 	g_EventManager:Subscribe(self, "ENEMY_TAKES_DAMAGE")
@@ -43,10 +57,12 @@ function CShowHealthBarManagerComponent:ShowBar()
 	local l_EnemyMaxHealth = self.m_LastEnemyHit:GetMaxHealth()
 	local l_Avatar = self.m_LastEnemyHit:GetAvatar()
 	if(l_Avatar~=nil and l_EnemyCurrentHealth>0.0) then 
-		local l_HealthBarPos = SGUIPosition(self.m_X,self.m_Y,self.m_Width,self.m_Height,CGUIManager.TOP_LEFT,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
+		local l_HealthBarBackgroundPos = SGUIPosition(self.m_HBBackgroundX,self.m_HBBackgroundY,self.m_HBBackgroundWidth,self.m_HBBackgrounHeight,CGUIManager.TOP_LEFT, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+		g_GUIManager:DoImage("healthbar_image_background", "healthbar_image_background", l_HealthBarBackgroundPos)
+		local l_HealthBarPos = SGUIPosition(self.m_HBX,self.m_HBY,self.m_HBWidth,self.m_HBHeight,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 		g_GUIManager:DoHealthBar(self.m_HealthBarID,self.m_HealthBarName,l_HealthBarPos, 0.0, l_EnemyMaxHealth, l_EnemyCurrentHealth) 	
 		
-		local l_AvatarPos = SGUIPosition(self.m_X-0.06, self.m_Y, 0.05, 0.05, CGUIManager.TOP_LEFT, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
+		local l_AvatarPos = SGUIPosition(self.m_AvatarX, self.m_AvatarY, self.m_AvatarWidth,self.m_AvatarHeight, CGUIManager.TOP_LEFT, CGUIManager.GUI_RELATIVE, CGUIManager.GUI_RELATIVE_WIDTH)
 		g_GUIManager:DoImage("enemy_avatar", l_Avatar, l_AvatarPos)
 	end
 end

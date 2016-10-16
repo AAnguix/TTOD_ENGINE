@@ -36,9 +36,9 @@ float4 PS(PS_INPUT IN) : SV_Target
 	
 	float3 l_WorldPos=GetPositionFromZDepthView(l_Depth, IN.UV,m_InverseView, m_InverseProjection);
 	float3 l_WorldNormal = normalize(Texture2Normal(l_NormalMap.xyz));
-	
-	float l_ShadowMapContrib = GetShadowMapContrib(0,l_WorldPos,T6Texture,S6Sampler);
-	// float4 l_BlackAndWhiteMap = T6Texture.Sample(S6Sampler, IN.UV);
+	float l_ShadowMapContrib = 1.0;
+	//float l_ShadowMapContrib = GetShadowMapContrib(0,l_WorldPos,T6Texture,S6Sampler);
+	float l_BlackAndWhiteMap = T6Texture.Sample(S6Sampler, IN.UV).r;
 	//float l_ShadowMapContrib = T7Texture.Sample(S7Sampler, IN.UV).r;
 	
 	//float3 l_BlackAndWhite = T7Texture.Sample(S7Sampler, IN.UV);
@@ -73,5 +73,6 @@ float4 PS(PS_INPUT IN) : SV_Target
 		//return float4(h);
 	
 	GetSingleIluminatedPixelColor(0, l_DiffuseMap, l_SpecularFactor, l_Gloss, l_WorldPos, l_WorldNormal, l_DiffuseLight, l_SpecularLight, l_ShadowMapContrib);
-	return float4(l_DiffuseLight+l_SpecularLight, 0.0);
+	return float4((l_DiffuseLight+l_SpecularLight)*l_BlackAndWhiteMap, 0.0);
+	//return float4((l_DiffuseLight+l_SpecularLight), 0.0);
 }

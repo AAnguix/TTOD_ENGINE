@@ -8,6 +8,7 @@
 #include "Engine\Engine.h"
 #include "Animation\AnimatedInstanceModel.h"
 #include "RenderableObjects\MeshInstance.h"
+#include "Utils\3DElement.h"
 
 CLuaGameObjectHandle::CLuaGameObjectHandle(CGameObject* GameObject)
 {

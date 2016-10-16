@@ -197,13 +197,14 @@ void CEffectManager::SetLightConstants(unsigned int IdLight, CLight *Light)
 		if(Light->GetGenerateShadowMap())
 		{
 			CDynamicTexture *l_ShadowMap = Light->GetShadowMap();
-			CDynamicTexture *l_BlackAndWhite = Light->GetBlackAndWhiteMap();
+			CDynamicTexture *l_BlackAndWhite= Light->GetBlackAndWhiteMap();
+			CDynamicTexture *l_BlackAndWhiteBlurred = Light->GetBlackAndWhiteBlurredMap();
 			CTexture *l_ShadowMask=Light->GetShadowMaskTexture();
 			
 			CEffectManager::m_LightEffectParameters.m_UseShadowMask[IdLight]=l_ShadowMask!=NULL ? 1.0f : 0.0f;
 			CEffectManager::m_LightEffectParameters.m_LightView[IdLight]=Light->GetViewShadowMap();
 			CEffectManager::m_LightEffectParameters.m_LightProjection[IdLight]=Light->GetProjectionShadowMap();
-			l_ShadowMap->Activate(UAB_ID_SHADOW_MAP + IdLight * 2);
+			l_BlackAndWhiteBlurred->Activate(UAB_ID_SHADOW_MAP + IdLight * 2);
 			
 			/*if (l_BlackAndWhite != NULL)
 				l_BlackAndWhite->Activate(UAB_ID_SHADOW_MAP + 1 + IdLight * 2);*/

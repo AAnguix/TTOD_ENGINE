@@ -24,31 +24,12 @@
 		<sprite name="open_audio_submenu_highlight" x="0" y="0" w="512" h="512" />
 		<sprite name="open_audio_submenu_pressed" x="0" y="0" w="512" h="512" />
 	</gui_spritemap>
-		<!-- Audio -->
-		<gui_spritemap name="modify_fx_volume_slider" width="512" height="512" material="in_game_music_submenu_modify_fx_volume_slider_material">
-			<sprite name="modify_fx_volume_slider_base" x="0" y="0" w="512" h="150" />
-			<sprite name="modify_fx_volume_slider_top" x="0" y="150" w="512" h="150" />
-			<sprite name="modify_fx_volume_slider_handle" x="0" y="400" w="64" h="64" />
-			<sprite name="modify_fx_volume_slider_pressed_handle" x="400" y="400" w="64" h="64" />
-		</gui_spritemap>
-		<gui_spritemap name="modify_music_volume_slider" width="512" height="512" material="in_game_music_submenu_modify_music_volume_slider_material">
-			<sprite name="modify_music_volume_slider_base" x="0" y="0" w="512" h="150" />
-			<sprite name="modify_music_volume_slider_top" x="0" y="150" w="512" h="150" />
-			<sprite name="modify_music_volume_slider_handle" x="0" y="400" w="64" h="64" />
-			<sprite name="modify_music_volume_slider_pressed_handle" x="400" y="400" w="64" h="64" />
-		</gui_spritemap>
-	
 	<!-- Gameplay -->
-	<gui_spritemap name="player_health_bar" width="512" height="256" material="healthBar_material">
+	<!-- <gui_spritemap name="player_health_bar" width="512" height="256" material="healthBar_material">
 		<sprite name="player_health_bar_background" x="0" y="0" w="512" h="128" />
 		<sprite name="player_health_bar_top" x="0" y="128" w="512" h="64" />
 		<sprite name="player_health_bar_base" x="0" y="192" w="512" h="64" />
-	</gui_spritemap>
-	<gui_spritemap name="health_potion" width="512" height="512" material="health_potion_material">
-		<sprite name="health_potion_normal" x="0" y="0" w="512" h="512" />
-		<sprite name="health_potion_highlight" x="0" y="0" w="512" h="512" />
-		<sprite name="health_potion_pressed" x="0" y="0" w="512" h="512" />
-	</gui_spritemap>
+	</gui_spritemap> -->
 	<gui_spritemap name="dynamite" width="512" height="512" material="dynamite_material">
 		<sprite name="dynamite_normal" x="0" y="0" w="512" h="512" />
 		<sprite name="dynamite_highlight" x="0" y="0" w="512" h="512" />
@@ -61,12 +42,6 @@
 		<sprite name="pedestal_button_normal" x="0" y="0" w="256" h="256" />
 		<sprite name="pedestal_button_highlight" x="0" y="0" w="256" h="256" />
 		<sprite name="pedestal_button_pressed" x="0" y="0" w="256" h="256" />
-	</gui_spritemap>
-	<gui_spritemap name="avatars_spritemaps" width="512" height="512" material="avatars_material">
-		<sprite name="basic_enemy_avatar_sprite" x="0" y="0" w="256" h="256" />
-		<sprite name="player_avatar_sprite" x="256" y="0" w="256" h="256" />
-		<!--<sprite name="ranged_enemy_avatar_sprite" x="0" y="256" w="256" h="256" /> -->
-		<sprite name="dragon_avatar_sprite" x="256" y="256" w="256" h="256" />
 	</gui_spritemap>
 	<gui_spritemap name="map_spritemap_1280_720" width="1280" height="720" material="map_material_1280_720">
 		<sprite name="map_sprite_1280_720" x="0" y="0" w="1280" h="720" />

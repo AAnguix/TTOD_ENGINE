@@ -13,6 +13,7 @@
 #include "Render\RenderManager.h"
 #include "Log\Log.h"
 #include "PhysXManager.h"
+#include "Render\ContextManager.h"
 #include "RenderableObjects\LayerManager.h"
 #include "RenderableObjects\RenderableObjectTechniqueManager.h"
 #include "SceneRendererCommands\SceneRendererCommandManager.h"
@@ -155,7 +156,8 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 	m_Profiler->Begin("LoadSoundBanks");
 		m_SoundManager->SetPath("./Data/Audio/Soundbanks/General/");
 		m_SoundManager->Init();
-		m_SoundManager->Load("SoundbanksInfo.xml", "");
+		m_SoundManager->LoadSoundBanks("SoundbanksInfo.xml");
+		//m_SoundManager->LoadSpeakers("");
 	m_Profiler->End("LoadSoundBanks");
 
 	m_SceneRendererCommandManager->Load("./Data/start_screen_scene_renderer_commands.xml");
@@ -165,8 +167,6 @@ void CEngine::Initialize(HINSTANCE* HInstance)
 	l_ContextManager->GetVideoCardInfo(l_VCDescription, l_VCMemory);
 
 	#ifdef _DEBUG
-		Quatf l_QuatCamera = Quatf(0.0f, 0.0f, 0.0f, 1.0f);
-		bool l_CamPhysX = CEngine::GetSingleton().GetPhysXManager()->CreateSphereTrigger("DebugPhysxCamera", 0.1f, "GROUP3", Vect3f(0.0f, 0.0f, 0.0f), l_QuatCamera, "kinematic");
 		CEngine::GetSingleton().GetLogManager()->Log("VC: " + std::string(l_VCDescription) + ". Memory: " + std::to_string(l_VCMemory)+" mb.");
 	#endif
 
@@ -266,9 +266,10 @@ bool CEngine::Update(float ElapsedTime)
 	return true;
 }
 
-bool CEngine::AddLevel(const std::string &Level, const std::string &LuaLoadFunction)
+CLevel* CEngine::AddLevel(const std::string &Level, const std::string &LuaLoadFunction)
 {
 	bool l_Exists = false;
+	CLevel* l_Level = nullptr;
 
 	for (size_t i = 0; i < m_Levels.size(); ++i)
 	{
@@ -276,9 +277,12 @@ bool CEngine::AddLevel(const std::string &Level, const std::string &LuaLoadFunct
 			l_Exists = true;
 	}
 	if (!l_Exists)
-		m_Levels.push_back(new CLevel(Level, LuaLoadFunction));
+	{
+		l_Level = new CLevel(Level, LuaLoadFunction);
+		m_Levels.push_back(l_Level);
+	}
 
-	return !l_Exists;
+	return l_Level;
 }
 
 void CEngine::LoadLevel(const std::string &Level)

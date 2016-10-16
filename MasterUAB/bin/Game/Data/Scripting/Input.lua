@@ -21,16 +21,16 @@ function Action17() end
 function Action18() end
 function Action19() end
 function Action20()	g_EventManager:FireEvent("ESC_PRESSED") end
-function Action21() end
-function Action22() end
-function Action23() end
-function Action24() end
-function Action25() end
-function Action26() end
-function Action27() end
-function Action28() end
-function Action29() end
-function Action30() end
+function Action21()	g_EventManager:FireEvent("ON_ALT1_PRESSED") end
+function Action22()	g_EventManager:FireEvent("ON_ALT2_PRESSED") end
+function Action23()	g_EventManager:FireEvent("ON_ALT3_PRESSED") end
+function Action24()	g_EventManager:FireEvent("ON_ALT4_PRESSED") end
+function Action25()	g_EventManager:FireEvent("ON_ALT5_PRESSED") end
+function Action26()	g_EventManager:FireEvent("ON_ALT6_PRESSED") end
+function Action27()	g_EventManager:FireEvent("ON_ALT7_PRESSED") end
+function Action28()	g_EventManager:FireEvent("ON_ALT8_PRESSED") end
+function Action29()	g_EventManager:FireEvent("ON_ALT9_PRESSED") end
+function Action30()	g_EventManager:FireEvent("RELOAD_LUA") end
 
 function InputRangesCallback(xAxis,yAxis)
 end

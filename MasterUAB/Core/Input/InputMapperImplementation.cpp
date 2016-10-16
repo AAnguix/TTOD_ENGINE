@@ -39,7 +39,6 @@ InputMapping::CInputMapperImplementation::CInputMapperImplementation()
 ,m_PreviousButtonLeft(false)
 ,m_PreviousButtonMiddle(false)
 ,m_PreviousButtonRight(false)
-,m_MouseSpeed(1.0f)
 {
 	
 }
@@ -150,8 +149,8 @@ void InputMapping::CInputMapperImplementation::BeginFrame()
 			
 					CInputMapperImplementation* l_InputMapper = CEngine::GetSingleton().GetInputMapper();
 
-					float l_XAsisValue = l_InputMapper->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, static_cast<double>(m_MovementX * m_MouseSpeed));
-					float l_YAsisValue = l_InputMapper->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(m_MovementY * m_MouseSpeed));
+					l_InputMapper->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_X, (static_cast<double>(m_MovementX))*(-1.0));
+					l_InputMapper->SetOSAxisValue(InputMapping::OS_INPUT_AXIS_MOUSE_Y, static_cast<double>(m_MovementY));
 					
 					float l_ZBlurConstant = GetZBlurConstant(0.5f, (float)m_MovementX, (float)CEngine::GetSingleton().GetRenderManager()->GetContextManager()->GetFrameBufferWidth(), 0.1f);
 

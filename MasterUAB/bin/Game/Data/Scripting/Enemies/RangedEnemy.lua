@@ -12,6 +12,9 @@ function CRangedEnemyComponent:__init(CGameObject)
 	self.m_LastTimeFrightened = false
 	self.m_ShootingForce= 150.0
 	
+	self.m_SpawnBallDelay = 1.5
+	self.m_LaunchBallDelay = 0.8
+	
 	self.m_GuiAvatar = "basic_enemy_avatar_image"
 	
 	--self.m_Weapon = "Cristalmanec"
@@ -29,6 +32,10 @@ end
 function CRangedEnemyComponent:Initialize()
 	
 	CEnemyComponent.Initialize(self)
+	
+	self.m_LuaGameObject:AddSound("OrcShamanJump","Play_OrcShamanJump")
+	self.m_LuaGameObject:AddSound("OrcShamanAttack","Play_OrcShamanAttack")
+	self.m_LuaGameObject:AddSound("OrcDead","Play_OrcShamanDead")
 	
 	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_RangedEnemy", "OnUpdate_Idle_RangedEnemy", "OnExit_Idle_RangedEnemy")
 	local l_Attack = self.m_LuaGameObject:AddState("Attack_State", "normalAttack", 1.0, "OnEnter_Attack_RangedEnemy", "OnUpdate_Attack_RangedEnemy", "OnExit_Attack_RangedEnemy")
@@ -83,7 +90,7 @@ function CRangedEnemyComponent:MovementController(ElapsedTime)
 		self:MoveToPoint(ElapsedTime)
 	end
 	
-	self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
+	self.m_Velocity = self.m_Velocity + Vect3f(0.0,-10.0,0.0)
 	
 	if ElapsedTime>0.0 then
 		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, (self.m_Velocity * ElapsedTime), ElapsedTime)

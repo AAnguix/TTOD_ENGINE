@@ -4,6 +4,9 @@
 #include <string>
 #include "Math\Vector3.h"
 
+#include "GameObject\LuaGameObjectHandle.h"
+#include "Components\LuaComponent.h"
+
 class CTTODMathUtils
 {  
 
@@ -15,6 +18,13 @@ public:
 	static float CalculateNewAngle(float Angle, float CurrentYaw, float Velocity, float ElapsedTime);
 
 	static float LogBaseBofX(float X, float Base);
+
+	static float GetFixedAngle(float Angle);
+
+
+	//Gameplay
+
+	static bool FaceDirection(CLUAComponent self, CLuaGameObjectHandle LuaGameObjectHandle, float CurrentYaw, float YawBeforeFacing, float YawAfterFacing, float RotationAngle, float RotationDuration, float AngleMargin);
 };
 
 #endif

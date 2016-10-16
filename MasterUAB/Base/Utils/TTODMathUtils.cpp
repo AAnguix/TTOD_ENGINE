@@ -14,6 +14,83 @@
 //	return portName;
 //}
 
+/*
+Returns true when the objects reaches the YawAfterFacing value.
+*/
+bool CTTODMathUtils::FaceDirection(CLUAComponent self, CLuaGameObjectHandle LuaGameObjectHandle, float CurrentYaw, float YawBeforeFacing, float YawAfterFacing, float RotationAngle, float RotationDuration, float AngleMargin)
+{
+	if (RotationDuration == 0.0f)
+		return false;
+
+	float l_PI_2 = FLOAT_PI_VALUE / 2.0f;
+	float l_DoublePi = FLOAT_PI_VALUE * 2.0f;
+
+	float l_ThreeQuarter = FLOAT_PI_VALUE + l_PI_2;
+	float l_Difference = YawAfterFacing - CurrentYaw;
+
+	if ((CurrentYaw > l_ThreeQuarter) && (YawAfterFacing < l_PI_2))
+	{
+		l_Difference = l_DoublePi - CurrentYaw + YawAfterFacing;
+	}
+	else
+	{
+		l_Difference = abs(abs(CurrentYaw) - abs(YawAfterFacing));
+	}
+
+	if (l_Difference > AngleMargin)
+	{
+		float l_Angle = (self.GetTimer()*RotationAngle) / RotationDuration;
+		float l_NewYaw = GetFixedAngle(YawBeforeFacing + l_Angle);
+
+		if (l_NewYaw<0.0 && YawAfterFacing < 0.0f)
+		{
+			if (RotationAngle<0.0 && l_NewYaw < YawAfterFacing)
+			{
+				LuaGameObjectHandle.SetYaw(YawAfterFacing);
+				return true;
+			}
+			else if(RotationAngle>0.0 && l_NewYaw>YawAfterFacing)
+			{
+				LuaGameObjectHandle.SetYaw(YawAfterFacing);
+				return true;
+			}
+		}
+		else if(l_NewYaw > 0.0 && YawAfterFacing>0.0)
+		{
+			if (RotationAngle<0.0 && l_NewYaw < YawAfterFacing)
+			{
+				LuaGameObjectHandle.SetYaw(YawAfterFacing);
+				return true;
+			}
+			else if(RotationAngle > 0.0 && l_NewYaw>YawAfterFacing)
+			{
+				LuaGameObjectHandle.SetYaw(YawAfterFacing);
+				return true;
+			}
+		}
+		LuaGameObjectHandle.SetYaw(l_NewYaw);
+	}
+	else
+	{
+		LuaGameObjectHandle.SetYaw(YawAfterFacing);
+		return true;
+	}
+	return false;
+}
+
+float CTTODMathUtils::GetFixedAngle(float Angle)
+{
+	if (Angle > (2 * FLOAT_PI_VALUE))
+	{
+		return (Angle - (2 * FLOAT_PI_VALUE));
+	}
+	else if (Angle < (FLOAT_PI_VALUE*(-2.0f)))
+	{
+		return (Angle + (2 * FLOAT_PI_VALUE));
+	}
+	else { return Angle; }
+}
+
 float  CTTODMathUtils::AngleBetweenVectors(const Vect3f &VectorOne, const Vect3f &VectorTwo)
 {
 	float l_Value = 0.0f;

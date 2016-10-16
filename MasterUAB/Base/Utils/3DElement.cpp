@@ -132,8 +132,16 @@ Vect3f C3DElement::GetRight() const
 */
 
 void C3DElement::SetYaw(float Yaw)
-{
-	m_Yaw=Yaw;
+{	
+	if (Yaw > (2*FLOAT_PI_VALUE))
+	{
+		m_Yaw = (Yaw - (2*FLOAT_PI_VALUE));
+	}
+	else if (Yaw < (FLOAT_PI_VALUE*(-2.0f)))
+	{
+		m_Yaw = (Yaw + (2*FLOAT_PI_VALUE));
+	}
+	else { m_Yaw = Yaw; }
 }  
 
 void C3DElement::SetPitch(float Pitch)

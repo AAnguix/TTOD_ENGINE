@@ -50,7 +50,7 @@ function CGameController:LoadWeapon(TreeNode, EntityComponent)
 			local l_Damage = TreeNode:GetFloatProperty("damage", 0.0, false)
 			local l_WeaponStyle = TreeNode:GetPszProperty("weapon_style","",false)
 		
-			local l_PositionAdjustment = TreeNode:GetVect3fProperty("position_adjustment", Vect3f(0.0,0.0,0.0), false)
+			local l_PositionAdjustment = TreeNode:GetVect3fProperty("collider_adjustment", Vect3f(0.0,0.0,0.0), false)
 			local l_ColliderRadius = TreeNode:GetFloatProperty("collider_radius", 0.0, false)
 			
 			local l_OnPlayerContactParticles = TreeNode:GetPszProperty("on_player_contact_particles","",false)

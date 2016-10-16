@@ -151,8 +151,7 @@ end
 
 function CAntTweakBarReloader:ReloadGUI()
 	g_GUIManager:Reload()
-	dofile(g_CurrentGuiFile) --Reload GUI___.lua
-	InitializeGUI()
+	g_LuaGuiManager:Reload()
 end
 
 function CAntTweakBarReloader:ReloadCameras()

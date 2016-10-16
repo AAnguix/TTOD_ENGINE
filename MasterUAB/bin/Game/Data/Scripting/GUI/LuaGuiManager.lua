@@ -5,6 +5,7 @@ dofile("./Data/Scripting/GUI/LuaGuiInGame.lua")
 dofile("./Data/Scripting/GUI/LuaGuiCredits.lua")
 dofile("./Data/Scripting/GUI/LuaGuiOptions.lua")
 dofile("./Data/Scripting/GUI/LuaGuiAudioMenu.lua")
+dofile("./Data/Scripting/GUI/LuaGuiTutorial.lua")
 
 class 'CLuaGuiManager'
 function CLuaGuiManager:__init()
@@ -13,9 +14,6 @@ function CLuaGuiManager:__init()
 	self.m_State = 1 --StartScreen, InGame, etc.
 	self.m_GUIs = {}
 	self.m_CurrentGui = nil
-	
-	self.m_AudioSubmenuActive = false
-	self.m_MenuActive = false
 	
 	self.m_MinMusicVolume = 0.0
 	self.m_MaxMusicVolume = 100.0
@@ -36,7 +34,7 @@ function CLuaGuiManager:__init()
 	self.m_GRAPHICS_STATS_Y_OFFSET = 0.025
 	
 	self.m_CREDITS_AUTHORS_XOFFSET = 0.4
-	self.m_CREDITS_AUTHORS_YOFFSET = 0.2
+	self.m_CREDITS_AUTHORS_YOFFSET = 0.1
 	
 	self.m_ShowGraphicsStats = true
 	
@@ -52,15 +50,28 @@ function CLuaGuiManager:Initialize()
 	self:AddGui(CLuaGuiCredits())
 	self:AddGui(CLuaGuiOptions())
 	self:AddGui(CLuaGuiAudioMenu())
+	self:AddGui(CLuaGuiTutorial())
 end
 
 function CLuaGuiManager:Reload()
+	
+	dofile("./Data/Scripting/GUI/LuaGui.lua")
+	dofile("./Data/Scripting/GUI/LuaGuiStartScreen.lua")
+	dofile("./Data/Scripting/GUI/LuaGuiInGame.lua")
+	dofile("./Data/Scripting/GUI/LuaGuiCredits.lua")
+	dofile("./Data/Scripting/GUI/LuaGuiOptions.lua")
+	dofile("./Data/Scripting/GUI/LuaGuiAudioMenu.lua")
+	dofile("./Data/Scripting/GUI/LuaGuiTutorial.lua")
 	for i=1, (#self.m_GUIs) do
 		self.m_GUIs[i] = nil
 	end
 	self.m_CurrentGui=nil
 	self:Initialize()
-	self:SetGui(2)
+	
+	if(self.m_State~=1) then
+		self.m_GUIs[1]:Initialize()
+	end
+	self:SetGui(self.m_State)
 end
 
 --Manager subscribes events, and call apropiate method
@@ -116,6 +127,7 @@ function CLuaGuiManager:ShowGraphicsStats()
 		
 		local l_MaxMillisecondsPerFramePos = SGUIPosition(self.m_GRAPHICS_STATS_X_DISPLACEMENT,self.m_GRAPHICS_STATS_Y_DISPLACEMENT+(self.m_GRAPHICS_STATS_Y_OFFSET*5),0.1,0.1,CGUIManager.TOP_CENTER,CGUIManager.GUI_RELATIVE,CGUIManager.GUI_RELATIVE_WIDTH)
 		g_GUIManager:DoText("MaxMillisecondsPerFrame","calibri_font",l_MaxMillisecondsPerFramePos,"","Max "..Round(g_GraphicsStats:GetMaxMillisecondsPerFrame(),2))
+	
 	end
 end
 

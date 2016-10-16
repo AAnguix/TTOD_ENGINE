@@ -8,8 +8,8 @@ function CInventory:__init()
 	self.m_ButtonXOffset = 0.0
 	self.m_ButtonYOffset = 0.15
 	
-	self.m_TextsStartX = 0.968
-	self.m_TextsStartY = 0.785
+	self.m_TextsStartX = 0.985
+	self.m_TextsStartY = 0.85
 	
 	self.m_TextXOffset = 0.0
 	self.m_TextYOffset = 0.10

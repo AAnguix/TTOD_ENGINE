@@ -105,7 +105,6 @@ namespace InputMapping
 		bool m_ButtonRight, m_PreviousButtonRight;
 		bool m_ButtonLeft, m_PreviousButtonLeft;
 		bool m_ButtonMiddle, m_PreviousButtonMiddle;
-		float m_MouseSpeed;
 
 		//DirectX mouse
 		LPDIRECTINPUT8 m_DirectInput;

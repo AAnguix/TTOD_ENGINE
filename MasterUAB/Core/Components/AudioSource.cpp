@@ -54,7 +54,13 @@ void CAudioSource::PlayEvent(const std::string &Key)
 				i = m_Sounds.size();
 			}
 		}
-		assert(l_Found);
+		#ifdef _DEBUG
+		if (!l_Found)
+		{
+			LOG("Unable to find key " + Key);
+			assert(false);
+		}
+		#endif
 	}
 }
 
@@ -72,7 +78,11 @@ void CAudioSource::PlayEvent(const std::string &Key, const std::string& Speaker)
 				i = m_Sounds.size();
 			}
 		}
-		assert(l_Found);
+		if (!l_Found)
+		{
+			LOG("Unable to find key " + Key);
+			assert(false);
+		}
 	}
 }
 
@@ -90,7 +100,11 @@ void CAudioSource::PlayEvent(const std::string &Key, const C3DElement* Speaker)
 				i = m_Sounds.size();
 			}
 		}
-		assert(l_Found);
+		if (!l_Found)
+		{
+			LOG("Unable to find key " + Key);
+			assert(false);
+		}
 	}
 }
 
@@ -116,6 +130,12 @@ bool CAudioSource::AddSound(const std::string &Key, const std::string &SoundEven
 		}
 		#ifdef _DEBUG
 			CEngine::GetSingleton().GetLogManager()->Log("Sound " + SoundEventName + " already exists in GameObject "+m_Owner->GetName());
+		#endif
+	}
+	else
+	{
+		#ifdef _DEBUG
+			CEngine::GetSingleton().GetLogManager()->Log("SoundEvent " + SoundEventName + " not found");
 		#endif
 	}
 

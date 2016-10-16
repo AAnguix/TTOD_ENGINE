@@ -22,6 +22,7 @@ CMeshInstance::CMeshInstance(CGameObject* Owner, const std::string &Name, const 
 ,m_Parent(nullptr)
 ,m_ParentBoneId(-1)
 ,m_TemporalRenderbleObjectTechnique(NULL)
+,m_Billboard(false)
 {
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(CoreName);
 }
@@ -33,6 +34,7 @@ CMeshInstance::CMeshInstance(CXMLTreeNode &TreeNode)
 ,m_Parent(nullptr)
 ,m_ParentBoneId(-1)
 ,m_TemporalRenderbleObjectTechnique(NULL)
+,m_Billboard(false)
 {
 	std::string l_CoreName = TreeNode.GetPszProperty("core_name", "");
 	m_StaticMesh = CEngine::GetSingleton().GetStaticMeshManager()->GetResource(l_CoreName);
@@ -155,70 +157,116 @@ void CMeshInstance::Render(CRenderManager* RenderManager)
 				l_IsOutsideFrustum = true;
 		#endif
 
-			if (!l_IsOutsideFrustum)
+		if (!l_IsOutsideFrustum)
+		{
+			CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->IncrementObjects();
+
+			if (m_Parent != nullptr && m_ParentBoneId != -1)
 			{
-				CEngine::GetSingleton().GetLayerManager()->GetResource("solid")->IncrementObjects();
+				Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
+				Mat44f l_ParentTransform = m_Parent->GetTransform();
+				CContextManager* l_ContextManager = RenderManager->GetContextManager();
 
-				if (m_Parent != nullptr && m_ParentBoneId != -1)
+				/*l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
+				l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());*/
+				/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
+				Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
+				l_Translation.SetIdentity();
+				l_Translation.Translate(m_Position);
+				l_RotX.SetIdentity();
+				l_RotX.RotByAngleX(m_Pitch);
+				l_RotY.SetIdentity();
+				l_RotY.RotByAngleY(m_Yaw);
+				l_RotZ.SetIdentity();
+				l_RotZ.RotByAngleZ(m_Roll);
+
+				Mat44f l_Tranform;
+				l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
+				/*if (b_Test==0)
+				l_Tranform = l_RotZ*l_RotY*l_RotX*l_Translation;
+				else if (b_Test == 1)
+				l_Tranform = l_RotZ*l_RotX*l_RotY*l_Translation;
+				else if (b_Test == 2)*/
+
+				/*else if (b_Test == 3)
+				l_Tranform = l_RotX*l_RotZ*l_RotY*l_Translation;
+				else if (b_Test == 4)
+				l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
+				else if (b_Test == 5)
+				l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
+				Mat44f l_Matrix = l_Tranform*l_BoneTransform*l_ParentTransform;
+				Vect3f l_Po = l_Matrix.GetWorldPos();
+				float l_Y = l_Matrix.GetYaw();
+				float l_P = l_Matrix.GetPitch();
+				float  l_R = l_Matrix.GetRoll();
+				/*	LOG("ESTO EN C");
+				LOG(l_Po);
+				LOG(l_Y);
+				LOG(l_P);
+				LOG(l_R);*/
+
+				l_ContextManager->SetWorldMatrix(l_Matrix);
+			}
+			else
+			{
+				if (m_Billboard)
 				{
-					Mat44f l_BoneTransform = m_Parent->GetBoneTransformationMatrix(m_ParentBoneId);
-					//Mat44f l_ParentTransform = m_Parent->ChildGetTransform(m_Parent->GetPitch(), m_Parent->GetYaw(), m_Parent->GetRoll());
-					Mat44f l_ParentTransform = m_Parent->GetTransform();
-					CContextManager* l_ContextManager = RenderManager->GetContextManager();
+					Vect3f l_ObjectPosition = GetPosition();
 
-					/*l_ContextManager->SetWorldMatrix(l_BoneTransform*l_ParentTransform);
-					l_ContextManager->Draw(RenderManager->GetDebugRender()->GetAxis());*/
-					/*l_ContextManager->SetWorldMatrix(ChildGetTransform(m_Pitch, m_Yaw, m_Roll)*l_BoneTransform*l_ParentTransform);*/
-					Mat44f l_RotX, l_RotY, l_RotZ, l_Translation;
-					l_Translation.SetIdentity();
-					l_Translation.Translate(m_Position);
-					l_RotX.SetIdentity();
-					l_RotX.RotByAngleX(m_Pitch);
-					l_RotY.SetIdentity();
-					l_RotY.RotByAngleY(m_Yaw);
-					l_RotZ.SetIdentity();
-					l_RotZ.RotByAngleZ(m_Roll);
+					CCameraController* l_CurrentCamera = CEngine::GetSingleton().GetCameraControllerManager()->GetCurrentCameraController();
+					Vect3f l_CurrentCameraPosition1 = l_CurrentCamera->GetPosition();
+					Vect3f l_CurrentCameraPosition = RenderManager->GetCurrentCamera().GetPosition();
+					// Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
+					float angle = atan2(l_ObjectPosition.x - l_CurrentCameraPosition.x, l_ObjectPosition.z - l_CurrentCameraPosition.z) * (180.0f / DirectX::XM_PI);
+					//To radians
+					float rotation = (float)angle * 0.0174532925f;
 
-					Mat44f l_Tranform;
-					l_Tranform = l_RotX*l_RotY*l_RotZ*l_Translation;
-					/*if (b_Test==0)
-						l_Tranform = l_RotZ*l_RotY*l_RotX*l_Translation;
-						else if (b_Test == 1)
-						l_Tranform = l_RotZ*l_RotX*l_RotY*l_Translation;
-						else if (b_Test == 2)*/
+					DirectX::XMMATRIX l_WorldMatrix = DirectX::XMMatrixRotationY(rotation);
+					DirectX::XMMATRIX l_TranslationMatrix = DirectX::XMMatrixTranslation(l_ObjectPosition.x, l_ObjectPosition.y, l_ObjectPosition.z);
+					DirectX::XMMATRIX l_ResultingMatrix = DirectX::XMMatrixMultiply(l_WorldMatrix, l_TranslationMatrix);
 
-					/*else if (b_Test == 3)
-						l_Tranform = l_RotX*l_RotZ*l_RotY*l_Translation;
-						else if (b_Test == 4)
-						l_Tranform = l_RotY*l_RotZ*l_RotX*l_Translation;
-						else if (b_Test == 5)
-						l_Tranform = l_RotY*l_RotX*l_RotZ*l_Translation;*/
-					Mat44f l_Matrix = l_Tranform*l_BoneTransform*l_ParentTransform;
-					Vect3f l_Po = l_Matrix.GetWorldPos();
-					float l_Y = l_Matrix.GetYaw();
-					float l_P = l_Matrix.GetPitch();
-					float  l_R = l_Matrix.GetRoll();
-					/*	LOG("ESTO EN C");
-						LOG(l_Po);
-						LOG(l_Y);
-						LOG(l_P);
-						LOG(l_R);*/
+					DirectX::XMFLOAT4X4  matrix;
 
-					l_ContextManager->SetWorldMatrix(l_Matrix);
+					DirectX::XMStoreFloat4x4(&matrix, l_ResultingMatrix);
+					Mat44f l_Result;
+
+					l_Result.m00 = matrix._11;
+					l_Result.m01 = matrix._12;
+					l_Result.m02 = matrix._13;
+					l_Result.m03 = matrix._14;
+
+					l_Result.m10 = matrix._21;
+					l_Result.m11 = matrix._22;
+					l_Result.m12 = matrix._23;
+					l_Result.m13 = matrix._24;
+
+					l_Result.m20 = matrix._31;
+					l_Result.m21 = matrix._32;
+					l_Result.m22 = matrix._33;
+					l_Result.m23 = matrix._34;
+
+					l_Result.m30 = matrix._41;
+					l_Result.m31 = matrix._42;
+					l_Result.m32 = matrix._43;
+					l_Result.m33 = matrix._44;
+
+					RenderManager->GetContextManager()->SetWorldMatrix(l_Result);
 				}
 				else
 				{
 					RenderManager->GetContextManager()->SetWorldMatrix(GetTransform());
 				}
-				if (!m_TemporalRenderbleObjectTechnique)
-				{
-					m_StaticMesh->Render(RenderManager);
-				}
-				else 
-				{
-					m_StaticMesh->Render(RenderManager, m_TemporalRenderbleObjectTechnique);
-				}
+
 			}
+			if (!m_TemporalRenderbleObjectTechnique)
+			{
+				m_StaticMesh->Render(RenderManager);
+			}
+			else
+			{
+				m_StaticMesh->Render(RenderManager, m_TemporalRenderbleObjectTechnique);
+			}
+		}
 	}
 }
 

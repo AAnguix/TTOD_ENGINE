@@ -159,7 +159,7 @@ public:
 	void Initialize(HINSTANCE* HInstance);
 	HINSTANCE* GetHInstance() const { return m_HInstance; }
 	void LoadLevelsCommonData();
-	bool AddLevel(const std::string &Level, const std::string &LuaLoadFunction);
+	CLevel* AddLevel(const std::string &Level, const std::string &LuaLoadFunction);
 	void LoadLevel(const std::string &Level);
 	void UnloadLevel(const std::string &Level);
 	bool LoadingLevel() const { return m_LoadingLevel; };

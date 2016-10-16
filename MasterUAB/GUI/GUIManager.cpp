@@ -284,10 +284,16 @@ void CGUIManager::AddSpriteMap(CXMLTreeNode &TreeNode)
 
 void CGUIManager::Reload()
 {
-	Destroy();
+	std::vector<std::string> l_Filenames;
 	for (size_t i = 0; i < m_Filenames.size(); ++i)
 	{
-		Load(m_Filenames[i]);
+		l_Filenames.push_back(m_Filenames[i]);
+	}
+	m_Filenames.clear();
+	Destroy();
+	for (size_t i = 0; i < l_Filenames.size(); ++i)
+	{
+		Load(l_Filenames[i]);
 	}
 }
 
@@ -485,6 +491,28 @@ void CGUIManager::AddSlider(const std::string& SliderID, const std::string& Base
 	}
 }
 
+void CGUIManager::AddSlider(const std::string& SliderID, const std::string& Base, const std::string& Top, const std::string& Handle, const std::string& PressedHandle, int SliderWidth, int SliderHeight)
+{
+	std::map<std::string, SSliderInfo*>::iterator it;
+	it = m_Sliders.find(SliderID);
+
+	if (it == m_Sliders.end())
+	{
+		SSpriteInfo* l_Base = GetSprite(Base);
+		SSpriteInfo* l_Top = GetSprite(Top);
+		SSpriteInfo* l_Handle = GetSprite(Handle);
+		SSpriteInfo* l_PressedHandle = GetSprite(PressedHandle);
+
+		assert(l_Base != nullptr);
+		assert(l_Top != nullptr);
+		assert(l_Handle != nullptr);
+		assert(l_PressedHandle != nullptr);
+
+		SSliderInfo* l_Slider = new SSliderInfo(l_Base, l_Top, l_Handle, l_PressedHandle, SliderWidth, SliderHeight);
+		m_Sliders[SliderID] = l_Slider;
+	}
+}
+
 void CGUIManager::AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top, const std::string& Background)
 {
 	std::map<std::string, SHealthBarInfo*>::iterator it;
@@ -501,6 +529,24 @@ void CGUIManager::AddHealthBar(const std::string& HealthBarID, const std::string
 		assert(l_Background != nullptr);
 
 		SHealthBarInfo* l_HealthBar = new SHealthBarInfo(l_Base, l_Top, l_Background);
+		m_HealthBars[HealthBarID] = l_HealthBar;
+	}
+}
+
+void CGUIManager::AddHealthBar(const std::string& HealthBarID, const std::string& Base, const std::string& Top)
+{
+	std::map<std::string, SHealthBarInfo*>::iterator it;
+	it = m_HealthBars.find(HealthBarID);
+
+	if (it == m_HealthBars.end())
+	{
+		SSpriteInfo* l_Base = GetSprite(Base);
+		SSpriteInfo* l_Top = GetSprite(Top);
+
+		assert(l_Base != nullptr);
+		assert(l_Top != nullptr);
+
+		SHealthBarInfo* l_HealthBar = new SHealthBarInfo(l_Base, l_Top);
 		m_HealthBars[HealthBarID] = l_HealthBar;
 	}
 }
@@ -745,34 +791,56 @@ CGUIManager::SSliderResult CGUIManager::DoSlider(const std::string& GuiID, const
 void CGUIManager::DoHealthBar(const std::string& GuiID, const std::string& HealthBarID, const SGUIPosition& Position, float MinValue, float MaxValue, float CurrentValue)
 {
 	SHealthBarInfo* l_HealthBarInfo = GetHealthBar(HealthBarID);
-	float l_CurrentValuePos = 0.0f;
+	SSliderResult l_Result;
 
 	if (l_HealthBarInfo != nullptr)
 	{
 		CheckInput();
+		bool RealResult = false;
+
+		float l_Factor = (float)(m_MouseX - Position.x) / ((float)Position.width);
+		if (l_Factor < 0) l_Factor = 0;
+		else if (l_Factor > 1) l_Factor = 1;
+
+		l_Result.temp = MinValue + (MaxValue - MinValue)*l_Factor;
 
 		if (m_ActiveItem == GuiID)
 		{
+			l_Result.active = true;
 			if (m_MouseWentReleased)
 			{
 				if (m_HotItem == GuiID)
 				{
-					//
+					RealResult = true;
 				}
 				SetNotActive(GuiID);
 			}
 		}
 		else if (m_HotItem == GuiID)
 		{
+			l_Result.hot = true;
 			if (m_MouseWentPressed)
 			{
 				SetActive(GuiID);
 			}
 		}
 
-		l_CurrentValuePos = Position.x + Position.width * (CurrentValue - MinValue) / (MaxValue - MinValue);
-		float l_BarWidth = l_HealthBarInfo->barRelativeWidth * Position.width;
-		float l_BarHeight = l_HealthBarInfo->barRelativeHeight * Position.height;
+		if (RealResult)
+		{
+			l_Result.real = l_Result.temp;
+		}
+		else if (m_ActiveItem == GuiID)
+		{
+			l_Result.real = CurrentValue;
+		}
+		else
+		{
+			l_Result.temp = CurrentValue;
+			l_Result.real = CurrentValue;
+		}
+
+		float l_HandlePosition = Position.x + Position.width * (l_Result.temp - MinValue) / (MaxValue - MinValue);
+		
 
 		if (IsMouseInside(m_MouseX, m_MouseY, Position.x, Position.y, Position.width, Position.height))
 		{
@@ -783,18 +851,13 @@ void CGUIManager::DoHealthBar(const std::string& GuiID, const std::string& Healt
 			SetNotHot(GuiID);
 		}
 
-		SGUICommand l_Background = { l_HealthBarInfo->background, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
-		, 0, 0, 1, 1,
-		CColor(1.0f, 1.0f, 1.0f, 1.0f) };
-		m_Commands.push_back(l_Background);
-
-		SGUICommand l_Base = { l_HealthBarInfo->base, (int)Position.x, (int)Position.y, (int)(Position.x + l_BarWidth), (int)(Position.y + l_BarHeight)
+		SGUICommand l_Base = { l_HealthBarInfo->base, (int)Position.x, (int)Position.y, (int)(Position.x + Position.width), (int)(Position.y + Position.height)
 		, 0, 0, 1, 1,
 		CColor(1.0f, 1.0f, 1.0f, 1.0f) };
 		m_Commands.push_back(l_Base);
 
-		SGUICommand l_Top = { l_HealthBarInfo->top, (int)Position.x, (int)Position.y, (int)l_CurrentValuePos, int(Position.y + l_BarHeight),
-		0, 0, (CurrentValue - MinValue) / (MaxValue - MinValue), 1,
+		SGUICommand l_Top = { l_HealthBarInfo->top, (int)Position.x, (int)Position.y, (int)l_HandlePosition, int(Position.y + Position.height),
+		0, 0, (l_Result.temp - MinValue) / (MaxValue - MinValue), 1,
 		CColor(1.0f, 1.0f, 1.0f, 1.0f) };
 		m_Commands.push_back(l_Top);
 	}

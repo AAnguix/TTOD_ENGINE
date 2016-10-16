@@ -1,7 +1,7 @@
 class 'CBasicEnemyComponent' (CEnemyComponent)
-function CBasicEnemyComponent:__init(CGameObject)
-	CEnemyComponent.__init(self, CGameObject,"BasicEnemy")
-	self.m_Health=10.0
+function CBasicEnemyComponent:__init(CLuaGameObject)
+	CEnemyComponent.__init(self, CLuaGameObject,"BasicEnemy")
+	self.m_Health=200.0
 	self.m_MaxHealth=self.m_Health
 	self.m_Speed=1.2
 	self.m_AttackDelay=1.5 + (math.random()*0.5)
@@ -19,6 +19,11 @@ end
 function CBasicEnemyComponent:Initialize()
 	
 	CEnemyComponent.Initialize(self)
+	
+	self.m_LuaGameObject:AddSound("OrcWarriorPatrolling","Play_OrcWarriorPatrolling")
+	self.m_LuaGameObject:AddSound("OrcWarriorAttack","Play_OrcWarriorAttack")
+	self.m_LuaGameObject:AddSound("OrcDead","Play_OrcWarriorDead")
+	self.m_LuaGameObject:AddSound("OrcWarriorCombatPose","Play_OrcWarriorCombatPose")
 	
 	local l_Idle = self.m_LuaGameObject:AddState("Idle_State", "idle", 1.0, "OnEnter_Idle_BasicEnemy", "OnUpdate_Idle_BasicEnemy", "OnExit_Idle_BasicEnemy")
 	local l_CombatIdle = self.m_LuaGameObject:AddState("CombatIdle_State", "alert", 1.0, "OnEnter_CombatIdle_BasicEnemy", "OnUpdate_CombatIdle_BasicEnemy", "OnExit_CombatIdle_BasicEnemy")
@@ -90,7 +95,7 @@ function CBasicEnemyComponent:MovementController(ElapsedTime)
 		self:MoveWithAStar(ElapsedTime)
 	end
 	
-	self.m_Velocity = self.m_Velocity + (g_Gravity*ElapsedTime)
+	self.m_Velocity = self.m_Velocity + Vect3f(0.0,-10.0,0.0)
 	
 	if ElapsedTime>0.0 then
 		self.m_Velocity = g_PhysXManager:DisplacementCharacterController(l_Name, (self.m_Velocity * ElapsedTime), ElapsedTime)

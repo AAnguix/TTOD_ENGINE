@@ -54,13 +54,13 @@ end
 
 function InputRangesCallback(xAxis,yAxis)
 	local l_CameraController = g_CameraControllerManager:GetCurrentCameraController()
-	
+	local l_ElapsedTime = g_Engine:GetElapsedTime()
 	if l_CameraController:GetType() == CCameraController.THIRD_PERSON then
-		l_CameraController:AddLookAtPitch(yAxis * g_Engine:GetElapsedTime())
-		l_CameraController:AddYaw( xAxis * g_Engine:GetElapsedTime())
+		l_CameraController:AddLookAtPitch(yAxis * l_ElapsedTime)
+		l_CameraController:AddYaw( xAxis * l_ElapsedTime)
 	end
 	if l_CameraController:GetType() == CCameraController.DEBUG then
-		l_CameraController:AddYaw(xAxis * g_Engine:GetElapsedTime() * 0.5)
-		l_CameraController:AddPitch(yAxis * g_Engine:GetElapsedTime() * 0.5)
+		l_CameraController:AddYaw(xAxis * l_ElapsedTime * 0.5)
+		l_CameraController:AddPitch(yAxis * l_ElapsedTime * 0.5)
 	end
 end

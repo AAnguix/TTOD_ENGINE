@@ -14,7 +14,7 @@ struct VS_INPUT
 	float3 Pos : POSITION;
 	float4 Weight : BLENDWEIGHT;
 	float4 Indices : BLENDINDICES;
-	float3 Normal : NORMAL;
+	float4 Normal : NORMAL;
 	float4 Tangent : TANGENT;
 	float4 Binormal : BINORMAL;
 	float2 UV : TEXCOORD0;
@@ -114,7 +114,8 @@ PixelOutputType PS( PS_INPUT IN) : SV_Target
 	Nn = Nn + (l_Bump.x*l_TangentNormalized) + (l_Bump.y*l_BinormalNormalized);
 	l_Output.Target2 = float4(Normal2Texture(Nn), 1.0f); 
 
-	//l_Output.Target2 = float4(l_TangentNormalized,1.0);  //float4(float3(1.0,1.0,0.0),1.0);
+	//l_Output.Target2 = float4(Nn,1.0); 
+	//l_Output.Target2 = float4(l_TangentNormalized.xyz, 1.0);
 	
 	
 	l_Output.Target1.xyz = l_Target1;

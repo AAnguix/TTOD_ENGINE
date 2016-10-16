@@ -66,7 +66,7 @@ function CItem:UpdateGUI(ElapsedTime)
 	end
 	
 	if (self.m_Gui.m_HasText and self.m_CurrentCooldown>0.00) then
-		g_GUIManager:DoText(self.m_Gui.m_Text.m_GuiID,self.m_Gui.m_Text.m_FontName,l_ButtonPosition,"",Round(self.m_CurrentCooldown,0).."")
+		g_GUIManager:DoText(self.m_Gui.m_Text.m_GuiID,self.m_Gui.m_Text.m_FontName,l_TextPosition,"",Round(self.m_CurrentCooldown,0).."")
 	end
 end
 

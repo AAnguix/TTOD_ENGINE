@@ -10,7 +10,6 @@ g_WindMildEnter = false
 
 --g_Enemies = {}
 
-g_CurrentGuiFile = "./Data/Scripting/GUI/GUIInGame.lua"
 g_CurrentLuaMainFile = "./Data/Scripting/LuaMainInGame.lua"
 
 g_IsGamePaused = false
