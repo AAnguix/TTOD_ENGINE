@@ -8,7 +8,7 @@ CLUAComponent.__init(self,"LightManagerScript")
 	self.m_EndLightIntensities = {}
 	self.m_LightPedestals = {}
 	
-	self.m_StoneGateSoundDelay = 1.5
+	self.m_StoneGateSoundDelay = 1.0
 	self.m_CombinationDoneSoundDelay = 1.0
 	self.m_LightsOnSoundDelay = 1.0
 	self.m_StoneGateDisplacement = Vect3f(0.6,0.0,0.0)
